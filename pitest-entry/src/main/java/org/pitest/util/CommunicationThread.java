@@ -18,22 +18,21 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.pitest.functional.SideEffect1;
 
 public class CommunicationThread {
 
   private static final Logger                     LOG = Log.getLogger();
 
-  private final SideEffect1<SafeDataOutputStream> sendInitialData;
+  private final Consumer<SafeDataOutputStream> sendInitialData;
   private final ReceiveStrategy                   receive;
   private final ServerSocket                      socket;
   private FutureTask<ExitCode>                    future;
 
   public CommunicationThread(final ServerSocket socket,
-      final SideEffect1<SafeDataOutputStream> sendInitialData,
+      final Consumer<SafeDataOutputStream> sendInitialData,
       final ReceiveStrategy receive) {
     this.socket = socket;
     this.sendInitialData = sendInitialData;

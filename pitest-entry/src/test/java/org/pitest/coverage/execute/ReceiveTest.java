@@ -9,19 +9,20 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.coverage.CoverageResult;
-import org.pitest.functional.SideEffect1;
 import org.pitest.testapi.Description;
 import org.pitest.util.Id;
 import org.pitest.util.SafeDataInputStream;
 
 import sun.pitest.CodeCoverageStore;
 
+import java.util.function.Consumer;
+
 // does this test add any value?
 public class ReceiveTest {
 
   private Receive                     testee;
 
-  private SideEffect1<CoverageResult> handler;
+  private Consumer<CoverageResult> handler;
 
   private CoverageResult              result;
 
@@ -38,7 +39,7 @@ public class ReceiveTest {
     this.description = new Description("foo", "bar");
   }
 
-  private SideEffect1<CoverageResult> stubHandler() {
+  private Consumer<CoverageResult> stubHandler() {
     return a -> ReceiveTest.this.result = a;
   }
 

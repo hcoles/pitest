@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -57,7 +58,7 @@ public class FCollectionTest {
   @Test
   public void shouldApplyForEachToAllItems() {
     final List<Integer> actual = new ArrayList<>();
-    final SideEffect1<Integer> e = a -> actual.add(a);
+    final Consumer<Integer> e = a -> actual.add(a);
 
     FCollection.forEach(this.is, e);
 

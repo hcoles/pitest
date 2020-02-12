@@ -76,7 +76,7 @@ public class Pitest {
   private void processResults(final List<TestResult> results) {
     for (final TestResult result : results) {
       final ResultType classifiedResult = classify(result);
-      classifiedResult.getListenerFunction(result).apply(this.listener);
+      classifiedResult.getListenerFunction(result).accept(this.listener);
     }
   }
 

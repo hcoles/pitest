@@ -19,10 +19,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import org.pitest.functional.SideEffect1;
 import org.pitest.functional.predicate.And;
 import org.pitest.functional.predicate.Or;
 
@@ -54,13 +54,13 @@ public abstract class Prelude {
     return new Or<>(ps);
   }
 
-  public static final <A> SideEffect1<A> accumulateTo(
+  public static final <A> Consumer<A> accumulateTo(
       final Collection<A> collection) {
     return a -> collection.add(a);
 
   }
 
-  public static <A, B> SideEffect1<A> putToMap(final Map<A, B> map,
+  public static <A, B> Consumer<A> putToMap(final Map<A, B> map,
       final B value) {
     return key -> map.put(key, value);
   }
@@ -73,24 +73,24 @@ public abstract class Prelude {
     return id();
   }
 
-  public static final <T> SideEffect1<T> print() {
+  public static final <T> Consumer<T> print() {
     return printTo(System.out);
   }
 
-  public static final <T> SideEffect1<T> print(final Class<T> type) {
+  public static final <T> Consumer<T> print(final Class<T> type) {
     return print();
   }
 
-  public static final <T> SideEffect1<T> printTo(final Class<T> type,
+  public static final <T> Consumer<T> printTo(final Class<T> type,
       final PrintStream stream) {
     return printTo(stream);
   }
 
-  public static final <T> SideEffect1<T> printTo(final PrintStream stream) {
+  public static final <T> Consumer<T> printTo(final PrintStream stream) {
     return a -> stream.print(a);
   }
 
-  public static <T> SideEffect1<T> printWith(final T t) {
+  public static <T> Consumer<T> printWith(final T t) {
     return a -> System.out.print(t + " : " + a);
   }
 
@@ -114,7 +114,7 @@ public abstract class Prelude {
     return a -> Collections.singletonList(a);
   }
 
-  public static <T> SideEffect1<T> noSideEffect(final Class<T> clazz) {
+  public static <T> Consumer<T> noSideEffect(final Class<T> clazz) {
     return a -> {
     };
   }

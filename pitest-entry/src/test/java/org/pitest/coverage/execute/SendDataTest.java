@@ -32,7 +32,7 @@ public class SendDataTest {
 
   @Test
   public void shouldSendArgumentsToMinion() {
-    this.testee.apply(this.os);
+    this.testee.accept(this.os);
     verify(this.os).write(this.arguments);
   }
 
@@ -40,7 +40,7 @@ public class SendDataTest {
   public void shouldSendTestClassesToMinion() {
     this.testClasses.add("foo");
     this.testClasses.add("bar");
-    this.testee.apply(this.os);
+    this.testee.accept(this.os);
     verify(this.os).writeInt(this.testClasses.size());
     verify(this.os).writeString("foo");
     verify(this.os).writeString("bar");

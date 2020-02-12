@@ -4,9 +4,9 @@ import static org.pitest.functional.prelude.Prelude.printWith;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.function.Consumer;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.SideEffect1;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.EngineArguments;
 import org.pitest.mutationtest.MutationConfig;
@@ -66,7 +66,7 @@ public class WorkerFactory {
     return worker;
   }
 
-  private SideEffect1<String> captureStdOutIfVerbose() {
+  private Consumer<String> captureStdOutIfVerbose() {
     if (this.verbose) {
       return Prelude.printWith("stdout ");
     } else {

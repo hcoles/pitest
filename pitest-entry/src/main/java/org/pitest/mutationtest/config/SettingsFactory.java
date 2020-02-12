@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -13,7 +14,6 @@ import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.export.DefaultCoverageExporter;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.SideEffect1;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.build.CompoundInterceptorFactory;
@@ -85,7 +85,7 @@ public class SettingsFactory {
     return firstOrDefault(groupers, new DefaultMutationGrouperFactory());
   }
 
-  public void describeFeatures(SideEffect1<Feature> enabled, SideEffect1<Feature> disabled) {
+  public void describeFeatures(Consumer<Feature> enabled, Consumer<Feature> disabled) {
     final FeatureParser parser = new FeatureParser();
     final Collection<ProvidesFeature> available = new ArrayList<>(this.plugins.findInterceptors());
     final List<FeatureSetting> settings = parser.parseFeatures(this.options.getFeatures());
@@ -97,14 +97,14 @@ public class SettingsFactory {
       .sorted(byName())
       .collect(Collectors.toList());
       
-    enabledFeatures.stream().forEach(each -> enabled.apply(each));
+    enabledFeatures.forEach(enabled);
 
     available.stream()
       .map(toFeature())
       .distinct()
       .sorted(byName())
       .filter(f -> !enabledFeatures.contains(f))
-      .forEach(each -> disabled.apply(each));
+      .forEach(disabled);
     
   }
 

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -29,10 +30,8 @@ import java.util.function.Predicate;
 public abstract class FCollection {
 
   public static <A> void forEach(final Iterable<? extends A> as,
-      final SideEffect1<A> e) {
-    for (final A a : as) {
-      e.apply(a);
-    }
+      final Consumer<A> e) {
+    as.forEach(e);
   }
 
   public static <A, B> void mapTo(final Iterable<? extends A> as,

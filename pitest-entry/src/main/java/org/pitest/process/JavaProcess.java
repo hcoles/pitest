@@ -14,9 +14,10 @@
  */
 package org.pitest.process;
 
-import org.pitest.functional.SideEffect1;
 import org.pitest.util.Monitor;
 import org.pitest.util.StreamMonitor;
+
+import java.util.function.Consumer;
 
 public class JavaProcess {
 
@@ -24,8 +25,8 @@ public class JavaProcess {
   private final Monitor out;
   private final Monitor err;
 
-  public JavaProcess(Process process, SideEffect1<String> sysoutHandler,
-      SideEffect1<String> syserrHandler) {
+  public JavaProcess(Process process, Consumer<String> sysoutHandler,
+                     Consumer<String> syserrHandler) {
     this.process = process;
 
     this.out = new StreamMonitor(process.getInputStream(), sysoutHandler);

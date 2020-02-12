@@ -7,10 +7,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.function.Consumer;
 
 import org.junit.Test;
 import org.pitest.classpath.ClassPath;
-import org.pitest.functional.SideEffect1;
 import org.pitest.util.NullJavaAgent;
 
 public class WrappingProcessTest {
@@ -51,7 +51,7 @@ public class WrappingProcessTest {
     assertEquals(EXIT_CODE, process.waitToDie());
   }
 
-  private SideEffect1<String> nullHandler() {
+  private Consumer<String> nullHandler() {
     return a -> {
 
     };
