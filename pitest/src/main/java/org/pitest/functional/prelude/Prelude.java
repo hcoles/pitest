@@ -98,18 +98,6 @@ public abstract class Prelude {
     return o -> o.longValue() > value.longValue();
   }
 
-  public static <T> Predicate<T> isEqualTo(final T value) {
-    return o -> o.equals(value);
-  }
-
-  public static <T> Predicate<T> isNotNull() {
-    return o -> (o != null);
-  }
-
-  public static <T> Predicate<T> isNull() {
-    return o -> (o == null);
-  }
-
   public static <T> Function<T, Iterable<T>> asList(final Class<T> type) {
     return a -> Collections.singletonList(a);
   }

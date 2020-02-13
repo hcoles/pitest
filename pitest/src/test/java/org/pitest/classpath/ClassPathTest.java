@@ -14,6 +14,7 @@
  */
 package org.pitest.classpath;
 
+import static java.util.function.Predicate.isEqual;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -32,7 +33,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import java.util.Optional;
-import org.pitest.functional.prelude.Prelude;
 
 public class ClassPathTest {
 
@@ -75,7 +75,7 @@ public class ClassPathTest {
   @Test
   public void shouldFindMatchingClasses() {
     assertEquals(Arrays.asList("FooClass"),
-        this.testee.findClasses(Prelude.isEqualTo("FooClass")));
+        this.testee.findClasses(isEqual("FooClass")));
   }
 
   @Test
