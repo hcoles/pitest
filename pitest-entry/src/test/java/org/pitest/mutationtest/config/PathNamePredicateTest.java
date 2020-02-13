@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest.config;
 
+import static java.util.function.Predicate.isEqual;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -23,7 +24,6 @@ import java.io.File;
 import org.junit.Test;
 import org.pitest.classpath.ClassPathRoot;
 import org.pitest.classpath.DirectoryClassPathRoot;
-import org.pitest.functional.prelude.Prelude;
 
 public class PathNamePredicateTest {
 
@@ -33,7 +33,7 @@ public class PathNamePredicateTest {
   public void shouldMatchRootsWithMatchingNames() {
     final File testFile = new File("/foo/bar");
     final ClassPathRoot root = new DirectoryClassPathRoot(testFile);
-    this.testee = new PathNamePredicate(Prelude.isEqualTo(testFile
+    this.testee = new PathNamePredicate(isEqual(testFile
         .getAbsolutePath()));
     assertThat(this.testee.test(root), is(true));
   }
@@ -41,7 +41,7 @@ public class PathNamePredicateTest {
   @Test
   public void shouldNotMatchRootsWithNonMatchingNames() {
     final ClassPathRoot root = new DirectoryClassPathRoot(new File("/foo/bar/"));
-    this.testee = new PathNamePredicate(Prelude.isEqualTo("phoee"));
+    this.testee = new PathNamePredicate(isEqual("phoee"));
     assertFalse(this.testee.test(root));
   }
 

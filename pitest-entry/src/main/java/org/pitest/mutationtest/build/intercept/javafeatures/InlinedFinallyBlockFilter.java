@@ -1,9 +1,9 @@
 package org.pitest.mutationtest.build.intercept.javafeatures;
 
+import static java.util.function.Predicate.isEqual;
 import static org.pitest.functional.FCollection.bucket;
 import static org.pitest.functional.FCollection.map;
 import static org.pitest.functional.FCollection.mapTo;
-import static org.pitest.functional.prelude.Prelude.isEqualTo;
 import static org.pitest.functional.prelude.Prelude.not;
 
 import java.util.ArrayList;
@@ -97,7 +97,7 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
     // to the base one (is this not implied by there being only 1 mutation in
     // the handler ????)
     final List<Integer> ids = map(each.getValue(), mutationToBlock());
-    if (ids.stream().filter(not(isEqualTo(firstBlock))).findFirst().isPresent()) {
+    if (ids.stream().filter(not(isEqual(firstBlock))).findFirst().isPresent()) {
       combined.add(makeCombinedMutant(each.getValue()));
     } else {
       combined.addAll(each.getValue());

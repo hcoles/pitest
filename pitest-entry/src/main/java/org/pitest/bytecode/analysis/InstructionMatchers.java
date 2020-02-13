@@ -1,5 +1,6 @@
 package org.pitest.bytecode.analysis;
 
+import static java.util.function.Predicate.isEqual;
 import static org.objectweb.asm.Opcodes.ICONST_0;
 import static org.objectweb.asm.Opcodes.ICONST_1;
 import static org.objectweb.asm.Opcodes.ICONST_2;
@@ -20,7 +21,6 @@ import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.sequence.Match;
 import org.pitest.sequence.Slot;
 import org.pitest.sequence.SlotRead;
@@ -50,7 +50,7 @@ public class InstructionMatchers {
 
   public static Match<AbstractInsnNode> incrementsVariable(final SlotRead<Integer> counterVariable) {
    return (context, a) -> (a instanceof IincInsnNode)
-       && context.retrieve(counterVariable).filter(Prelude.isEqualTo(((IincInsnNode)a).var)).isPresent();
+       && context.retrieve(counterVariable).filter(isEqual(((IincInsnNode)a).var)).isPresent();
   }
 
   public static Match<AbstractInsnNode> anIStore(
@@ -76,7 +76,7 @@ public class InstructionMatchers {
   public static Match<AbstractInsnNode> variableMatches(
       final SlotRead<Integer> counterVariable) {
     return (c, t) -> (t instanceof VarInsnNode)
-        && c.retrieve(counterVariable).filter(Prelude.isEqualTo(((VarInsnNode)t).var)).isPresent();
+        && c.retrieve(counterVariable).filter(isEqual(((VarInsnNode) t).var)).isPresent();
   }
 
 
@@ -189,7 +189,7 @@ public class InstructionMatchers {
       }
       final JumpInsnNode jump = (JumpInsnNode) a;
 
-      return context.retrieve(loopStart).filter(Prelude.isEqualTo(jump.label)).isPresent();
+      return context.retrieve(loopStart).filter(isEqual(jump.label)).isPresent();
     };
   }
 
@@ -211,7 +211,7 @@ public class InstructionMatchers {
      }
 
      final LabelNode l = (LabelNode) t;
-     return c.retrieve(loopEnd).filter(Prelude.isEqualTo(l)).isPresent();
+     return c.retrieve(loopEnd).filter(isEqual(l)).isPresent();
 
     };
   }
