@@ -32,7 +32,6 @@ import org.pitest.process.JavaExecutableLocator;
 import org.pitest.process.KnownLocationJavaExecutableLocator;
 import org.pitest.util.PitError;
 import org.pitest.util.ResultOutputStrategy;
-import org.pitest.util.StringUtil;
 
 public class SettingsFactory {
 
