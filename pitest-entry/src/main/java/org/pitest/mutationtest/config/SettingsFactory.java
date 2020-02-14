@@ -32,7 +32,6 @@ import org.pitest.process.JavaExecutableLocator;
 import org.pitest.process.KnownLocationJavaExecutableLocator;
 import org.pitest.util.PitError;
 import org.pitest.util.ResultOutputStrategy;
-import org.pitest.util.StringUtil;
 
 public class SettingsFactory {
 
@@ -141,7 +140,7 @@ public class SettingsFactory {
         .filter(listeners, nameMatches(this.options.getOutputFormats()));
     if (matches.size() < this.options.getOutputFormats().size()) {
       throw new PitError("Unknown listener requested in "
-          + StringUtil.join(this.options.getOutputFormats(), ","));
+          + String.join(",", this.options.getOutputFormats()));
     }
     return matches;
   }
