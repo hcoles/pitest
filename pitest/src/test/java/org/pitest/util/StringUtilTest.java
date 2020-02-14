@@ -24,22 +24,6 @@ import org.junit.Test;
 public class StringUtilTest {
 
   @Test
-  public void shouldCreateEmptyStringWhenJoiningEmptyList() {
-    assertEquals("", StringUtil.join(Collections.<String> emptyList(), ","));
-  }
-
-  @Test
-  public void shouldIncludeNoSeparatorsWhenJoiningSingleItem() {
-    assertEquals("foo", StringUtil.join(Collections.singleton("foo"), ","));
-  }
-
-  @Test
-  public void shouldJoinStringWithSeparators() {
-    assertEquals("foo,bar,car",
-        StringUtil.join(Arrays.asList("foo", "bar", "car"), ","));
-  }
-
-  @Test
   public void repeatShouldRepeatGivenCharacter() {
     assertEquals("----", StringUtil.repeat('-', 4));
   }

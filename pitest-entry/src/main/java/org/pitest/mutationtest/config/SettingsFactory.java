@@ -141,7 +141,7 @@ public class SettingsFactory {
         .filter(listeners, nameMatches(this.options.getOutputFormats()));
     if (matches.size() < this.options.getOutputFormats().size()) {
       throw new PitError("Unknown listener requested in "
-          + StringUtil.join(this.options.getOutputFormats(), ","));
+          + String.join(",", this.options.getOutputFormats()));
     }
     return matches;
   }

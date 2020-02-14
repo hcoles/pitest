@@ -16,17 +16,6 @@ package org.pitest.util;
 
 public class StringUtil {
 
-  public static String join(final Iterable<String> strings,
-      final String separator) {
-    final StringBuilder sb = new StringBuilder();
-    String sep = "";
-    for (final String s : strings) {
-      sb.append(sep).append(s);
-      sep = separator;
-    }
-    return sb.toString();
-  }
-
   public static String newLine() {
     return System.getProperty("line.separator");
   }
