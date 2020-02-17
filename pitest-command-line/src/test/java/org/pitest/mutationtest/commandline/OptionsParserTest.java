@@ -312,6 +312,19 @@ public class OptionsParserTest {
   }
 
   @Test
+  public void shouldDetermineIfSkipFailingTestsFlagIsSet() {
+    assertTrue(parseAddingRequiredArgs("--skipFailingTests", "true")
+        .skipFailingTests());
+    assertFalse(parseAddingRequiredArgs("--skipFailingTests", "false")
+        .skipFailingTests());
+  }
+
+  @Test
+  public void shouldSkipFailingTestsNotSetByDefault() {
+    assertFalse(parseAddingRequiredArgs("").skipFailingTests());
+  }
+  
+  @Test
   public void shouldParseCommaSeparatedListOfMutableCodePaths() {
     final ReportOptions actual = parseAddingRequiredArgs("--mutableCodePaths",
         "foo,bar");

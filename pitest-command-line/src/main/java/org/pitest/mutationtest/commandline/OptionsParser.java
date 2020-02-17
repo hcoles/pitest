@@ -44,6 +44,7 @@ import static org.pitest.mutationtest.config.ConfigOption.MUTATION_UNIT_SIZE;
 import static org.pitest.mutationtest.config.ConfigOption.OUTPUT_FORMATS;
 import static org.pitest.mutationtest.config.ConfigOption.PLUGIN_CONFIGURATION;
 import static org.pitest.mutationtest.config.ConfigOption.REPORT_DIR;
+import static org.pitest.mutationtest.config.ConfigOption.SKIP_FAILING_TESTS;
 import static org.pitest.mutationtest.config.ConfigOption.SOURCE_DIR;
 import static org.pitest.mutationtest.config.ConfigOption.TARGET_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.TEST_FILTER;
@@ -113,6 +114,7 @@ public class OptionsParser {
   private final OptionSpec<String>                   additionalClassPathSpec;
   private final OptionSpec<File>                     classPathFile;
   private final ArgumentAcceptingOptionSpec<Boolean> failWhenNoMutations;
+  private final ArgumentAcceptingOptionSpec<Boolean> skipFailingTests;
   private final ArgumentAcceptingOptionSpec<String>  codePaths;
   private final OptionSpec<String>                   excludedGroupsSpec;
   private final OptionSpec<String>                   includedGroupsSpec;
@@ -280,6 +282,10 @@ public class OptionsParser {
         .withOptionalArg().ofType(Boolean.class).defaultsTo(true)
         .describedAs("whether to throw error if no mutations found");
 
+    this.skipFailingTests = parserAccepts(SKIP_FAILING_TESTS)
+            .withOptionalArg().ofType(Boolean.class).defaultsTo(false)
+            .describedAs("whether to ignore failing tests when computing coverage");
+
     this.codePaths = parserAccepts(CODE_PATHS)
         .withRequiredArg()
         .ofType(String.class)
@@ -412,6 +418,7 @@ public class OptionsParser {
 
     data.addOutputFormats(this.outputFormatSpec.values(userArgs));
     data.setFailWhenNoMutations(this.failWhenNoMutations.value(userArgs));
+    data.setSkipFailingTests(this.skipFailingTests.value(userArgs));
     data.setCodePaths(this.codePaths.values(userArgs));
     data.setMutationUnitSize(this.mutationUnitSizeSpec.value(userArgs));
 
