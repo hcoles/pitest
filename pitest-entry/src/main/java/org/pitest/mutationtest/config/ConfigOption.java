@@ -104,7 +104,7 @@ public enum ConfigOption {
   EXCLUDED_CLASSES("excludedClasses"),
 
   /**
-   * Filter defining test classes to excludd
+   * Filter defining test classes to excluded
    */
   EXCLUDED_TEST_CLASSES("excludedTestClasses"),
   /**
@@ -128,6 +128,10 @@ public enum ConfigOption {
    * Flag to indicate if an error should be thrown if no mutations found
    */
   FAIL_WHEN_NOT_MUTATIONS("failWhenNoMutations", true),
+  /**
+   * Ignore failing tests when computing coverage. Otherwise, the execution will fail.
+   */
+  SKIP_FAILING_TESTS("skipFailingTests", false),
   /**
    * Filter defining paths that should be treated as containing mutable code
    */
