@@ -48,7 +48,6 @@ import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.CompoundMutationInterceptor;
 import org.pitest.mutationtest.build.DefaultGrouper;
 import org.pitest.mutationtest.build.DefaultTestPrioritiser;
@@ -340,8 +339,8 @@ public class TestMutationTesting {
         new HashMap<String, String>());
 
     final PathFilter pf = new PathFilter(
-        Prelude.not(new DefaultDependencyPathPredicate()),
-        Prelude.not(new DefaultDependencyPathPredicate()));
+        new DefaultDependencyPathPredicate().negate(),
+        new DefaultDependencyPathPredicate().negate());
     final ProjectClassPaths cps = new ProjectClassPaths(data.getClassPath(),
         data.createClassesFilter(), pf);
 

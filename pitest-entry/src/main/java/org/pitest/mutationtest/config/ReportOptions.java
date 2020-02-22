@@ -14,8 +14,6 @@
  */
 package org.pitest.mutationtest.config;
 
-import static org.pitest.functional.prelude.Prelude.not;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -254,7 +252,7 @@ public class ReportOptions {
 
   public Predicate<String> getTargetClassesFilter() {
     final Predicate<String> filter = Glob.toGlobPredicate(this.targetClasses)
-        .and(not(Glob.toGlobPredicate(this.excludedClasses)));
+        .and(Glob.toGlobPredicate(this.excludedClasses).negate());
     checkNotTryingToMutateSelf(filter);
     return filter;
   }
@@ -316,9 +314,9 @@ public class ReportOptions {
     if (this.targetTests == null || this.targetTests.isEmpty()) {
       // If target tests is not explicitly set we assume that the
       // target classes predicate covers both classes and tests
-      return Glob.toGlobPredicate(this.targetClasses).and(not(Glob.toGlobPredicate(this.excludedTestClasses)));
+      return Glob.toGlobPredicate(this.targetClasses).and(Glob.toGlobPredicate(this.excludedTestClasses).negate());
     } else {
-      return Glob.toGlobPredicate(this.targetTests).and(not(Glob.toGlobPredicate(this.excludedTestClasses)));
+      return Glob.toGlobPredicate(this.targetTests).and(Glob.toGlobPredicate(this.excludedTestClasses).negate());
     }
   }
 
@@ -402,7 +400,7 @@ public class ReportOptions {
 
   private PathFilter createPathFilter() {
     return new PathFilter(createCodePathFilter(),
-        not(new DefaultDependencyPathPredicate()));
+        new DefaultDependencyPathPredicate().negate());
   }
 
   private Predicate<ClassPathRoot> createCodePathFilter() {

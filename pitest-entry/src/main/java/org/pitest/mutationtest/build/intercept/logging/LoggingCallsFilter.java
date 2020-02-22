@@ -12,7 +12,6 @@ import org.pitest.bytecode.ASMVersion;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
@@ -47,7 +46,7 @@ public class LoggingCallsFilter implements MutationInterceptor {
   @Override
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
-    return FCollection.filter(mutations, Prelude.not(isOnLoggingLine()));
+    return FCollection.filter(mutations, isOnLoggingLine().negate());
   }
 
   private Predicate<MutationDetails> isOnLoggingLine() {

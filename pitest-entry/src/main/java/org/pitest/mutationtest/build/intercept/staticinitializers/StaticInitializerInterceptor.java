@@ -16,7 +16,6 @@ import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.MethodName;
@@ -60,7 +59,7 @@ class StaticInitializerInterceptor implements MutationInterceptor {
           .collect(Collectors.toList());
 
       final List<MutationDetails> notAltered =
-          FCollection.filter(mutations, Prelude.not(this.isStaticInitCode));
+          FCollection.filter(mutations, this.isStaticInitCode.negate());
 
       notAltered.addAll(altered);
       return notAltered;

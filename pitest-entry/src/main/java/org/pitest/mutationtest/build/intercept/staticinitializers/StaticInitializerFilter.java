@@ -5,7 +5,6 @@ import java.util.function.Predicate;
 
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
@@ -21,7 +20,7 @@ class StaticInitializerFilter implements MutationInterceptor {
   @Override
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
-    return FCollection.filter(mutations, Prelude.not(isInStaticInitCode()));
+    return FCollection.filter(mutations, isInStaticInitCode().negate());
   }
 
   private Predicate<MutationDetails> isInStaticInitCode() {

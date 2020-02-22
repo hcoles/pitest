@@ -16,7 +16,6 @@ package org.pitest.functional.prelude;
 
 import java.io.PrintStream;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /**
  * @author henry
@@ -24,10 +23,6 @@ import java.util.function.Predicate;
  */
 public abstract class Prelude {
 
-
-  public static final <A> Predicate<A> not(final Predicate<A> p) {
-    return p.negate();
-  }
 
   public static final <T> Consumer<T> print() {
     return printTo(System.out);

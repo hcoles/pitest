@@ -16,7 +16,6 @@ import org.pitest.classpath.DirectoryClassPathRoot;
 import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.config.DefaultCodePathPredicate;
 import org.pitest.mutationtest.config.DefaultDependencyPathPredicate;
 import org.pitest.util.Glob;
@@ -38,7 +37,7 @@ class CodeSourceAggregator {
     final Predicate<String> classPredicate = createClassPredicate();
     final Predicate<ClassPathRoot> pathPredicate = new DefaultCodePathPredicate();
     return new ProjectClassPaths(classPath, new ClassFilter(classPredicate, classPredicate),
-        new PathFilter(pathPredicate, Prelude.not(new DefaultDependencyPathPredicate())));
+        new PathFilter(pathPredicate, new DefaultDependencyPathPredicate().negate()));
   }
 
   private Predicate<String> createClassPredicate() {

@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationResult;
@@ -69,7 +68,7 @@ public class MutationTestBuilder {
         .collect(Collectors.toList());
 
     final List<MutationResult> analysed = FCollection.filter(analysedMutations,
-        Prelude.not(statusNotKnown()));
+        statusNotKnown().negate());
 
     if (!analysed.isEmpty()) {
       tus.add(makePreAnalysedUnit(analysed));

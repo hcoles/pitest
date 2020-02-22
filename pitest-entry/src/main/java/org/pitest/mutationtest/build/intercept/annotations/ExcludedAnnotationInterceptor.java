@@ -11,7 +11,6 @@ import org.pitest.bytecode.analysis.AnalysisFunctions;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
@@ -65,7 +64,7 @@ public class ExcludedAnnotationInterceptor implements MutationInterceptor {
       return Collections.emptyList();
     }
 
-    return FCollection.filter(mutations, Prelude.not(this.annotatedMethodMatcher));
+    return FCollection.filter(mutations, this.annotatedMethodMatcher.negate());
   }
 
   @Override

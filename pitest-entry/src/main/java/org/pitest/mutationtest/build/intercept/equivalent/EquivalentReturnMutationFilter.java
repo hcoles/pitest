@@ -21,7 +21,6 @@ import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.CompoundMutationInterceptor;
 import org.pitest.mutationtest.build.InterceptorParameters;
 import org.pitest.mutationtest.build.InterceptorType;
@@ -113,7 +112,7 @@ class HardCodedTrueEquivalentFilter implements MutationInterceptor {
   @Override
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
-    return FCollection.filter(mutations, Prelude.not(isEquivalent(m)));
+    return FCollection.filter(mutations, isEquivalent(m).negate());
   }
 
   private Predicate<MutationDetails> isEquivalent(Mutater m) {
@@ -178,7 +177,7 @@ class PrimitiveEquivalentFilter implements MutationInterceptor {
   @Override
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
-    return FCollection.filter(mutations, Prelude.not(isEquivalent(m)));
+    return FCollection.filter(mutations, isEquivalent(m).negate());
   }
 
   private Predicate<MutationDetails> isEquivalent(Mutater m) {
@@ -243,7 +242,7 @@ class EmptyReturnsFilter implements MutationInterceptor {
   @Override
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
-    return FCollection.filter(mutations, Prelude.not(isEquivalent(m)));
+    return FCollection.filter(mutations, isEquivalent(m).negate());
   }
 
   private static Match<AbstractInsnNode> isZeroConstant() {
@@ -331,7 +330,7 @@ class NullReturnsFilter implements MutationInterceptor {
   @Override
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
-    return FCollection.filter(mutations, Prelude.not(isEquivalent(m)));
+    return FCollection.filter(mutations, isEquivalent(m).negate());
   }
 
   private Predicate<MutationDetails> isEquivalent(Mutater m) {
