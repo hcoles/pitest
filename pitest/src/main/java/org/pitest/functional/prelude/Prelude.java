@@ -98,8 +98,4 @@ public abstract class Prelude {
     return o -> o.longValue() > value.longValue();
   }
 
-  public static <T> Function<T, Iterable<T>> asList(final Class<T> type) {
-    return a -> Collections.singletonList(a);
-  }
-
 }
