@@ -14,9 +14,6 @@
  */
 package org.pitest.process;
 
-import static org.pitest.functional.prelude.Prelude.print;
-import static org.pitest.functional.prelude.Prelude.printTo;
-
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
@@ -28,8 +25,8 @@ import org.pitest.classpath.ClassPath;
 public final class ProcessArgs {
 
   private final String        launchClassPath;
-  private Consumer<String> stdout     = print(String.class);
-  private Consumer<String> stdErr     = printTo(String.class, System.err);
+  private Consumer<String> stdout     = System.out::print;
+  private Consumer<String> stdErr     = System.err::print;
   private List<String>        jvmArgs    = Collections.emptyList();
   private JavaAgent           javaAgentFinder;
   private File                workingDir = null;
