@@ -20,7 +20,6 @@ import java.util.function.Predicate;
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.functional.predicate.False;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.util.PitError;
 
 /**
@@ -67,12 +66,12 @@ public class FCollectionTest {
 
   @Test
   public void shouldApplyMapToAllItems() {
-    assertEquals(this.is, FCollection.map(this.is, Prelude.id()));
+    assertEquals(this.is, FCollection.map(this.is, x -> x));
   }
 
   @Test
   public void mapShouldTreatNullAsAnEmptyIterable() {
-    assertEquals(Collections.emptyList(), FCollection.map(null, Prelude.id()));
+    assertEquals(Collections.emptyList(), FCollection.map(null, x -> x));
   }
 
   @Test
@@ -178,7 +177,7 @@ public class FCollectionTest {
   public void shouldSplitIntoMultipleBuckets() {
     this.is = Arrays.asList(1, 2, 3);
     final Map<Integer, Collection<Integer>> actual = FCollection.bucket(
-        this.is, Prelude.id(Integer.class));
+        this.is, x -> x);
     final Map<Integer, Collection<Integer>> expected = new HashMap<>();
     expected.put(1, Arrays.asList(1));
     expected.put(2, Arrays.asList(2));

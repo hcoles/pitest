@@ -17,10 +17,8 @@ package org.pitest.functional.prelude;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.pitest.functional.predicate.And;
@@ -65,14 +63,6 @@ public abstract class Prelude {
     return key -> map.put(key, value);
   }
 
-  public static final <A> Function<A, A> id() {
-    return a -> a;
-  }
-
-  public static final <A> Function<A, A> id(final Class<A> type) {
-    return id();
-  }
-
   public static final <T> Consumer<T> print() {
     return printTo(System.out);
   }
@@ -92,10 +82,6 @@ public abstract class Prelude {
 
   public static <T> Consumer<T> printWith(final T t) {
     return a -> System.out.print(t + " : " + a);
-  }
-
-  public static <T extends Number> Predicate<T> isGreaterThan(final T value) {
-    return o -> o.longValue() > value.longValue();
   }
 
 }
