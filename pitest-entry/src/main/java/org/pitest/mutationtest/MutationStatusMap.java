@@ -14,8 +14,6 @@
  */
 package org.pitest.mutationtest;
 
-import static org.pitest.functional.prelude.Prelude.putToMap;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,7 +44,7 @@ public class MutationStatusMap {
 
   public void setStatusForMutations(
       final Collection<MutationDetails> mutations, final DetectionStatus status) {
-    mutations.forEach(putToMap(this.mutationMap, MutationStatusTestPair.notAnalysed(0, status)));
+    mutations.forEach(key -> this.mutationMap.put(key, MutationStatusTestPair.notAnalysed(0, status)));
   }
 
   public List<MutationResult> createMutationResults() {
