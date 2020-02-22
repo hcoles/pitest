@@ -254,8 +254,7 @@ public class ReportOptions {
 
 
   public Predicate<String> getTargetClassesFilter() {
-    final Predicate<String> filter = Prelude.and(or(Glob.toGlobPredicates(this.targetClasses)),
-        not(isBlackListed(Glob.toGlobPredicates(ReportOptions.this.excludedClasses))));
+    final Predicate<String> filter = or(Glob.toGlobPredicates(this.targetClasses)).and(not(isBlackListed(Glob.toGlobPredicates(this.excludedClasses))));
     checkNotTryingToMutateSelf(filter);
     return filter;
   }
@@ -307,11 +306,9 @@ public class ReportOptions {
     if ((this.targetTests == null) || this.targetTests.isEmpty()) {
       // If target tests is not explicitly set we assume that the
       // target classes predicate covers both classes and tests
-      return Prelude.and(or(Glob.toGlobPredicates(this.targetClasses)),
-          not(isBlackListed(ReportOptions.this.excludedTestClasses)));
+      return or(Glob.toGlobPredicates(this.targetClasses)).and(not(isBlackListed(this.excludedTestClasses)));
     } else {
-      return Prelude.and(or(this.targetTests),
-          not(isBlackListed(ReportOptions.this.excludedTestClasses)));
+      return or(this.targetTests).and(not(isBlackListed(this.excludedTestClasses)));
     }
   }
 

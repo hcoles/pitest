@@ -16,6 +16,8 @@ package org.pitest.functional.prelude;
 
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -28,26 +30,13 @@ import org.pitest.functional.predicate.Or;
  */
 public abstract class Prelude {
 
-  @SafeVarargs
-  public static final <A> And<A> and(final Predicate<A>... ps) {
-    return new And<>(Arrays.asList(ps));
-  }
-
-  public static final <A> And<A> and(final Iterable<? extends Predicate<A>> ps) {
-    return new And<>(ps);
-  }
 
   public static final <A> Predicate<A> not(final Predicate<A> p) {
     return p.negate();
   }
 
-  @SafeVarargs
-  public static final <A> Or<A> or(final Predicate<A>... ps) {
-    return new Or<>(Arrays.asList(ps));
-  }
-
-  public static final <A> Or<A> or(final Iterable<Predicate<A>> ps) {
-    return new Or<>(ps);
+  public static final <A> Predicate<A> or(final Collection<Predicate<A>> ps) {
+    return ps.stream().reduce(x -> false, Predicate::or);
   }
 
   public static final <T> Consumer<T> print() {

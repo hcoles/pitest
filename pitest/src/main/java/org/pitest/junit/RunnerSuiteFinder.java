@@ -28,7 +28,6 @@ import org.junit.internal.runners.SuiteMethod;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
 import org.pitest.testapi.TestSuiteFinder;
 
@@ -43,7 +42,7 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
       flattenChildren(allChildren, runner.getDescription());
 
       final List<Description> suites = FCollection.filter(allChildren,
-          Prelude.or(isSuiteMethodRunner(runner), isSuite()));
+          isSuiteMethodRunner(runner).or(isSuite()));
       final Set<Class<?>> classes = suites.stream().flatMap(descriptionToTestClass()).collect(Collectors.toSet());
 
       classes.remove(a);

@@ -156,8 +156,8 @@ public class MutationTestMinion {
 
   private static void enablePowerMockSupport() {
     // Bwahahahahahahaha
-    HotSwapAgent.addTransformer(new BendJavassistToMyWillTransformer(Prelude
-        .or(new Glob("javassist/*")), JavassistInputStreamInterceptorAdapater.inputStreamAdapterSupplier(JavassistInterceptor.class)));
+    HotSwapAgent.addTransformer(new BendJavassistToMyWillTransformer(
+        new Glob("javassist/*"), JavassistInputStreamInterceptorAdapater.inputStreamAdapterSupplier(JavassistInterceptor.class)));
   }
 
   private static void safelyCloseSocket(final Socket s) {

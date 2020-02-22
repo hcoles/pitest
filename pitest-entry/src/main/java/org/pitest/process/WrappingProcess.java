@@ -1,7 +1,5 @@
 package org.pitest.process;
 
-import static org.pitest.functional.prelude.Prelude.or;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -134,7 +132,7 @@ public class WrappingProcess {
   private static void addLaunchJavaAgents(List<String> cmd) {
     final RuntimeMXBean rt = ManagementFactory.getRuntimeMXBean();
     final List<String> agents = FCollection.filter(rt.getInputArguments(),
-        or(isJavaAgentParam(), isEnvironmentSetting()));
+        isJavaAgentParam().or(isEnvironmentSetting()));
     cmd.addAll(agents);
   }
 

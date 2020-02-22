@@ -93,7 +93,7 @@ class StaticInitializerInterceptor implements MutationInterceptor {
       .collect(Collectors.toList())
       );
 
-      this.isStaticInitCode = Prelude.or(isInStaticInitializer(), initOnlyMethods);
+      this.isStaticInitCode = isInStaticInitializer().or(initOnlyMethods);
     }
   }
 

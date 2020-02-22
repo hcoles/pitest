@@ -14,8 +14,6 @@
  */
 package org.pitest.dependency;
 
-import static org.pitest.functional.prelude.Prelude.and;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,7 +55,7 @@ public class DependencyExtractor {
     final Set<String> allDependencies = extractCallDependencies(clazz,
         new IgnoreCoreClasses());
     return FCollection.filter(allDependencies,
-        and(asJVMNamePredicate(targetPackages), notSuppliedClass(clazz)));
+        asJVMNamePredicate(targetPackages).and(notSuppliedClass(clazz)));
   }
 
   private static Predicate<String> notSuppliedClass(final String clazz) {
@@ -148,7 +146,7 @@ public class DependencyExtractor {
     final List<DependencyAccess> dependencies = new ArrayList<>();
 
     final Consumer<DependencyAccess> se = constructCollectingSideEffectForVisitor(
-        dependencies, and(nameIsEqual(clazz).negate(), filter));
+        dependencies, nameIsEqual(clazz).negate().and(filter));
     final DependencyClassVisitor dcv = new DependencyClassVisitor(
         new NullVisitor(), se);
     reader.accept(dcv, ClassReader.EXPAND_FRAMES);

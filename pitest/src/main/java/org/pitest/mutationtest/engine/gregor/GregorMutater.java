@@ -14,8 +14,6 @@
  */
 package org.pitest.mutationtest.engine.gregor;
 
-import static org.pitest.functional.prelude.Prelude.and;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -118,8 +116,10 @@ public class GregorMutater implements Mutater {
   }
 
   private Predicate<MethodInfo> filterMethods() {
-    return and(this.filter, filterSyntheticMethods(),
-        isGeneratedEnumMethod().negate(), isGroovyClass().negate());
+    return this.filter
+        .and(filterSyntheticMethods())
+        .and(isGeneratedEnumMethod().negate())
+        .and(isGroovyClass().negate());
   }
 
   private static Predicate<MethodInfo> isGroovyClass() {

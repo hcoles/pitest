@@ -116,8 +116,8 @@ public class CoverageMinion {
 
   private static void enablePowerMockSupport() {
     // Bwahahahahahahaha
-    HotSwapAgent.addTransformer(new BendJavassistToMyWillTransformer(Prelude
-        .or(new Glob("javassist/*")),
+    HotSwapAgent.addTransformer(new BendJavassistToMyWillTransformer(
+        new Glob("javassist/*"),
         JavassistInputStreamInterceptorAdapater.inputStreamAdapterSupplier(JavassistCoverageInterceptor.class)));
   }
 
