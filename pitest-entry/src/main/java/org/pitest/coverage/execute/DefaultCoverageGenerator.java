@@ -34,7 +34,6 @@ import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.CoverageResult;
 import org.pitest.coverage.analysis.LineMapper;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.config.TestPluginArguments;
@@ -159,7 +158,8 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     if (this.coverageOptions.isVerbose()) {
       return log();
     } else {
-      return Prelude.noSideEffect(String.class);
+      return a -> {
+      };
     }
   }
 

@@ -70,7 +70,8 @@ public class WorkerFactory {
     if (this.verbose) {
       return Prelude.printWith("stdout ");
     } else {
-      return Prelude.noSideEffect(String.class);
+      return a -> {
+      };
     }
 
   }

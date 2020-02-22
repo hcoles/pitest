@@ -102,8 +102,4 @@ public abstract class Prelude {
     return a -> Collections.singletonList(a);
   }
 
-  public static <T> Consumer<T> noSideEffect(final Class<T> clazz) {
-    return a -> {
-    };
-  }
 }
