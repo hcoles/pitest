@@ -84,14 +84,13 @@ class StaticInitializerInterceptor implements MutationInterceptor {
         .map(toPredicate())
         .collect(Collectors.toList());
 
-      final Predicate<MethodTree> matchingCalls = Prelude.or(selfCalls);
+      final Predicate<MethodTree> matchingCalls = selfCalls.stream().reduce(x -> false, Predicate::or);
 
-      final Predicate<MutationDetails> initOnlyMethods = Prelude.or(tree.methods().stream()
-      .filter(isPrivateStatic())
-      .filter(matchingCalls)
-      .map(AnalysisFunctions.matchMutationsInMethod())
-      .collect(Collectors.toList())
-      );
+      final Predicate<MutationDetails> initOnlyMethods = tree.methods().stream()
+          .filter(isPrivateStatic())
+          .filter(matchingCalls)
+          .map(AnalysisFunctions.matchMutationsInMethod())
+          .reduce(x -> false, Predicate::or);
 
       this.isStaticInitCode = isInStaticInitializer().or(initOnlyMethods);
     }

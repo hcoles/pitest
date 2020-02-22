@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Predicate;
 
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.util.Glob;
 
 public class IgnoreCoreClasses implements Predicate<DependencyAccess> {
@@ -31,7 +30,7 @@ public class IgnoreCoreClasses implements Predicate<DependencyAccess> {
       "org.jmock.*", "com.sun.*");
 
   IgnoreCoreClasses() {
-    this.impl = Prelude.not(Prelude.or(Glob.toGlobPredicates(this.filtered)));
+    this.impl = Glob.toGlobPredicate(this.filtered).negate();
   }
 
   @Override

@@ -44,7 +44,7 @@ public class ExcludedAnnotationInterceptor implements MutationInterceptor {
           .filter(hasAvoidedAnnotation())
           .map(AnalysisFunctions.matchMutationsInMethod())
           .collect(Collectors.toList());
-      this.annotatedMethodMatcher = Prelude.or(methods);
+      this.annotatedMethodMatcher = methods.stream().reduce(x -> false, Predicate::or);
     }
   }
 

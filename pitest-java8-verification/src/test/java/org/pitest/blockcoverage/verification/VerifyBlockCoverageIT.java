@@ -15,7 +15,7 @@ public class VerifyBlockCoverageIT extends ReportTestBase {
 
   @Test
   public void shouldNotRunMutantsOnCoveredLineButNotCovered() {
-    this.data.setTargetTests(predicateFor(HasTernaryTest.class));
+    this.data.setTargetTests(HasTernaryTest.class);
     this.data.setTargetClasses(asList("com.example.blockcoverage.HasTernaryTestee"));
     setMutators("INCREMENTS");
     createAndRun();
@@ -24,7 +24,7 @@ public class VerifyBlockCoverageIT extends ReportTestBase {
 
   @Test
   public void shouldNotRunMutantsOnLinesUncoveredByExceptions(){
-    this.data.setTargetTests(predicateFor(HasExceptionsTest.class));
+    this.data.setTargetTests(HasExceptionsTest.class);
     this.data.setTargetClasses(asList("com.example.blockcoverage.HasExceptionsTestee"));
     setMutators("INCREMENTS");
     createAndRun();
@@ -33,7 +33,7 @@ public class VerifyBlockCoverageIT extends ReportTestBase {
 
   @Test
   public void shouldDetectInlinedFinallyCodeAndOnlyMakeOneMutant(){
-    this.data.setTargetTests(predicateFor(HasFinallyTest.class));
+    this.data.setTargetTests(HasFinallyTest.class);
     this.data.setTargetClasses(asList("com.example.blockcoverage.HasFinallyTestee"));
     this.data.setDetectInlinedCode(true);
     setMutators("INCREMENTS");

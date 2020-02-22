@@ -15,7 +15,6 @@
 package org.pitest.mutationtest.config;
 
 import static org.pitest.functional.prelude.Prelude.not;
-import static org.pitest.functional.prelude.Prelude.or;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,7 +38,7 @@ import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.functional.FCollection;
 import java.util.Optional;
-import org.pitest.functional.prelude.Prelude;
+
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
@@ -78,7 +77,7 @@ public class ReportOptions {
   private Collection<String>             excludedClasses                = Collections
       .emptyList();
 
-  private Collection<Predicate<String>>  excludedTestClasses            = Collections
+  private Collection<String>             excludedTestClasses            = Collections
       .emptyList();
 
   private Collection<String>             codePaths;
@@ -100,7 +99,7 @@ public class ReportOptions {
   private float                          timeoutFactor                  = PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR;
   private long                           timeoutConstant                = PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT;
 
-  private Collection<Predicate<String>>  targetTests;
+  private Collection<String>             targetTests;
 
   private Collection<String>             loggingClasses                 = new ArrayList<>();
 
@@ -254,7 +253,8 @@ public class ReportOptions {
 
 
   public Predicate<String> getTargetClassesFilter() {
-    final Predicate<String> filter = or(Glob.toGlobPredicates(this.targetClasses)).and(not(isBlackListed(Glob.toGlobPredicates(this.excludedClasses))));
+    final Predicate<String> filter = Glob.toGlobPredicate(this.targetClasses)
+        .and(not(Glob.toGlobPredicate(this.excludedClasses)));
     checkNotTryingToMutateSelf(filter);
     return filter;
   }
@@ -270,8 +270,18 @@ public class ReportOptions {
   }
 
   public void setTargetTests(
-      final Collection<Predicate<String>> targetTestsPredicates) {
-    this.targetTests = targetTestsPredicates;
+      final Class<?> clazz) {
+    setTargetTests(clazz.getName());
+  }
+
+  public void setTargetTests(
+      final String... targetTests) {
+    setTargetTests(Arrays.asList(targetTests));
+  }
+
+  public void setTargetTests(
+      final Collection<String> targetTests) {
+    this.targetTests = targetTests;
   }
 
   public int getNumberOfThreads() {
@@ -298,23 +308,18 @@ public class ReportOptions {
     this.timeoutFactor = timeoutFactor;
   }
 
-  public Collection<Predicate<String>> getTargetTests() {
+  public Collection<String> getTargetTests() {
     return this.targetTests;
   }
 
   public Predicate<String> getTargetTestsFilter() {
-    if ((this.targetTests == null) || this.targetTests.isEmpty()) {
+    if (this.targetTests == null || this.targetTests.isEmpty()) {
       // If target tests is not explicitly set we assume that the
       // target classes predicate covers both classes and tests
-      return or(Glob.toGlobPredicates(this.targetClasses)).and(not(isBlackListed(this.excludedTestClasses)));
+      return Glob.toGlobPredicate(this.targetClasses).and(not(Glob.toGlobPredicate(this.excludedTestClasses)));
     } else {
-      return or(this.targetTests).and(not(isBlackListed(this.excludedTestClasses)));
+      return Glob.toGlobPredicate(this.targetTests).and(not(Glob.toGlobPredicate(this.excludedTestClasses)));
     }
-  }
-
-  private static Predicate<String> isBlackListed(
-      final Collection<Predicate<String>> excludedClasses) {
-        return or(excludedClasses);
   }
 
   public Collection<String> getLoggingClasses() {
@@ -348,7 +353,7 @@ public class ReportOptions {
   }
 
   public void setExcludedTestClasses(
-      final Collection<Predicate<String>> excludedClasses) {
+      final Collection<String> excludedClasses) {
     this.excludedTestClasses = excludedClasses;
   }
 
@@ -364,7 +369,7 @@ public class ReportOptions {
     return this.excludedClasses;
   }
 
-  public Collection<Predicate<String>> getExcludedTestClasses() {
+  public Collection<String> getExcludedTestClasses() {
     return this.excludedTestClasses;
   }
 
@@ -402,8 +407,7 @@ public class ReportOptions {
 
   private Predicate<ClassPathRoot> createCodePathFilter() {
     if ((this.codePaths != null) && !this.codePaths.isEmpty()) {
-      return new PathNamePredicate(Prelude.or(Glob
-          .toGlobPredicates(this.codePaths)));
+      return new PathNamePredicate(Glob.toGlobPredicate(this.codePaths));
     } else {
       return new DefaultCodePathPredicate();
     }

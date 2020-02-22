@@ -5,12 +5,10 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
-import java.util.function.Predicate;
 
 import org.junit.Before;
 import org.pitest.classpath.CodeSource;
@@ -33,7 +31,6 @@ import org.pitest.process.DefaultJavaExecutableLocator;
 import org.pitest.process.JavaAgent;
 import org.pitest.process.LaunchOptions;
 import org.pitest.testapi.TestGroupConfig;
-import org.pitest.util.Glob;
 import org.pitest.util.Timings;
 import org.pitest.util.Unchecked;
 
@@ -84,14 +81,6 @@ public abstract class ReportTestBase {
     Collections.sort(actual);
 
     assertEquals(expected, actual);
-  }
-
-  protected Collection<Predicate<String>> predicateFor(final String... glob) {
-    return Glob.toGlobPredicates(Arrays.asList(glob));
-  }
-
-  protected Collection<Predicate<String>> predicateFor(final Class<?> clazz) {
-    return predicateFor(clazz.getName());
   }
 
   protected void createAndRun() {

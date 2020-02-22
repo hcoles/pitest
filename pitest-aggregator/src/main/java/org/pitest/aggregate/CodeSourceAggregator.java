@@ -49,7 +49,7 @@ class CodeSourceAggregator {
         classes.addAll(FCollection.map(dcRoot.classNames(), toPredicate()));
       }
     }
-    return Prelude.or(FCollection.map(classes, Glob.toGlobPredicate()));
+    return Glob.toGlobPredicate(classes);
   }
 
   private Function<String, String> toPredicate() {

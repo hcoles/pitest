@@ -73,7 +73,6 @@ import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.testapi.TestGroupConfig;
-import org.pitest.util.Glob;
 import org.pitest.util.Log;
 import org.pitest.util.Unchecked;
 
@@ -384,8 +383,7 @@ public class OptionsParser {
     data.setTestPlugin(userArgs.valueOf(this.testPluginSpec));
     data.setReportDir(userArgs.valueOf(this.reportDirSpec));
     data.setTargetClasses(this.targetClassesSpec.values(userArgs));
-    data.setTargetTests(FCollection.map(this.targetTestsSpec.values(userArgs),
-        Glob.toGlobPredicate()));
+    data.setTargetTests(this.targetTestsSpec.values(userArgs));
     data.setSourceDirs(this.sourceDirSpec.values(userArgs));
     data.setMutators(this.mutators.values(userArgs));
     data.setFeatures(this.features.values(userArgs));
@@ -411,8 +409,7 @@ public class OptionsParser {
     data.setLoggingClasses(this.avoidCallsSpec.values(userArgs));
     data.setExcludedMethods(this.excludedMethodsSpec.values(userArgs));
     data.setExcludedClasses(this.excludedClassesSpec.values(userArgs));
-    data.setExcludedTestClasses(FCollection.map(
-        this.excludedTestClassesSpec.values(userArgs), Glob.toGlobPredicate()));
+    data.setExcludedTestClasses(this.excludedTestClassesSpec.values(userArgs));
     data.setVerbose(userArgs.has(this.verboseSpec)
         && userArgs.valueOf(this.verboseSpec));
 

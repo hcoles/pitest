@@ -100,13 +100,12 @@ public class MojoToReportOptionsConverter {
     data.setFailWhenNoMutations(shouldFailWhenNoMutations());
 
     data.setTargetClasses(determineTargetClasses());
-    data.setTargetTests(determineTargetTests());
+    data.setTargetTests(this.mojo.getTargetTests());
 
     data.setExcludedMethods(this.mojo
         .getExcludedMethods());
     data.setExcludedClasses(this.mojo.getExcludedClasses());
-    data.setExcludedTestClasses(globStringsToPredicates(this.mojo
-        .getExcludedTestClasses()));
+    data.setExcludedTestClasses(this.mojo.getExcludedTestClasses());
     data.setNumberOfThreads(this.mojo.getThreads());
     data.setExcludedRunners(this.mojo.getExcludedRunners());
 

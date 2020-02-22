@@ -14,7 +14,6 @@
  */
 package org.pitest.mutationtest;
 
-import static java.util.function.Predicate.isEqual;
 import static org.junit.Assert.assertEquals;
 import static org.pitest.mutationtest.DetectionStatus.KILLED;
 import static org.pitest.mutationtest.DetectionStatus.MEMORY_ERROR;
@@ -30,7 +29,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -312,8 +310,7 @@ public class TestMutationTesting {
 
     final ReportOptions data = new ReportOptions();
 
-    final Set<Predicate<String>> tests = Collections.singleton(isEqual(test.getName()));
-    data.setTargetTests(tests);
+    data.setTargetTests(test.getName());
     data.setDependencyAnalysisMaxDistance(-1);
 
     final Set<String> mutees = Collections.singleton(clazz.getName() + "*");

@@ -1,8 +1,3 @@
-package org.pitest.coverage.execute;
-
-import java.io.Serializable;
-import java.util.Collection;
-
 /*
  * Copyright 2010 Henry Coles
  *
@@ -18,11 +13,14 @@ import java.util.Collection;
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
+package org.pitest.coverage.execute;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.util.Glob;
 
@@ -48,11 +46,9 @@ public class CoverageOptions implements Serializable {
   }
 
   public Predicate<String> getFilter() {
-    return Stream.of(
-        Prelude.or(Glob.toGlobPredicates(this.include)),
-        Prelude.not(Prelude.or(Glob.toGlobPredicates(this.exclude))),
-        Prelude.not(commonClasses())
-    ).reduce(x -> true, Predicate::and);
+    return Glob.toGlobPredicate(this.include)
+        .and(Glob.toGlobPredicate(this.exclude).negate())
+        .and(commonClasses().negate());
   }
 
   public boolean isVerbose() {
@@ -68,17 +64,13 @@ public class CoverageOptions implements Serializable {
   }
 
   private static Predicate<String> commonClasses() {
-    return Stream.<Predicate<String>>of(
-        glob("java/*"),
-        glob("sun/*"),
-        glob("org/pitest/coverage/*"),
-        glob("org/pitest/reloc/*"),
-        glob("org/pitest/boot/*")
-    ).reduce(x -> false, Predicate::or);
-  }
-
-  private static Glob glob(String match) {
-    return new Glob(match);
+    return Glob.toGlobPredicate(Arrays.asList(
+        "java/*",
+        "sun/*",
+        "org/pitest/coverage/*",
+        "org/pitest/reloc/*",
+        "org/pitest/boot/*"
+    ));
   }
 
 }

@@ -42,7 +42,7 @@ public class SurefireConfigConverterTest {
 
     ReportOptions actual = this.testee
         .update(this.options, this.surefireConfig);
-    Predicate<String> predicate = actual.getExcludedTestClasses().iterator().next();
+    Predicate<String> predicate = Glob.toGlobPredicate(actual.getExcludedTestClasses());
     assertThat(predicate.test("com.example.FailingTest")).isTrue();
     assertThat(predicate.test("com.example.Test")).isFalse();
   }
@@ -50,8 +50,7 @@ public class SurefireConfigConverterTest {
   @Test
   public void shouldKeepExistingExclusions() throws Exception {
     this.surefireConfig = makeConfig("<excludes><exclude>A</exclude><exclude>B</exclude></excludes>");
-    this.options.setExcludedTestClasses(Collections
-        .<Predicate<String>> singletonList(new Glob("Foo")));
+    this.options.setExcludedTestClasses(Collections.singletonList("Foo"));
     ReportOptions actual = this.testee
         .update(this.options, this.surefireConfig);
 
