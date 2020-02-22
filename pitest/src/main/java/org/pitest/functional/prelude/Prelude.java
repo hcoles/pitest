@@ -16,7 +16,6 @@ package org.pitest.functional.prelude;
 
 import java.io.PrintStream;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -50,12 +49,6 @@ public abstract class Prelude {
 
   public static final <A> Or<A> or(final Iterable<Predicate<A>> ps) {
     return new Or<>(ps);
-  }
-
-  public static final <A> Consumer<A> accumulateTo(
-      final Collection<A> collection) {
-    return a -> collection.add(a);
-
   }
 
   public static <A, B> Consumer<A> putToMap(final Map<A, B> map,
