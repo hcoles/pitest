@@ -39,6 +39,7 @@ import org.junit.experimental.categories.Category;
 import org.pitest.SystemTest;
 import org.pitest.classpath.ClassPath;
 import org.pitest.help.PitHelpError;
+import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.engine.gregor.Generated;
 import org.pitest.util.FileUtil;
 import org.pitest.util.IsolationUtils;
@@ -212,18 +213,24 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     .setTargetTests(predicateFor("com.example.coverage.execute.samples.mutationMatrix.*"));
     this.data.setTargetClasses(asList("com.example.coverage.execute.samples.mutationMatrix.*"));
     this.data.setExcludedClasses(asGlobs(TestsForSimpleCalculator.class));
+    this.data.setExcludedMethods(asList("crash"));
     this.data.setFullMutationMatrix(true);
     this.data.addOutputFormats(Arrays.asList("XML"));
     this.data.setMutators(Arrays.asList("MATH"));
+    this.data.setTimeoutConstant(PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT);
+    this.data.setTimeoutFactor(PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR);
     createAndRun();
     List<MutationResult> resultData = this.metaDataExtractor.getData();
     assertEquals(1, resultData.size());
     
     MutationResult mutation = resultData.get(0);
     assertEquals(KILLED, mutation.getStatus());
-    assertEquals(3, mutation.getNumberOfTestsRun());
+    assertEquals(5, mutation.getNumberOfTestsRun());
     assertEquals(2, mutation.getKillingTests().size());
     assertEquals(1, mutation.getSucceedingTests().size());
+    assertEquals(0, mutation.getMemoryErrorTests().size());
+    assertEquals(1, mutation.getTimeoutTests().size());
+    assertEquals(1, mutation.getRunErrorTests().size());
   }
 
   @Test(expected = PitHelpError.class)

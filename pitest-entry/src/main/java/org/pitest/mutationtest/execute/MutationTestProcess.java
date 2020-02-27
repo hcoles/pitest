@@ -31,6 +31,10 @@ public class MutationTestProcess {
     this.process.start();
   }
 
+  public MutationStatusTestPair results(MutationDetails mutant) {
+    return this.thread.getStatus(mutant.getId());
+  }
+
   public void results(final MutationStatusMap allmutations) throws IOException {
 
     for (final MutationDetails each : allmutations.allMutations()) {

@@ -75,4 +75,8 @@ public class WorkerFactory {
 
   }
 
+  public boolean isFullMutationMatrix() {
+    return this.fullMutationMatrix;
+  }
+
 }
