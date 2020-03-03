@@ -8,10 +8,11 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.4.12-SNAPSHOT
+### 1.5.0
 
 * #556 - Do not mutate enum constructors
 * #726 - Ensure static initializer coverage is recorded 
+* #734/#735/#736 - Replace legacy interfaces with Java API (thanks @AlexElin)
 
 ### 1.4.11
 
