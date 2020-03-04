@@ -29,7 +29,13 @@ matrix:
 
     - jdk: openjdk12
       env: MAVEN=3.5.4
-    
+
+    - jdk: openjdk13
+      env: MAVEN=3.6.3
+
+    - env: JDK=14 MAVEN=3.6.3
+      install: . ./install-jdk.sh --feature 14
+
     - env: JDK='OpenJ9 11' MAVEN=3.5.4
       install: . ./install-jdk.sh --url "https://api.adoptopenjdk.net/v2/binary/releases/openjdk11?openjdk_impl=openj9&os=linux&arch=x64&release=latest&type=jdk&heap_size=normal"
 
