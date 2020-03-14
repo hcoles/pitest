@@ -22,7 +22,7 @@ Read all about it at http://pitest.org
 * #692 - Add property='skipPitest' to skip attribute inn maven plugin (thanks @cjgwhite)
 * #697 - TestNG 7.0.0 compatibility (thanks @kris-scheibe)
 * #666 - UOI4 reports mutated field name (thanks @LaurentTho3)
-* #716 - Bump asm to 7.3.1
+* #716 - Bump asm to 7.3.1 (required for Java 14)
 * #710 - Use the new mutator set by default
 
 ### 1.4.10
