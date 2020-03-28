@@ -8,6 +8,13 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.5.1
+
+* #737 Add skipFailingTests flag to command line tool (thanks @szpak)
+* #739 Fix typo in error message (thanks @vmellgre)
+* #745 Improve error message when junit not on classpath (thanks @szpak)
+* #748 Bump asm to 8.0 for Java 14 support
+
 ### 1.5.0
 
 * #556 - Do not mutate enum constructors
