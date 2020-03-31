@@ -474,6 +474,13 @@ public class PitestTaskTest {
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--useClasspathJar=true");
   }
+
+  @Test
+  public void shouldPassMutationMatrixFlagToJavaTask() {
+    this.pitestTask.setFullMutationMatrix("true");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--fullMutationMatrix=true");
+  }
   
   private static class PathMatcher extends ArgumentMatcher<Path> {
 
