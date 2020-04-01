@@ -248,6 +248,10 @@ public class PitestTask extends Task { // NO_UCD (test only)
     this.setOption(ConfigOption.MUTATION_ENGINE, value);
   }
 
+  public void setFullMutationMatrix(final String value) {
+    this.setOption(ConfigOption.FULL_MUTATION_MATRIX, value);
+  }
+
   public void setJVM(String value) {
     this.setOption(ConfigOption.JVM_PATH, value);
   }
