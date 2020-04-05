@@ -317,7 +317,7 @@
 		<maven-verifier>1.5</maven-verifier>
 		<maven.version>2.2.1</maven.version>
 		<powermock.version>1.7.3</powermock.version>
-		<surefire.version>2.22.2</surefire.version>
+		<surefire.version>2.17</surefire.version>
 		<testng.version>6.9.10</testng.version>
 		<slf4j.version>1.7.12</slf4j.version>
 
