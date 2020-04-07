@@ -15,7 +15,7 @@
 
 package org.pitest.junit.adapter;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
 import org.junit.Before;

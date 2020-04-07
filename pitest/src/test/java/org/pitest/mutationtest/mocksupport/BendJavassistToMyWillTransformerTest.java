@@ -2,7 +2,7 @@ package org.pitest.mutationtest.mocksupport;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.lang.instrument.IllegalClassFormatException;

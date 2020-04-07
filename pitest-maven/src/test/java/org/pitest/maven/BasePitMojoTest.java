@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.apache.maven.artifact.Artifact;
@@ -61,7 +60,7 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
     super.setUp();
     MockitoAnnotations.initMocks(this);
     this.classPath = new ArrayList<>(FCollection.map(
-        ClassPath.getClassPathElementsAsFiles(), fileToString()));
+        ClassPath.getClassPathElementsAsFiles(), File::getAbsolutePath));
     when(this.project.getTestClasspathElements()).thenReturn(this.classPath);
     when(this.project.getPackaging()).thenReturn("jar");
     
@@ -74,17 +73,6 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
         Collections.emptyList());
     when(this.plugins.findClientClasspathPlugins()).thenReturn(
         Collections.emptyList());
-  }
-
-  private Function<File, String> fileToString() {
-    return new Function<File, String>() {
-
-      @Override
-      public String apply(final File a) {
-        return a.getAbsolutePath();
-      }
-
-    };
   }
 
   protected String createPomWithConfiguration(final String config) {

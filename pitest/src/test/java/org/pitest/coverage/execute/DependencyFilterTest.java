@@ -2,9 +2,10 @@ package org.pitest.coverage.execute;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -64,13 +65,13 @@ public class DependencyFilterTest {
   public void shouldReturnOnlyTestUnitsForClassesWithinReach()
       throws IOException {
     when(
-        this.extractor.extractCallDependenciesForPackages(eq(this.aTestUnit
-            .getDescription().getFirstTestClass()), any(Predicate.class)))
-            .thenReturn(Arrays.asList("foo"));
+        this.extractor.extractCallDependenciesForPackages(
+            eq(this.aTestUnit.getDescription().getFirstTestClass()),
+            isNull())).thenReturn(Arrays.asList("foo"));
     when(
         this.extractor.extractCallDependenciesForPackages(
             eq(this.anotherTestUnit.getDescription().getFirstTestClass()),
-            any(Predicate.class))).thenReturn(Collections.<String> emptyList());
+            isNull())).thenReturn(Collections.<String> emptyList());
 
     assertEquals(Arrays.asList(this.aTestUnit),
         this.testee.filterTestsByDependencyAnalysis(this.tus));
@@ -91,7 +92,7 @@ public class DependencyFilterTest {
     this.testee.filterTestsByDependencyAnalysis(this.tus);
     verify(this.extractor, times(1)).extractCallDependenciesForPackages(
         eq(this.aTestUnit.getDescription().getFirstTestClass()),
-        any(Predicate.class));
+        isNull());
   }
 
   private TestUnit makeTestUnit(final Description d) {

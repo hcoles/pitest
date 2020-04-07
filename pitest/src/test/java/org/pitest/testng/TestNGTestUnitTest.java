@@ -14,8 +14,8 @@
  */
 package org.pitest.testng;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -38,8 +38,6 @@ import com.example.testng.Fails;
 import com.example.testng.HasGroups;
 import com.example.testng.Passes;
 import com.example.testng.Skips;
-
-import junit.framework.AssertionFailedError;
 
 public class TestNGTestUnitTest {
 
@@ -88,7 +86,7 @@ public class TestNGTestUnitTest {
     this.testee.execute(this.rc);
     verify(this.rc, times(1)).notifyEnd(
         eq(new Description("fails", Fails.class)),
-        any(AssertionFailedError.class));
+        any(AssertionError.class));
   }
 
   @Test

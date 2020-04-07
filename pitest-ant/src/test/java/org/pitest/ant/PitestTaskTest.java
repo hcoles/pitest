@@ -15,8 +15,8 @@
 
 package org.pitest.ant;
 
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.startsWith;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -36,7 +36,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.pitest.mutationtest.commandline.MutationCoverageReport;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -482,7 +482,7 @@ public class PitestTaskTest {
     verify(this.arg).setValue("--fullMutationMatrix=true");
   }
   
-  private static class PathMatcher extends ArgumentMatcher<Path> {
+  private static class PathMatcher implements ArgumentMatcher<Path> {
 
     private final String[] expectedPaths;
 
@@ -491,8 +491,7 @@ public class PitestTaskTest {
     }
 
     @Override
-    public boolean matches(final Object argument) {
-      final Path argPath = (Path) argument;
+    public boolean matches(final Path argPath) {
       final String[] paths = argPath.toString().split(File.pathSeparator);
       final boolean matches = paths.length == this.expectedPaths.length;
       if (matches) {

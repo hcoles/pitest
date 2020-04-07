@@ -1,19 +1,19 @@
 package org.pitest.maven;
 
 import static java.util.Arrays.asList;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.Map;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.mockito.Matchers;
 import org.pitest.coverage.CoverageSummary;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
@@ -37,7 +37,7 @@ public class PitMojoTest extends BasePitMojoTest {
     build.setOutputDirectory("foo");
     this.testee.getProject().setBuild(build);
     this.testee.execute();
-    verify(this.executionStrategy).execute(any(File.class),
+    verify(this.executionStrategy).execute(isNull(),
         any(ReportOptions.class), any(PluginServices.class), anyMap());
   }
 
@@ -381,7 +381,7 @@ public class PitMojoTest extends BasePitMojoTest {
     CoverageSummary sum = new CoverageSummary(lines, linesCovered);
     final CombinedStatistics cs = new CombinedStatistics(stats, sum);
     when(
-        this.executionStrategy.execute(any(File.class),
+        this.executionStrategy.execute(isNull(),
             any(ReportOptions.class), any(PluginServices.class), anyMap()))
             .thenReturn(cs);
   }
@@ -394,13 +394,9 @@ public class PitMojoTest extends BasePitMojoTest {
     CoverageSummary sum = new CoverageSummary(0, 0);
     final CombinedStatistics cs = new CombinedStatistics(stats, sum);
     when(
-        this.executionStrategy.execute(any(File.class),
+        this.executionStrategy.execute(isNull(),
             any(ReportOptions.class), any(PluginServices.class), anyMap()))
             .thenReturn(cs);
-  }
-
-  private Map<String, String> anyMap() {
-    return Matchers.<Map<String, String>> any();
   }
 
 }
