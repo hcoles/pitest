@@ -2,6 +2,7 @@ package org.pitest.mutationtest;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 import org.pitest.classinfo.ClassName;
 
@@ -40,11 +41,7 @@ public class ClassMutationResults {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result)
-        + ((this.mutations == null) ? 0 : this.mutations.hashCode());
-    return result;
+    return Objects.hash(mutations);
   }
 
   @Override
@@ -52,21 +49,11 @@ public class ClassMutationResults {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final ClassMutationResults other = (ClassMutationResults) obj;
-    if (this.mutations == null) {
-      if (other.mutations != null) {
-        return false;
-      }
-    } else if (!this.mutations.equals(other.mutations)) {
-      return false;
-    }
-    return true;
+    return Objects.equals(mutations, other.mutations);
   }
 
   @Override

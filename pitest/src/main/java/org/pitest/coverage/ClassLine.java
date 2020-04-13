@@ -17,6 +17,8 @@ package org.pitest.coverage;
 
 import org.pitest.classinfo.ClassName;
 
+import java.util.Objects;
+
 public final class ClassLine {
   private final ClassName clazz;
   private final int       lineNumber;
@@ -40,12 +42,7 @@ public final class ClassLine {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result)
-        + ((this.clazz == null) ? 0 : this.clazz.hashCode());
-    result = (prime * result) + this.lineNumber;
-    return result;
+    return Objects.hash(clazz, lineNumber);
   }
 
   @Override
@@ -53,24 +50,12 @@ public final class ClassLine {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final ClassLine other = (ClassLine) obj;
-    if (this.clazz == null) {
-      if (other.clazz != null) {
-        return false;
-      }
-    } else if (!this.clazz.equals(other.clazz)) {
-      return false;
-    }
-    if (this.lineNumber != other.lineNumber) {
-      return false;
-    }
-    return true;
+    return lineNumber == other.lineNumber
+            && Objects.equals(clazz, other.clazz);
   }
 
   @Override

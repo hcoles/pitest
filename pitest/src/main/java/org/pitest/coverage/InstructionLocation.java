@@ -2,6 +2,8 @@ package org.pitest.coverage;
 
 import org.pitest.classinfo.ClassName;
 
+import java.util.Objects;
+
 public final class InstructionLocation {
   private final BlockLocation blockLocation;
   private final int           instructionIndex;
@@ -17,27 +19,21 @@ public final class InstructionLocation {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(final Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
-
-    InstructionLocation that = (InstructionLocation) o;
-
-    if (instructionIndex != that.instructionIndex) {
-      return false;
-    }
-    return blockLocation.getLocation().equals(that.blockLocation.getLocation());
+    final InstructionLocation other = (InstructionLocation) obj;
+    return instructionIndex == other.instructionIndex
+            && Objects.equals(blockLocation.getLocation(), other.blockLocation.getLocation());
   }
 
   @Override
   public int hashCode() {
-    int result = blockLocation.getLocation().hashCode();
-    result = 31 * result + instructionIndex;
-    return result;
+    return Objects.hash(blockLocation.getLocation(), instructionIndex);
   }
 
   public boolean isFor(final ClassName clazz) {

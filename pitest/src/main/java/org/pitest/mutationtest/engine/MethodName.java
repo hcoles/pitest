@@ -1,6 +1,7 @@
 package org.pitest.mutationtest.engine;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class MethodName implements Serializable {
 
@@ -18,11 +19,7 @@ public class MethodName implements Serializable {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result)
-        + ((this.name == null) ? 0 : this.name.hashCode());
-    return result;
+    return Objects.hash(name);
   }
 
   @Override
@@ -30,21 +27,11 @@ public class MethodName implements Serializable {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final MethodName other = (MethodName) obj;
-    if (this.name == null) {
-      if (other.name != null) {
-        return false;
-      }
-    } else if (!this.name.equals(other.name)) {
-      return false;
-    }
-    return true;
+    return Objects.equals(name, other.name);
   }
 
   @Override

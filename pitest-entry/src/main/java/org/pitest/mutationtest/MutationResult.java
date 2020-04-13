@@ -15,6 +15,7 @@
 package org.pitest.mutationtest;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.pitest.mutationtest.engine.MutationDetails;
 
@@ -67,13 +68,7 @@ public final class MutationResult {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result)
-        + ((this.details == null) ? 0 : this.details.hashCode());
-    result = (prime * result)
-        + ((this.status == null) ? 0 : this.status.hashCode());
-    return result;
+    return Objects.hash(details, status);
   }
 
   @Override
@@ -81,28 +76,12 @@ public final class MutationResult {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final MutationResult other = (MutationResult) obj;
-    if (this.details == null) {
-      if (other.details != null) {
-        return false;
-      }
-    } else if (!this.details.equals(other.details)) {
-      return false;
-    }
-    if (this.status == null) {
-      if (other.status != null) {
-        return false;
-      }
-    } else if (!this.status.equals(other.status)) {
-      return false;
-    }
-    return true;
+    return Objects.equals(details, other.details)
+            && Objects.equals(status, other.status);
   }
 
   @Override

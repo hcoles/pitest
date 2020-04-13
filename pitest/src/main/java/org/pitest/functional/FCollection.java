@@ -156,11 +156,7 @@ public abstract class FCollection {
     final Map<A, Collection<B>> bucketed = new HashMap<>();
     for (final B each : bs) {
       final A key = f.apply(each);
-      Collection<B> existing = bucketed.get(key);
-      if (existing == null) {
-        existing = new ArrayList<>();
-        bucketed.put(key, existing);
-      }
+      Collection<B> existing = bucketed.computeIfAbsent(key, k -> new ArrayList<>());
       existing.add(each);
     }
     return bucketed;

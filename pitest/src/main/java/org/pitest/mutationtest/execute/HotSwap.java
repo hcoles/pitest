@@ -20,11 +20,10 @@ class HotSwap implements F3<ClassName, ClassLoader, byte[], Boolean> {
   @Override
   public Boolean apply(final ClassName clazzName, final ClassLoader loader,
       final byte[] b) {
-    Class<?> clazz;
     try {
       restoreLastClass(this.byteSource, clazzName, loader);
       this.lastUsedLoader = loader;
-      clazz = Class.forName(clazzName.asJavaName(), false, loader);
+      Class<?> clazz = Class.forName(clazzName.asJavaName(), false, loader);
       return HotSwapAgent.hotSwap(clazz, b);
     } catch (final ClassNotFoundException e) {
       throw Unchecked.translateCheckedException(e);

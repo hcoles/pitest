@@ -101,16 +101,7 @@ public final class MutationStatusTestPair implements Serializable {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result)
-        + ((this.killingTests == null) ? 0 : this.killingTests.hashCode());
-    result = (prime * result)
-        + ((this.succeedingTests == null) ? 0 : this.succeedingTests.hashCode());
-    result = (prime * result) + this.numberOfTestsRun;
-    result = (prime * result)
-        + ((this.status == null) ? 0 : this.status.hashCode());
-    return result;
+    return Objects.hash(numberOfTestsRun, status, killingTests, succeedingTests);
   }
 
   @Override
@@ -118,26 +109,13 @@ public final class MutationStatusTestPair implements Serializable {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final MutationStatusTestPair other = (MutationStatusTestPair) obj;
-    if (!Objects.equals( this.killingTests,other.killingTests)) {
-      return false;
-    }
-    if (!Objects.equals(this.succeedingTests, other.succeedingTests)) {
-      return false;
-    }
-    if (this.numberOfTestsRun != other.numberOfTestsRun) {
-      return false;
-    }
-    if (this.status != other.status) {
-      return false;
-    }
-    return true;
+    return numberOfTestsRun == other.numberOfTestsRun
+            && status == other.status
+            && Objects.equals(killingTests, other.killingTests)
+            && Objects.equals(succeedingTests, other.succeedingTests);
   }
-
 }

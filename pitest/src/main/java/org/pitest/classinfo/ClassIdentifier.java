@@ -1,6 +1,7 @@
 package org.pitest.classinfo;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public final class ClassIdentifier implements Serializable {
 
@@ -24,12 +25,7 @@ public final class ClassIdentifier implements Serializable {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result) + (int) (this.hash ^ (this.hash >>> 32));
-    result = (prime * result)
-        + ((this.name == null) ? 0 : this.name.hashCode());
-    return result;
+    return Objects.hash(hash, name);
   }
 
   @Override
@@ -37,24 +33,11 @@ public final class ClassIdentifier implements Serializable {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final ClassIdentifier other = (ClassIdentifier) obj;
-    if (this.hash != other.hash) {
-      return false;
-    }
-    if (this.name == null) {
-      if (other.name != null) {
-        return false;
-      }
-    } else if (!this.name.equals(other.name)) {
-      return false;
-    }
-    return true;
+    return hash == other.hash
+            && Objects.equals(name, other.name);
   }
-
 }
