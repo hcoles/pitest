@@ -15,6 +15,7 @@
 package org.pitest.simpletest.steps;
 
 import java.lang.reflect.Modifier;
+import java.util.Objects;
 
 import org.pitest.simpletest.CanNotCreateTestClassException;
 import org.pitest.simpletest.TestStep;
@@ -44,7 +45,7 @@ public final class NoArgsInstantiateStep implements TestStep {
         throw new CanNotCreateTestClassException(
             "Cannot instantiate the abstract class " + c.getName(), null);
       } else {
-        return c.newInstance();
+        return c.getDeclaredConstructor().newInstance();
       }
     } catch (final Throwable e) {
       e.printStackTrace();
@@ -54,11 +55,7 @@ public final class NoArgsInstantiateStep implements TestStep {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result)
-        + ((this.clazz == null) ? 0 : this.clazz.hashCode());
-    return result;
+    return Objects.hash(clazz);
   }
 
   @Override
@@ -66,21 +63,10 @@ public final class NoArgsInstantiateStep implements TestStep {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final NoArgsInstantiateStep other = (NoArgsInstantiateStep) obj;
-    if (this.clazz == null) {
-      if (other.clazz != null) {
-        return false;
-      }
-    } else if (!this.clazz.equals(other.clazz)) {
-      return false;
-    }
-    return true;
+    return Objects.equals(clazz, other.clazz);
   }
-
 }

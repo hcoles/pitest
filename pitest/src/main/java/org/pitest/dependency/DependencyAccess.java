@@ -14,6 +14,8 @@
  */
 package org.pitest.dependency;
 
+import java.util.Objects;
+
 final class DependencyAccess {
 
   static class Member implements Comparable<Member> {
@@ -35,13 +37,7 @@ final class DependencyAccess {
 
     @Override
     public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = (prime * result)
-          + ((this.name == null) ? 0 : this.name.hashCode());
-      result = (prime * result)
-          + ((this.owner == null) ? 0 : this.owner.hashCode());
-      return result;
+      return Objects.hash(owner, name);
     }
 
     @Override
@@ -49,28 +45,12 @@ final class DependencyAccess {
       if (this == obj) {
         return true;
       }
-      if (obj == null) {
-        return false;
-      }
-      if (getClass() != obj.getClass()) {
+      if (obj == null || getClass() != obj.getClass()) {
         return false;
       }
       final Member other = (Member) obj;
-      if (this.name == null) {
-        if (other.name != null) {
-          return false;
-        }
-      } else if (!this.name.equals(other.name)) {
-        return false;
-      }
-      if (this.owner == null) {
-        if (other.owner != null) {
-          return false;
-        }
-      } else if (!this.owner.equals(other.owner)) {
-        return false;
-      }
-      return true;
+      return Objects.equals(owner, other.owner)
+              && Objects.equals(name, other.name);
     }
 
     @Override
@@ -99,13 +79,7 @@ final class DependencyAccess {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result)
-        + ((this.dest == null) ? 0 : this.dest.hashCode());
-    result = (prime * result)
-        + ((this.source == null) ? 0 : this.source.hashCode());
-    return result;
+    return Objects.hash(source, dest);
   }
 
   @Override
@@ -113,28 +87,11 @@ final class DependencyAccess {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final DependencyAccess other = (DependencyAccess) obj;
-    if (this.dest == null) {
-      if (other.dest != null) {
-        return false;
-      }
-    } else if (!this.dest.equals(other.dest)) {
-      return false;
-    }
-    if (this.source == null) {
-      if (other.source != null) {
-        return false;
-      }
-    } else if (!this.source.equals(other.source)) {
-      return false;
-    }
-    return true;
+    return Objects.equals(source, other.source)
+            && Objects.equals(dest, other.dest);
   }
-
 }

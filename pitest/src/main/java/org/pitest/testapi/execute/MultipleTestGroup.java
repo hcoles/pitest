@@ -16,6 +16,7 @@
 package org.pitest.testapi.execute;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.pitest.testapi.AbstractTestUnit;
 import org.pitest.testapi.Description;
@@ -44,11 +45,7 @@ public final class MultipleTestGroup extends AbstractTestUnit {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result)
-        + ((this.children == null) ? 0 : this.children.hashCode());
-    return result;
+    return Objects.hash(children);
   }
 
   @Override
@@ -56,21 +53,11 @@ public final class MultipleTestGroup extends AbstractTestUnit {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final MultipleTestGroup other = (MultipleTestGroup) obj;
-    if (this.children == null) {
-      if (other.children != null) {
-        return false;
-      }
-    } else if (!this.children.equals(other.children)) {
-      return false;
-    }
-    return true;
+    return Objects.equals(children, other.children);
   }
 
 }

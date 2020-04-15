@@ -3,6 +3,7 @@ package org.pitest.plugin;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public final class Feature {
 
@@ -56,11 +57,7 @@ public final class Feature {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result)
-        + ((this.name == null) ? 0 : this.name.hashCode());
-    return result;
+    return Objects.hash(name);
   }
 
   @Override
@@ -68,22 +65,10 @@ public final class Feature {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final Feature other = (Feature) obj;
-    if (this.name == null) {
-      if (other.name != null) {
-        return false;
-      }
-    } else if (!this.name.equals(other.name)) {
-      return false;
-    }
-    return true;
+    return Objects.equals(name, other.name);
   }
-
-
 }

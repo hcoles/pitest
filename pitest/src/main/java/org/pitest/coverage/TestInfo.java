@@ -15,6 +15,7 @@
 package org.pitest.coverage;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.function.Function;
 
 import org.pitest.classinfo.ClassName;
@@ -73,13 +74,7 @@ public final class TestInfo implements Serializable {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result)
-        + ((this.definingClass == null) ? 0 : this.definingClass.hashCode());
-    result = (prime * result)
-        + ((this.name == null) ? 0 : this.name.hashCode());
-    return result;
+    return Objects.hash(name, definingClass);
   }
 
   @Override
@@ -87,28 +82,12 @@ public final class TestInfo implements Serializable {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final TestInfo other = (TestInfo) obj;
-    if (this.definingClass == null) {
-      if (other.definingClass != null) {
-        return false;
-      }
-    } else if (!this.definingClass.equals(other.definingClass)) {
-      return false;
-    }
-    if (this.name == null) {
-      if (other.name != null) {
-        return false;
-      }
-    } else if (!this.name.equals(other.name)) {
-      return false;
-    }
-    return true;
+    return Objects.equals(name, other.name)
+            && Objects.equals(definingClass, other.definingClass);
   }
 
   private static String internIfNotNull(final String string) {

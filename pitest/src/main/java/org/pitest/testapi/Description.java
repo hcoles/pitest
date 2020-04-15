@@ -16,6 +16,7 @@
 package org.pitest.testapi;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public final class Description implements Serializable {
 
@@ -62,13 +63,7 @@ public final class Description implements Serializable {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result)
-        + ((this.name == null) ? 0 : this.name.hashCode());
-    result = (prime * result)
-        + ((this.testClass == null) ? 0 : this.testClass.hashCode());
-    return result;
+    return Objects.hash(testClass, name);
   }
 
   @Override
@@ -76,28 +71,12 @@ public final class Description implements Serializable {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final Description other = (Description) obj;
-    if (this.name == null) {
-      if (other.name != null) {
-        return false;
-      }
-    } else if (!this.name.equals(other.name)) {
-      return false;
-    }
-    if (this.testClass == null) {
-      if (other.testClass != null) {
-        return false;
-      }
-    } else if (!this.testClass.equals(other.testClass)) {
-      return false;
-    }
-    return true;
+    return Objects.equals(testClass, other.testClass)
+            && Objects.equals(name, other.name);
   }
 
   @Override

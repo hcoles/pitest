@@ -16,6 +16,7 @@ package org.pitest.simpletest;
 
 import java.util.Collection;
 
+import java.util.Objects;
 import java.util.Optional;
 import org.pitest.testapi.AbstractTestUnit;
 import org.pitest.testapi.Description;
@@ -86,13 +87,7 @@ public class SteppedTestUnit extends AbstractTestUnit {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = super.hashCode();
-    result = (prime * result)
-        + ((this.expected == null) ? 0 : this.expected.hashCode());
-    result = (prime * result)
-        + ((this.steps == null) ? 0 : this.steps.hashCode());
-    return result;
+    return Objects.hash(steps, expected);
   }
 
   @Override
@@ -100,28 +95,12 @@ public class SteppedTestUnit extends AbstractTestUnit {
     if (this == obj) {
       return true;
     }
-    if (!super.equals(obj)) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final SteppedTestUnit other = (SteppedTestUnit) obj;
-    if (this.expected == null) {
-      if (other.expected != null) {
-        return false;
-      }
-    } else if (!this.expected.equals(other.expected)) {
-      return false;
-    }
-    if (this.steps == null) {
-      if (other.steps != null) {
-        return false;
-      }
-    } else if (!this.steps.equals(other.steps)) {
-      return false;
-    }
-    return true;
+    return Objects.equals(steps, other.steps)
+            && Objects.equals(expected, other.expected);
   }
 
   @Override

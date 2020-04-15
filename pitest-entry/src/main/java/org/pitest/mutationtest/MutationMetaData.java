@@ -16,9 +16,9 @@ package org.pitest.mutationtest;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import org.pitest.classinfo.ClassName;
 
@@ -35,7 +35,7 @@ public final class MutationMetaData {
   }
 
   public Collection<ClassMutationResults> toClassResults() {
-    Collections.sort(this.mutations, comparator());
+    this.mutations.sort(comparator());
     final List<ClassMutationResults> cmrs = new ArrayList<>();
     final List<MutationResult> buffer = new ArrayList<>();
     ClassName cn = null;
@@ -55,16 +55,12 @@ public final class MutationMetaData {
   }
 
   private static Comparator<MutationResult> comparator() {
-    return (arg0, arg1) -> arg0.getDetails().getId().compareTo(arg1.getDetails().getId());
+    return Comparator.comparing(arg0 -> arg0.getDetails().getId());
   }
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result)
-        + ((this.mutations == null) ? 0 : this.mutations.hashCode());
-    return result;
+    return Objects.hash(mutations);
   }
 
   @Override
@@ -72,21 +68,10 @@ public final class MutationMetaData {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final MutationMetaData other = (MutationMetaData) obj;
-    if (this.mutations == null) {
-      if (other.mutations != null) {
-        return false;
-      }
-    } else if (!this.mutations.equals(other.mutations)) {
-      return false;
-    }
-    return true;
+    return Objects.equals(mutations, other.mutations);
   }
-
 }

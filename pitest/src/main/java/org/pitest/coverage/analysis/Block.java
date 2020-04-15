@@ -1,5 +1,6 @@
 package org.pitest.coverage.analysis;
 
+import java.util.Objects;
 import java.util.Set;
 
 public final class Block {
@@ -16,11 +17,7 @@ public final class Block {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result) + this.firstInstruction;
-    result = (prime * result) + this.lastInstruction;
-    return result;
+    return Objects.hash(firstInstruction, lastInstruction);
   }
 
   @Override
@@ -28,20 +25,12 @@ public final class Block {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final Block other = (Block) obj;
-    if (this.firstInstruction != other.firstInstruction) {
-      return false;
-    }
-    if (this.lastInstruction != other.lastInstruction) {
-      return false;
-    }
-    return true;
+    return (firstInstruction == other.firstInstruction)
+            && (lastInstruction == other.lastInstruction);
   }
 
   @Override

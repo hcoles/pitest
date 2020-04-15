@@ -100,16 +100,10 @@ public class SafeDataInputStream {
 
   private Object deserialize(byte[] bytes) throws IOException {
     final ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-    ObjectInput in = null;
-    try {
-      in = new ObjectInputStream(bis);
+    try (ObjectInput in = new ObjectInputStream(bis)) {
       return in.readObject();
     } catch (final ClassNotFoundException e) {
       throw Unchecked.translateCheckedException(e);
-    } finally {
-        if (in != null) {
-          in.close();
-        }
     }
   }
 
