@@ -14,10 +14,9 @@
  */
 package org.pitest.coverage.execute;
 
+import static java.util.stream.Collectors.toList;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -38,18 +37,16 @@ public class CoverageWorker {
   }
 
   public void run() {
-
     try {
       final List<TestUnit> decoratedTests = decorateForCoverage(this.tests,
           this.pipe);
 
-      Collections.sort(decoratedTests, testComparator());
+      decoratedTests.sort(testComparator());
 
       final Container c = new UnContainer();
 
       final Pitest pit = new Pitest(new ErrorListener());
       pit.run(c, decoratedTests);
-
     } catch (final Exception ex) {
       throw translateCheckedException(ex);
     }
@@ -57,16 +54,13 @@ public class CoverageWorker {
   }
 
   private static Comparator<TestUnit> testComparator() {
-    return (o1, o2) -> o1.getDescription().getQualifiedName()
-        .compareTo(o2.getDescription().getQualifiedName());
+    return Comparator.comparing(o -> o.getDescription().getQualifiedName());
   }
 
   private static List<TestUnit> decorateForCoverage(final List<TestUnit> plainTests,
       final CoverageReceiver queue) {
-    final List<TestUnit> decorated = new ArrayList<>(plainTests.size());
-    for (final TestUnit each : plainTests) {
-      decorated.add(new CoverageDecorator(queue, each));
-    }
-    return decorated;
+    return plainTests.stream()
+            .map(each -> new CoverageDecorator(queue, each))
+            .collect(toList());
   }
 }

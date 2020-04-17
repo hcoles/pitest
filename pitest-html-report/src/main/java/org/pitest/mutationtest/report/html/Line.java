@@ -14,7 +14,6 @@
  */
 package org.pitest.mutationtest.report.html;
 
-import java.util.Collections;
 import java.util.List;
 
 import java.util.Optional;
@@ -33,7 +32,7 @@ public class Line {
     this.text = text;
     this.lineCovered = lineCovered;
     this.mutations = mutations;
-    Collections.sort(mutations, new ResultComparator());
+    mutations.sort(new ResultComparator());
   }
 
   public long getNumber() {

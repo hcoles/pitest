@@ -60,9 +60,9 @@ public class FCollectionTest {
     final List<Integer> actual = new ArrayList<>();
     final Consumer<Integer> e = a -> actual.add(a);
 
-    FCollection.forEach(this.is, e);
+      this.is.forEach(e);
 
-    assertEquals(this.is, actual);
+      assertEquals(this.is, actual);
   }
 
   @Test

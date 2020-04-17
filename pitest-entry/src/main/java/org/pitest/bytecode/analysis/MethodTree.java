@@ -74,9 +74,8 @@ public class MethodTree {
 
   private List<AbstractInsnNode> createInstructionList() {
     final List<AbstractInsnNode> list = new LinkedList<>();
-    final ListIterator<AbstractInsnNode> it = this.rawNode.instructions.iterator();
-    while (it.hasNext()) {
-        list.add(it.next());
+    for (AbstractInsnNode abstractInsnNode : this.rawNode.instructions) {
+      list.add(abstractInsnNode);
     }
     this.lazyInstructions = new ArrayList<>(list);
     return this.lazyInstructions;

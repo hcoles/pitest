@@ -149,9 +149,7 @@ public class ControlFlowAnalyser {
 
   private static Set<LabelNode> findJumpTargets(final InsnList instructions) {
     final Set<LabelNode> jumpTargets = new HashSet<>();
-    final ListIterator<AbstractInsnNode> it = instructions.iterator();
-    while (it.hasNext()) {
-      final AbstractInsnNode o = it.next();
+    for (AbstractInsnNode o : instructions) {
       if (o instanceof JumpInsnNode) {
         jumpTargets.add(((JumpInsnNode) o).label);
       } else if (o instanceof TableSwitchInsnNode) {

@@ -167,6 +167,6 @@ public class SettingsFactory {
 
 
   private Comparator<Feature> byName() {
-    return (a,b) -> a.name().compareTo(b.name());
+    return Comparator.comparing(Feature::name);
   }
 }

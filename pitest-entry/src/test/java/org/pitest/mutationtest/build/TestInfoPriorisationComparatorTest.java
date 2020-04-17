@@ -18,7 +18,6 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -82,7 +81,7 @@ public class TestInfoPriorisationComparatorTest {
 
   private List<TestInfo> sortWithTestee(final TestInfo... testInfos) {
     final List<TestInfo> list = Arrays.asList(testInfos);
-    Collections.sort(list, this.testee);
+    list.sort(this.testee);
     return list;
   }
 
