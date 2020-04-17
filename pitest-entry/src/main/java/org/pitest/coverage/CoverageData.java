@@ -74,9 +74,8 @@ public class CoverageData implements CoverageDatabase {
   }
 
   @Override
-  public Collection<TestInfo> getTestsForInstructionLocation(
-      InstructionLocation location) {
-    return this.instructionCoverage.get(location);
+  public Collection<TestInfo> getTestsForInstructionLocation(InstructionLocation location) {
+    return this.instructionCoverage.getOrDefault(location, Collections.emptySet());
   }
 
   @Override
@@ -252,13 +251,7 @@ public class CoverageData implements CoverageDatabase {
   }
 
   private int getNumberOfCoveredLines(final ClassName clazz) {
-    final Map<ClassLine, Set<TestInfo>> map = getTestsForClassName(clazz);
-    if (map != null) {
-      return map.size();
-    } else {
-      return 0;
-    }
-
+    return getTestsForClassName(clazz).size();
   }
 
   private Map<ClassLine, Set<TestInfo>> getTestsForClassName(
