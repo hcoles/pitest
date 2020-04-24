@@ -552,5 +552,15 @@ public class PitMojoIT {
             .contains("<a href=\"pit-reports/index.html\" title=\"PIT Test Report\">PIT Test Report</a>"));
   }
 
+  @Test
+  public void shouldFindOccupiedTestPackages() throws IOException, VerificationException {
+    File testDir = prepare("/pit-findOccupiedTestPackages");
+    verifier.executeGoal("test");
+    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+
+    String actual = readResults(testDir);
+    assertThat(actual).contains(
+        "<mutation detected='true' status='KILLED' numberOfTestsRun='1'><sourceFile>DiscoveredClass.java</sourceFile>");
+  }
 
 }
