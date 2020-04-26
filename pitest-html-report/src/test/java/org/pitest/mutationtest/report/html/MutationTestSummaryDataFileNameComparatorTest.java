@@ -19,7 +19,7 @@ public class MutationTestSummaryDataFileNameComparatorTest {
     final MutationTestSummaryData aa = makeSummaryData("aa");
     final MutationTestSummaryData z = makeSummaryData("z");
     final List<MutationTestSummaryData> list = Arrays.asList(z, aa, ab);
-    Collections.sort(list, testee);
+    list.sort(testee);
     final List<MutationTestSummaryData> expected = Arrays.asList(aa, ab, z);
     assertEquals(expected, list);
   }

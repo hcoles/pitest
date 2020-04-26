@@ -14,8 +14,6 @@
  */
 package org.pitest.functional.prelude;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 
 import java.io.PrintStream;

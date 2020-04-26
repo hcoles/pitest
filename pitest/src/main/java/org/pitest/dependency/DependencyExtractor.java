@@ -134,7 +134,7 @@ public class DependencyExtractor {
   }
 
   private static Comparator<DependencyAccess> equalDestinationComparator() {
-    return (o1, o2) -> o1.getDest().compareTo(o2.getDest());
+    return Comparator.comparing(DependencyAccess::getDest);
   }
 
   private List<DependencyAccess> extract(final String clazz,
@@ -157,10 +157,6 @@ public class DependencyExtractor {
 
   private Map<String, List<DependencyAccess>> groupDependenciesByClass(
       final Set<DependencyAccess> relevantDependencies) {
-    final List<DependencyAccess> sortedByClass = new ArrayList<>(
-        relevantDependencies.size());
-    Collections.sort(sortedByClass, classNameComparator());
-
     return FCollection.fold(addDependenciesToMap(),
         new HashMap<String, List<DependencyAccess>>(), relevantDependencies);
 
@@ -178,10 +174,6 @@ public class DependencyExtractor {
     map.put(access.getDest().getOwner(), list);
     return map;
    };
-  }
-
-  private static Comparator<DependencyAccess> classNameComparator() {
-    return (lhs, rhs) -> lhs.getDest().getOwner().compareTo(rhs.getDest().getOwner());
   }
 
   private static Predicate<DependencyAccess> nameIsEqual(final String clazz) {

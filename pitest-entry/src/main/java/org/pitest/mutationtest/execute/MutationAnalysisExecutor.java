@@ -10,7 +10,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResultListener;
@@ -74,13 +73,11 @@ public class MutationAnalysisExecutor {
   }
 
   private void signalRunStartToAllListeners() {
-    FCollection.forEach(this.listeners,
-        a -> a.runStart());
+    this.listeners.forEach(MutationResultListener::runStart);
   }
 
   private void signalRunEndToAllListeners() {
-    FCollection.forEach(this.listeners,
-        a -> a.runEnd());
+    this.listeners.forEach(MutationResultListener::runEnd);
   }
 
 }

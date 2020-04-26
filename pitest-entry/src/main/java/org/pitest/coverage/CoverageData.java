@@ -74,14 +74,13 @@ public class CoverageData implements CoverageDatabase {
   }
 
   @Override
-  public Collection<TestInfo> getTestsForInstructionLocation(
-      InstructionLocation location) {
-    return this.instructionCoverage.get(location);
+  public Collection<TestInfo> getTestsForInstructionLocation(InstructionLocation location) {
+    return this.instructionCoverage.getOrDefault(location, Collections.emptySet());
   }
 
   @Override
   public Collection<TestInfo> getTestsForClassLine(final ClassLine classLine) {
-    final Collection<TestInfo> result = getTestsForClassName(
+    final Collection<TestInfo> result = getLineCoverageForClassName(
         classLine.getClassName()).get(classLine);
     if (result == null) {
       return Collections.emptyList();
@@ -109,7 +108,10 @@ public class CoverageData implements CoverageDatabase {
 
   @Override
   public int getNumberOfCoveredLines(final Collection<ClassName> mutatedClass) {
-    return FCollection.fold(numberCoveredLines(), 0, mutatedClass);
+    return mutatedClass.stream()
+        .map(this::getLineCoverageForClassName)
+        .mapToInt(Map::size)
+        .sum();
   }
 
   @Override
@@ -147,7 +149,7 @@ public class CoverageData implements CoverageDatabase {
 
   @Override
   public BigInteger getCoverageIdForClass(final ClassName clazz) {
-    final Map<ClassLine, Set<TestInfo>> coverage = getTestsForClassName(clazz);
+    final Map<ClassLine, Set<TestInfo>> coverage = getLineCoverageForClassName(clazz);
     if (coverage.isEmpty()) {
       return BigInteger.ZERO;
     }
@@ -224,7 +226,7 @@ public class CoverageData implements CoverageDatabase {
   }
 
   private int coveredLines() {
-    return FCollection.fold(numberCoveredLines(), 0, allClasses());
+    return getNumberOfCoveredLines(allClasses());
   }
 
   private BiFunction<Integer, ClassInfo, Integer> numberLines() {
@@ -247,22 +249,7 @@ public class CoverageData implements CoverageDatabase {
         description.getQualifiedName(), executionTime, testee, linesCovered);
   }
 
-  private BiFunction<Integer, ClassName, Integer> numberCoveredLines() {
-    return (a, clazz) -> a + getNumberOfCoveredLines(clazz);
-  }
-
-  private int getNumberOfCoveredLines(final ClassName clazz) {
-    final Map<ClassLine, Set<TestInfo>> map = getTestsForClassName(clazz);
-    if (map != null) {
-      return map.size();
-    } else {
-      return 0;
-    }
-
-  }
-
-  private Map<ClassLine, Set<TestInfo>> getTestsForClassName(
-      final ClassName clazz) {
+  private Map<ClassLine, Set<TestInfo>> getLineCoverageForClassName(final ClassName clazz) {
     // Use any test that provided some coverage of the class
     // This fails to consider tests that only accessed a static variable
     // of the class in question as this does not register as coverage.
