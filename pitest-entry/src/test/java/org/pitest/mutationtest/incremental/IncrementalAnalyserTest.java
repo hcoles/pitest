@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -56,23 +57,25 @@ public class IncrementalAnalyserTest {
 
   private LogCatcher logCatcher;
 
+
+  @Before
+  public void configureLogCatcher() {
+    logCatcher = new LogCatcher();
+    final Logger logger = Log.getLogger();
+
+    logger.addHandler(logCatcher);
+    logger.setLevel(Level.ALL);
+  }
+
   @Before
   public void setUp() {
-    configureLogCatcher();
-
     MockitoAnnotations.initMocks(this);
     this.testee = new IncrementalAnalyser(this.history, this.coverage);
   }
 
-  private void configureLogCatcher() {
-    logCatcher = new LogCatcher();
-    final Logger logger = Log.getLogger();
-
-    for (Handler handler : logger.getHandlers()) {
-      logger.removeHandler(handler);
-    }
-    logger.addHandler(logCatcher);
-    logger.setLevel(Level.ALL);
+  @After
+  public void removeLogCatcher() {
+    Log.getLogger().removeHandler(logCatcher);
   }
 
   @Test
