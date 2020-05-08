@@ -2,7 +2,6 @@ package org.pitest.coverage.execute;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -46,7 +45,7 @@ public class DependencyFilterTest {
     this.aTestUnit = makeTestUnit(new Description("foo", String.class));
     this.anotherTestUnit = makeTestUnit(new Description("bar", Integer.class));
 
-    this.testee = new DependencyFilter(this.extractor, null);
+    this.testee = new DependencyFilter(this.extractor, s -> true);
     this.tus = Arrays.asList(this.aTestUnit, this.anotherTestUnit);
   }
 
@@ -67,11 +66,11 @@ public class DependencyFilterTest {
     when(
         this.extractor.extractCallDependenciesForPackages(
             eq(this.aTestUnit.getDescription().getFirstTestClass()),
-            isNull())).thenReturn(Arrays.asList("foo"));
+            any(Predicate.class))).thenReturn(Arrays.asList("foo"));
     when(
         this.extractor.extractCallDependenciesForPackages(
             eq(this.anotherTestUnit.getDescription().getFirstTestClass()),
-            isNull())).thenReturn(Collections.<String> emptyList());
+            any(Predicate.class))).thenReturn(Collections.<String> emptyList());
 
     assertEquals(Arrays.asList(this.aTestUnit),
         this.testee.filterTestsByDependencyAnalysis(this.tus));
@@ -92,7 +91,7 @@ public class DependencyFilterTest {
     this.testee.filterTestsByDependencyAnalysis(this.tus);
     verify(this.extractor, times(1)).extractCallDependenciesForPackages(
         eq(this.aTestUnit.getDescription().getFirstTestClass()),
-        isNull());
+        any(Predicate.class));
   }
 
   private TestUnit makeTestUnit(final Description d) {

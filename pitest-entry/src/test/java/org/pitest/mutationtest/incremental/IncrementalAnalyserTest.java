@@ -1,7 +1,6 @@
 package org.pitest.mutationtest.incremental;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.pitest.mutationtest.LocationMother.aLocation;
@@ -58,9 +57,11 @@ public class IncrementalAnalyserTest {
   public void shouldStartPreviousSurvivedMutationsAtAStatusOfNotStartedWhenCoverageHasChanged() {
     final MutationDetails md = makeMutation("foo");
     setHistoryForAllMutationsTo(DetectionStatus.SURVIVED);
+    when(coverage.getCoverageIdForClass(any(ClassName.class)))
+        .thenReturn(BigInteger.ONE);
     when(
         this.history.hasCoverageChanged(any(ClassName.class),
-            isNull())).thenReturn(true);
+            any(BigInteger.class))).thenReturn(true);
     final Collection<MutationResult> actual = this.testee.analyse(Collections
         .singletonList(md));
     assertEquals(DetectionStatus.NOT_STARTED, actual.iterator().next()
