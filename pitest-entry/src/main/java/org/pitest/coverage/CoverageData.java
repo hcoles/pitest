@@ -15,6 +15,8 @@
 
 package org.pitest.coverage;
 
+import static java.util.stream.Collectors.toCollection;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +33,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.pitest.classinfo.ClassInfo;
@@ -61,7 +62,7 @@ public class CoverageData implements CoverageDatabase {
   private final List<Description>                             failingTestDescriptions = new ArrayList<>();
 
   public CoverageData(final CodeSource code, final LineMap lm) {
-    this(code, lm, new LinkedHashMap<InstructionLocation, Set<TestInfo>>());
+    this(code, lm, new LinkedHashMap<>());
   }
 
 
@@ -116,13 +117,10 @@ public class CoverageData implements CoverageDatabase {
 
   @Override
   public Collection<TestInfo> getTestsForClass(final ClassName clazz) {
-    final Set<TestInfo> tis = new TreeSet<>(
-        new TestInfoNameComparator());
-    tis.addAll(this.instructionCoverage.entrySet().stream().filter(isFor(clazz))
-        .flatMap(toTests())
-        .collect(Collectors.toList())
-        );
-    return tis;
+    return this.instructionCoverage.entrySet().stream()
+            .filter(isFor(clazz))
+            .flatMap(toTests())
+            .collect(toCollection(() -> new TreeSet<>(new TestInfoNameComparator())));
   }
 
   public void calculateClassCoverage(final CoverageResult cr) {
@@ -172,7 +170,7 @@ public class CoverageData implements CoverageDatabase {
     final Collection<ClassInfo> value = this.getClassesForFileCache().get(
         keyFromSourceAndPackage(sourceFile, packageName));
     if (value == null) {
-      return Collections.<ClassInfo> emptyList();
+      return Collections.emptyList();
     } else {
       return value;
     }
