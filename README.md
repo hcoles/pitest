@@ -8,6 +8,13 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.5.2
+
+* #749 ANT support for the fullMutationMatrix option (thanks @ayaankazerouni)
+* #752, #755, #757 Version bumps and legacy code improvements (thanks @AlexElin)
+* #758 Correctly can for test packages (thanks @nicerloop)
+* #765 Fix incremental analysis for TestNG (thanks @StefanPenndorf)     
+
 ### 1.5.1
 
 * #737 Add skipFailingTests flag to command line tool (thanks @szpak)
