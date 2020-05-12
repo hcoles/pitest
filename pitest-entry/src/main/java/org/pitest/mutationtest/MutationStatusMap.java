@@ -46,8 +46,7 @@ public class MutationStatusMap {
 
   public void setStatusForMutations(
       final Collection<MutationDetails> mutations, final DetectionStatus status) {
-    FCollection.forEach(mutations,
-        putToMap(this.mutationMap, MutationStatusTestPair.notAnalysed(0, status)));
+    mutations.forEach(putToMap(this.mutationMap, MutationStatusTestPair.notAnalysed(0, status)));
   }
 
   public List<MutationResult> createMutationResults() {

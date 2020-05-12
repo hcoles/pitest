@@ -11,7 +11,6 @@ import static org.objectweb.asm.Opcodes.RETURN;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Set;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -149,9 +148,7 @@ public class ControlFlowAnalyser {
 
   private static Set<LabelNode> findJumpTargets(final InsnList instructions) {
     final Set<LabelNode> jumpTargets = new HashSet<>();
-    final ListIterator<AbstractInsnNode> it = instructions.iterator();
-    while (it.hasNext()) {
-      final AbstractInsnNode o = it.next();
+    for (AbstractInsnNode o : instructions) {
       if (o instanceof JumpInsnNode) {
         jumpTargets.add(((JumpInsnNode) o).label);
       } else if (o instanceof TableSwitchInsnNode) {

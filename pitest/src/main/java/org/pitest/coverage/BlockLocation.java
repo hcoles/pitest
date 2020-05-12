@@ -3,6 +3,8 @@ package org.pitest.coverage;
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.Location;
 
+import java.util.Objects;
+
 public final class BlockLocation {
 
   private final Location location;
@@ -45,12 +47,7 @@ public final class BlockLocation {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result) + this.block;
-    result = (prime * result)
-        + ((this.location == null) ? 0 : this.location.hashCode());
-    return result;
+    return Objects.hash(location, block);
   }
 
   @Override
@@ -58,24 +55,12 @@ public final class BlockLocation {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final BlockLocation other = (BlockLocation) obj;
-    if (this.block != other.block) {
-      return false;
-    }
-    if (this.location == null) {
-      if (other.location != null) {
-        return false;
-      }
-    } else if (!this.location.equals(other.location)) {
-      return false;
-    }
-    return true;
+    return block == other.block
+            && Objects.equals(location, other.location);
   }
 
   @Override

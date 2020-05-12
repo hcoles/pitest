@@ -14,10 +14,10 @@
  */
 package org.pitest.mutationtest.build;
 
+import static java.util.Comparator.comparing;
+
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -58,7 +58,7 @@ public class MutationTestBuilder {
     final List<MutationDetails> mutations = FCollection.flatMap(codeClasses,
         classToMutations());
 
-    Collections.sort(mutations, comparator());
+    mutations.sort(comparing(MutationDetails::getId));
 
     final Collection<MutationResult> analysedMutations = this.analyser
         .analyse(mutations);
@@ -82,12 +82,8 @@ public class MutationTestBuilder {
       }
     }
 
-    Collections.sort(tus, new AnalysisPriorityComparator());
+    tus.sort(new AnalysisPriorityComparator());
     return tus;
-  }
-
-  private Comparator<MutationDetails> comparator() {
-    return (arg0, arg1) -> arg0.getId().compareTo(arg1.getId());
   }
 
   private Function<ClassName, Iterable<MutationDetails>> classToMutations() {

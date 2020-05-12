@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.pitest.classinfo.ClassName;
 
@@ -126,15 +127,7 @@ public final class MutationIdentifier implements Comparable<MutationIdentifier>,
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result)
-        + ((this.indexes == null) ? 0 : this.indexes.hashCode());
-    result = (prime * result)
-        + ((this.location == null) ? 0 : this.location.hashCode());
-    result = (prime * result)
-        + ((this.mutator == null) ? 0 : this.mutator.hashCode());
-    return result;
+    return Objects.hash(location, indexes, mutator);
   }
 
   @Override
@@ -142,35 +135,13 @@ public final class MutationIdentifier implements Comparable<MutationIdentifier>,
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final MutationIdentifier other = (MutationIdentifier) obj;
-    if (this.indexes == null) {
-      if (other.indexes != null) {
-        return false;
-      }
-    } else if (!this.indexes.equals(other.indexes)) {
-      return false;
-    }
-    if (this.location == null) {
-      if (other.location != null) {
-        return false;
-      }
-    } else if (!this.location.equals(other.location)) {
-      return false;
-    }
-    if (this.mutator == null) {
-      if (other.mutator != null) {
-        return false;
-      }
-    } else if (!this.mutator.equals(other.mutator)) {
-      return false;
-    }
-    return true;
+    return Objects.equals(location, other.location)
+            && Objects.equals(indexes, other.indexes)
+            && Objects.equals(mutator, other.mutator);
   }
 
   @Override

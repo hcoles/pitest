@@ -1,9 +1,7 @@
 package org.pitest.bytecode.analysis;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -73,12 +71,11 @@ public class MethodTree {
   }
 
   private List<AbstractInsnNode> createInstructionList() {
-    final List<AbstractInsnNode> list = new LinkedList<>();
-    final ListIterator<AbstractInsnNode> it = this.rawNode.instructions.iterator();
-    while (it.hasNext()) {
-        list.add(it.next());
+    final List<AbstractInsnNode> list = new ArrayList<>();
+    for (AbstractInsnNode abstractInsnNode : this.rawNode.instructions) {
+      list.add(abstractInsnNode);
     }
-    this.lazyInstructions = new ArrayList<>(list);
+    this.lazyInstructions = list;
     return this.lazyInstructions;
   }
 

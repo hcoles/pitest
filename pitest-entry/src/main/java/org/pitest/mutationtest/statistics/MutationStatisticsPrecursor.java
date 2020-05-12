@@ -15,7 +15,7 @@ class MutationStatisticsPrecursor {
   private long                              numberOfTestsRun = 0;
 
   public void registerResults(final Collection<MutationResult> results) {
-    FCollection.forEach(results, register());
+    results.forEach(register());
   }
 
   private Consumer<MutationResult> register() {

@@ -1,5 +1,7 @@
 package org.pitest.mutationtest.build.intercept.javafeatures;
 
+import java.util.Objects;
+
 public class LineMutatorPair {
 
   private final int    lineNumber;
@@ -12,12 +14,7 @@ public class LineMutatorPair {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result) + this.lineNumber;
-    result = (prime * result)
-        + ((this.mutator == null) ? 0 : this.mutator.hashCode());
-    return result;
+    return Objects.hash(lineNumber, mutator);
   }
 
   @Override
@@ -25,24 +22,11 @@ public class LineMutatorPair {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final LineMutatorPair other = (LineMutatorPair) obj;
-    if (this.lineNumber != other.lineNumber) {
-      return false;
-    }
-    if (this.mutator == null) {
-      if (other.mutator != null) {
-        return false;
-      }
-    } else if (!this.mutator.equals(other.mutator)) {
-      return false;
-    }
-    return true;
+    return lineNumber == other.lineNumber
+            && Objects.equals(mutator, other.mutator);
   }
-
 }

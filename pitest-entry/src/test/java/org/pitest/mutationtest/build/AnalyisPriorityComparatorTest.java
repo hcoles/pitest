@@ -3,7 +3,6 @@ package org.pitest.mutationtest.build;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -19,7 +18,7 @@ public class AnalyisPriorityComparatorTest {
     final MutationAnalysisUnit b = unit(2);
     final MutationAnalysisUnit c = unit(3);
     final List<MutationAnalysisUnit> actual = Arrays.asList(a, b, c);
-    Collections.sort(actual, this.testee);
+    actual.sort(this.testee);
     assertEquals(Arrays.asList(c, b, a), actual);
   }
 
@@ -29,7 +28,7 @@ public class AnalyisPriorityComparatorTest {
     final MutationAnalysisUnit b = unit(2);
     final MutationAnalysisUnit c = unit(1);
     final List<MutationAnalysisUnit> actual = Arrays.asList(a, b, c);
-    Collections.sort(actual, this.testee);
+    actual.sort(this.testee);
     assertEquals(Arrays.asList(a, b, c), actual);
   }
 

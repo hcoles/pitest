@@ -33,7 +33,7 @@ public class DefaultBuildVerifier implements BuildVerifier {
 
     if (hasMutableCode(codeClasses)) {
       checkAtLeastOneClassHasLineNumbers(codeClasses);
-      FCollection.forEach(codeClasses, throwErrorIfHasNoSourceFile());
+      codeClasses.forEach(throwErrorIfHasNoSourceFile());
     }
   }
 

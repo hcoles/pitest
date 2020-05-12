@@ -398,15 +398,14 @@ public final class Mutator {
 
   public static Collection<MethodMutatorFactory> fromStrings(
       final Collection<String> names) {
-    final Set<MethodMutatorFactory> unique = new TreeSet<>(
-        compareId());
+    final Set<MethodMutatorFactory> unique = new TreeSet<>(compareId());
 
     FCollection.flatMapTo(names, fromString(), unique);
     return unique;
   }
 
   private static Comparator<? super MethodMutatorFactory> compareId() {
-    return (o1, o2) -> o1.getGloballyUniqueId().compareTo(o2.getGloballyUniqueId());
+    return Comparator.comparing(MethodMutatorFactory::getGloballyUniqueId);
   }
 
   private static Function<String, Iterable<MethodMutatorFactory>> fromString() {

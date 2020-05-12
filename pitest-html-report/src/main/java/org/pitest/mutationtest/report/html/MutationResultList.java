@@ -14,10 +14,10 @@
  */
 package org.pitest.mutationtest.report.html;
 
+import static java.util.Comparator.comparingInt;
+
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -54,9 +54,7 @@ public class MutationResultList implements Iterable<MutationResult> {
   }
 
   private void sortMutationsIntoLineOrder() {
-    final Comparator<MutationResult> c = (o1, o2) -> o1.getDetails().getLineNumber()
-        - o2.getDetails().getLineNumber();
-    Collections.sort(this.impl, c);
+    this.impl.sort(comparingInt(o -> o.getDetails().getLineNumber()));
   }
 
   @Override

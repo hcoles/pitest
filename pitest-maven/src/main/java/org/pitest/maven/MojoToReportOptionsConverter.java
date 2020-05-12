@@ -236,7 +236,28 @@ public class MojoToReportOptionsConverter {
   }
 
   private Collection<Predicate<String>> determineTargetTests() {
-    return FCollection.map(this.mojo.getTargetTests(), Glob.toGlobPredicate());
+    return FCollection.map(useConfiguredTargetTestsOrFindOccupiedPackages(this.mojo.getTargetTests()), Glob.toGlobPredicate());
+  }
+
+  private Collection<String> useConfiguredTargetTestsOrFindOccupiedPackages(
+      final Collection<String> filters) {
+    if (!hasValue(filters)) {
+      this.mojo.getLog().info("Defaulting target tests to match packages in test build directory");
+      return findOccupiedTestPackages();
+    } else {
+      return filters;
+    }
+  }
+
+  private Collection<String> findOccupiedTestPackages() {
+    String outputDirName = this.mojo.getProject().getBuild()
+        .getTestOutputDirectory();
+    if (outputDirName != null) {
+        File outputDir = new File(outputDirName);
+        return findOccupiedPackagesIn(outputDir);
+    } else {
+        return Collections.emptyList();
+    }
   }
 
   private Collection<Artifact> filteredDependencies() {

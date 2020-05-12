@@ -1,10 +1,10 @@
 package org.pitest.mutationtest.report.html;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class PackageSummaryData implements Comparable<PackageSummaryData> {
 
@@ -50,17 +50,13 @@ public class PackageSummaryData implements Comparable<PackageSummaryData> {
   public List<MutationTestSummaryData> getSummaryData() {
     final ArrayList<MutationTestSummaryData> values = new ArrayList<>(
         this.fileNameToSummaryData.values());
-    Collections.sort(values, new MutationTestSummaryDataFileNameComparator());
+    values.sort(new MutationTestSummaryDataFileNameComparator());
     return values;
   }
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result)
-        + ((this.packageName == null) ? 0 : this.packageName.hashCode());
-    return result;
+    return Objects.hash(packageName);
   }
 
   @Override
@@ -68,21 +64,11 @@ public class PackageSummaryData implements Comparable<PackageSummaryData> {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final PackageSummaryData other = (PackageSummaryData) obj;
-    if (this.packageName == null) {
-      if (other.packageName != null) {
-        return false;
-      }
-    } else if (!this.packageName.equals(other.packageName)) {
-      return false;
-    }
-    return true;
+    return Objects.equals(packageName, other.packageName);
   }
 
   @Override

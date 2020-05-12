@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -28,11 +27,6 @@ import java.util.function.Predicate;
  * Functional programming style operations for plain old Java iterables.
  */
 public abstract class FCollection {
-
-  public static <A> void forEach(final Iterable<? extends A> as,
-      final Consumer<A> e) {
-    as.forEach(e);
-  }
 
   public static <A, B> void mapTo(final Iterable<? extends A> as,
       final Function<A, B> f, final Collection<? super B> bs) {
@@ -156,11 +150,7 @@ public abstract class FCollection {
     final Map<A, Collection<B>> bucketed = new HashMap<>();
     for (final B each : bs) {
       final A key = f.apply(each);
-      Collection<B> existing = bucketed.get(key);
-      if (existing == null) {
-        existing = new ArrayList<>();
-        bucketed.put(key, existing);
-      }
+      Collection<B> existing = bucketed.computeIfAbsent(key, k -> new ArrayList<>());
       existing.add(each);
     }
     return bucketed;

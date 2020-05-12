@@ -1,9 +1,10 @@
 package org.pitest.mutationtest.build;
 
+import static java.util.Comparator.comparing;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.pitest.bytecode.analysis.ClassTree;
@@ -16,18 +17,16 @@ public class CompoundMutationInterceptor implements MutationInterceptor {
 
   public CompoundMutationInterceptor(List<? extends MutationInterceptor> interceptors) {
     this.children.addAll(interceptors);
-    Collections.sort(this.children, sortByType());
+    this.children.sort(comparing(MutationInterceptor::type));
   }
 
   public static MutationInterceptor nullInterceptor() {
-    return new CompoundMutationInterceptor(Collections.<MutationInterceptor>emptyList());
+    return new CompoundMutationInterceptor(Collections.emptyList());
   }
 
   @Override
   public void begin(ClassTree clazz) {
-    for (final MutationInterceptor each : this.children) {
-      each.begin(clazz);
-    }
+    this.children.forEach(each -> each.begin(clazz));
   }
 
   @Override
@@ -42,18 +41,12 @@ public class CompoundMutationInterceptor implements MutationInterceptor {
 
   @Override
   public void end() {
-    for (final MutationInterceptor each : this.children) {
-      each.end();
-    }
+    this.children.forEach(MutationInterceptor::end);
   }
 
   @Override
   public InterceptorType type() {
     return InterceptorType.OTHER;
-  }
-
-  private static Comparator<? super MutationInterceptor> sortByType() {
-    return (o1, o2) -> o1.type().compareTo(o2.type());
   }
 
 }

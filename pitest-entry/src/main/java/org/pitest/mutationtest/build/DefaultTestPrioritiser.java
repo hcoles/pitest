@@ -1,7 +1,7 @@
 package org.pitest.mutationtest.build;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Logger;
@@ -11,8 +11,6 @@ import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.InstructionLocation;
 import org.pitest.coverage.TestInfo;
-import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.util.Log;
 
@@ -69,10 +67,8 @@ public class DefaultTestPrioritiser implements TestPrioritiser {
 
   private List<TestInfo> prioritizeTests(ClassName clazz,
       Collection<TestInfo> testsForMutant) {
-    final List<TestInfo> sortedTis = FCollection.map(testsForMutant,
-        Prelude.id(TestInfo.class));
-    Collections.sort(sortedTis, new TestInfoPriorisationComparator(clazz,
-        TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS));
+    final List<TestInfo> sortedTis = new ArrayList<>(testsForMutant);
+    sortedTis.sort(new TestInfoPriorisationComparator(clazz, TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS));
     return sortedTis;
   }
 

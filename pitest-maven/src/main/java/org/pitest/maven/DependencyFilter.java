@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -129,12 +130,7 @@ public class DependencyFilter implements Predicate<Artifact> {
 
     @Override
     public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = (prime * result)
-          + ((this.group == null) ? 0 : this.group.hashCode());
-      result = (prime * result) + ((this.id == null) ? 0 : this.id.hashCode());
-      return result;
+      return Objects.hash(group, id);
     }
 
     @Override
@@ -142,30 +138,13 @@ public class DependencyFilter implements Predicate<Artifact> {
       if (this == obj) {
         return true;
       }
-      if (obj == null) {
-        return false;
-      }
-      if (getClass() != obj.getClass()) {
+      if (obj == null || getClass() != obj.getClass()) {
         return false;
       }
       final GroupIdPair other = (GroupIdPair) obj;
-      if (this.group == null) {
-        if (other.group != null) {
-          return false;
-        }
-      } else if (!this.group.equals(other.group)) {
-        return false;
-      }
-      if (this.id == null) {
-        if (other.id != null) {
-          return false;
-        }
-      } else if (!this.id.equals(other.id)) {
-        return false;
-      }
-      return true;
+      return Objects.equals(group, other.group)
+              && Objects.equals(id, other.id);
     }
-
   }
 
 }

@@ -15,6 +15,8 @@
 
 package org.pitest.coverage;
 
+import static java.util.stream.Collectors.toCollection;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +33,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.pitest.classinfo.ClassInfo;
@@ -61,7 +62,7 @@ public class CoverageData implements CoverageDatabase {
   private final List<Description>                             failingTestDescriptions = new ArrayList<>();
 
   public CoverageData(final CodeSource code, final LineMap lm) {
-    this(code, lm, new LinkedHashMap<InstructionLocation, Set<TestInfo>>());
+    this(code, lm, new LinkedHashMap<>());
   }
 
 
@@ -74,14 +75,13 @@ public class CoverageData implements CoverageDatabase {
   }
 
   @Override
-  public Collection<TestInfo> getTestsForInstructionLocation(
-      InstructionLocation location) {
-    return this.instructionCoverage.get(location);
+  public Collection<TestInfo> getTestsForInstructionLocation(InstructionLocation location) {
+    return this.instructionCoverage.getOrDefault(location, Collections.emptySet());
   }
 
   @Override
   public Collection<TestInfo> getTestsForClassLine(final ClassLine classLine) {
-    final Collection<TestInfo> result = getTestsForClassName(
+    final Collection<TestInfo> result = getLineCoverageForClassName(
         classLine.getClassName()).get(classLine);
     if (result == null) {
       return Collections.emptyList();
@@ -109,18 +109,18 @@ public class CoverageData implements CoverageDatabase {
 
   @Override
   public int getNumberOfCoveredLines(final Collection<ClassName> mutatedClass) {
-    return FCollection.fold(numberCoveredLines(), 0, mutatedClass);
+    return mutatedClass.stream()
+        .map(this::getLineCoverageForClassName)
+        .mapToInt(Map::size)
+        .sum();
   }
 
   @Override
   public Collection<TestInfo> getTestsForClass(final ClassName clazz) {
-    final Set<TestInfo> tis = new TreeSet<>(
-        new TestInfoNameComparator());
-    tis.addAll(this.instructionCoverage.entrySet().stream().filter(isFor(clazz))
-        .flatMap(toTests())
-        .collect(Collectors.toList())
-        );
-    return tis;
+    return this.instructionCoverage.entrySet().stream()
+            .filter(isFor(clazz))
+            .flatMap(toTests())
+            .collect(toCollection(() -> new TreeSet<>(new TestInfoNameComparator())));
   }
 
   public void calculateClassCoverage(final CoverageResult cr) {
@@ -147,7 +147,7 @@ public class CoverageData implements CoverageDatabase {
 
   @Override
   public BigInteger getCoverageIdForClass(final ClassName clazz) {
-    final Map<ClassLine, Set<TestInfo>> coverage = getTestsForClassName(clazz);
+    final Map<ClassLine, Set<TestInfo>> coverage = getLineCoverageForClassName(clazz);
     if (coverage.isEmpty()) {
       return BigInteger.ZERO;
     }
@@ -170,7 +170,7 @@ public class CoverageData implements CoverageDatabase {
     final Collection<ClassInfo> value = this.getClassesForFileCache().get(
         keyFromSourceAndPackage(sourceFile, packageName));
     if (value == null) {
-      return Collections.<ClassInfo> emptyList();
+      return Collections.emptyList();
     } else {
       return value;
     }
@@ -224,7 +224,7 @@ public class CoverageData implements CoverageDatabase {
   }
 
   private int coveredLines() {
-    return FCollection.fold(numberCoveredLines(), 0, allClasses());
+    return getNumberOfCoveredLines(allClasses());
   }
 
   private BiFunction<Integer, ClassInfo, Integer> numberLines() {
@@ -247,22 +247,7 @@ public class CoverageData implements CoverageDatabase {
         description.getQualifiedName(), executionTime, testee, linesCovered);
   }
 
-  private BiFunction<Integer, ClassName, Integer> numberCoveredLines() {
-    return (a, clazz) -> a + getNumberOfCoveredLines(clazz);
-  }
-
-  private int getNumberOfCoveredLines(final ClassName clazz) {
-    final Map<ClassLine, Set<TestInfo>> map = getTestsForClassName(clazz);
-    if (map != null) {
-      return map.size();
-    } else {
-      return 0;
-    }
-
-  }
-
-  private Map<ClassLine, Set<TestInfo>> getTestsForClassName(
-      final ClassName clazz) {
+  private Map<ClassLine, Set<TestInfo>> getLineCoverageForClassName(final ClassName clazz) {
     // Use any test that provided some coverage of the class
     // This fails to consider tests that only accessed a static variable
     // of the class in question as this does not register as coverage.

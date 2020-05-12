@@ -15,6 +15,7 @@
 package org.pitest.mutationtest.engine;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.pitest.classinfo.ClassName;
 
@@ -56,15 +57,7 @@ public final class Location implements Comparable<Location>, Serializable  {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result)
-        + ((this.clazz == null) ? 0 : this.clazz.hashCode());
-    result = (prime * result)
-        + ((this.method == null) ? 0 : this.method.hashCode());
-    result = (prime * result)
-        + ((this.methodDesc == null) ? 0 : this.methodDesc.hashCode());
-    return result;
+    return Objects.hash(clazz, method, methodDesc);
   }
 
   @Override
@@ -72,35 +65,13 @@ public final class Location implements Comparable<Location>, Serializable  {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final Location other = (Location) obj;
-    if (this.clazz == null) {
-      if (other.clazz != null) {
-        return false;
-      }
-    } else if (!this.clazz.equals(other.clazz)) {
-      return false;
-    }
-    if (this.method == null) {
-      if (other.method != null) {
-        return false;
-      }
-    } else if (!this.method.equals(other.method)) {
-      return false;
-    }
-    if (this.methodDesc == null) {
-      if (other.methodDesc != null) {
-        return false;
-      }
-    } else if (!this.methodDesc.equals(other.methodDesc)) {
-      return false;
-    }
-    return true;
+    return Objects.equals(clazz, other.clazz)
+            && Objects.equals(method, other.method)
+            && Objects.equals(methodDesc, other.methodDesc);
   }
 
   @Override

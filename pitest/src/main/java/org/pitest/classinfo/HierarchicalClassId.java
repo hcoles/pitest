@@ -2,6 +2,7 @@ package org.pitest.classinfo;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.Objects;
 
 public final class HierarchicalClassId implements Serializable {
 
@@ -45,14 +46,7 @@ public final class HierarchicalClassId implements Serializable {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result)
-        + ((this.classId == null) ? 0 : this.classId.hashCode());
-    result = (prime * result)
-        + ((this.hierarchicalHash == null) ? 0 : this.hierarchicalHash
-            .hashCode());
-    return result;
+    return Objects.hash(classId, hierarchicalHash);
   }
 
   @Override
@@ -60,28 +54,11 @@ public final class HierarchicalClassId implements Serializable {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final HierarchicalClassId other = (HierarchicalClassId) obj;
-    if (this.classId == null) {
-      if (other.classId != null) {
-        return false;
-      }
-    } else if (!this.classId.equals(other.classId)) {
-      return false;
-    }
-    if (this.hierarchicalHash == null) {
-      if (other.hierarchicalHash != null) {
-        return false;
-      }
-    } else if (!this.hierarchicalHash.equals(other.hierarchicalHash)) {
-      return false;
-    }
-    return true;
+    return Objects.equals(classId, other.classId)
+            && Objects.equals(hierarchicalHash, other.hierarchicalHash);
   }
-
 }

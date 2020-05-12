@@ -8,7 +8,6 @@ import static org.pitest.functional.prelude.Prelude.not;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -67,7 +66,7 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
     }
 
     /* FIXME tests rely on order of returned mutants */
-    Collections.sort(combined, compareLineNumbers());
+    combined.sort(compareLineNumbers());
     return combined;
   }
 
@@ -77,7 +76,7 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
   }
 
   private static Comparator<MutationDetails> compareLineNumbers() {
-    return (arg0, arg1) -> arg0.getLineNumber() - arg1.getLineNumber();
+    return Comparator.comparingInt(MutationDetails::getLineNumber);
   }
 
   private void checkForInlinedCode(final Collection<MutationDetails> combined,
@@ -97,7 +96,7 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
     // to the base one (is this not implied by there being only 1 mutation in
     // the handler ????)
     final List<Integer> ids = map(each.getValue(), mutationToBlock());
-    if (ids.stream().filter(not(isEqual(firstBlock))).findFirst().isPresent()) {
+    if (ids.stream().anyMatch(not(isEqual(firstBlock)))) {
       combined.add(makeCombinedMutant(each.getValue()));
     } else {
       combined.addAll(each.getValue());

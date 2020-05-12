@@ -17,6 +17,7 @@ package org.pitest.simpletest;
 
 import java.lang.reflect.Method;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class TestMethod {
@@ -43,7 +44,7 @@ public class TestMethod {
   }
 
   public Optional<Class<? extends Throwable>> getExpected() {
-    return Optional.<Class<? extends Throwable>> ofNullable(this.expected);
+    return Optional.ofNullable(this.expected);
   }
 
   @Override
@@ -54,13 +55,7 @@ public class TestMethod {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = (prime * result)
-        + ((this.expected == null) ? 0 : this.expected.hashCode());
-    result = (prime * result)
-        + ((this.method == null) ? 0 : this.method.hashCode());
-    return result;
+    return Objects.hash(method, expected);
   }
 
   @Override
@@ -68,28 +63,11 @@ public class TestMethod {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final TestMethod other = (TestMethod) obj;
-    if (this.expected == null) {
-      if (other.expected != null) {
-        return false;
-      }
-    } else if (!this.expected.equals(other.expected)) {
-      return false;
-    }
-    if (this.method == null) {
-      if (other.method != null) {
-        return false;
-      }
-    } else if (!this.method.equals(other.method)) {
-      return false;
-    }
-    return true;
+    return Objects.equals(method, other.method) &&
+            Objects.equals(expected, other.expected);
   }
-
 }
