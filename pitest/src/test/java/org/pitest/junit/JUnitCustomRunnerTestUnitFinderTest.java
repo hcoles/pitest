@@ -123,15 +123,13 @@ public class JUnitCustomRunnerTestUnitFinderTest {
    *
    * This appears to be happening in org.apache.maven.plugins:maven-pmd-plugin:3.13.0.
    *
-   * This fails in two ways:
-   * 1) if the Suite has no SuiteClasses, it is determined to be a
-   * test, after which its description is used to create a TestUnit
-   * but as the classname of the description is not an actual class
-   * a ClassNotFoundException is thrown and the entiry test results
-   * in "PitError: Coverage generation minion exited abnormall
-   * y!" errors.
-   * 2) if the Suite does have SuiteClasss, it is determined to NOT be a
-   * test, after which it is ignored entirely.
+   * This needs to be addressed in two ways:
+   * 1) if the Suite has no SuiteClasses, isTest() is
+   * true. Pitest must not fail if the the name in the
+   * Description throws a ClassNotFoundException
+   * 2) if the Suite has SuiteClasses, isTest() is false,
+   * Pitest must then use the child descriptions of the Suite
+   * to continue testing with.
    */
   public static class CustomDescriptionSuiteRunner extends Suite {
 
