@@ -123,13 +123,11 @@ public class JUnitCustomRunnerTestUnitFinderTest {
    *
    * This appears to be happening in org.apache.maven.plugins:maven-pmd-plugin:3.13.0.
    *
-   * This needs to be addressed in two ways:
-   * 1) if the Suite has no SuiteClasses, isTest() is
-   * true. Pitest must not fail if the the name in the
-   * Description throws a ClassNotFoundException
-   * 2) if the Suite has SuiteClasses, isTest() is false,
-   * Pitest must then use the child descriptions of the Suite
-   * to continue testing with.
+   * This needs to be addressed as follows:
+   * if a ClassNotFoundException is thrown
+   * when creating a TestUnit because of non-class name,
+   * find its direct children to create test units
+   * from.
    */
   public static class CustomDescriptionSuiteRunner extends Suite {
 
