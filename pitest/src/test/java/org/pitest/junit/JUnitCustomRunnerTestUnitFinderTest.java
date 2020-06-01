@@ -195,31 +195,31 @@ public class JUnitCustomRunnerTestUnitFinderTest {
 
   @RunWith(CustomDescriptionSuiteRunner.class)
   @SuiteClasses({ })
-  public static class EmptySuite {
+  public static class EmptyCustomDescriptionSuite {
   }
 
 
   @RunWith(CustomDescriptionSuiteRunner.class)
   @SuiteClasses({ One.class })
-  public static class CustomTest {
+  public static class CustomDescriptionSuite {
   }
 
   @Test
   public void shouldHandleEmptySuite() {
-    final Collection<TestUnit> actual = findWithTestee(EmptySuite.class);
+    final Collection<TestUnit> actual = findWithTestee(EmptyCustomDescriptionSuite.class);
     assertTrue(actual.isEmpty());
+  }
+
+  @Test
+  public void shouldNotFindTestsInCustomDescriptionSuite() {
+    final Collection<TestUnit> actual = findWithTestee(CustomDescriptionSuite.class);
+    assertEquals(2, actual.size());
   }
 
   @Test
   public void shouldNotFindTestsInCustomSuite() {
     final Collection<TestUnit> actual = findWithTestee(CustomSuite.class);
     assertTrue(actual.isEmpty());
-  }
-
-  @Test
-  public void shouldNotFindTestsInCustomSuite2() {
-    final Collection<TestUnit> actual = findWithTestee(CustomTest.class);
-    assertEquals(2, actual.size());
   }
 
   public static class Three {
