@@ -36,6 +36,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExternalResource;
 import org.junit.rules.TestRule;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -116,6 +117,55 @@ public class JUnitCustomRunnerTestUnitFinderTest {
 
   }
 
+  /**
+   * It is possible to override the getDescription() method in a (Parent)Runner,
+   * and this way it is even possibly to add a non-class name.
+   *
+   * This appears to be happening in org.apache.maven.plugins:maven-pmd-plugin:3.13.0.
+   *
+   * This fails in two ways:
+   * 1) if the Suite has no SuiteClasses, it is determined to be a
+   * test, after which its description is used to create a TestUnit
+   * but as the classname of the description is not an actual class
+   * a ClassNotFoundException is thrown and the entiry test results
+   * in "PitError: Coverage generation minion exited abnormall
+   * y!" errors.
+   * 2) if the Suite does have SuiteClasss, it is determined to NOT be a
+   * test, after which it is ignored entirely.
+   */
+  public static class CustomDescriptionSuiteRunner extends Suite {
+
+    CustomSuiteRunner customSuiteRunner;
+
+    public CustomDescriptionSuiteRunner(final Class<?> klass, final RunnerBuilder rb)
+            throws InitializationError {
+      super(klass, rb);
+      customSuiteRunner = new CustomSuiteRunner(klass, rb);
+    }
+
+    @Override
+    public Description getDescription() {
+      Description description = Description.createSuiteDescription(super.getDescription().getClassName());;
+      final Description unit_tests = Description.createSuiteDescription("Unit Tests");
+      description.addChild( unit_tests);
+      for (Description child : customSuiteRunner.getDescription().getChildren()) {
+        for( Description grandChild : child.getChildren()) {
+          unit_tests.addChild(grandChild);
+        }
+      }
+
+      return description;
+    }
+
+    private Description createChildrenDescriptions(Runner runner, String suiteName) {
+      Description suite = Description.createSuiteDescription(suiteName);
+      for (Description child : runner.getDescription().getChildren()) {
+        suite.addChild(child);
+      }
+      return suite;
+    }
+  }
+
   public static class One {
     @Test
     public void one() {
@@ -144,12 +194,40 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   @SuiteClasses({ One.class, Two.class })
   public static class CustomSuite {
 
+
+  }
+
+  @RunWith(CustomDescriptionSuiteRunner.class)
+  @SuiteClasses({ })
+  public static class EmptySuite {
+  }
+
+
+  @RunWith(CustomDescriptionSuiteRunner.class)
+  @SuiteClasses({ One.class })
+  public static class CustomTest {
+    @Test
+    public void six() {
+
+    }
+  }
+
+  @Test
+  public void shouldHandleEmptySuite() {
+    final Collection<TestUnit> actual = findWithTestee(EmptySuite.class);
+    assertTrue(actual.isEmpty());
   }
 
   @Test
   public void shouldNotFindTestsInCustomSuite() {
     final Collection<TestUnit> actual = findWithTestee(CustomSuite.class);
     assertTrue(actual.isEmpty());
+  }
+
+  @Test
+  public void shouldNotFindTestsInCustomSuite2() {
+    final Collection<TestUnit> actual = findWithTestee(CustomTest.class);
+    assertEquals(2, actual.size());
   }
 
   public static class Three {
