@@ -202,10 +202,6 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   @RunWith(CustomDescriptionSuiteRunner.class)
   @SuiteClasses({ One.class })
   public static class CustomTest {
-    @Test
-    public void six() {
-
-    }
   }
 
   @Test
