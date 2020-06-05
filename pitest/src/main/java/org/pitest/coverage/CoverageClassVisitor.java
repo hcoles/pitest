@@ -39,7 +39,6 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
   private int       probeCount = 1;
 
   private String    className;
-  private boolean   foundClinit;
 
   public CoverageClassVisitor(final int classId, final ClassWriter writer) {
     super(writer, BridgeMethodFilter.INSTANCE);
@@ -62,10 +61,6 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
   public MethodVisitor visitMethodIfRequired(final int access,
       final String name, final String desc, final String signature,
       final String[] exceptions, final MethodVisitor methodVisitor) {
-
-    if (name.equals("<clinit>")) {
-      foundClinit = true;
-    }
 
     return new CoverageAnalyser(this, this.classId, this.probeCount,
         methodVisitor, access, name, desc, signature, exceptions);
@@ -100,57 +95,6 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
     super.visitField(Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_PUBLIC
             | Opcodes.ACC_SYNTHETIC, CodeCoverageStore.PROBE_LENGTH_FIELD_NAME, "I",
         null, this.probeCount + 1);
-
-    //If there is no <clinit>, then generate one that sets the probe field directly
-    if (!foundClinit) {
-      MethodVisitor clinitMv = this.cv
-          .visitMethod(Opcodes.ACC_STATIC, "<clinit>", "()V", null, null);
-      clinitMv.visitCode();
-
-
-      pushConstant(clinitMv, this.classId);
-      pushConstant(clinitMv, this.probeCount);
-      clinitMv
-          .visitMethodInsn(Opcodes.INVOKESTATIC, CodeCoverageStore.CLASS_NAME,
-              "getOrRegisterClassProbes", "(II)[Z", false);
-
-      clinitMv.visitFieldInsn(Opcodes.PUTSTATIC, className,
-          CodeCoverageStore.PROBE_FIELD_NAME, "[Z");
-      clinitMv.visitInsn(Opcodes.RETURN);
-      clinitMv.visitMaxs(0, 0);
-      clinitMv.visitEnd();
-    }
-  }
-
-  private void pushConstant(MethodVisitor mv, int value) {
-    switch (value) {
-      case 0:
-        mv.visitInsn(Opcodes.ICONST_0);
-        break;
-      case 1:
-        mv.visitInsn(Opcodes.ICONST_1);
-        break;
-      case 2:
-        mv.visitInsn(Opcodes.ICONST_2);
-        break;
-      case 3:
-        mv.visitInsn(Opcodes.ICONST_3);
-        break;
-      case 4:
-        mv.visitInsn(Opcodes.ICONST_4);
-        break;
-      case 5:
-        mv.visitInsn(Opcodes.ICONST_5);
-        break;
-      default:
-        if (value <= Byte.MAX_VALUE) {
-          mv.visitIntInsn(Opcodes.BIPUSH, value);
-        } else if (value <= Short.MAX_VALUE) {
-          mv.visitIntInsn(Opcodes.SIPUSH, value);
-        } else {
-          mv.visitLdcInsn(value);
-        }
-    }
   }
 
   public String getClassName() {
