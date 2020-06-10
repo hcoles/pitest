@@ -96,10 +96,15 @@ public class CoverageTransformerTest {
     assertValidClass(AccessMode.class);
   }
   
+  @Test
+  public void shouldGenerateValidClassesWhenStaticInitializerPresent() throws IllegalClassFormatException {
+    assertValidClass(HasStaticInitializer.class);
+  }
+  
   private void assertValidClass(final Class<?> clazz)
       throws IllegalClassFormatException {
     final byte[] bs = transform(clazz);
-     printClass(bs);
+    //printClass(bs);
     final StringWriter sw = new StringWriter();
     CheckClassAdapter.verify(new ClassReader(bs), false, new PrintWriter(sw));
     assertTrue(sw.toString(), sw.toString().length() == 0);

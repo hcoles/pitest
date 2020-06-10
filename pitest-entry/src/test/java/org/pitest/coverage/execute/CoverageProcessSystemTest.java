@@ -47,6 +47,8 @@ import com.example.coverage.execute.samples.exceptions.ThrowsExceptionInFinallyB
 import com.example.coverage.execute.samples.exceptions.ThrowsExceptionTestee;
 import com.example.coverage.execute.samples.simple.Testee;
 import com.example.coverage.execute.samples.simple.Testee2;
+import com.example.coverage.execute.samples.simple.TesteeThatHasAStaticInitializer;
+import com.example.coverage.execute.samples.simple.TesteeThatHasAStaticInitializerTest;
 import com.example.coverage.execute.samples.simple.TesteeThatIsAnInterface;
 import com.example.coverage.execute.samples.simple.TesteeThatIsAnInterfaceTest;
 import com.example.coverage.execute.samples.simple.TesteeWithComplexConstructorsTest;
@@ -262,6 +264,17 @@ public class CoverageProcessSystemTest {
         Location.location(clazz, this.foo, "()V"), 0)));
   }
 
+  @Test
+  public void shouldCalculateCoverageForClassesWithStaticInitializers() throws Exception {
+    final List<CoverageResult> coveredClasses = runCoverageForTest(TesteeThatHasAStaticInitializerTest.class);
+    
+    final ClassName clazz = ClassName
+        .fromClass(TesteeThatHasAStaticInitializer.class);
+
+    assertThat(coveredClasses).anyMatch(coverageFor(BlockLocation.blockLocation(
+        Location.location(clazz, this.foo, "()V"), 0)));
+  }
+  
   public static class TestInDifferentClassLoader {
     @Test
     public void testFoo() {
