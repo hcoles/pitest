@@ -47,6 +47,8 @@ import com.example.coverage.execute.samples.exceptions.ThrowsExceptionInFinallyB
 import com.example.coverage.execute.samples.exceptions.ThrowsExceptionTestee;
 import com.example.coverage.execute.samples.simple.Testee;
 import com.example.coverage.execute.samples.simple.Testee2;
+import com.example.coverage.execute.samples.simple.TesteeThatIsAnInterface;
+import com.example.coverage.execute.samples.simple.TesteeThatIsAnInterfaceTest;
 import com.example.coverage.execute.samples.simple.TesteeWithComplexConstructorsTest;
 import com.example.coverage.execute.samples.simple.TesteeWithMultipleLines;
 import com.example.coverage.execute.samples.simple.Tests;
@@ -247,6 +249,17 @@ public class CoverageProcessSystemTest {
     assertThat(coveredClasses).anyMatch(coverageFor(BlockLocation.blockLocation(
         Location.location(clazz, this.foo, "()I"), 0)));
 
+  }
+  
+  @Test
+  public void shouldCalculateCoverageForInterfaceDefaultMethods() throws Exception {
+    final List<CoverageResult> coveredClasses = runCoverageForTest(TesteeThatIsAnInterfaceTest.class);
+    
+    final ClassName clazz = ClassName
+        .fromClass(TesteeThatIsAnInterface.class);
+
+    assertThat(coveredClasses).anyMatch(coverageFor(BlockLocation.blockLocation(
+        Location.location(clazz, this.foo, "()V"), 0)));
   }
 
   public static class TestInDifferentClassLoader {

@@ -8,11 +8,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.instrument.IllegalClassFormatException;
+import java.nio.file.AccessMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 import org.junit.After;
 import org.junit.Before;
@@ -83,11 +85,21 @@ public class CoverageTransformerTest {
     assertValidClass(ConcurrentHashMap.class);
     assertValidClass(Math.class);
   }
+  
+  @Test
+  public void shouldGenerateValidInterfaces() throws IllegalClassFormatException {
+    assertValidClass(Function.class);
+  }
 
+  @Test
+  public void shouldGenerateValidEnums() throws IllegalClassFormatException {
+    assertValidClass(AccessMode.class);
+  }
+  
   private void assertValidClass(final Class<?> clazz)
       throws IllegalClassFormatException {
     final byte[] bs = transform(clazz);
-    // printClass(bs);
+     printClass(bs);
     final StringWriter sw = new StringWriter();
     CheckClassAdapter.verify(new ClassReader(bs), false, new PrintWriter(sw));
     assertTrue(sw.toString(), sw.toString().length() == 0);
