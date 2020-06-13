@@ -45,7 +45,7 @@ public class CoverageAnalyser extends MethodNode {
     final DefaultInstructionCounter counter = new DefaultInstructionCounter();
     accept(new InstructionTrackingMethodVisitor(
         new ArrayProbeCoverageMethodVisitor(blocks, counter, this.classId,
-            this.mv, this.access, parent.getClassName(), this.name, this.desc,
+            this.mv, parent.getClassAccess(), this.access, parent.getClassName(), this.name, this.desc,
             this.probeOffset), counter));
   }
 

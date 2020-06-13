@@ -64,12 +64,16 @@ import sun.pitest.CodeCoverageStore;
 public class ArrayProbeCoverageMethodVisitor extends AbstractCoverageStrategy {
 
   private int           probeHitArrayLocal;
+  private final int     classAccess;
+  private final String  className;
 
   public ArrayProbeCoverageMethodVisitor(List<Block> blocks,
       InstructionCounter counter, final int classId,
-      final MethodVisitor writer, final int access, final String className, final String name,
+      final MethodVisitor writer, final int classAccess, final int access, final String className, final String name,
       final String desc, final int probeOffset) {
     super(blocks, counter, classId, writer, access, className, name, desc, probeOffset);
+    this.classAccess = classAccess;
+    this.className = className;
   }
 
   @Override
@@ -87,29 +91,37 @@ public class ArrayProbeCoverageMethodVisitor extends AbstractCoverageStrategy {
 
   @Override
   void prepare() {
+    if ((this.classAccess & Opcodes.ACC_INTERFACE) != 0 && getName().equals("<clinit>")) {
+      pushConstant(this.classId);
+      this.mv.visitFieldInsn(Opcodes.GETSTATIC, this.className, CodeCoverageStore.PROBE_LENGTH_FIELD_NAME,"I");
+      this.mv
+              .visitMethodInsn(Opcodes.INVOKESTATIC, CodeCoverageStore.CLASS_NAME,
+                      "getOrRegisterClassProbes", "(II)[Z", false);
+      this.mv.visitFieldInsn(Opcodes.PUTSTATIC, className,
+              CodeCoverageStore.PROBE_FIELD_NAME, "[Z");
+    }
+
     this.probeHitArrayLocal = newLocal(Type.getType("[Z"));
 
     this.mv.visitFieldInsn(Opcodes.GETSTATIC, className,
         CodeCoverageStore.PROBE_FIELD_NAME, "[Z");
-    this.mv.visitInsn(DUP); //duplicate array reference, one for null check and one to use
 
-    //Check if PROBE_FIELD_NAME has been initialised
-    Label notnull = new Label();
-    this.mv.visitJumpInsn(Opcodes.IFNONNULL,notnull);
+    if ((this.classAccess & Opcodes.ACC_INTERFACE) == 0) { //If we are instrumenting a class or enum
+      this.mv.visitInsn(DUP); //duplicate array reference, one for null check and one to use
 
-    //if not then initialise
-    this.mv.visitInsn(POP); //gte rid of null on top of stack
-    pushConstant(this.classId);
-    this.mv.visitFieldInsn(Opcodes.GETSTATIC, this.className, CodeCoverageStore.PROBE_LENGTH_FIELD_NAME,"I");
-    this.mv
-            .visitMethodInsn(Opcodes.INVOKESTATIC, CodeCoverageStore.CLASS_NAME,
-                    "getOrRegisterClassProbes", "(II)[Z", false);
-    this.mv.visitInsn(DUP);//duplicate array reference, one to store and one to use
-    this.mv.visitFieldInsn(Opcodes.PUTSTATIC, className,
-            CodeCoverageStore.PROBE_FIELD_NAME, "[Z");
+      //Check if PROBE_FIELD_NAME has been initialised
+      Label notNull = new Label();
+      this.mv.visitJumpInsn(Opcodes.IFNONNULL, notNull);
 
-    //else do nothing
-    this.mv.visitLabel(notnull);
+      //if not initialised then double-checked Locking (PROBE_FIELD_NAME is volatile)
+      this.mv.visitInsn(POP); //get rid of null on top of stack
+
+      this.mv.visitMethodInsn(Opcodes.INVOKESTATIC, this.className,
+              CodeCoverageStore.PROBE_FIELD_NAME + "Init", "()[Z", false);
+
+      //if initialised then do nothing
+      this.mv.visitLabel(notNull);
+    }
 
     //Make sure that we recorded that the class was hit
     this.mv.visitInsn(DUP);
