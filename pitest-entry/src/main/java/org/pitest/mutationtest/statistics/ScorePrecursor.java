@@ -36,8 +36,17 @@ class ScorePrecursor {
         FCollection.filter(this.counts.values(), isDetected()));
   }
 
+  private long getTotalMutationsWithCoverage() {
+    return FCollection.fold(addTotals(), 0L,
+            FCollection.filter(this.counts.values(), hasCoverage()));
+  }
+
   private static Predicate<StatusCount> isDetected() {
     return a -> a.getStatus().isDetected();
+  }
+
+  private static Predicate<StatusCount> hasCoverage() {
+    return a -> a.getStatus() != DetectionStatus.NO_COVERAGE;
   }
 
   private BiFunction<Long, StatusCount, Long> addTotals() {
@@ -54,7 +63,7 @@ class ScorePrecursor {
 
   Score toScore() {
     return new Score(this.mutatorName, this.getCounts(), this.getTotalMutations(),
-        this.getTotalDetectedMutations());
+        this.getTotalDetectedMutations(), this.getTotalMutationsWithCoverage());
   }
 }
 

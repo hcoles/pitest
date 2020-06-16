@@ -377,7 +377,7 @@ public class PitMojoTest extends BasePitMojoTest {
   private void setupCoverage(long mutationScore, int lines, int linesCovered)
       throws MojoExecutionException {
     Iterable<Score> scores = Collections.<Score>emptyList();
-    final MutationStatistics stats = new MutationStatistics(scores, 100, mutationScore, 0);
+    final MutationStatistics stats = new MutationStatistics(scores, 100, mutationScore, 0, 100);
     CoverageSummary sum = new CoverageSummary(lines, linesCovered);
     final CombinedStatistics cs = new CombinedStatistics(stats, sum);
     when(
@@ -390,7 +390,7 @@ public class PitMojoTest extends BasePitMojoTest {
       throws MojoExecutionException {
     Iterable<Score> scores = Collections.<Score>emptyList();
     int detected = 100;
-    final MutationStatistics stats = new MutationStatistics(scores, detected + survivors, detected, 0);
+    final MutationStatistics stats = new MutationStatistics(scores, detected + survivors, detected, 0, detected + survivors);
     CoverageSummary sum = new CoverageSummary(0, 0);
     final CombinedStatistics cs = new CombinedStatistics(stats, sum);
     when(

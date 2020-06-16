@@ -22,13 +22,15 @@ public final class Score {
   private final Iterable<StatusCount> counts;
   private final long                  totalMutations;
   private final long                  totalDetected;
+  private final long totalWithCoverage;
 
   public Score(final String name, Iterable<StatusCount> counts,
-      long totalMutations, long totalDetected) {
+               long totalMutations, long totalDetected, long totalWithCoverage) {
     this.mutatorName = name;
     this.counts = counts;
     this.totalMutations = totalMutations;
     this.totalDetected = totalDetected;
+    this.totalWithCoverage = totalWithCoverage;
   }
 
   public void report(final PrintStream out) {
@@ -58,6 +60,10 @@ public final class Score {
 
   public long getTotalDetectedMutations() {
     return this.totalDetected;
+  }
+
+  public long getTotalWithCoverage() {
+    return this.totalWithCoverage;
   }
 
   public int getPercentageDetected() {
