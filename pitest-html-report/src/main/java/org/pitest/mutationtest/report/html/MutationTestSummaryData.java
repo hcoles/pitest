@@ -17,6 +17,7 @@ package org.pitest.mutationtest.report.html;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
+import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
 
 import java.util.ArrayList;
@@ -54,7 +55,15 @@ public class MutationTestSummaryData {
     mt.addMutationsDetetcted(this.getNumberOfMutationsDetected());
     mt.addLines(getNumberOfLines());
     mt.addLinesCovered(this.numberOfCoveredLines);
+    mt.addMutationsWithCoverage(this.getNumberOfMutationsWithCoverage());
     return mt;
+  }
+
+  private long getNumberOfMutationsWithCoverage() {
+    return this.mutations.stream()
+            .map(MutationResult::getStatus)
+            .filter(it -> it != DetectionStatus.NO_COVERAGE)
+            .count();
   }
 
   public String getPackageName() {
