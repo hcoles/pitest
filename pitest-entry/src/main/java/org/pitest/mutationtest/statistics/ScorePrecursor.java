@@ -46,7 +46,7 @@ class ScorePrecursor {
   }
 
   private static Predicate<StatusCount> hasCoverage() {
-    return a -> a.getStatus() != DetectionStatus.NO_COVERAGE;
+    return a -> a.getStatus().hasCoverage();
   }
 
   private BiFunction<Long, StatusCount, Long> addTotals() {

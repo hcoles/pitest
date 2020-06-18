@@ -61,8 +61,7 @@ public class MutationTestSummaryData {
 
   private long getNumberOfMutationsWithCoverage() {
     return this.mutations.stream()
-            .map(MutationResult::getStatus)
-            .filter(it -> it != DetectionStatus.NO_COVERAGE)
+            .filter(it -> it.getStatus().hasCoverage())
             .count();
   }
 
