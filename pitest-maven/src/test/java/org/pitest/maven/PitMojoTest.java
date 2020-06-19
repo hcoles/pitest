@@ -68,6 +68,18 @@ public class PitMojoTest extends BasePitMojoTest {
     }
   }
 
+  public void testThrowsMojoFailureExceptionWhenTestStrengthScoreBelowThreshold()
+          throws Exception {
+    this.testee = createPITMojo(createPomWithConfiguration("<testStrengthThreshold>21</testStrengthThreshold>"));
+    setupTestStrength(120, 20, 100);
+    try {
+      this.testee.execute();
+      fail();
+    } catch (final MojoFailureException ex) {
+      // pass
+    }
+  }
+
   public void testDoesNotThrowsMojoFailureExceptionWhenMutationScoreOnThreshold()
       throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration("<mutationThreshold>21</mutationThreshold>"));
@@ -377,7 +389,7 @@ public class PitMojoTest extends BasePitMojoTest {
   private void setupCoverage(long mutationScore, int lines, int linesCovered)
       throws MojoExecutionException {
     Iterable<Score> scores = Collections.<Score>emptyList();
-    final MutationStatistics stats = new MutationStatistics(scores, 100, mutationScore, 0, 100);
+    final MutationStatistics stats = new MutationStatistics(scores, 100, mutationScore, 100, 0);
     CoverageSummary sum = new CoverageSummary(lines, linesCovered);
     final CombinedStatistics cs = new CombinedStatistics(stats, sum);
     when(
@@ -385,12 +397,24 @@ public class PitMojoTest extends BasePitMojoTest {
             any(ReportOptions.class), any(PluginServices.class), anyMap()))
             .thenReturn(cs);
   }
+
+  private void setupTestStrength(long totalMutations, long mutationDetected, long mutationsWithCoverage)
+          throws MojoExecutionException {
+    Iterable<Score> scores = Collections.<Score>emptyList();
+    final MutationStatistics stats = new MutationStatistics(scores, totalMutations, mutationDetected, mutationsWithCoverage, 0);
+    CoverageSummary sum = new CoverageSummary(0, 0);
+    final CombinedStatistics cs = new CombinedStatistics(stats, sum);
+    when(
+            this.executionStrategy.execute(any(File.class),
+                    any(ReportOptions.class), any(PluginServices.class), anyMap()))
+            .thenReturn(cs);
+  }
   
   private void setupSuvivingMutants(long survivors)
       throws MojoExecutionException {
     Iterable<Score> scores = Collections.<Score>emptyList();
     int detected = 100;
-    final MutationStatistics stats = new MutationStatistics(scores, detected + survivors, detected, 0, detected + survivors);
+    final MutationStatistics stats = new MutationStatistics(scores, detected + survivors, detected, detected + survivors, 0);
     CoverageSummary sum = new CoverageSummary(0, 0);
     final CombinedStatistics cs = new CombinedStatistics(stats, sum);
     when(
