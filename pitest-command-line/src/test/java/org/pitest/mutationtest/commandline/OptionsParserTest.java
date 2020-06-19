@@ -399,6 +399,13 @@ public class OptionsParserTest {
   }
 
   @Test
+  public void shouldParseTestStrengthThreshold() {
+    final ReportOptions actual = parseAddingRequiredArgs("--testStrengthThreshold",
+            "50");
+    assertEquals(50, actual.getTestStrengthThreshold());
+  }
+
+  @Test
   public void shouldParseMaximumAllowedSurvivingMutants() {
     final ReportOptions actual = parseAddingRequiredArgs("--maxSurviving",
         "42");

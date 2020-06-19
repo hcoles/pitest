@@ -14,6 +14,33 @@
  */
 package org.pitest.mutationtest.commandline;
 
+import joptsimple.ArgumentAcceptingOptionSpec;
+import joptsimple.OptionException;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
+import joptsimple.OptionSpecBuilder;
+import joptsimple.util.KeyValuePair;
+import org.pitest.classpath.ClassPath;
+import org.pitest.functional.FCollection;
+import org.pitest.mutationtest.config.ConfigOption;
+import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.testapi.TestGroupConfig;
+import org.pitest.util.Glob;
+import org.pitest.util.Log;
+import org.pitest.util.Unchecked;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+import java.util.function.Predicate;
+import java.util.logging.Logger;
+
 import static org.pitest.mutationtest.config.ConfigOption.AVOID_CALLS;
 import static org.pitest.mutationtest.config.ConfigOption.CHILD_JVM;
 import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH;
@@ -49,6 +76,7 @@ import static org.pitest.mutationtest.config.ConfigOption.SOURCE_DIR;
 import static org.pitest.mutationtest.config.ConfigOption.TARGET_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.TEST_FILTER;
 import static org.pitest.mutationtest.config.ConfigOption.TEST_PLUGIN;
+import static org.pitest.mutationtest.config.ConfigOption.TEST_STRENGTH_THRESHOLD;
 import static org.pitest.mutationtest.config.ConfigOption.THREADS;
 import static org.pitest.mutationtest.config.ConfigOption.TIMEOUT_CONST;
 import static org.pitest.mutationtest.config.ConfigOption.TIMEOUT_FACTOR;
@@ -56,34 +84,6 @@ import static org.pitest.mutationtest.config.ConfigOption.TIME_STAMPED_REPORTS;
 import static org.pitest.mutationtest.config.ConfigOption.USE_CLASSPATH_JAR;
 import static org.pitest.mutationtest.config.ConfigOption.USE_INLINED_CODE_DETECTION;
 import static org.pitest.mutationtest.config.ConfigOption.VERBOSE;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
-import java.util.function.Predicate;
-import java.util.logging.Logger;
-
-import org.pitest.classpath.ClassPath;
-import org.pitest.functional.FCollection;
-import org.pitest.mutationtest.config.ConfigOption;
-import org.pitest.mutationtest.config.ReportOptions;
-import org.pitest.testapi.TestGroupConfig;
-import org.pitest.util.Glob;
-import org.pitest.util.Log;
-import org.pitest.util.Unchecked;
-
-import joptsimple.ArgumentAcceptingOptionSpec;
-import joptsimple.OptionException;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
-import joptsimple.OptionSpecBuilder;
-import joptsimple.util.KeyValuePair;
 
 public class OptionsParser {
 
@@ -124,6 +124,7 @@ public class OptionsParser {
   private final ArgumentAcceptingOptionSpec<Boolean> timestampedReportsSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> detectInlinedCode;
   private final ArgumentAcceptingOptionSpec<Integer> mutationThreshHoldSpec;
+  private final ArgumentAcceptingOptionSpec<Integer> testStrengthThreshHoldSpec;
   private final ArgumentAcceptingOptionSpec<Integer> coverageThreshHoldSpec;
   private final ArgumentAcceptingOptionSpec<Integer> maxSurvivingSpec;
   private final OptionSpec<String>                   mutationEngine;
@@ -332,6 +333,11 @@ public class OptionsParser {
         .describedAs("Mutation score below which to throw an error")
         .defaultsTo(MUTATION_THRESHOLD.getDefault(Integer.class));
 
+    this.testStrengthThreshHoldSpec = parserAccepts(TEST_STRENGTH_THRESHOLD)
+            .withRequiredArg().ofType(Integer.class)
+            .describedAs("Test strength score below which to throw an error")
+            .defaultsTo(TEST_STRENGTH_THRESHOLD.getDefault(Integer.class));
+
     this.maxSurvivingSpec = parserAccepts(MAX_SURVIVING)
         .withRequiredArg().ofType(Integer.class)
         .describedAs("Maximum number of surviving mutants to allow without throwing an error")
@@ -425,6 +431,7 @@ public class OptionsParser {
     data.setHistoryInputLocation(this.historyInputSpec.value(userArgs));
     data.setHistoryOutputLocation(this.historyOutputSpec.value(userArgs));
     data.setMutationThreshold(this.mutationThreshHoldSpec.value(userArgs));
+    data.setTestStrengthThreshold(this.testStrengthThreshHoldSpec.value(userArgs));
     data.setMaximumAllowedSurvivors(this.maxSurvivingSpec.value(userArgs));
     data.setCoverageThreshold(this.coverageThreshHoldSpec.value(userArgs));
     data.setMutationEngine(this.mutationEngine.value(userArgs));
