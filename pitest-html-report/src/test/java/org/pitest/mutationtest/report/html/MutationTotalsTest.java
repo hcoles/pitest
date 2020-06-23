@@ -36,7 +36,7 @@ public class MutationTotalsTest {
   public void shouldCorrectlyCalculateLineCoverageWhenPartiallyCovered() {
     this.testee.addLines(63);
     this.testee.addLinesCovered(20);
-    assertEquals(32, this.testee.getLineCoverage());
+    assertEquals(31, this.testee.getLineCoverage());
   }
 
   @Test
@@ -61,7 +61,7 @@ public class MutationTotalsTest {
   public void shouldCorrectlyCalculateMutationCoverageWhenSomeMutationUndetected() {
     this.testee.addMutations(63);
     this.testee.addMutationsDetetcted(20);
-    assertEquals(32, this.testee.getMutationCoverage());
+    assertEquals(31, this.testee.getMutationCoverage());
   }
 
   @Test
