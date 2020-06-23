@@ -49,13 +49,13 @@ public class MutationTotals {
   }
 
   public int getLineCoverage() {
-    return this.numberOfLines == 0 ? 100 : Math
-        .round((100f * this.numberOfLinesCovered) / this.numberOfLines);
+    return this.numberOfLines == 0 ? 100 : (int) Math
+        .floor((100f * this.numberOfLinesCovered) / this.numberOfLines);
   }
 
   public int getMutationCoverage() {
     return this.numberOfMutations == 0 ? 100
-        : Math.round((100f * this.numberOfMutationsDetected)
+        : (int) Math.floor((100f * this.numberOfMutationsDetected)
             / this.numberOfMutations);
   }
 
