@@ -236,6 +236,10 @@ public class PitestTask extends Task { // NO_UCD (test only)
     this.setOption(ConfigOption.MUTATION_THRESHOLD, value);
   }
 
+  public void setTestStrengthThreshold(final String value) {
+    this.setOption(ConfigOption.TEST_STRENGTH_THRESHOLD, value);
+  }
+
   public void setMaxSurviving(final String value) {
     this.setOption(ConfigOption.MAX_SURVIVING, value);
   }

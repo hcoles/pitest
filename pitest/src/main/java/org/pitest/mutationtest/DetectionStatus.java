@@ -101,4 +101,11 @@ public enum DetectionStatus {
     return this.detected;
   }
 
+  /**
+   *
+   * @return True if the mutations has test coverage, false if not.
+   */
+  public boolean hasCoverage() {
+    return this != NO_COVERAGE;
+  }
 };

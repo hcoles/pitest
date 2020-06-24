@@ -14,16 +14,6 @@
  */
 package org.pitest.mutationtest.statistics;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.function.Predicate;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.functional.FCollection;
@@ -32,6 +22,14 @@ import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.report.MutationTestResultMother;
 import org.pitest.util.StringUtil;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.function.Predicate;
+
+import static org.junit.Assert.*;
 
 public class MutationStatisticsPrecursorTest {
 
@@ -52,7 +50,7 @@ public class MutationStatisticsPrecursorTest {
     final MutationResult mr = makeResult(DetectionStatus.KILLED);
     this.testee.registerResults(Collections.singletonList(mr));
     assertTrue(FCollection.contains(this.testee.getScores(),
-        hasResultForMutator(mr.getDetails().getId().getMutator())));
+            hasResultForMutator(mr.getDetails().getId().getMutator())));
   }
 
   @Test
@@ -65,6 +63,30 @@ public class MutationStatisticsPrecursorTest {
     final MutationResult mr = makeResult(DetectionStatus.KILLED);
     this.testee.registerResults(Arrays.asList(mr, mr, mr));
     assertEquals(3, this.testee.toStatistics().getTotalMutations());
+  }
+
+  @Test
+  public void shouldCalculateTotalNumberOfMutationsWithCoverageWhenNoneGenerated() {
+    assertEquals(0, this.testee.toStatistics().getTotalMutationsWithCoverage());
+  }
+
+  @Test
+  public void shouldCalculateTotalNumberOfMutationsWithCoverageWhenAllCovered() {
+    this.testee.registerResults(Arrays.asList(
+            makeResult(DetectionStatus.KILLED),
+            makeResult(DetectionStatus.SURVIVED),
+            makeResult(DetectionStatus.TIMED_OUT)));
+    assertEquals(3, this.testee.toStatistics().getTotalMutationsWithCoverage());
+  }
+
+  @Test
+  public void shouldCalculateTotalNumberOfMutationsWithCoverageWhenSomeNotCovered() {
+      this.testee.registerResults(Arrays.asList(
+              makeResult(DetectionStatus.KILLED),
+              makeResult(DetectionStatus.SURVIVED),
+              makeResult(DetectionStatus.TIMED_OUT),
+              makeResult(DetectionStatus.NO_COVERAGE)));
+    assertEquals(3, this.testee.toStatistics().getTotalMutationsWithCoverage());
   }
 
   @Test
@@ -82,51 +104,70 @@ public class MutationStatisticsPrecursorTest {
   @Test
   public void shouldCalculateTotalNumberOfDetectedMutationsWhenSomeDetected() {
     this.testee.registerResults(Arrays.asList(
-        makeResult(DetectionStatus.SURVIVED),
-        makeResult(DetectionStatus.KILLED)));
+            makeResult(DetectionStatus.SURVIVED),
+            makeResult(DetectionStatus.KILLED)));
     assertEquals(1, this.testee.toStatistics().getTotalDetectedMutations());
   }
 
   @Test
   public void shouldCalculatePercentageDetected() {
     this.testee.registerResults(Arrays.asList(
-        makeResult(DetectionStatus.SURVIVED),
-        makeResult(DetectionStatus.KILLED)));
+            makeResult(DetectionStatus.SURVIVED),
+            makeResult(DetectionStatus.KILLED)));
     assertEquals(50, this.testee.toStatistics().getPercentageDetected());
+  }
+
+  @Test
+  public void shouldCalculateTestStrength() {
+    this.testee.registerResults(Arrays.asList(
+            makeResult(DetectionStatus.SURVIVED),
+            makeResult(DetectionStatus.NO_COVERAGE),
+            makeResult(DetectionStatus.KILLED)));
+    assertEquals(50, this.testee.toStatistics().getTestStrength());
   }
 
   @Test
   public void shouldReportNumberOfSurvivingMutants() {
     this.testee.registerResults(Arrays.asList(
-        makeResult(DetectionStatus.SURVIVED),
-        makeResult(DetectionStatus.SURVIVED)));
+            makeResult(DetectionStatus.SURVIVED),
+            makeResult(DetectionStatus.SURVIVED)));
     assertEquals(2, this.testee.toStatistics().getTotalSurvivingMutations());
   }
 
   @Test
   public void shouldReportNumberOfSurvivingMutantsWhenNoneSurvive() {
     this.testee.registerResults(Arrays.asList(
-        makeResult(DetectionStatus.KILLED),
-        makeResult(DetectionStatus.TIMED_OUT)));
+            makeResult(DetectionStatus.KILLED),
+            makeResult(DetectionStatus.TIMED_OUT)));
     assertEquals(0, this.testee.toStatistics().getTotalSurvivingMutations());
   }
 
   @Test
   public void shouldReportTotalNumberOfMutationsWhenNoneGenerated() {
     this.testee.registerResults(Arrays.asList(
-        makeResult(DetectionStatus.SURVIVED),
-        makeResult(DetectionStatus.KILLED)));
+            makeResult(DetectionStatus.SURVIVED),
+            makeResult(DetectionStatus.KILLED)));
     final String[] actual = generateReportLines();
     assertEquals(">> Generated 2 mutations Killed 1 (50%)", actual[0]);
   }
 
   @Test
+  public void shouldReportTestStrength() {
+    this.testee.registerResults(Arrays.asList(
+            makeResult(DetectionStatus.SURVIVED),
+            makeResult(DetectionStatus.NO_COVERAGE),
+            makeResult(DetectionStatus.KILLED)));
+    final String[] actual = generateReportLines();
+    assertEquals(">> Mutations with no coverage 1. Test strength 50%", actual[1]);
+  }
+
+  @Test
   public void shouldReportTotalNumberOfTestsRun() {
     this.testee.registerResults(Arrays.asList(
-        makeResult(DetectionStatus.SURVIVED, 1),
-        makeResult(DetectionStatus.KILLED, 42)));
+            makeResult(DetectionStatus.SURVIVED, 1),
+            makeResult(DetectionStatus.KILLED, 42)));
     final String[] actual = generateReportLines();
-    assertEquals(">> Ran 43 tests (21.5 tests per mutation)", actual[1]);
+    assertEquals(">> Ran 43 tests (21.5 tests per mutation)", actual[2]);
   }
 
   private Predicate<Score> hasResultForMutator(final String mutator) {
@@ -138,10 +179,10 @@ public class MutationStatisticsPrecursorTest {
   }
 
   private MutationResult makeResult(final DetectionStatus status,
-      final int numberOfTests) {
+                                    final int numberOfTests) {
     final MutationResult mr = new MutationResult(
-        MutationTestResultMother.createDetails("foo.java"),
-        new MutationStatusTestPair(numberOfTests, status, "foo"));
+            MutationTestResultMother.createDetails("foo.java"),
+            new MutationStatusTestPair(numberOfTests, status, "foo"));
     return mr;
   }
 

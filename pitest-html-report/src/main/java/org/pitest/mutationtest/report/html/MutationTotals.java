@@ -2,11 +2,12 @@ package org.pitest.mutationtest.report.html;
 
 public class MutationTotals {
 
-  private long numberOfFiles             = 0;
-  private long numberOfLines             = 0;
-  private long numberOfLinesCovered      = 0;
-  private long numberOfMutations         = 0;
-  private long numberOfMutationsDetected = 0;
+  private long numberOfFiles                 = 0;
+  private long numberOfLines                 = 0;
+  private long numberOfLinesCovered          = 0;
+  private long numberOfMutations             = 0;
+  private long numberOfMutationsDetected     = 0;
+  private long numberOfMutationsWithCoverage = 0;
 
   public long getNumberOfFiles() {
     return this.numberOfFiles;
@@ -59,6 +60,20 @@ public class MutationTotals {
             / this.numberOfMutations);
   }
 
+  public void addMutationsWithCoverage(final long mutationsWithCoverage) {
+    this.numberOfMutationsWithCoverage += mutationsWithCoverage;
+  }
+
+  public int getTestStrength() {
+    return this.numberOfMutationsWithCoverage == 0 ? 0
+            : Math.round((100f * this.numberOfMutationsDetected)
+            / this.numberOfMutationsWithCoverage);
+  }
+
+  public long getNumberOfMutationsWithCoverage() {
+    return this.numberOfMutationsWithCoverage;
+  }
+
   public void add(final MutationTotals data) {
     add(data.getNumberOfLines(), data.getNumberOfFiles(), data);
   }
@@ -69,6 +84,6 @@ public class MutationTotals {
     this.addLinesCovered(data.getNumberOfLinesCovered());
     this.addMutations(data.getNumberOfMutations());
     this.addMutationsDetetcted(data.getNumberOfMutationsDetected());
+    this.addMutationsWithCoverage(data.getNumberOfMutationsWithCoverage());
   }
-
 }

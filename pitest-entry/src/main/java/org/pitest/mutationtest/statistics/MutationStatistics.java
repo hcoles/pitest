@@ -24,13 +24,15 @@ public final class MutationStatistics {
   private final long totalMutations;
   private final long numberOfTestsRun;
   private final long totalDetected;
+  private final long totalWithCoverage;
 
   public MutationStatistics(Iterable<Score> scores, long totalMutations,
-      long totalDetected, long numberOfTestsRun) {
+                            long totalDetected, long totalWithCoverage, long numberOfTestsRun) {
     this.scores = scores;
     this.totalMutations = totalMutations;
     this.totalDetected = totalDetected;
     this.numberOfTestsRun = numberOfTestsRun;
+    this.totalWithCoverage = totalWithCoverage;
   }
 
   public Iterable<Score> getScores() {
@@ -43,6 +45,14 @@ public final class MutationStatistics {
 
   public long getTotalDetectedMutations() {
     return this.totalDetected;
+  }
+
+  public long getTotalMutationsWithCoverage() {
+    return this.totalWithCoverage;
+  }
+
+  private long getTotalMutationsWithoutCoverage() {
+    return this.totalMutations - this.totalWithCoverage;
   }
 
   public long getTotalSurvivingMutations() {
@@ -66,6 +76,8 @@ public final class MutationStatistics {
     out.println(">> Generated " + this.getTotalMutations()
         + " mutations Killed " + this.getTotalDetectedMutations() + " ("
         + this.getPercentageDetected() + "%)");
+    out.println(">> Mutations with no coverage " + this.getTotalMutationsWithoutCoverage()
+            + ". Test strength " + this.getTestStrength() + "%");
     out.println(">> Ran " + this.numberOfTestsRun + " tests ("
         + getTestsPerMutation() + " tests per mutation)");
 
@@ -82,4 +94,16 @@ public final class MutationStatistics {
         .format(testsPerMutation);
   }
 
+  public long getTestStrength() {
+    if (getTotalMutations() == 0) {
+      return 100;
+    }
+
+    if (getTotalMutationsWithCoverage() == 0) {
+      return 0;
+    }
+
+    return Math.round((100f / getTotalMutationsWithCoverage())
+            * getTotalDetectedMutations());
+  }
 }

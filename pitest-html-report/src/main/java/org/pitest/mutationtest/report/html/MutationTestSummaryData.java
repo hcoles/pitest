@@ -22,8 +22,8 @@ import org.pitest.mutationtest.MutationResult;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.TreeSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -54,7 +54,14 @@ public class MutationTestSummaryData {
     mt.addMutationsDetetcted(this.getNumberOfMutationsDetected());
     mt.addLines(getNumberOfLines());
     mt.addLinesCovered(this.numberOfCoveredLines);
+    mt.addMutationsWithCoverage(this.getNumberOfMutationsWithCoverage());
     return mt;
+  }
+
+  private long getNumberOfMutationsWithCoverage() {
+    return this.mutations.stream()
+            .filter(it -> it.getStatus().hasCoverage())
+            .count();
   }
 
   public String getPackageName() {

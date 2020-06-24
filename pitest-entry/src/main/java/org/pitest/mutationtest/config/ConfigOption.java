@@ -14,9 +14,9 @@
  */
 package org.pitest.mutationtest.config;
 
-import java.io.Serializable;
-
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
+
+import java.io.Serializable;
 
 public enum ConfigOption {
 
@@ -178,6 +178,11 @@ public enum ConfigOption {
    * Mutation score below which to throw an error
    */
   MUTATION_THRESHOLD("mutationThreshold", 0),
+
+  /**
+   * Test strength score below which to throw an error
+   */
+  TEST_STRENGTH_THRESHOLD("testStrengthThreshold", 0),
 
   /**
    * Number of surviving mutants at which to throw an error

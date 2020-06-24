@@ -3,13 +3,16 @@ package org.pitest.mutationtest.report.html;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.pitest.classinfo.ClassInfo;
+import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
+import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -95,6 +98,47 @@ public class MutationTestSummaryDataTest {
   }
 
   @Test
+  public void shouldReturnCorrectTestStrengthWhenAnalysedInOneUnit() {
+    this.testee = buildSummaryDataWithMutationResults(makeClass(),
+            aMutationResult(DetectionStatus.NO_COVERAGE),
+            aMutationResult(DetectionStatus.KILLED),
+            aMutationResult(DetectionStatus.SURVIVED)
+    );
+    assertEquals(50, this.testee.getTotals().getTestStrength());
+  }
+
+  @Test
+  public void shouldReturnCorrectTestStrengthWhenAnalysedInTwoUnits() {
+    ClassInfo clazz = makeClass();
+    this.testee = buildSummaryDataWithMutationResults(clazz,
+            aMutationResult(DetectionStatus.NO_COVERAGE),
+            aMutationResult(DetectionStatus.KILLED),
+            aMutationResult(DetectionStatus.SURVIVED)
+    );
+    final MutationTestSummaryData additionalData = buildSummaryDataWithMutationResults(clazz,
+            aMutationResult(DetectionStatus.KILLED),
+            aMutationResult(DetectionStatus.KILLED)
+    );
+    this.testee.add(additionalData);
+    assertEquals(75, this.testee.getTotals().getTestStrength());
+  }
+
+  @Test
+  public void shouldReturnCorrectTestStrengthWhenWhenCombiningResultsForDifferentClasses() {
+    this.testee = buildSummaryDataWithMutationResults(makeClass(100),
+            aMutationResult(DetectionStatus.NO_COVERAGE),
+            aMutationResult(DetectionStatus.KILLED),
+            aMutationResult(DetectionStatus.SURVIVED)
+    );
+    final MutationTestSummaryData additionalData = buildSummaryDataWithMutationResults(makeClass(200),
+            aMutationResult(DetectionStatus.KILLED),
+            aMutationResult(DetectionStatus.KILLED)
+    );
+    this.testee.add(additionalData);
+    assertEquals(75, this.testee.getTotals().getTestStrength());
+  }
+
+  @Test
   public void shouldReturnSortedListOfMutators() {
     this.testee = buildSummaryDataMutators();
 
@@ -126,6 +170,17 @@ public class MutationTestSummaryDataTest {
     final Collection<String> mutators = Collections.emptyList();
     return new MutationTestSummaryData(FILE_NAME, results, mutators, classes,
         linesCovered);
+  }
+
+  private MutationTestSummaryData buildSummaryDataWithMutationResults(final ClassInfo clazz, final MutationResult... mutationResults) {
+    final Collection<ClassInfo> classes = Arrays.asList(clazz);
+    final Collection<String> mutators = Collections.emptyList();
+    return new MutationTestSummaryData(FILE_NAME, Arrays.asList(mutationResults), mutators, classes,
+            100);
+  }
+
+  private MutationResult aMutationResult(DetectionStatus status) {
+    return new MutationResult(null, new MutationStatusTestPair(1, status, "A test"));
   }
 
   private MutationTestSummaryData buildSummaryDataMutators() {
