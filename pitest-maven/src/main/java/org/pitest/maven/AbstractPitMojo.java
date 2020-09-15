@@ -24,6 +24,8 @@ import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.plugin.ToolClasspathPlugin;
+import org.pitest.util.FileUtil;
+import org.pitest.util.StringUtil;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
@@ -362,8 +364,16 @@ public class AbstractPitMojo extends AbstractMojo {
    */
   @Parameter(property = "plugin.artifactMap", readonly = true, required = true)
   private Map<String, Artifact>       pluginArtifactMap;
-  
-  
+
+
+  @Parameter(property = "pit.input_charset", defaultValue = "${project.build.sourceEncoding}",
+      readonly = true, required = false)
+  private String inputCharset;
+
+  @Parameter(property = "pit.output_charset", defaultValue = "${project.reporting.outputEncoding}",
+      readonly = true, required = false)
+  private String outputCharset;
+
   /**
    * Communicate the classpath using a temporary jar with a classpath
    * manifest. This allows support of very large classpaths but may cause
@@ -391,6 +401,12 @@ public class AbstractPitMojo extends AbstractMojo {
   @Override
   public final void execute() throws MojoExecutionException,
       MojoFailureException {
+    if (!StringUtil.isNullOrEmpty(inputCharset)) {
+        System.setProperty(FileUtil.INPUT_ENCODING_KEY, inputCharset);
+    }
+    if (!StringUtil.isNullOrEmpty(outputCharset)) {
+        System.setProperty(FileUtil.OUTPUT_ENCODING_KEY, outputCharset);
+    }
 
     switchLogging();
     RunDecision shouldRun = shouldRun();

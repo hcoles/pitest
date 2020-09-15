@@ -15,8 +15,9 @@
 package org.pitest.mutationtest.tooling;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.Optional;
@@ -25,6 +26,7 @@ import java.util.stream.Stream;
 
 import org.pitest.functional.Streams;
 import org.pitest.mutationtest.SourceLocator;
+import org.pitest.util.FileUtil;
 
 public class DirectorySourceLocator implements SourceLocator {
 
@@ -37,7 +39,8 @@ public class DirectorySourceLocator implements SourceLocator {
     public Optional<Reader> apply(final File f) {
       if (f.exists()) {
         try {
-          return Optional.of(new FileReader(f));
+          return Optional.of(new InputStreamReader(new FileInputStream(f),
+              FileUtil.INPUT_CHARSET));
         } catch (final FileNotFoundException e) {
           return Optional.empty();
         }

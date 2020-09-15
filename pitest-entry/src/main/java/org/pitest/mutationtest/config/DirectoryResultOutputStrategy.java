@@ -16,10 +16,12 @@ package org.pitest.mutationtest.config;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import org.pitest.util.FileUtil;
 import org.pitest.util.ResultOutputStrategy;
 import org.pitest.util.Unchecked;
 
@@ -44,8 +46,9 @@ public class DirectoryResultOutputStrategy implements ResultOutputStrategy {
           directoryFile.mkdirs();
         }
       }
-      return new BufferedWriter(new FileWriter(this.reportDir.getAbsolutePath()
-          + File.separatorChar + file));
+      final FileOutputStream out = new FileOutputStream(this.reportDir.getAbsolutePath()
+          + File.separatorChar + file);
+      return new BufferedWriter(new OutputStreamWriter(out,FileUtil.OUTPUT_CHARSET));
     } catch (final IOException ex) {
       throw Unchecked.translateCheckedException(ex);
     }
