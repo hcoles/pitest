@@ -35,6 +35,7 @@ import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
+import org.pitest.coverage.CoverageSummary;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
 import org.pitest.help.Help;
@@ -60,6 +61,7 @@ import org.pitest.mutationtest.execute.MutationAnalysisExecutor;
 import org.pitest.mutationtest.incremental.DefaultCodeHistory;
 import org.pitest.mutationtest.incremental.HistoryListener;
 import org.pitest.mutationtest.incremental.IncrementalAnalyser;
+import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.statistics.MutationStatisticsListener;
 import org.pitest.mutationtest.statistics.Score;
 import org.pitest.util.Log;
@@ -154,10 +156,10 @@ public class MutationCoverage {
 
     LOG.info("Completed in " + timeSpan(t0));
 
-    printStats(stats);
-
-    return new CombinedStatistics(stats.getStatistics(),
+    final CombinedStatistics combinedStatistics = new CombinedStatistics(stats.getStatistics(),
         coverageData.createSummary());
+     printStats(combinedStatistics);
+    return combinedStatistics;
 
   }
 
@@ -223,13 +225,14 @@ private int numberOfThreads() {
     this.strategies.buildVerifier().verify(this.code);
   }
 
-  private void printStats(final MutationStatisticsListener stats) {
+  private void printStats(final CombinedStatistics stats) {
     final PrintStream ps = System.out;
 
     ps.println(StringUtil.separatorLine('='));
     ps.println("- Mutators");
     ps.println(StringUtil.separatorLine('='));
-    for (final Score each : stats.getStatistics().getScores()) {
+    final MutationStatistics mutationStat = stats.getMutationStatistics();
+    for (final Score each : mutationStat.getScores()) {
       each.report(ps);
       ps.println(StringUtil.separatorLine());
     }
@@ -242,7 +245,12 @@ private int numberOfThreads() {
     ps.println(StringUtil.separatorLine('='));
     ps.println("- Statistics");
     ps.println(StringUtil.separatorLine('='));
-    stats.getStatistics().report(ps);
+    final CoverageSummary coverage = stats.getCoverageSummary();
+    if (coverage != null) {
+      ps.println(String.format(">> Line Coverage: %d/%d (%d%%)", coverage.getNumberOfCoveredLines(),
+          coverage.getNumberOfLines(), coverage.getCoverage()));
+    }
+    mutationStat.report(ps);
   }
 
   private List<MutationAnalysisUnit> buildMutationTests(
