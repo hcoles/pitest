@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest.report.html;
 
+import java.util.Collections;
 import java.util.List;
 
 import java.util.Optional;
@@ -25,14 +26,17 @@ public class Line {
   private final String               text;
   private final LineStatus           lineCovered;
   private final List<MutationResult> mutations;
+  private final DetectionStatus      detectionStatus;
 
   public Line(final long number, final String text,
-      final LineStatus lineCovered, final List<MutationResult> mutations) {
+      final LineStatus lineCovered, final List<MutationResult> mutations,
+      final DetectionStatus detectionStatus) {
     this.number = number;
     this.text = text;
     this.lineCovered = lineCovered;
     this.mutations = mutations;
-    mutations.sort(new ResultComparator());
+    this.detectionStatus = detectionStatus;
+    Collections.sort(mutations, new ResultComparator());
   }
 
   public long getNumber() {
@@ -52,10 +56,7 @@ public class Line {
   }
 
   public Optional<DetectionStatus> detectionStatus() {
-    if (this.mutations.isEmpty()) {
-      return Optional.empty();
-    }
-    return Optional.ofNullable(this.mutations.get(0).getStatus());
+    return Optional.ofNullable(detectionStatus);
   }
 
   public int getNumberOfMutations() {

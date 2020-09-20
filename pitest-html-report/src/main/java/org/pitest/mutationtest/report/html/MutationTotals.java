@@ -8,6 +8,7 @@ public class MutationTotals {
   private long numberOfMutations             = 0;
   private long numberOfMutationsDetected     = 0;
   private long numberOfMutationsWithCoverage = 0;
+  private MutationScore mutationScore        = new MutationScore();
 
   public long getNumberOfFiles() {
     return this.numberOfFiles;
@@ -49,6 +50,10 @@ public class MutationTotals {
     this.numberOfMutationsDetected += mutationsKilled;
   }
 
+  public void addMutationScore(final MutationScore score) {
+    mutationScore.add(score);
+  }
+
   public int getLineCoverage() {
     return this.numberOfLines == 0 ? 100 : Math
         .round((100f * this.numberOfLinesCovered) / this.numberOfLines);
@@ -74,6 +79,10 @@ public class MutationTotals {
     return this.numberOfMutationsWithCoverage;
   }
 
+  public MutationScore getMutationScore() {
+    return mutationScore;
+  }
+
   public void add(final MutationTotals data) {
     add(data.getNumberOfLines(), data.getNumberOfFiles(), data);
   }
@@ -85,5 +94,7 @@ public class MutationTotals {
     this.addMutations(data.getNumberOfMutations());
     this.addMutationsDetetcted(data.getNumberOfMutationsDetected());
     this.addMutationsWithCoverage(data.getNumberOfMutationsWithCoverage());
+    this.addMutationScore(data.getMutationScore());
   }
+
 }

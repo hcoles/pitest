@@ -1,23 +1,24 @@
 package org.pitest.mutationtest.report.html;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
+import org.pitest.mutationtest.engine.MutationDetails;
+import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 
 public class MutationTestSummaryDataTest {
 
@@ -180,7 +181,11 @@ public class MutationTestSummaryDataTest {
   }
 
   private MutationResult aMutationResult(DetectionStatus status) {
-    return new MutationResult(null, new MutationStatusTestPair(1, status, "A test"));
+    return new MutationResult(aMutationDetails(), new MutationStatusTestPair(1, status, "A test"));
+  }
+
+  private MutationDetails aMutationDetails() {
+    return new MutationDetails(new MutationIdentifier(null, Collections.emptyList(), null), null, "", 0, 0);
   }
 
   private MutationTestSummaryData buildSummaryDataMutators() {

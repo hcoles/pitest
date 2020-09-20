@@ -15,6 +15,7 @@
             <th>Line Coverage</th>
             <th>Mutation Coverage</th>
             <th>Test Strength</th>
+            <th>Mutation Score</th>
         </tr>
     </thead>
     <tbody>
@@ -23,6 +24,17 @@
             <td>$packageData.totals.lineCoverage$% <div class="coverage_bar"><div class="coverage_complete width-$packageData.totals.lineCoverage$"></div><div class="coverage_legend">$packageData.totals.numberOfLinesCovered$/$packageData.totals.numberOfLines$</div></div></td>
             <td>$packageData.totals.mutationCoverage$% <div class="coverage_bar"><div class="coverage_complete width-$packageData.totals.mutationCoverage$"></div><div class="coverage_legend">$packageData.totals.numberOfMutationsDetected$/$packageData.totals.numberOfMutations$</div></div></td>
             <td>$packageData.totals.testStrength$% <div class="coverage_bar"><div class="coverage_complete width-$packageData.totals.testStrength$"></div><div class="coverage_legend">$packageData.totals.numberOfMutationsDetected$/$packageData.totals.numberOfMutationsWithCoverage$</div></div></td>
+            <td>$packageData.totals.mutationScore.killedScore$% 
+                <div class="coverage_bar">
+                  <div class="coverage_possibly_detected width-$packageData.totals.mutationScore.possiblyDetectedScore$"></div>
+                  <div class="coverage_complete width-$packageData.totals.mutationScore.killedScore$"></div>
+                  <div class="coverage_legend">$packageData.totals.mutationScore.numberOfUniqueMutationsKilled$/$packageData.totals.mutationScore.numberOfUniqueMutations$</div>
+                </div>
+                <div class="legend">
+                  <div class="killed">Killed: $packageData.totals.mutationScore.numberOfUniqueMutationsKilled$</div>
+                  <div class="uncertain">Uncertain: $packageData.totals.mutationScore.numberOfUniqueMutationsPossiblyDetected$</div>
+                </div>
+            </td>
         </tr>
     </tbody>
 </table>
@@ -36,6 +48,7 @@
             <th>Line Coverage</th>
             <th>Mutation Coverage</th>
             <th>Test Strength</th>
+            <th>Mutation Score</th>
         </tr>
     </thead>
     <tbody>
@@ -45,6 +58,18 @@ $packageData.summaryData:{ summary |
             <td><div class="coverage_percentage">$summary.totals.lineCoverage$% </div><div class="coverage_bar"><div class="coverage_complete width-$summary.totals.lineCoverage$"></div><div class="coverage_legend">$summary.totals.numberOfLinesCovered$/$summary.totals.numberOfLines$</div></div></td>
             <td><div class="coverage_percentage">$summary.totals.mutationCoverage$% </div><div class="coverage_bar"><div class="coverage_complete width-$summary.totals.mutationCoverage$"></div><div class="coverage_legend">$summary.totals.numberOfMutationsDetected$/$summary.totals.numberOfMutations$</div></div></td>
             <td><div class="coverage_percentage">$summary.totals.testStrength$% </div><div class="coverage_bar"><div class="coverage_complete width-$summary.totals.testStrength$"></div><div class="coverage_legend">$summary.totals.numberOfMutationsDetected$/$summary.totals.numberOfMutationsWithCoverage$</div></div></td>
+            <td>
+              <div class="coverage_percentage">$summary.totals.mutationScore.killedScore$% </div>
+              <div class="coverage_bar">
+                <div class="coverage_possibly_detected width-$summary.totals.mutationScore.possiblyDetectedScore$"></div>
+                <div class="coverage_complete width-$summary.totals.mutationScore.killedScore$"></div>
+                <div class="coverage_legend">$summary.totals.mutationScore.numberOfUniqueMutationsKilled$/$summary.totals.mutationScore.numberOfUniqueMutations$</div>
+              </div>
+              <div class="legend">
+                <div class="killed">Killed: $summary.totals.mutationScore.numberOfUniqueMutationsKilled$</div>
+                <div class="uncertain">Uncertain: $summary.totals.mutationScore.numberOfUniqueMutationsPossiblyDetected$</div>
+              </div>
+            </td>
         </tr>
 }$
      </tbody>

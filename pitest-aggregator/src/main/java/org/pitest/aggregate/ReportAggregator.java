@@ -99,12 +99,18 @@ public final class ReportAggregator {
     for (final BlockCoverage blockData : coverageData) {
       for (int i = blockData.getBlock().getFirstInsnInBlock();
            i <= blockData.getBlock().getLastInsnInBlock(); i++) {
-        blockCoverageMap.put(new InstructionLocation(blockData.getBlock(), i),
-            new HashSet<>(
-                FCollection.map(blockData.getTests(), toTestInfo(blockData))));
+        addBlockCoverage(blockCoverageMap, new InstructionLocation(blockData.getBlock(), i), 
+            FCollection.map(blockData.getTests(), toTestInfo(blockData)));
       }
     }
     return blockCoverageMap;
+  }
+
+  private void addBlockCoverage(Map<InstructionLocation, Set<TestInfo>> blockCoverageMap, InstructionLocation instructionLocation, List<TestInfo> tests) {
+    if (!blockCoverageMap.containsKey(instructionLocation)) {
+      blockCoverageMap.put(instructionLocation, new HashSet<>());
+    }
+    blockCoverageMap.get(instructionLocation).addAll(tests);
   }
 
   private Function<String, TestInfo> toTestInfo(final BlockCoverage blockData) {
