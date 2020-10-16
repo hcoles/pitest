@@ -46,6 +46,8 @@ public class MutationCoverageReport {
 
       throwErrorIfScoreBelowCoverageThreshold(stats.getCoverageSummary(),
           data.getCoverageThreshold());
+      throwErrorIfScoreBelowTestStrengthThreshold(stats.getMutationStatistics(),
+              data.getTestStrengthThreshold());
       throwErrorIfScoreBelowMutationThreshold(stats.getMutationStatistics(),
           data.getMutationThreshold());
       throwErrorIfMoreThanMaxSuvivingMutants(stats.getMutationStatistics(), data.getMaximumAllowedSurvivors());
@@ -67,6 +69,15 @@ public class MutationCoverageReport {
       throw new RuntimeException("Mutation score of "
           + stats.getPercentageDetected() + " is below threshold of "
           + threshold);
+    }
+  }
+
+  private static void throwErrorIfScoreBelowTestStrengthThreshold(
+          final MutationStatistics stats, final int threshold) {
+    if ((threshold != 0) && (stats.getTestStrength() < threshold)) {
+      throw new RuntimeException("Test strength score of "
+              + stats.getTestStrength() + " is below threshold of "
+              + threshold);
     }
   }
 

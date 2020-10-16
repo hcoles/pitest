@@ -171,7 +171,7 @@ public class AbstractPitMojo extends AbstractMojo {
   /**
    * Arguments to pass to child processes
    */
-  @Parameter
+  @Parameter(property = "jvmArgs")
   private ArrayList<String>           jvmArgs;
 
   /**
@@ -246,6 +246,12 @@ public class AbstractPitMojo extends AbstractMojo {
    */
   @Parameter(defaultValue = "0", property = "mutationThreshold")
   private int                         mutationThreshold;
+
+  /**
+   * Test strength score threshold at which to fail build
+   */
+  @Parameter(defaultValue = "0", property = "testStrengthThreshold")
+  private int                         testStrengthThreshold;
 
   /**
    * Maximum surviving mutants to allow
@@ -403,6 +409,7 @@ public class AbstractPitMojo extends AbstractMojo {
 
       final Optional<CombinedStatistics> result = analyse();
       if (result.isPresent()) {
+        throwErrorIfTestStrengthBelowThreshold(result.get().getMutationStatistics());
         throwErrorIfScoreBelowThreshold(result.get().getMutationStatistics());
         throwErrorIfMoreThanMaximumSurvivors(result.get().getMutationStatistics());
         throwErrorIfCoverageBelowThreshold(result.get().getCoverageSummary());
@@ -444,6 +451,16 @@ public class AbstractPitMojo extends AbstractMojo {
       throw new MojoFailureException("Mutation score of "
           + result.getPercentageDetected() + " is below threshold of "
           + this.mutationThreshold);
+    }
+  }
+
+  private void throwErrorIfTestStrengthBelowThreshold(final MutationStatistics result)
+          throws MojoFailureException {
+    if ((this.testStrengthThreshold != 0)
+            && (result.getTestStrength() < this.testStrengthThreshold)) {
+      throw new MojoFailureException("Test strength score of "
+              + result.getTestStrength() + " is below threshold of "
+              + this.testStrengthThreshold);
     }
   }
   

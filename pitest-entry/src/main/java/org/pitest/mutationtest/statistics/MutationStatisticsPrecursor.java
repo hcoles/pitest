@@ -38,7 +38,8 @@ class MutationStatisticsPrecursor {
     final long totalMutations = FCollection.fold(addTotals(), 0L, scores);
     final long totalDetected = FCollection
         .fold(addDetectedTotals(), 0L, scores);
-    return new MutationStatistics(scores, totalMutations, totalDetected,
+    final long totalWithCoverage = FCollection.fold(addCoveredTotals(), 0L, scores);
+    return new MutationStatistics(scores, totalMutations, totalDetected, totalWithCoverage,
         this.numberOfTestsRun);
   }
 
@@ -56,5 +57,9 @@ class MutationStatisticsPrecursor {
 
   private static BiFunction<Long, Score, Long> addDetectedTotals() {
     return (a, b) -> a + b.getTotalDetectedMutations();
+  }
+
+  private static BiFunction<Long, Score, Long> addCoveredTotals() {
+    return (a, b) -> a + b.getTotalWithCoverage();
   }
 }

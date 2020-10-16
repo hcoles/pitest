@@ -441,6 +441,13 @@ public class PitestTaskTest {
   }
 
   @Test
+  public void shouldPassTestStrengthThresholdToJavaTask() {
+    this.pitestTask.setTestStrengthThreshold("42");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--testStrengthThreshold=42");
+  }
+
+  @Test
   public void shouldPassMaxSurvivorsToJavaTask() {
     this.pitestTask.setMaxSurviving("42");
     this.pitestTask.execute(this.java);

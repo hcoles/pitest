@@ -65,6 +65,39 @@ public class MutationTotalsTest {
   }
 
   @Test
+  public void shouldCorrectlyCalculateTestStrengthWhenNoMutationsPresent() {
+    assertEquals(0, this.testee.getTestStrength());
+  }
+
+  @Test
+  public void shouldCorrectlyCalculateTestStrengthWhenNoMutationsDetected() {
+    this.testee.addMutations(100);
+    assertEquals(0, this.testee.getTestStrength());
+  }
+
+  @Test
+  public void shouldCorrectlyCalculateTestStrengthWhenAllMutationsWithNoCoverage() {
+    this.testee.addMutations(100);
+    assertEquals(0, this.testee.getTestStrength());
+  }
+
+  @Test
+  public void shouldCorrectlyCalculateTestStrengthWhenAllWithCoverage() {
+    this.testee.addMutations(120);
+    this.testee.addMutationsWithCoverage(120);
+    this.testee.addMutationsDetetcted(60);
+    assertEquals(50, this.testee.getTestStrength());
+  }
+
+  @Test
+  public void shouldCorrectlyCalculateTestStrengthWhenSomeWithCoverage() {
+    this.testee.addMutations(120);
+    this.testee.addMutationsWithCoverage(100);
+    this.testee.addMutationsDetetcted(60);
+    assertEquals(60, this.testee.getTestStrength());
+  }
+
+  @Test
   public void shouldAccumulateAddedValues() {
     final MutationTotals extra = new MutationTotals();
     extra.addFiles(2);
@@ -72,10 +105,12 @@ public class MutationTotalsTest {
     extra.addLinesCovered(4);
     extra.addMutations(9);
     extra.addMutationsDetetcted(3);
+    extra.addMutationsWithCoverage(6);
     this.testee.add(extra);
     assertEquals(2, this.testee.getNumberOfFiles());
     assertEquals(50, this.testee.getLineCoverage());
     assertEquals(33, this.testee.getMutationCoverage());
+    assertEquals(50, this.testee.getTestStrength());
   }
 
 }

@@ -122,6 +122,7 @@ public class ReportOptions {
   private boolean                        exportLineCoverage             = false;
   private int                            mutationThreshold;
   private int                            coverageThreshold;
+  private int                            testStrengthThreshold;
 
   private String                         mutationEngine                 = "gregor";
 
@@ -547,6 +548,15 @@ public class ReportOptions {
     this.coverageThreshold = coverageThreshold;
   }
 
+  public int getTestStrengthThreshold() {
+    return this.testStrengthThreshold;
+  }
+
+  public void setTestStrengthThreshold(final int testStrengthThreshold) {
+    this.testStrengthThreshold = testStrengthThreshold;
+  }
+
+
   public String getJavaExecutable() {
     return this.javaExecutable;
   }
@@ -639,7 +649,7 @@ public class ReportOptions {
         + groupConfig + ", fullMutationMatrix=" + fullMutationMatrix + ", mutationUnitSize=" + mutationUnitSize
         + ", shouldCreateTimestampedReports=" + shouldCreateTimestampedReports
         + ", detectInlinedCode=" + detectInlinedCode + ", exportLineCoverage="
-        + exportLineCoverage + ", mutationThreshold=" + mutationThreshold
+        + exportLineCoverage + ", mutationThreshold=" + mutationThreshold + ", testStrengthThreshold=" + testStrengthThreshold
         + ", coverageThreshold=" + coverageThreshold + ", mutationEngine="
         + mutationEngine + ", javaExecutable=" + javaExecutable
         + ", includeLaunchClasspath=" + includeLaunchClasspath + ", properties="
@@ -648,8 +658,6 @@ public class ReportOptions {
         + ", testPlugin=" + testPlugin + ", useClasspathJar=" + useClasspathJar
         + ", skipFailingTests=" + skipFailingTests + "]";
   }
-
-  
 
 
 }
