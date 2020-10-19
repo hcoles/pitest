@@ -405,7 +405,7 @@ public class PitMojoTest extends BasePitMojoTest {
     CoverageSummary sum = new CoverageSummary(0, 0);
     final CombinedStatistics cs = new CombinedStatistics(stats, sum);
     when(
-            this.executionStrategy.execute(any(File.class),
+            this.executionStrategy.execute(isNull(),
                     any(ReportOptions.class), any(PluginServices.class), anyMap()))
             .thenReturn(cs);
   }
