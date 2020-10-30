@@ -121,7 +121,7 @@ public class MutationTestMinion {
 
     enablePowerMockSupport();
 
-    final int port = Integer.valueOf(args[0]);
+    final int port = Integer.parseInt(args[0]);
 
     Socket s = null;
     try {
