@@ -43,7 +43,7 @@ public class ManifestUtils {
     final Attributes attributes = manifest.getMainAttributes();
     attributes.put(Attributes.Name.MANIFEST_VERSION, "1.0");
 
-    String classpathForManifest = "";
+    StringBuilder classpathForManifest = new StringBuilder();
     int idx = 0;
     int endIdx = 0;
     while (endIdx >= 0) {
@@ -51,13 +51,13 @@ public class ManifestUtils {
       String path = endIdx < 0 ? classpath.substring(idx)
           : classpath.substring(idx, endIdx);
       if (classpathForManifest.length() > 0) {
-        classpathForManifest += " ";
+        classpathForManifest.append(" ");
       }
 
-      classpathForManifest += new File(path).toURI().toURL().toString();
+      classpathForManifest.append(new File(path).toURI().toURL().toString());
       idx = endIdx + File.pathSeparator.length();
     }
-    attributes.put(Attributes.Name.CLASS_PATH, classpathForManifest);
+    attributes.put(Attributes.Name.CLASS_PATH, classpathForManifest.toString());
 
     File jarFile = File.createTempFile("classpath", ".jar");
     try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(jarFile));
