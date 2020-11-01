@@ -34,6 +34,8 @@ import java.util.zip.ZipOutputStream;
  */
 public class ManifestUtils {
 
+  public static final String CLASSPATH_JAR_FILE_PREFIX = "pitest-classpath-jar-file-";
+
   // Method based on
   // https://github.com/JetBrains/intellij-community/blob/master/java/java-runtime/src/com/intellij/rt/execution/testFrameworks/ForkedByModuleSplitter.java
   // JetBrains copyright notice and licence retained above.
@@ -59,7 +61,7 @@ public class ManifestUtils {
     }
     attributes.put(Attributes.Name.CLASS_PATH, classpathForManifest.toString());
 
-    File jarFile = File.createTempFile("classpath", ".jar");
+    File jarFile = File.createTempFile(CLASSPATH_JAR_FILE_PREFIX, ".jar");
     try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(jarFile));
         ZipOutputStream jarPlugin = new JarOutputStream(out, manifest);
         )  {
