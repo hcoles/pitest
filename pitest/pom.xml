@@ -249,7 +249,7 @@
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
-            <version>1.4.8</version>
+            <version>1.4.13-java7</version>
             <scope>test</scope>
 		</dependency>
 	</dependencies>
