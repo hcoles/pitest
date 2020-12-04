@@ -14,12 +14,6 @@
  */
 package org.pitest.mutationtest.execute;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -29,6 +23,12 @@ import org.pitest.functional.SideEffect;
 import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestUnit;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class MutationTimeoutDecoratorTest {
 
@@ -58,7 +58,7 @@ public class MutationTimeoutDecoratorTest {
   @Test
   public void shouldCompleteNormallyWhenChildExecutesWithinAllowedTime() {
     when(this.timeoutStrategy.getAllowedTime(NORMAL_EXECUTION)).thenReturn(
-        1000l);
+        1000L);
     this.testee.execute(this.rc);
     verify(this.child).execute(any(ResultCollector.class));
     verify(this.sideEffect, never()).apply();
@@ -67,7 +67,7 @@ public class MutationTimeoutDecoratorTest {
   @Test
   @Ignore("flakey")
   public void shouldApplySideEffectWhenChildRunsForLongerThanAllowedTime() {
-    when(this.timeoutStrategy.getAllowedTime(NORMAL_EXECUTION)).thenReturn(50l);
+    when(this.timeoutStrategy.getAllowedTime(NORMAL_EXECUTION)).thenReturn(50L);
 
     doAnswer(invocation -> {
       Thread.sleep(100);

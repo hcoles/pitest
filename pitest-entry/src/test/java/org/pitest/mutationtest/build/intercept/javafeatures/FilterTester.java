@@ -1,19 +1,5 @@
 package org.pitest.mutationtest.build.intercept.javafeatures;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.assertj.core.api.Condition;
 import org.assertj.core.api.SoftAssertions;
 import org.pitest.bytecode.analysis.ClassTree;
@@ -28,6 +14,20 @@ import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.util.ResourceFolderByteArraySource;
+
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class FilterTester {
 
@@ -262,8 +262,7 @@ public class FilterTester {
 
 
   private String makeClassName(String sample, String compiler) {
-    final String clazz = MessageFormat.format(this.path, sample, compiler);
-    return clazz;
+    return MessageFormat.format(this.path, sample, compiler);
   }
 
 

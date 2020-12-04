@@ -14,19 +14,6 @@
  */
 package org.pitest.coverage.execute;
 
-import static org.pitest.util.Unchecked.translateCheckedException;
-
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassPathByteArraySource;
@@ -47,8 +34,20 @@ import org.pitest.util.Glob;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
 import org.pitest.util.SafeDataInputStream;
-
 import sun.pitest.CodeCoverageStore;
+
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import static org.pitest.util.Unchecked.translateCheckedException;
 
 public class CoverageMinion {
 
@@ -163,8 +162,7 @@ public class CoverageMinion {
       final CoverageOptions paramsFromParent) {
     final ClientPluginServices plugins = new ClientPluginServices(IsolationUtils.getContextClassLoader());
     final MinionSettings factory = new MinionSettings(plugins);
-    final Configuration testPlugin = factory.getTestFrameworkPlugin(paramsFromParent.getPitConfig(), ClassloaderByteArraySource.fromContext());
-    return testPlugin;
+    return factory.getTestFrameworkPlugin(paramsFromParent.getPitConfig(), ClassloaderByteArraySource.fromContext());
   }
 
   private static void verifyEnvironment(Configuration config) {

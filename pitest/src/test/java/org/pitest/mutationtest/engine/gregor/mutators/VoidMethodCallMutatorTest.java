@@ -15,16 +15,16 @@
 
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.concurrent.Callable;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutatorTest.HasConstructorCall;
 import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutatorTest.HasIntMethodCall;
+
+import java.util.concurrent.Callable;
+
+import static org.junit.Assert.assertTrue;
 
 public class VoidMethodCallMutatorTest extends MutatorTestBase {
 
@@ -82,7 +82,7 @@ public class VoidMethodCallMutatorTest extends MutatorTestBase {
       final double a = 1;
       final String b = "foo";
       try {
-        set(1, 2l, a, this, b);
+        set(1, 2L, a, this, b);
       } finally {
         return "" + this.i;
       }
@@ -112,7 +112,7 @@ public class VoidMethodCallMutatorTest extends MutatorTestBase {
       final double a = 1;
       final String b = "foo";
       try {
-        set(1, 2l, a, this, b);
+        set(1, 2L, a, this, b);
       } finally {
         return "" + i;
       }

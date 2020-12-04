@@ -1,15 +1,5 @@
 package org.pitest.mutationtest.build.intercept.equivalent;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN;
-import static org.pitest.mutationtest.engine.gregor.mutators.BooleanTrueReturnValsMutator.BOOLEAN_TRUE_RETURN;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 import org.junit.Test;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
@@ -17,6 +7,16 @@ import org.pitest.mutationtest.build.intercept.javafeatures.FilterTester;
 import org.pitest.mutationtest.engine.gregor.mutators.EmptyObjectReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NullReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.PrimitiveReturnsMutator;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN;
+import static org.pitest.mutationtest.engine.gregor.mutators.BooleanTrueReturnValsMutator.BOOLEAN_TRUE_RETURN;
 
 public class EquivalentReturnMutationFilterTest {
 
@@ -263,7 +263,7 @@ class AlreadyReturnsLong0 {
 
 class AlreadyReturnsBoxedZeroLong {
   public Long a() {
-    return 0l;
+    return 0L;
   }
 }
 

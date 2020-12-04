@@ -14,12 +14,16 @@
  */
 package org.pitest.maven;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.model.Build;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Plugin;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.mockito.Mockito;
+import org.pitest.mutationtest.config.ConfigOption;
+import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.util.Unchecked;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,16 +35,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.Plugin;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.mockito.Mockito;
-import org.pitest.mutationtest.config.ConfigOption;
-import org.pitest.mutationtest.config.ReportOptions;
-import org.pitest.util.Unchecked;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
 
@@ -417,8 +417,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
               any(Xpp3Dom.class))).then(returnsFirstArg());
       this.testee = new MojoToReportOptionsConverter(mojo,
           this.surefireConverter, filter);
-      final ReportOptions actual = this.testee.convert();
-      return actual;
+      return this.testee.convert();
     } catch (final Exception ex) {
       throw Unchecked.translateCheckedException(ex);
     }

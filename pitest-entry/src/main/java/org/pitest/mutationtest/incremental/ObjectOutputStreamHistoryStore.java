@@ -109,7 +109,7 @@ public class ObjectOutputStreamHistoryStore implements HistoryStore {
 
   private void restoreClassPath() {
     try {
-      final long classPathSize = Long.parseLong(this.input.readLine());
+      final long classPathSize = Long.valueOf(this.input.readLine());
       for (int i = 0; i != classPathSize; i++) {
         final ClassHistory coverage = deserialize(this.input.readLine(),
             ClassHistory.class);

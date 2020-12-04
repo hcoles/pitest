@@ -14,20 +14,20 @@
  */
 package org.pitest.mutationtest.report.xml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.Arrays;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.report.MutationTestResultMother;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class XMLReportListenerTest {
 
@@ -88,10 +88,9 @@ public class XMLReportListenerTest {
 
   private MutationResult createdKilledMutationWithKillingTestOf(
       final String killingTest) {
-    final MutationResult mr = new MutationResult(
+    return new MutationResult(
         MutationTestResultMother.createDetails(),
         new MutationStatusTestPair(1, DetectionStatus.KILLED, killingTest));
-    return mr;
   }
 
   @Test
@@ -104,10 +103,9 @@ public class XMLReportListenerTest {
   }
 
   private MutationResult createSurvivingMutant() {
-    final MutationResult mr = new MutationResult(
+    return new MutationResult(
         MutationTestResultMother.createDetails(),
         MutationStatusTestPair.notAnalysed(1, DetectionStatus.SURVIVED));
-    return mr;
   }
 
 }

@@ -1,19 +1,5 @@
 package org.pitest.coverage;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.instrument.IllegalClassFormatException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Vector;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,9 +15,22 @@ import org.pitest.classpath.OtherClassLoaderClassPathRoot;
 import org.pitest.functional.predicate.False;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.StreamUtil;
-
 import sun.pitest.CodeCoverageStore;
 import sun.pitest.InvokeReceiver;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.instrument.IllegalClassFormatException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class CoverageTransformerTest {
 
@@ -110,9 +109,8 @@ public class CoverageTransformerTest {
       throws IllegalClassFormatException {
     final CoverageTransformer testee = new CoverageTransformer(
         s -> true);
-    final byte[] bs = testee.transform(this.loader, clazz.getName(), null,
+    return testee.transform(this.loader, clazz.getName(), null,
         null, this.bytes.getBytes(clazz.getName()).get());
-    return bs;
   }
 
 }

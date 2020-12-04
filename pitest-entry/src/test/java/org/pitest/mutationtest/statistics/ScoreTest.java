@@ -14,18 +14,18 @@
  */
 package org.pitest.mutationtest.statistics;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.function.Predicate;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.util.StringUtil;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.function.Predicate;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ScoreTest {
 
@@ -75,8 +75,7 @@ public class ScoreTest {
     final PrintStream out = new PrintStream(s);
     this.testee.toScore().report(out);
     final String actual = new String(s.toByteArray());
-    final String[] ss = actual.split(StringUtil.newLine());
-    return ss;
+    return actual.split(StringUtil.newLine());
   }
 
   @Test

@@ -14,17 +14,6 @@
  */
 package org.pitest.mutationtest.execute;
 
-import static org.pitest.util.Unchecked.translateCheckedException;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.F3;
 import org.pitest.mutationtest.DetectionStatus;
@@ -43,6 +32,17 @@ import org.pitest.testapi.execute.Pitest;
 import org.pitest.testapi.execute.containers.ConcreteResultCollector;
 import org.pitest.testapi.execute.containers.UnContainer;
 import org.pitest.util.Log;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import static org.pitest.util.Unchecked.translateCheckedException;
 
 public class MutationTestWorker {
 
@@ -156,7 +156,7 @@ public class MutationTestWorker {
   }
 
   private static Container createNewContainer() {
-    final Container c = new UnContainer() {
+    return new UnContainer() {
       @Override
       public List<TestResult> execute(final TestUnit group) {
         final List<TestResult> results = new ArrayList<>();
@@ -166,7 +166,6 @@ public class MutationTestWorker {
         return results;
       }
     };
-    return c;
   }
 
 

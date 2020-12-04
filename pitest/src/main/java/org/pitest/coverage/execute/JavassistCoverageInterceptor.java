@@ -14,12 +14,6 @@
  */
 package org.pitest.coverage.execute;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.pitest.bytecode.FrameOptions;
@@ -32,6 +26,12 @@ import org.pitest.util.IsolationUtils;
 import org.pitest.util.StreamUtil;
 import org.pitest.util.Unchecked;
 import sun.pitest.CodeCoverageStore;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class JavassistCoverageInterceptor {
 
@@ -61,8 +61,7 @@ public final class JavassistCoverageInterceptor {
   private static byte[] getOriginalBytes(final Object classPath,
       final String name) throws IOException {
     try (InputStream is = returnNormalBytes(classPath,name)) {
-      final byte[] bs = StreamUtil.streamToByteArray(is);
-      return bs;
+      return StreamUtil.streamToByteArray(is);
     }
   }
 

@@ -37,8 +37,6 @@ import org.pitest.util.ManifestUtils;
 import org.pitest.util.PitError;
 import org.pitest.util.StreamUtil;
 
-import static org.pitest.util.ManifestUtils.CLASSPATH_JAR_FILE_PREFIX;
-
 public class ClassPath {
 
   private static final Logger         LOG = Log.getLogger();
@@ -117,7 +115,7 @@ public class ClassPath {
 
   public static Collection<String> getClassPathElementsAsPaths() {
     final Set<String> filesAsString = new LinkedHashSet<>();
-    FCollection.mapTo(getClassPathElementsAsFiles(), File::getPath,
+    FCollection.mapTo(getClassPathElementsAsFiles(), file -> file.getPath(),
         filesAsString);
     return filesAsString;
   }
@@ -140,8 +138,8 @@ public class ClassPath {
    * @param elements existing elements
    */
   private static void addEntriesFromClasspathManifest(final Set<File> elements) {
-    Optional<File> maybeJar = elements.stream().filter(f -> f.getName().startsWith(CLASSPATH_JAR_FILE_PREFIX) && f.getName().endsWith(".jar"))
-        .findFirst();
+    Optional<File> maybeJar = elements.stream().filter( f -> f.getName().startsWith("classpath") && f.getName().endsWith(".jar"))
+    .findFirst();
     maybeJar.ifPresent(file -> elements.addAll(ManifestUtils.readClasspathManifest(file)));
   }
 

@@ -197,12 +197,6 @@
 			<version>1.1</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.maven.shared</groupId>
-			<artifactId>maven-verifier</artifactId>
-			<version>${maven-verifier}</version>
-			<scope>test</scope>
-		</dependency>
 
 	</dependencies>
 

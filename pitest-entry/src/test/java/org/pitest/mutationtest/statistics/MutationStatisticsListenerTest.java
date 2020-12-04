@@ -14,10 +14,6 @@
  */
 package org.pitest.mutationtest.statistics;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.function.Predicate;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.functional.FCollection;
@@ -26,6 +22,10 @@ import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.report.MutationTestResultMother;
+
+import java.util.function.Predicate;
+
+import static org.junit.Assert.assertTrue;
 
 public class MutationStatisticsListenerTest {
 
@@ -44,10 +44,9 @@ public class MutationStatisticsListenerTest {
   }
 
   private MutationResult makeResult() {
-    final MutationResult mr = new MutationResult(
+    return new MutationResult(
         MutationTestResultMother.createDetails("foo.java"),
         new MutationStatusTestPair(1, DetectionStatus.KILLED, "foo"));
-    return mr;
   }
 
   private boolean hasResultFor(final String mutator) {

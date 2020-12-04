@@ -1,24 +1,18 @@
 package org.pitest.coverage.execute;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
+import com.example.coverage.execute.samples.exceptions.CoveredBeforeExceptionTestee;
+import com.example.coverage.execute.samples.exceptions.TestThrowsExceptionFromLargeMethodTestee;
+import com.example.coverage.execute.samples.exceptions.TestThrowsExceptionInFinallyBlock;
+import com.example.coverage.execute.samples.exceptions.TestsClassWithException;
+import com.example.coverage.execute.samples.exceptions.ThrowsExceptionFromLargeMethodTestee;
+import com.example.coverage.execute.samples.exceptions.ThrowsExceptionInFinallyBlockTestee;
+import com.example.coverage.execute.samples.exceptions.ThrowsExceptionTestee;
+import com.example.coverage.execute.samples.simple.Testee;
+import com.example.coverage.execute.samples.simple.Testee2;
+import com.example.coverage.execute.samples.simple.TesteeWithComplexConstructorsTest;
+import com.example.coverage.execute.samples.simple.TesteeWithMultipleLines;
+import com.example.coverage.execute.samples.simple.Tests;
+import com.example.coverage.execute.samples.simple.TestsForMultiBlockCoverage;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.pitest.SystemTest;
@@ -38,19 +32,24 @@ import org.pitest.util.ExitCode;
 import org.pitest.util.SocketFinder;
 import org.pitest.util.XStreamCloning;
 
-import com.example.coverage.execute.samples.exceptions.CoveredBeforeExceptionTestee;
-import com.example.coverage.execute.samples.exceptions.TestThrowsExceptionFromLargeMethodTestee;
-import com.example.coverage.execute.samples.exceptions.TestThrowsExceptionInFinallyBlock;
-import com.example.coverage.execute.samples.exceptions.TestsClassWithException;
-import com.example.coverage.execute.samples.exceptions.ThrowsExceptionFromLargeMethodTestee;
-import com.example.coverage.execute.samples.exceptions.ThrowsExceptionInFinallyBlockTestee;
-import com.example.coverage.execute.samples.exceptions.ThrowsExceptionTestee;
-import com.example.coverage.execute.samples.simple.Testee;
-import com.example.coverage.execute.samples.simple.Testee2;
-import com.example.coverage.execute.samples.simple.TesteeWithComplexConstructorsTest;
-import com.example.coverage.execute.samples.simple.TesteeWithMultipleLines;
-import com.example.coverage.execute.samples.simple.Tests;
-import com.example.coverage.execute.samples.simple.TestsForMultiBlockCoverage;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @Category(SystemTest.class)
 public class CoverageProcessSystemTest {
@@ -402,7 +401,7 @@ public class CoverageProcessSystemTest {
   private boolean coversBlock(
       final List<CoverageResult> coveredClasses,
       final String testName, final int block) {
-    return coveredClasses.stream().filter(hitsBlock(testName, block)).findFirst().isPresent();
+    return coveredClasses.stream().anyMatch(hitsBlock(testName, block));
   }
 
   private Predicate<CoverageResult> hitsBlock(final String testName,

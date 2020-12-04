@@ -1,11 +1,5 @@
 package org.pitest.mutationtest.build;
 
-import static org.pitest.functional.prelude.Prelude.printWith;
-
-import java.io.File;
-import java.util.Collection;
-import java.util.function.Consumer;
-
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.EngineArguments;
@@ -18,6 +12,12 @@ import org.pitest.mutationtest.execute.MutationTestProcess;
 import org.pitest.process.ProcessArgs;
 import org.pitest.util.Log;
 import org.pitest.util.SocketFinder;
+
+import java.io.File;
+import java.util.Collection;
+import java.util.function.Consumer;
+
+import static org.pitest.functional.prelude.Prelude.printWith;
 
 public class WorkerFactory {
 
@@ -61,9 +61,8 @@ public class WorkerFactory {
         .andStderr(printWith("stderr "));
 
     final SocketFinder sf = new SocketFinder();
-    final MutationTestProcess worker = new MutationTestProcess(
+    return new MutationTestProcess(
         sf.getNextAvailableServerSocket(), args, fileArgs);
-    return worker;
   }
 
   private Consumer<String> captureStdOutIfVerbose() {

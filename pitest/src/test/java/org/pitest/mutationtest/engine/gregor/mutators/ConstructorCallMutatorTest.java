@@ -15,14 +15,6 @@
 
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.function.Predicate;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
@@ -30,6 +22,14 @@ import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutatorTest.HasIntMethodCall;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutatorTest.HasVoidMethodCall;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.function.Predicate;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ConstructorCallMutatorTest extends MutatorTestBase {
 
@@ -122,6 +122,6 @@ public class ConstructorCallMutatorTest extends MutatorTestBase {
 
 
   private static void assertDoesNotContain(Collection<MutationDetails> c, Predicate<MutationDetails> p) {
-    assertThat(c.stream().filter(p).findFirst().isPresent()).isFalse();
+    assertThat(c.stream().anyMatch(p)).isFalse();
   }
 }
