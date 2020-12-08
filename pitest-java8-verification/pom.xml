@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>pitest-parent</artifactId>
 		<groupId>org.pitest</groupId>
-		<version>1.5.3-SNAPSHOT</version>
+		<version>1.6.${revision}</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -14,13 +14,6 @@
 
 	<build>
 		<plugins>
-		    <!-- Don't deploy to Maven Central -->
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
