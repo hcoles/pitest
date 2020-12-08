@@ -102,7 +102,7 @@ public class MutationCoverageReportTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.data = new ReportOptions();
     this.data.setSourceDirs(Collections.<File> emptyList());
     when(this.coverage.calculateCoverage()).thenReturn(this.coverageDb);

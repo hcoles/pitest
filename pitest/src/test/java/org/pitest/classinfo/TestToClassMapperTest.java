@@ -34,7 +34,7 @@ public class TestToClassMapperTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.repository = new Repository(this.source);
     this.testee = new TestToClassMapper(this.repository);
   }

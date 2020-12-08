@@ -45,7 +45,7 @@ public class TestNGAdapterTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.description = new Description("foo");
     this.clazz = TestNGAdapterTest.class;
     this.testee = new TestNGAdapter(this.clazz, this.description, this.rc);

@@ -40,7 +40,7 @@ public class SocketReadingCallableTest {
 
   @Before
   public void setUp() throws IOException {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new SocketReadingCallable(this.socket,
         this.sendDataSideEffect, this.receiveStrategy);
 

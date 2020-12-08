@@ -62,7 +62,7 @@ public class MutationTestMinionTest {
 
   @Before
   public void setup() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.mutations = new ArrayList<>();
     this.tests = new ArrayList<>();
 

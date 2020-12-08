@@ -33,7 +33,7 @@ public class ReceiveTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.handler = stubHandler();
     this.testee = new Receive(this.handler);
     this.description = new Description("foo", "bar");

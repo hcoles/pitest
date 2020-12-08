@@ -39,7 +39,7 @@ public class DefaultTestPrioritiserTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new DefaultTestPrioritiser(this.coverage);
   }
 

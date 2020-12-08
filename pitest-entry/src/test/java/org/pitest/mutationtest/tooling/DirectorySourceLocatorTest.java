@@ -39,7 +39,7 @@ public class DirectorySourceLocatorTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.root = new File(".");
     this.testee = new DirectorySourceLocator(this.root, this.locator);
     when(this.locator.apply(any(File.class)))

@@ -56,7 +56,7 @@ public class OptionsParserTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     when(this.filter.test(any(String.class))).thenReturn(true);
     this.testee = new OptionsParser(this.filter);
   }

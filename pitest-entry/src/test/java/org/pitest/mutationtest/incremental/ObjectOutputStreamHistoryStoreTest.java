@@ -62,7 +62,7 @@ public class ObjectOutputStreamHistoryStoreTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         when(this.coverage.getCoverageIdForClass(any(ClassName.class))).thenReturn(
             BigInteger.TEN);
     }

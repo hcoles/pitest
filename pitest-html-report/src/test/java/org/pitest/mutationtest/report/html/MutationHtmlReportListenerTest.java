@@ -60,7 +60,7 @@ public class MutationHtmlReportListenerTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
 
     when(this.outputStrategy.createWriterForFile(any(String.class)))
         .thenReturn(this.writer);

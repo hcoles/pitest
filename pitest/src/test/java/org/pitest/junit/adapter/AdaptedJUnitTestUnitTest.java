@@ -37,7 +37,7 @@ public class AdaptedJUnitTestUnitTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
   }
 
   private static class HideFromJUnit {

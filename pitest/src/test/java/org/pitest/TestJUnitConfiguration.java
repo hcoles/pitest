@@ -64,7 +64,7 @@ public class TestJUnitConfiguration {
 
   @Before
   public void createTestee() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.container = new UnContainer();
 
     this.pitest = new Pitest(this.listener);

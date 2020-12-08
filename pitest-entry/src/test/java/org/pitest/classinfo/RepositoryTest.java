@@ -47,7 +47,7 @@ public class RepositoryTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new Repository(new ClassloaderByteArraySource(
         IsolationUtils.getContextClassLoader()), this.hashFunction);
   }

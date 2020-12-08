@@ -45,7 +45,7 @@ public class TimeOutDecoratedTestSourceTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
 
     this.testee = new TimeOutDecoratedTestSource(this.timeoutStrategy,
         Arrays.asList(makeTestUnit("one"), makeTestUnit("two")), this.reporter);

@@ -39,7 +39,7 @@ public class CustomRunnerExecutorTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new CustomRunnerExecutor(
         DescriptionMother.createEmptyDescription("foo"), this.runner, this.rc);
   }

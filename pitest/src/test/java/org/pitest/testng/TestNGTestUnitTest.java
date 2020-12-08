@@ -50,7 +50,7 @@ public class TestNGTestUnitTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.config = new TestGroupConfig(Collections.<String> emptyList(),
         Collections.<String> emptyList());
     this.includedTestMethods = Collections.emptyList();

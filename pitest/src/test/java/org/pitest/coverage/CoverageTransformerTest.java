@@ -46,7 +46,7 @@ public class CoverageTransformerTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     CodeCoverageStore.init(this.invokeQueue);
   }
 

@@ -49,7 +49,7 @@ public class MutationTestUnitTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.mutationConfig = new MutationConfig(this.engine, new LaunchOptions(
         this.javaAgent));
     this.mutations = new ArrayList<>();

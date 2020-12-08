@@ -46,7 +46,7 @@ public class ClassPathTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new ClassPath(this.firstComponent, this.secondComponent);
     when(this.firstComponent.cacheLocation()).thenReturn(Optional.ofNullable("foo"));
     when(this.firstComponent.classNames()).thenReturn(

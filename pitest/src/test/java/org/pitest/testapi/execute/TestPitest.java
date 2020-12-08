@@ -31,7 +31,7 @@ public class TestPitest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.container = new UnContainer();
     this.testee = new Pitest(this.listener);
   }

@@ -58,7 +58,7 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.classPath = new ArrayList<>(FCollection.map(
         ClassPath.getClassPathElementsAsFiles(), File::getAbsolutePath));
     when(this.project.getTestClasspathElements()).thenReturn(this.classPath);

@@ -69,7 +69,7 @@ public class TestContainersSendCorrectNotifications {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.config = new ConfigurationForTesting();
     this.pit = new Pitest(this.listener);
   }

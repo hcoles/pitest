@@ -43,7 +43,7 @@ public class DefaultBuildVerifierTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new DefaultBuildVerifier();
   }
 

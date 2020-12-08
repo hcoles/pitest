@@ -40,7 +40,7 @@ public class DependencyFilterTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
 
     this.aTestUnit = makeTestUnit(new Description("foo", String.class));
     this.anotherTestUnit = makeTestUnit(new Description("bar", Integer.class));

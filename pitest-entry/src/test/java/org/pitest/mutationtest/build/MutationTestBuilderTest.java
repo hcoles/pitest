@@ -31,7 +31,7 @@ public class MutationTestBuilderTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     makeTesteeWithUnitSizeOf(0);
   }
 

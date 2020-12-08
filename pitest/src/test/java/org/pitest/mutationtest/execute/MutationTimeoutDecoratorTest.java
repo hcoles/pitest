@@ -50,7 +50,7 @@ public class MutationTimeoutDecoratorTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new MutationTimeoutDecorator(this.child, this.sideEffect,
         this.timeoutStrategy, NORMAL_EXECUTION);
   }

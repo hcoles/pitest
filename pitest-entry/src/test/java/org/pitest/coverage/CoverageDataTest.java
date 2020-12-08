@@ -65,7 +65,7 @@ public class CoverageDataTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     when(this.lm.mapLines(any(ClassName.class))).thenReturn(
         new HashMap<BlockLocation, Set<Integer>>());
     when(this.code.findTestee(any())).thenReturn(Optional.empty());

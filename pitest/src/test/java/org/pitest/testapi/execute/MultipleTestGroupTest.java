@@ -45,7 +45,7 @@ public class MultipleTestGroupTest {
 
   @Before
   public void setup() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     when(this.emptyTestUnit.getDescription()).thenReturn(
         new Description("foo", String.class));
     when(this.emptyTestUnit2.getDescription()).thenReturn(

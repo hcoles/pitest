@@ -53,7 +53,7 @@ public class MutationTestWorkerTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new MutationTestWorker(this.hotswapper, this.mutater,
         this.loader, false);
   }

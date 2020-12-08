@@ -33,7 +33,7 @@ public class CompoundClassPathRootTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new CompoundClassPathRoot(Arrays.asList(this.child1,this.heavyChild,
         this.child2));
   }
