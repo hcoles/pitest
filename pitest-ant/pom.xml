@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>pitest-parent</artifactId>
 		<groupId>org.pitest</groupId>
-		<version>1.5.3-SNAPSHOT</version>
+		<version>1.6.${revision}</version>
 	</parent>
 	<artifactId>pitest-ant</artifactId>
 	<name>pitest-ant</name>
@@ -77,7 +77,11 @@
 						</configuration>
 					</execution>
 				</executions>
-
+			</plugin>
+			<!-- must run after shade -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
