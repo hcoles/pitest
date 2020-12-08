@@ -1,0 +1,50 @@
+name: Release
+on:
+  push:
+    branches:
+      - release
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    # sonatype nexus sometimes hangs
+    timeout-minutes: 20
+    steps:
+      # The build number is stored as a tag in git
+      # If it needs to be reset (eg after a major number version change)
+      # run
+      # git tag -d build-number-<x>
+      # git push --delete origin build-number-<x>
+      - name: Generate build number
+        id: buildnumber
+        uses: einaregilsson/build-number@v3
+        with:
+          token: ${{secrets.github_token}}
+      - name: Install gpg secret key
+        run: |
+          cat <(echo -e "${{ secrets.GPG_SECRET_KEY }}") | gpg --batch --import
+          gpg --list-secret-keys --keyid-format LONG
+      - name: Checkout project
+        uses: actions/checkout@v2
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+      - name: Setup Java JDK
+        uses: actions/setup-java@v1.4.3
+        with:
+          java-version: 8
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+      - name: Configure Git user
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+      - name: Publish JAR
+        run: mvn -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE}} -B -Prelease deploy scm:tag -Drevision=${{ steps.buildnumber.outputs.build_number }} -DskipTests=true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
