@@ -15,15 +15,15 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.concurrent.Callable;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
+
+import java.util.concurrent.Callable;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class ReturnValuesMutatorTest extends MutatorTestBase {
 
@@ -297,8 +297,8 @@ public class ReturnValuesMutatorTest extends MutatorTestBase {
   public void shouldMutateReturnOfLongToValuePlus1() throws Exception {
     final Mutant mutant = getFirstMutant(HasLongReturn.class);
     assertMutantCallableReturns(
-        new HasLongReturn(Long.valueOf(Integer.MAX_VALUE + 5l)), mutant,
-        Long.valueOf(Integer.MAX_VALUE + 6l));
+        new HasLongReturn(Long.valueOf(Integer.MAX_VALUE + 5L)), mutant,
+        Long.valueOf(Integer.MAX_VALUE + 6L));
   }
 
   @Test

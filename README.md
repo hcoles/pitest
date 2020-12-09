@@ -8,6 +8,14 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.6.1
+
+* Automate release to maven central
+* #774 Test strength statistic (thanks @alex859)
+* #798 Enable jvm args to be passed from command line (thanks @yfrolov)
+* #797 Add line coverage to console (thanks @qxo)
+* #822 Mitigate NPE on accidental dependency (thanks @szpak)
+
 ### 1.5.2
 
 * #749 ANT support for the fullMutationMatrix option (thanks @ayaankazerouni)

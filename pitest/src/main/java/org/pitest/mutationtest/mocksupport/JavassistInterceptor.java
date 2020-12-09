@@ -14,13 +14,13 @@
  */
 package org.pitest.mutationtest.mocksupport;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.reflection.Reflection;
 import org.pitest.util.Unchecked;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 public final class JavassistInterceptor {
 
@@ -34,9 +34,8 @@ public final class JavassistInterceptor {
       final String name) {
 
     if (isMutatedClass(name)) {
-      final ByteArrayInputStream bais = new ByteArrayInputStream(
+      return  new ByteArrayInputStream(
           mutant.getBytes());
-      return bais;
     } else {
       return returnNormalBytes(classPath, name);
     }

@@ -1,12 +1,5 @@
 package org.pitest.coverage.execute;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
-
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.CoverageResult;
@@ -16,8 +9,14 @@ import org.pitest.testapi.Description;
 import org.pitest.util.Id;
 import org.pitest.util.ReceiveStrategy;
 import org.pitest.util.SafeDataInputStream;
-
 import sun.pitest.CodeCoverageStore;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 final class Receive implements ReceiveStrategy {
 
@@ -93,9 +92,8 @@ final class Receive implements ReceiveStrategy {
       final Description d, Collection<BlockLocation> visitedBlocks) {
     final boolean isGreen = is.readBoolean();
     final int executionTime = is.readInt();
-    final CoverageResult cr = new CoverageResult(d, executionTime, isGreen,
+    return new CoverageResult(d, executionTime, isGreen,
         visitedBlocks);
-    return cr;
   }
 
 }

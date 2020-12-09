@@ -1,15 +1,5 @@
 package org.pitest.mutationtest.build.intercept.annotations;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.pitest.mutationtest.engine.MutationDetailsMother.aMutationDetail;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.bytecode.analysis.ClassTree;
@@ -21,6 +11,16 @@ import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.pitest.mutationtest.engine.MutationDetailsMother.aMutationDetail;
 
 public class ExcludedAnnotationInterceptorTest {
 
@@ -70,8 +70,7 @@ public class ExcludedAnnotationInterceptorTest {
   private Collection<MutationDetails> runWithTestee(
       Collection<MutationDetails> input, Class<?> clazz) {
     this.testee.begin(treeFor(clazz));
-    final Collection<MutationDetails> actual = this.testee.intercept(input, this.mutator);
-    return actual;
+    return this.testee.intercept(input, this.mutator);
   }
 
   private Collection<MutationDetails> someMutations() {

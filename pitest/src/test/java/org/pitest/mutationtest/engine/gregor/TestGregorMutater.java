@@ -14,15 +14,6 @@
  */
 package org.pitest.mutationtest.engine.gregor;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Predicate;
-
 import org.junit.Test;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -32,6 +23,15 @@ import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.util.ResourceFolderByteArraySource;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Predicate;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TestGregorMutater extends MutatorTestBase {
 
@@ -58,13 +58,13 @@ public class TestGregorMutater extends MutatorTestBase {
     final List<MutationDetails> actualDetails = findMutationsFor(HasMultipleMutations.class);
 
     assertTrue(actualDetails.stream()
-        .filter(descriptionContaining("Replaced Shift Left with Shift Right")).findFirst().isPresent());
+        .anyMatch(descriptionContaining("Replaced Shift Left with Shift Right")));
     assertTrue(actualDetails.stream()
-        .filter(descriptionContaining("replaced return of integer")).findFirst().isPresent());    
+        .anyMatch(descriptionContaining("replaced return of integer")));
     assertTrue(actualDetails.stream()
-        .filter(descriptionContaining("Changed increment")).findFirst().isPresent());  
+        .anyMatch(descriptionContaining("Changed increment")));
     assertTrue(actualDetails.stream()
-        .filter(descriptionContaining("removed negation")).findFirst().isPresent());  
+        .anyMatch(descriptionContaining("removed negation")));
   }
 
   @Test

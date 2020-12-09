@@ -180,10 +180,9 @@ public class MutationStatisticsPrecursorTest {
 
   private MutationResult makeResult(final DetectionStatus status,
                                     final int numberOfTests) {
-    final MutationResult mr = new MutationResult(
+    return new MutationResult(
             MutationTestResultMother.createDetails("foo.java"),
             new MutationStatusTestPair(numberOfTests, status, "foo"));
-    return mr;
   }
 
   private String[] generateReportLines() {
@@ -191,7 +190,6 @@ public class MutationStatisticsPrecursorTest {
     final PrintStream out = new PrintStream(s);
     this.testee.toStatistics().report(out);
     final String actual = new String(s.toByteArray());
-    final String[] ss = actual.split(StringUtil.newLine());
-    return ss;
+    return actual.split(StringUtil.newLine());
   }
 }

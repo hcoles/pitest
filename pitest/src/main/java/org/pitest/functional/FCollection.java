@@ -82,18 +82,6 @@ public abstract class FCollection {
     }
   }
 
-
-  public static <T> java.util.Optional<T> findFirst(final Iterable<? extends T> xs,
-      final Predicate<T> predicate) {
-    for (final T x : xs) {
-      if (predicate.test(x)) {
-        return java.util.Optional.ofNullable(x);
-      }
-    }
-    return java.util.Optional.empty();
-  }
-
-
   public static <T> boolean contains(final Iterable<? extends T> xs,
       final Predicate<T> predicate) {
     for (final T x : xs) {

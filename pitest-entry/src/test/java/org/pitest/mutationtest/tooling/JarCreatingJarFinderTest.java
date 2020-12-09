@@ -14,19 +14,6 @@
  */
 package org.pitest.mutationtest.tooling;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.jar.Attributes;
-import java.util.jar.JarInputStream;
-import java.util.jar.Manifest;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,8 +23,21 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.classinfo.ClassByteArraySource;
-import java.util.Optional;
 import org.pitest.util.PitError;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Optional;
+import java.util.jar.Attributes;
+import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 public class JarCreatingJarFinderTest {
 
@@ -136,9 +136,7 @@ public class JarCreatingJarFinderTest {
     try (JarInputStream jis = new JarInputStream(new FileInputStream(f))) {
       final Manifest m = jis.getManifest();
       final Attributes a = m.getMainAttributes();
-      final String am = a.getValue(key);
-
-      return am;
+      return a.getValue(key);
     }
   }
 }

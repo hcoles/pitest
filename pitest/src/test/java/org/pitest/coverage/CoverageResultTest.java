@@ -1,14 +1,14 @@
 package org.pitest.coverage;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Arrays;
-import java.util.Collections;
-
 import org.junit.Test;
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
+
+import java.util.Arrays;
+import java.util.Collections;
+
+import static org.junit.Assert.assertEquals;
 
 public class CoverageResultTest {
 
@@ -38,8 +38,7 @@ public class CoverageResultTest {
   private BlockLocation makeCoverage(final String name, final int block) {
     final Location l = Location.location(ClassName.fromString(name),
         MethodName.fromString("amethod"), "methodDesc");
-    final BlockLocation bl = new BlockLocation(l, block, 0, 1);
-    return bl;
+    return new BlockLocation(l, block, 0, 1);
   }
 
 }

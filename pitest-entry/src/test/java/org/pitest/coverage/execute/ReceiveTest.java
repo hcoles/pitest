@@ -1,9 +1,5 @@
 package org.pitest.coverage.execute;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.when;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -12,10 +8,13 @@ import org.pitest.coverage.CoverageResult;
 import org.pitest.testapi.Description;
 import org.pitest.util.Id;
 import org.pitest.util.SafeDataInputStream;
-
 import sun.pitest.CodeCoverageStore;
 
 import java.util.function.Consumer;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
 
 // does this test add any value?
 public class ReceiveTest {
@@ -69,7 +68,7 @@ public class ReceiveTest {
 
     when(this.is.read(Description.class)).thenReturn(this.description);
     when(this.is.readInt()).thenReturn(1);
-    when(this.is.readLong()).thenReturn(1l,
+    when(this.is.readLong()).thenReturn(1L,
         CodeCoverageStore.encode(classId, probeNumber));
     when(this.is.readBoolean()).thenReturn(testPassed);
     this.testee.apply(Id.OUTCOME, this.is);

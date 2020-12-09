@@ -114,9 +114,7 @@ public class SequenceQuery<T> {
     public State<T> make(State<T> andThen) {
       final Split<T> placeHolder = new Split<>(null, null);
       final State<T> right = this.r.make(placeHolder);
-      final Split<T> split = new Split<>(right, andThen);
-
-      placeHolder.out1 = split;
+      placeHolder.out1 = new Split<>(right, andThen);
       return placeHolder;
     }
 

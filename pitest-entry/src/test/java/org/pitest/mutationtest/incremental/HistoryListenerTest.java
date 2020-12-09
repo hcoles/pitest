@@ -1,7 +1,5 @@
 package org.pitest.mutationtest.incremental;
 
-import static org.mockito.Mockito.verify;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -12,6 +10,8 @@ import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.report.MutationTestResultMother;
+
+import static org.mockito.Mockito.verify;
 
 public class HistoryListenerTest {
 
@@ -36,10 +36,9 @@ public class HistoryListenerTest {
   }
 
   private MutationResult makeResult() {
-    final MutationResult mr = new MutationResult(
+    return new MutationResult(
         MutationTestResultMother.createDetails(), MutationStatusTestPair.notAnalysed(0,
             DetectionStatus.KILLED));
-    return mr;
   }
 
 }

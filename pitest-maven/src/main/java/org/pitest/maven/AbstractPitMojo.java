@@ -171,7 +171,7 @@ public class AbstractPitMojo extends AbstractMojo {
   /**
    * Arguments to pass to child processes
    */
-  @Parameter(property = "jvmArgs")
+  @Parameter
   private ArrayList<String>           jvmArgs;
 
   /**

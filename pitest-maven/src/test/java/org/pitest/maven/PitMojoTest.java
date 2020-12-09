@@ -1,15 +1,5 @@
 package org.pitest.maven;
 
-import static java.util.Arrays.asList;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.util.Collections;
-
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -21,6 +11,17 @@ import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.statistics.Score;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
+
+import java.io.File;
+import java.util.Collections;
+import java.util.Map;
+
+import static java.util.Arrays.asList;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class PitMojoTest extends BasePitMojoTest {
 
@@ -137,7 +138,7 @@ public class PitMojoTest extends BasePitMojoTest {
   public void testThrowsMojoFailureExceptionWhenCoverageBelowThreshold()
       throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration("<coverageThreshold>50</coverageThreshold>"));
-    setupCoverage(100l, 100, 40);
+    setupCoverage(100L, 100, 40);
     try {
       this.testee.execute();
       fail();
@@ -149,7 +150,7 @@ public class PitMojoTest extends BasePitMojoTest {
   public void testDoesNotThrowMojoFailureExceptionWhenCoverageOnThreshold()
       throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration("<coverageThreshold>50</coverageThreshold>"));
-    setupCoverage(100l, 100, 50);
+    setupCoverage(100L, 100, 50);
     try {
       this.testee.execute();
       // pass

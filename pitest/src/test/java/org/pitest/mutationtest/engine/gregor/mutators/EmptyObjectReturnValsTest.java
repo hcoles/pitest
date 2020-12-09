@@ -1,6 +1,9 @@
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Before;
+import org.junit.Test;
+import org.pitest.mutationtest.engine.MutationDetails;
+import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -8,10 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class EmptyObjectReturnValsTest extends MutatorTestBase {
 
@@ -71,7 +71,7 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
   @Test
   public void mutatesBoxedLongsToZero() throws Exception {
     assertMutantCallableReturns(new BoxedLong(),
-        createFirstMutant(BoxedLong.class), 0l);
+        createFirstMutant(BoxedLong.class), 0L);
   }
 
   @Test
@@ -193,7 +193,7 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
   private static class BoxedLong implements Callable<Long> {
     @Override
     public Long call() throws Exception {
-      return 1l;
+      return 1L;
     }
   }
 
