@@ -2,7 +2,6 @@ package org.pitest.maven;
 
 import static java.util.Arrays.asList;
 import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -14,6 +13,8 @@ import java.util.Collections;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
+import org.mockito.Mock;
 import org.pitest.coverage.CoverageSummary;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
@@ -23,11 +24,17 @@ import org.pitest.mutationtest.tooling.CombinedStatistics;
 
 public class PitMojoTest extends BasePitMojoTest {
 
+  @Mock
+  private MavenProject executionProject;
+
   private AbstractPitMojo testee;
 
   @Override
   public void setUp() throws Exception {
     super.setUp();
+
+    when(this.project.getExecutionProject()).thenReturn(executionProject);
+    when(this.executionProject.getBasedir()).thenReturn(new File("BASEDIR"));
   }
 
   public void testRunsAMutationReportWhenMutationCoverageGoalTrigered()
@@ -37,7 +44,7 @@ public class PitMojoTest extends BasePitMojoTest {
     build.setOutputDirectory("foo");
     this.testee.getProject().setBuild(build);
     this.testee.execute();
-    verify(this.executionStrategy).execute(isNull(),
+    verify(this.executionStrategy).execute(any(File.class),
         any(ReportOptions.class), any(PluginServices.class), anyMap());
   }
 
@@ -393,7 +400,7 @@ public class PitMojoTest extends BasePitMojoTest {
     CoverageSummary sum = new CoverageSummary(lines, linesCovered);
     final CombinedStatistics cs = new CombinedStatistics(stats, sum);
     when(
-        this.executionStrategy.execute(isNull(),
+        this.executionStrategy.execute(any(File.class),
             any(ReportOptions.class), any(PluginServices.class), anyMap()))
             .thenReturn(cs);
   }
@@ -405,7 +412,7 @@ public class PitMojoTest extends BasePitMojoTest {
     CoverageSummary sum = new CoverageSummary(0, 0);
     final CombinedStatistics cs = new CombinedStatistics(stats, sum);
     when(
-            this.executionStrategy.execute(isNull(),
+            this.executionStrategy.execute(any(File.class),
                     any(ReportOptions.class), any(PluginServices.class), anyMap()))
             .thenReturn(cs);
   }
@@ -418,7 +425,7 @@ public class PitMojoTest extends BasePitMojoTest {
     CoverageSummary sum = new CoverageSummary(0, 0);
     final CombinedStatistics cs = new CombinedStatistics(stats, sum);
     when(
-        this.executionStrategy.execute(isNull(),
+        this.executionStrategy.execute(any(File.class),
             any(ReportOptions.class), any(PluginServices.class), anyMap()))
             .thenReturn(cs);
   }
