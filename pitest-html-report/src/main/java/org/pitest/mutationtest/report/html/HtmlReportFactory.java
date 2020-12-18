@@ -15,11 +15,11 @@
 
 package org.pitest.mutationtest.report.html;
 
-import java.util.Properties;
-
 import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.MutationResultListenerFactory;
+
+import java.util.Properties;
 
 public class HtmlReportFactory implements MutationResultListenerFactory {
 
@@ -40,4 +40,5 @@ public class HtmlReportFactory implements MutationResultListenerFactory {
   public String description() {
     return "Default html report plugin";
   }
+
 }

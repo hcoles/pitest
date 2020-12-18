@@ -1,15 +1,15 @@
 package org.pitest.plugin;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class FeatureSelectorTest {
 
@@ -50,14 +50,6 @@ public class FeatureSelectorTest {
     this.testee = new FeatureSelector<>(Arrays.asList(disableFoo), features(this.onByDefault));
 
     assertThat(this.testee.getActiveFeatures()).isEmpty();
-  }
-
-  @Test
-  public void shouldThrowErrorWhenConfigForUnknownFeatureProvided() {
-    final FeatureSetting wrong = new FeatureSetting("unknown", ToggleStatus.DEACTIVATE,  new HashMap<String, List<String>>());
-
-    this.thrown.expect(IllegalArgumentException.class);
-    this.testee = new FeatureSelector<>(Arrays.asList(wrong), features(this.onByDefault));
   }
 
   @Test
