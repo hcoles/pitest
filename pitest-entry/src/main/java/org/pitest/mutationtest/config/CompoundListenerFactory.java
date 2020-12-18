@@ -14,33 +14,35 @@
  */
 package org.pitest.mutationtest.config;
 
-import java.util.Properties;
-import java.util.function.Function;
-
-import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.MutationResultListenerFactory;
+import org.pitest.plugin.Feature;
+import org.pitest.plugin.FeatureSelector;
+import org.pitest.plugin.FeatureSetting;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Properties;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class CompoundListenerFactory implements MutationResultListenerFactory {
 
-  private final Iterable<MutationResultListenerFactory> children;
+  private final FeatureSelector<MutationResultListenerFactory> features;
 
-  public CompoundListenerFactory(
-      final Iterable<MutationResultListenerFactory> children) {
-    this.children = children;
+  public CompoundListenerFactory(List<FeatureSetting> features, final Collection<MutationResultListenerFactory> children) {
+    this.features = new FeatureSelector<>(features, children);
   }
 
   @Override
   public MutationResultListener getListener(final Properties props,
       final ListenerArguments args) {
-    return new CompoundTestListener(FCollection.map(this.children,
-        factoryToListener(props, args)));
-  }
+    final List<MutationResultListener> listeners = this.features.getActiveFeatures().stream()
+            .map(toListener(props, args))
+            .collect(Collectors.toList());
 
-  private Function<MutationResultListenerFactory, MutationResultListener> factoryToListener(
-      final Properties props, final ListenerArguments args) {
-    return a -> a.getListener(props, args);
+    return new CompoundTestListener(listeners);
   }
 
   @Override
@@ -53,4 +55,13 @@ public class CompoundListenerFactory implements MutationResultListenerFactory {
     throw new UnsupportedOperationException();
   }
 
+  @Override
+  public Feature provides() {
+    throw new UnsupportedOperationException();
+  }
+
+  private Function<MutationResultListenerFactory, MutationResultListener> toListener(Properties props,
+                                                                                     ListenerArguments args) {
+    return a -> a.getListener(props, args.withSetting(features.getSettingForFeature(a.provides().name())));
+  }
 }

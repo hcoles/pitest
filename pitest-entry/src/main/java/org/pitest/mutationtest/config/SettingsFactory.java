@@ -1,14 +1,5 @@
 package org.pitest.mutationtest.config;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import org.pitest.coverage.CoverageExporter;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.export.DefaultCoverageExporter;
@@ -32,6 +23,17 @@ import org.pitest.process.JavaExecutableLocator;
 import org.pitest.process.KnownLocationJavaExecutableLocator;
 import org.pitest.util.PitError;
 import org.pitest.util.ResultOutputStrategy;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class SettingsFactory {
 
@@ -67,7 +69,8 @@ public class SettingsFactory {
   }
 
   public MutationResultListenerFactory createListener() {
-    return new CompoundListenerFactory(findListeners());
+    final FeatureParser parser = new FeatureParser();
+    return new CompoundListenerFactory(parser.parseFeatures(this.options.getFeatures()), findListeners());
   }
 
   public JavaExecutableLocator getJavaExecutable() {
@@ -86,7 +89,7 @@ public class SettingsFactory {
 
   public void describeFeatures(Consumer<Feature> enabled, Consumer<Feature> disabled) {
     final FeatureParser parser = new FeatureParser();
-    final Collection<ProvidesFeature> available = new ArrayList<>(this.plugins.findInterceptors());
+    final Collection<ProvidesFeature> available = new ArrayList<>(this.plugins.findFeatures());
     final List<FeatureSetting> settings = parser.parseFeatures(this.options.getFeatures());
     final FeatureSelector<ProvidesFeature> selector = new FeatureSelector<>(settings, available);
 
@@ -104,9 +107,22 @@ public class SettingsFactory {
       .sorted(byName())
       .filter(f -> !enabledFeatures.contains(f))
       .forEach(disabled);
-    
   }
 
+  public void checkRequestedFeatures() {
+    FeatureParser parser = new FeatureParser();
+    Set<String> available = this.plugins.findFeatures().stream()
+            .map(f -> f.provides().name())
+            .collect(Collectors.toSet());
+
+    Optional<FeatureSetting> unknown = parser.parseFeatures(this.options.getFeatures()).stream()
+            .filter(f -> !available.contains(f.feature()))
+            .findAny();
+
+    unknown.ifPresent(setting -> {
+      throw new IllegalArgumentException("Unknown feature " + setting.feature());
+    });
+  }
 
   public TestPrioritiserFactory getTestPrioritiser() {
     final Collection<? extends TestPrioritiserFactory> testPickers = this.plugins
@@ -128,12 +144,7 @@ public class SettingsFactory {
     return new CompoundInterceptorFactory(parser.parseFeatures(this.options.getFeatures()), new ArrayList<>(interceptors));
   }
 
-  private static Predicate<MutationResultListenerFactory> nameMatches(
-      final Iterable<String> outputFormats) {
-    return a -> FCollection.contains(outputFormats, equalsIgnoreCase(a.name()));
-  }
-
-  private Iterable<MutationResultListenerFactory> findListeners() {
+  private Collection<MutationResultListenerFactory> findListeners() {
     final Iterable<? extends MutationResultListenerFactory> listeners = this.plugins
         .findListeners();
     final Collection<MutationResultListenerFactory> matches = FCollection
@@ -144,6 +155,15 @@ public class SettingsFactory {
     }
     return matches;
   }
+
+  private static Predicate<MutationResultListenerFactory> nameMatches(
+          final Iterable<String> outputFormats) {
+    // plugins can be either activated here by name
+    // or later via the feature mechanism
+    return a -> FCollection.contains(outputFormats, equalsIgnoreCase(a.name()))
+            || !a.provides().equals(MutationResultListenerFactory.LEGACY_MODE);
+  }
+
 
   private static Predicate<String> equalsIgnoreCase(final String other) {
     return a -> a.equalsIgnoreCase(other);
