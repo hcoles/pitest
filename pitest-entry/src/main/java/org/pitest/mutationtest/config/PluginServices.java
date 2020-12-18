@@ -1,7 +1,13 @@
 package org.pitest.mutationtest.config;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.List;
 
 import org.pitest.mutationtest.MutationEngineFactory;
@@ -13,6 +19,7 @@ import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.plugin.ToolClasspathPlugin;
 import org.pitest.testapi.TestPluginFactory;
 import org.pitest.util.IsolationUtils;
+import org.pitest.util.PitError;
 import org.pitest.util.ServiceLoader;
 
 public class PluginServices {
@@ -53,8 +60,21 @@ public class PluginServices {
     l.addAll(nullPlugins());
     return l;
   }
+
+  public Iterable<? extends File> findClientClasspathPluginDescriptors() {
+    final List<File> l = new ArrayList<>();
+    l.addAll(findMutationEngineDescriptors());
+    l.addAll(findTestFrameworkPluginDescriptors());
+    l.addAll(nullPluginDescriptors());
+    return l;
+  }
+
   Collection<? extends TestPluginFactory> findTestFrameworkPlugins() {
     return ServiceLoader.load(TestPluginFactory.class, this.loader);
+  }
+
+  Collection<File> findTestFrameworkPluginDescriptors() {
+    return findPluginDescriptors(TestPluginFactory.class);
   }
 
   Collection<? extends MutationGrouperFactory> findGroupers() {
@@ -69,6 +89,10 @@ public class PluginServices {
     return ServiceLoader.load(MutationEngineFactory.class, this.loader);
   }
 
+  Collection<File> findMutationEngineDescriptors() {
+    return findPluginDescriptors(MutationEngineFactory.class);
+  }
+
   Collection<? extends TestPrioritiserFactory> findTestPrioritisers() {
     return ServiceLoader.load(TestPrioritiserFactory.class, this.loader);
   }
@@ -77,8 +101,28 @@ public class PluginServices {
     return ServiceLoader.load(ClientClasspathPlugin.class, this.loader);
   }
 
+  private Collection<File> nullPluginDescriptors() {
+    return findPluginDescriptors(ClientClasspathPlugin.class);
+  }
+
   public Collection<? extends MutationInterceptorFactory> findInterceptors() {
     return ServiceLoader.load(MutationInterceptorFactory.class, this.loader);
+  }
+
+  private Collection<File> findPluginDescriptors(Class<?> ifc) {
+    try {
+      final Collection<File> pluginDescriptors = new ArrayList<>();
+      Enumeration<URL> e = this.loader.getResources("META-INF/services/" + ifc.getName());
+      while (e.hasMoreElements()) {
+        URL url = e.nextElement();
+        if (url.getProtocol() == "file") {
+          pluginDescriptors.add(Paths.get(url.toURI()).getParent().getParent().getParent().toFile());
+        }
+      }
+      return pluginDescriptors;
+    } catch (final IOException | URISyntaxException ex) {
+      throw new PitError("Error finding plugin descriptor for " + ifc.getName(), ex);
+    }
   }
 
 }
