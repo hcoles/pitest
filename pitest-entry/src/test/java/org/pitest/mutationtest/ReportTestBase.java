@@ -26,6 +26,7 @@ import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.mutationtest.incremental.NullHistoryStore;
+import org.pitest.mutationtest.tooling.CombinedStatistics;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.mutationtest.tooling.MutationCoverage;
 import org.pitest.mutationtest.tooling.MutationStrategies;
@@ -94,12 +95,12 @@ public abstract class ReportTestBase {
     return predicateFor(clazz.getName());
   }
 
-  protected void createAndRun() {
+  protected CombinedStatistics createAndRun() {
     final SettingsFactory settings = new SettingsFactory(this.data, this.plugins);
-    createAndRun(settings);
+    return createAndRun(settings);
   }
 
-  protected void createAndRun(SettingsFactory settings) {
+  protected CombinedStatistics createAndRun(SettingsFactory settings) {
     final JavaAgent agent = new JarCreatingJarFinder();
     try {
 
@@ -129,7 +130,7 @@ public abstract class ReportTestBase {
           code, this.data, new SettingsFactory(this.data, this.plugins),
           timings);
 
-      testee.runReport();
+      return testee.runReport();
     } catch (final IOException e) {
       throw Unchecked.translateCheckedException(e);
     } finally {

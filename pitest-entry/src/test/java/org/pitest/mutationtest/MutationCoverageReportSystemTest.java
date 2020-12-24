@@ -16,6 +16,7 @@
 package org.pitest.mutationtest;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.pitest.mutationtest.DetectionStatus.KILLED;
 import static org.pitest.mutationtest.DetectionStatus.NO_COVERAGE;
@@ -40,6 +41,7 @@ import org.pitest.SystemTest;
 import org.pitest.classpath.ClassPath;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.engine.gregor.Generated;
+import org.pitest.mutationtest.tooling.CombinedStatistics;
 import org.pitest.util.FileUtil;
 import org.pitest.util.IsolationUtils;
 
@@ -97,19 +99,29 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   @Test
   public void shouldReportSurvivingMutations() {
     this.data
-    .setTargetClasses(asList("com.example.CoveredButOnlyPartiallyTested*"));
+      .setTargetClasses(asList("com.example.CoveredButOnlyPartiallyTested*"));
     createAndRun();
     verifyResults(KILLED, SURVIVED);
   }
 
+  @Test
+  public void shouldReportMaxSurvivingLinesPerFile() {
+    this.data
+      .setTargetClasses(singletonList("com.example.MultipleSurvivorsInSingleLine*"));
+    final CombinedStatistics actual = createAndRun();
+    assertEquals(3, actual.getMutationStatistics().getTotalMutations());
+    assertEquals(1, actual.getMutationStatistics().getTotalDetectedMutations());
+    assertEquals(4, actual.getCoverageSummary().getNumberOfCoveredLines());
+    assertEquals(6, actual.getCoverageSummary().getNumberOfLines());
+  }
 
   @Test(expected = PitHelpError.class)
   public void shouldFailRunWithHelpfulMessageIfTestsNotGreen() {
     setMutators("MATH");
     this.data
-    .setTargetClasses(asList("com.example.FailsTestWhenEnvVariableSet*"));
+      .setTargetClasses(asList("com.example.FailsTestWhenEnvVariableSet*"));
     this.data.addChildJVMArgs(Arrays.asList("-D"
-        + FailsTestWhenEnvVariableSetTestee.class.getName() + "=true"));
+      + FailsTestWhenEnvVariableSetTestee.class.getName() + "=true"));
     createAndRun();
     // should not get here
   }
@@ -118,19 +130,19 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldNotFailRunIfSkipFailedTests() {
     setMutators("MATH");
     this.data
-    .setTargetClasses(asList("com.example.FailsTestWhenEnvVariableSet*"));
+      .setTargetClasses(asList("com.example.FailsTestWhenEnvVariableSet*"));
     this.data.addChildJVMArgs(Arrays.asList("-D"
-        + FailsTestWhenEnvVariableSetTestee.class.getName() + "=true"));
+      + FailsTestWhenEnvVariableSetTestee.class.getName() + "=true"));
     this.data.setSkipFailingTests(true);
     createAndRun();
     verifyResults(NO_COVERAGE);
   }
 
   @Test
-  public void shouldLoadResoucesOffClassPathFromFolderWithSpaces() {
+  public void shouldLoadResourcesOffClassPathFromFolderWithSpaces() {
     setMutators("RETURN_VALS");
     this.data
-    .setTargetClasses(asList("com.example.LoadsResourcesFromClassPath*"));
+      .setTargetClasses(asList("com.example.LoadsResourcesFromClassPath*"));
     this.data.setVerbose(true);
     createAndRun();
     verifyResults(KILLED);
@@ -140,7 +152,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldPickRelevantTestsFromSuppliedTestSuites() {
     this.data.setTargetClasses(asList("com.example.FullyCovered*"));
     this.data
-    .setTargetTests(predicateFor(com.example.SuiteForFullyCovered.class));
+      .setTargetTests(predicateFor(com.example.SuiteForFullyCovered.class));
     createAndRun();
     verifyResults(KILLED);
   }
@@ -157,8 +169,8 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldLimitNumberOfMutationsPerClass() {
     this.data.setTargetClasses(asGlobs(MultipleMutations.class));
     this.data
-    .setTargetTests(predicateFor(com.example.FullyCoveredTesteeTest.class));
-    this.data.setFeatures(Collections.singletonList("+CLASSLIMIT(limit[1])"));
+      .setTargetTests(predicateFor(com.example.FullyCoveredTesteeTest.class));
+    this.data.setFeatures(singletonList("+CLASSLIMIT(limit[1])"));
     createAndRun();
     verifyResults(NO_COVERAGE);
   }
@@ -199,17 +211,17 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   @Test
   public void willAllowExcludedClassesToBeReIncludedViaSuite() {
     this.data
-    .setTargetTests(predicateFor("com.example.*SuiteForFullyCovered*"));
+      .setTargetTests(predicateFor("com.example.*SuiteForFullyCovered*"));
     this.data.setTargetClasses(asList("com.example.FullyCovered*"));
     this.data.setExcludedClasses(asGlobs(FullyCoveredTesteeTest.class));
     createAndRun();
     verifyResults(KILLED);
   }
-  
+
   @Test
   public void computesFullMutationMatrix() {
     this.data
-    .setTargetTests(predicateFor("com.example.coverage.execute.samples.mutationMatrix.*"));
+      .setTargetTests(predicateFor("com.example.coverage.execute.samples.mutationMatrix.*"));
     this.data.setTargetClasses(asList("com.example.coverage.execute.samples.mutationMatrix.*"));
     this.data.setExcludedClasses(asGlobs(TestsForSimpleCalculator.class));
     this.data.setFullMutationMatrix(true);
@@ -218,7 +230,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     createAndRun();
     List<MutationResult> resultData = this.metaDataExtractor.getData();
     assertEquals(1, resultData.size());
-    
+
     MutationResult mutation = resultData.get(0);
     assertEquals(KILLED, mutation.getStatus());
     assertEquals(3, mutation.getNumberOfTestsRun());
@@ -236,13 +248,13 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Test
   public void shouldMutateClassesSuppliedToAlternateClassPath()
-      throws IOException {
+    throws IOException {
     // yes, this is horrid
     final String location = FileUtil.randomFilename() + ".jar";
     try {
       try (FileOutputStream fos = new FileOutputStream(location)) {
         final InputStream stream = IsolationUtils.getContextClassLoader()
-             .getResourceAsStream("outofcp.jar");
+          .getResourceAsStream("outofcp.jar");
         copy(stream, fos);
       }
 
@@ -266,7 +278,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   @Test
   public void shouldSupportTestNG() {
     this.data
-    .setTargetClasses(asList("com.example.testng.FullyCovered*"));
+      .setTargetClasses(asList("com.example.testng.FullyCovered*"));
     this.data.setVerbose(true);
     this.data.setTestPlugin("testng");
     createAndRun();
@@ -277,7 +289,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldTerminateWhenThreadpoolCreated() {
     this.data.setTargetClasses(asGlobs(KeepAliveThread.class));
     this.data
-    .setTargetTests(predicateFor(com.example.KeepAliveThreadTest.class));
+      .setTargetTests(predicateFor(com.example.KeepAliveThreadTest.class));
     createAndRun();
     verifyResults(SURVIVED);
   }
@@ -287,7 +299,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     setMutators("NEGATE_CONDITIONALS");
     this.data.setTargetClasses(asGlobs(CrashesJVMWhenMutated.class));
     this.data
-    .setTargetTests(predicateFor(com.example.TestCrashesJVMWhenMutated.class));
+      .setTargetTests(predicateFor(com.example.TestCrashesJVMWhenMutated.class));
     createAndRun();
 
     verifyResults(RUN_ERROR);
@@ -321,7 +333,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     setMutators("INCREMENTS");
     this.data.setTargetClasses(asGlobs(HasMutationsInFinallyBlock.class));
     this.data
-    .setTargetTests(predicateFor(HasMutationInFinallyBlockNonTest.class));
+      .setTargetTests(predicateFor(HasMutationInFinallyBlockNonTest.class));
     this.data.setDetectInlinedCode(true);
     createAndRun();
 
@@ -332,7 +344,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldExitAfterFirstFailureWhenTestClassAnnotatedWithBeforeClass() {
     setMutators("RETURN_VALS");
     this.data
-    .setTargetClasses(asGlobs(CoveredByABeforeAfterClass.class));
+      .setTargetClasses(asGlobs(CoveredByABeforeAfterClass.class));
     this.data.setTargetTests(predicateFor(BeforeAfterClassTest.class));
 
     createAndRun();
@@ -346,9 +358,9 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     setMutators("RETURN_VALS");
 
     this.data
-    .setTargetClasses(asGlobs(com.example.mutatablecodeintest.Mutee.class));
+      .setTargetClasses(asGlobs(com.example.mutatablecodeintest.Mutee.class));
     this.data
-    .setTargetTests(predicateFor(com.example.mutatablecodeintest.MuteeTest.class));
+      .setTargetTests(predicateFor(com.example.mutatablecodeintest.MuteeTest.class));
 
     createAndRun();
 
@@ -360,22 +372,21 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     setMutators("RETURN_VALS");
 
     this.data
-    .setTargetClasses(asGlobs(com.example.testhasignores.Mutee.class));
+      .setTargetClasses(asGlobs(com.example.testhasignores.Mutee.class));
     this.data
-    .setTargetTests(predicateFor(com.example.testhasignores.MuteeTest.class));
+      .setTargetTests(predicateFor(com.example.testhasignores.MuteeTest.class));
 
     createAndRun();
 
     verifyResults(KILLED);
   }
 
-
   @Test
   public void shouldNotMutateStaticMethodsOnlyCalledFromInitializer() {
     setMutators("VOID_METHOD_CALLS");
 
     this.data
-    .setTargetClasses(asGlobs(com.example.staticinitializers.MethodsCalledOnlyFromInitializer.class));
+      .setTargetClasses(asGlobs(com.example.staticinitializers.MethodsCalledOnlyFromInitializer.class));
 
     createAndRun();
 
@@ -387,7 +398,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     setMutators("VOID_METHOD_CALLS");
 
     this.data
-    .setTargetClasses(asGlobs(com.example.staticinitializers.MethodsCalledFromInitializerAndElseWhere.class));
+      .setTargetClasses(asGlobs(com.example.staticinitializers.MethodsCalledFromInitializerAndElseWhere.class));
 
     createAndRun();
 
@@ -400,11 +411,11 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     setMutators("VOID_METHOD_CALLS");
 
     this.data
-    .setTargetClasses(asGlobs(com.example.staticinitializers.NonPrivateMethodsCalledFromInitializerOnly.class));
+      .setTargetClasses(asGlobs(com.example.staticinitializers.NonPrivateMethodsCalledFromInitializerOnly.class));
 
     createAndRun();
 
-    verifyResults(NO_COVERAGE,NO_COVERAGE,NO_COVERAGE);
+    verifyResults(NO_COVERAGE, NO_COVERAGE, NO_COVERAGE);
   }
 
   @Test
@@ -412,7 +423,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     setMutators("VOID_METHOD_CALLS");
 
     this.data
-    .setTargetClasses(asGlobs(com.example.staticinitializers.MethodsCalledInChainFromStaticInitializer.class));
+      .setTargetClasses(asGlobs(com.example.staticinitializers.MethodsCalledInChainFromStaticInitializer.class));
 
     createAndRun();
 
@@ -424,7 +435,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldNotMutateClassesAnnotatedWithGenerated() {
     setMutators("RETURN_VALS");
     this.data
-    .setTargetClasses(asGlobs(AnnotatedToAvoidAtClassLevel.class));
+      .setTargetClasses(asGlobs(AnnotatedToAvoidAtClassLevel.class));
 
     createAndRun();
 
@@ -433,14 +444,14 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
   @Generated
   public static class AnnotatedToAvoidAtClassLevel {
+
     public int mutateMe() {
       return 42;
     }
   }
 
-
   private static void copy(final InputStream in, final OutputStream out)
-      throws IOException {
+    throws IOException {
     // Read bytes and write to destination until eof
 
     final byte[] buf = new byte[1024];
