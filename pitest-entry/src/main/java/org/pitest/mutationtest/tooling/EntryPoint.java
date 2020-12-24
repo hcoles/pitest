@@ -1,10 +1,5 @@
 package org.pitest.mutationtest.tooling;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.Map;
-
 import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.classpath.CodeSource;
@@ -12,9 +7,6 @@ import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
-import java.util.Optional;
-import java.util.function.Consumer;
-
 import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.config.PluginServices;
@@ -30,6 +22,13 @@ import org.pitest.util.Log;
 import org.pitest.util.PitError;
 import org.pitest.util.ResultOutputStrategy;
 import org.pitest.util.Timings;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 public class EntryPoint {
 
@@ -72,6 +71,7 @@ public class EntryPoint {
       settings.describeFeatures(asInfo("+"), asInfo("-"));
       Log.getLogger().info("---------------------------------------------------------------------------");
     }
+    settings.checkRequestedFeatures();
 
     checkMatrixMode(data);
     

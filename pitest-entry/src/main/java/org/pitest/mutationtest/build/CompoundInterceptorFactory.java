@@ -1,14 +1,14 @@
 package org.pitest.mutationtest.build;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Function;
-
 import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.plugin.FeatureSelector;
 import org.pitest.plugin.FeatureSetting;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class CompoundInterceptorFactory {
 
@@ -22,8 +22,9 @@ public class CompoundInterceptorFactory {
   public MutationInterceptor createInterceptor(
       ReportOptions data,
       ClassByteArraySource source) {
-    final List<MutationInterceptor> interceptors = FCollection.map(this.features.getActiveFeatures(),
-        toInterceptor(this.features, data, source));
+    final List<MutationInterceptor> interceptors = this.features.getActiveFeatures().stream()
+            .map(toInterceptor(this.features, data, source))
+            .collect(Collectors.toList());
     return new CompoundMutationInterceptor(interceptors);
   }
 

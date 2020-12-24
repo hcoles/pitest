@@ -1,19 +1,21 @@
 package org.pitest.mutationtest.config;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.build.MutationGrouperFactory;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.mutationtest.build.TestPrioritiserFactory;
 import org.pitest.plugin.ClientClasspathPlugin;
+import org.pitest.plugin.ProvidesFeature;
 import org.pitest.plugin.ToolClasspathPlugin;
 import org.pitest.testapi.TestPluginFactory;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.ServiceLoader;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class PluginServices {
 
@@ -33,7 +35,7 @@ public class PluginServices {
    *
    * @return list of plugins
    */
-  public Iterable<? extends ToolClasspathPlugin> findToolClasspathPlugins() {
+  public Collection<? extends ToolClasspathPlugin> findToolClasspathPlugins() {
     final List<ToolClasspathPlugin> l = new ArrayList<>();
     l.addAll(findListeners());
     l.addAll(findGroupers());
@@ -79,6 +81,13 @@ public class PluginServices {
 
   public Collection<? extends MutationInterceptorFactory> findInterceptors() {
     return ServiceLoader.load(MutationInterceptorFactory.class, this.loader);
+  }
+
+  public Collection<? extends ProvidesFeature> findFeatures() {
+    return findToolClasspathPlugins().stream()
+            .filter(p -> p instanceof ProvidesFeature)
+            .map(p -> ProvidesFeature.class.cast(p))
+            .collect(Collectors.toList());
   }
 
 }
