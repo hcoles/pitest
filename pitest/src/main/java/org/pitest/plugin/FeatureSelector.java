@@ -25,7 +25,7 @@ public class FeatureSelector<T extends ProvidesFeature> {
 
   public FeatureSetting getSettingForFeature(String feature) {
     FeatureSetting conf = null;
-    final Collection<FeatureSetting> groupedSettings = this.settings.get(feature);
+    final Collection<FeatureSetting> groupedSettings = this.settings.get(feature.toLowerCase());
     if (groupedSettings != null) {
       conf = groupedSettings.iterator().next();
     }
@@ -65,7 +65,7 @@ public class FeatureSelector<T extends ProvidesFeature> {
   }
 
   private Function<FeatureSetting, String> byFeature() {
-    return a -> a.feature();
+    return a -> a.feature().toLowerCase();
   }
 
 }
