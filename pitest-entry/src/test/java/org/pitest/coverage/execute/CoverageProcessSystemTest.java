@@ -7,6 +7,7 @@ import com.example.coverage.execute.samples.exceptions.TestsClassWithException;
 import com.example.coverage.execute.samples.exceptions.ThrowsExceptionFromLargeMethodTestee;
 import com.example.coverage.execute.samples.exceptions.ThrowsExceptionInFinallyBlockTestee;
 import com.example.coverage.execute.samples.exceptions.ThrowsExceptionTestee;
+import com.example.coverage.execute.samples.simple.ParentChildInitializationTest;
 import com.example.coverage.execute.samples.simple.Testee;
 import com.example.coverage.execute.samples.simple.Testee2;
 import com.example.coverage.execute.samples.simple.TesteeWithComplexConstructorsTest;
@@ -57,8 +58,7 @@ public class CoverageProcessSystemTest {
   private final MethodName foo = MethodName.fromString("foo");
 
   @Test
-  public void shouldRecordSomeCoverage() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldRecordSomeCoverage() throws Exception {
     final List<CoverageResult> coverage = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertFalse(coverage.iterator().next().getCoverage().isEmpty());
   }
@@ -80,8 +80,7 @@ public class CoverageProcessSystemTest {
   // }
 
   @Test
-  public void shouldCalculateCoverageFor3BlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageFor3BlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test3", 2);
   }
@@ -122,22 +121,19 @@ public class CoverageProcessSystemTest {
   }
 
   @Test
-  public void shouldCalculateCoverageFor7BlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageFor7BlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test7", 2);
   }
 
   @Test
-  public void shouldCalculateCoverageFor8BlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageFor8BlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test8", 2);
   }
 
   @Test
-  public void shouldCalculateCoverageFor9BlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageFor9BlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test9", 2);
   }
@@ -150,50 +146,44 @@ public class CoverageProcessSystemTest {
   }
 
   @Test
-  public void shouldCalculateCoverageFor11BlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageFor11BlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test11", 2);
   }
 
   @Test
-  public void shouldCalculateCoverageFor12BlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageFor12BlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test12", 2);
   }
 
   @Test
-  public void shouldCalculateCoverageFor13BlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageFor13BlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test13", 2);
   }
 
   @Test
-  public void shouldCalculateCoverageFor14BlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageFor14BlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test14", 2);
   }
 
   @Test
-  public void shouldCalculateCoverageFor15BlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageFor15BlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test15", 2);
   }
 
   @Test
-  public void shouldCalculateCoverageForLargeBlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageForLargeBlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "testMany", 2);
   }
 
   @Test
   public void shouldCalculateCoverageForAllRelevantClasses()
-      throws IOException, InterruptedException, ExecutionException {
+      throws Exception{
 
     final List<CoverageResult> coveredClasses = runCoverageForTest(Tests.class);
 
@@ -204,7 +194,7 @@ public class CoverageProcessSystemTest {
 
   @Test
   public void shouldCalculateCoverageForSmallMethodThatThrowsException()
-      throws IOException, InterruptedException, ExecutionException {
+      throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsClassWithException.class);
     assertThat(coveredClasses).anyMatch(coverageFor(CoveredBeforeExceptionTestee.class));
 
@@ -222,7 +212,7 @@ public class CoverageProcessSystemTest {
 
   @Test
   public void shouldCalculateCoverageForMethodThatThrowsExceptionWithFinallyBlock()
-      throws IOException, InterruptedException, ExecutionException {
+      throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestThrowsExceptionInFinallyBlock.class);
 
     final ClassName clazz = ClassName
@@ -237,7 +227,7 @@ public class CoverageProcessSystemTest {
 
   @Test
   public void shouldCalculateCoverageForLargeMethodThatThrowsException()
-      throws IOException, InterruptedException, ExecutionException {
+      throws IOException, InterruptedException {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestThrowsExceptionFromLargeMethodTestee.class);
 
     final ClassName clazz = ClassName
@@ -262,7 +252,7 @@ public class CoverageProcessSystemTest {
 
   @Test
   public void shouldCalculateCoverageOfClassesRunInDifferentClassLoader()
-      throws IOException, InterruptedException, ExecutionException {
+      throws IOException, InterruptedException {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestInDifferentClassLoader.class);
     assertThat(coveredClasses).anyMatch(coverageFor(Testee2.class));
     assertThat(coveredClasses).anyMatch(coverageFor(Testee.class));
@@ -314,6 +304,13 @@ public class CoverageProcessSystemTest {
     assertEquals(ExitCode.JUNIT_ISSUE, exitCode);
   }
 
+  @Test
+  public void handlesParentChildInitializationOrderIssues() throws Exception {
+    final List<CoverageResult> coveredClasses = runCoverageForTest(ParentChildInitializationTest.class);
+    assertThat(coveredClasses)
+            .anyMatch(coverageFor(ClassName.fromString("com.example.coverage.execute.samples.simple.TesteeChild")));
+  }
+
   private ClassPath classPathWithoutJUnit() {
     final List<File> cpWithoutJUnit = 
         ClassPath.getClassPathElementsAsFiles().stream()
@@ -328,7 +325,7 @@ public class CoverageProcessSystemTest {
   }
 
   private List<CoverageResult> runCoverageForTest(final Class<?> test)
-      throws IOException, InterruptedException, ExecutionException {
+      throws IOException, InterruptedException {
 
     final List<CoverageResult> coveredClasses = new ArrayList<>();
 
@@ -360,16 +357,20 @@ public class CoverageProcessSystemTest {
     }
   }
 
-  private Predicate<CoverageResult> coverageFor(final Class<?> class1) {
+  private Predicate<CoverageResult> coverageFor(final Class<?> clazz) {
+    return coverageFor(ClassName.fromClass(clazz));
+  }
+
+  private Predicate<CoverageResult> coverageFor(ClassName clazz) {
     return new Predicate<CoverageResult>() {
 
       @Override
       public boolean test(final CoverageResult a) {
-        return FCollection.contains(a.getCoverage(), resultFor(class1));
+        return FCollection.contains(a.getCoverage(), resultFor(clazz));
       }
 
-      private Predicate<BlockLocation> resultFor(final Class<?> class1) {
-        return a -> a.isFor(ClassName.fromClass(class1));
+      private Predicate<BlockLocation> resultFor(ClassName clazz) {
+        return a -> a.isFor(clazz);
       }
     };
   }
