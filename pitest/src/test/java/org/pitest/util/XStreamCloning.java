@@ -1,18 +1,18 @@
 package org.pitest.util;
 
-import static org.pitest.util.Unchecked.translateCheckedException;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.CompactWriter;
 
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.WeakHashMap;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.CompactWriter;
+import static org.pitest.util.Unchecked.translateCheckedException;
 
 public class XStreamCloning {
 
   private static final XStream                           XSTREAM_INSTANCE          = new XStream(
-      new PitXmlDriver()).set
+      new PitXmlDriver());
   private static final WeakHashMap<ClassLoader, XStream> CACHE                     = new WeakHashMap<>();
 
 
@@ -32,6 +32,8 @@ public class XStreamCloning {
     if (foreginXstream == null) {
       foreginXstream = new XStream(new PitXmlDriver());
       foreginXstream.setClassLoader(loader);
+      XStream.setupDefaultSecurity(foreginXstream);
+      foreginXstream.allowTypesByWildcard(new String[] {"**"});
       // possible that more than one instance will be created
       // per loader, but probably better than synchronizing the whole method
       synchronized (CACHE) {

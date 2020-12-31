@@ -14,12 +14,10 @@
  */
 package org.pitest.util;
 
-import org.xmlpull.mxp1.MXParser;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
 import com.thoughtworks.xstream.io.xml.AbstractXppDriver;
 import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
+import org.xmlpull.mxp1.MXParser;
+import org.xmlpull.v1.XmlPullParser;
 
 /**
  * Pull parser driver that creates hard coded parser type to avoid clashes with
@@ -32,8 +30,7 @@ public class PitXmlDriver extends AbstractXppDriver {
   }
 
   @Override
-  protected synchronized XmlPullParser createParser()
-      throws XmlPullParserException {
+  protected synchronized XmlPullParser createParser() {
     return new MXParser();
   }
 }
