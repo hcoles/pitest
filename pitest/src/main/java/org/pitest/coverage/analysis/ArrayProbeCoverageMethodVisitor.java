@@ -17,13 +17,14 @@
 
 package org.pitest.coverage.analysis;
 
-import java.util.List;
-
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.pitest.mutationtest.engine.gregor.analysis.InstructionCounter;
 import sun.pitest.CodeCoverageStore;
+
+import java.util.List;
 
 /**
  *
@@ -99,6 +100,26 @@ public class ArrayProbeCoverageMethodVisitor extends AbstractCoverageStrategy {
 
     this.mv.visitFieldInsn(Opcodes.GETSTATIC, className,
         CodeCoverageStore.PROBE_FIELD_NAME, "[Z");
+
+    this.mv.visitInsn(DUP); //duplicate array reference, one for null check and one to use
+
+    //Check if PROBE_FIELD_NAME has been initialised
+    Label notnull = new Label();
+    this.mv.visitJumpInsn(Opcodes.IFNONNULL,notnull);
+
+    //if not then initialise
+    this.mv.visitInsn(POP); //gte rid of null on top of stack
+    pushConstant(this.classId);
+    this.mv.visitFieldInsn(Opcodes.GETSTATIC, this.className, CodeCoverageStore.PROBE_LENGTH_FIELD_NAME,"I");
+    this.mv
+            .visitMethodInsn(Opcodes.INVOKESTATIC, CodeCoverageStore.CLASS_NAME,
+                    "getOrRegisterClassProbes", "(II)[Z", false);
+    this.mv.visitInsn(DUP);//duplicate array reference, one to store and one to use
+    this.mv.visitFieldInsn(Opcodes.PUTSTATIC, className,
+            CodeCoverageStore.PROBE_FIELD_NAME, "[Z");
+
+    //else do nothing
+    this.mv.visitLabel(notnull);
 
     //Make sure that we recorded that the class was hit
     this.mv.visitInsn(DUP);
