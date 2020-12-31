@@ -15,14 +15,23 @@
 
 package org.pitest.mutationtest;
 
-import java.util.Properties;
-
+import org.pitest.plugin.Feature;
+import org.pitest.plugin.ProvidesFeature;
 import org.pitest.plugin.ToolClasspathPlugin;
 
-public interface MutationResultListenerFactory extends ToolClasspathPlugin {
+import java.util.Properties;
+
+public interface MutationResultListenerFactory extends ToolClasspathPlugin, ProvidesFeature {
+
+  Feature LEGACY_MODE = Feature.named("_internal_activate_by_output_string")
+          .withOnByDefault(true);
 
   MutationResultListener getListener(Properties props, ListenerArguments args);
 
   String name();
+
+  default Feature provides() {
+    return LEGACY_MODE;
+  }
 
 }

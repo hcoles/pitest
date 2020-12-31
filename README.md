@@ -1,5 +1,5 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.pitest/pitest/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.pitest/pitest)
-[![Build Status](https://travis-ci.org/hcoles/pitest.png?branch=master)](https://travis-ci.org/hcoles/pitest)
+![Build Statis](https://github.com/hcoles/pitest/workflows/CI/badge.svg?branch=master)
 [![Build Status](https://dev.azure.com/henrycoles/pitest/_apis/build/status/hcoles.pitest?branchName=master)](https://dev.azure.com/henrycoles/pitest/_build/latest?definitionId=3&branchName=master)
 
 Pitest (aka PIT) is a state of the art mutation testing system for Java and the JVM.
@@ -7,6 +7,14 @@ Pitest (aka PIT) is a state of the art mutation testing system for Java and the 
 Read all about it at http://pitest.org
 
 ## Releases
+
+### 1.6.1
+
+* Automate release to maven central
+* #774 Test strength statistic (thanks @alex859)
+* #798 Enable jvm args to be passed from command line (thanks @yfrolov)
+* #797 Add line coverage to console (thanks @qxo)
+* #822 Mitigate NPE on accidental dependency (thanks @szpak)
 
 ### 1.5.2
 
