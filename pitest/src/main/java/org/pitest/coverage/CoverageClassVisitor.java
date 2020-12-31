@@ -131,7 +131,7 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
               | Opcodes.ACC_SYNTHETIC;
     }
 
-    return Opcodes.ACC_STATIC | Opcodes.ACC_TRANSIENT | Opcodes.ACC_PUBLIC
+    return Opcodes.ACC_STATIC | Opcodes.ACC_TRANSIENT | Opcodes.ACC_PRIVATE
             | Opcodes.ACC_SYNTHETIC;
   }
 
