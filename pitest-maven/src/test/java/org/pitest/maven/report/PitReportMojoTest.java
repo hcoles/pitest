@@ -32,7 +32,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.pitest.maven.report.generator.ReportGenerationContext;
 import org.pitest.maven.report.generator.ReportGenerationManager;
 import org.pitest.util.PitError;
