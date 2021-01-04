@@ -112,11 +112,11 @@ public class SettingsFactory {
   public void checkRequestedFeatures() {
     FeatureParser parser = new FeatureParser();
     Set<String> available = this.plugins.findFeatures().stream()
-            .map(f -> f.provides().name())
+            .map(f -> f.provides().name().toUpperCase())
             .collect(Collectors.toSet());
 
     Optional<FeatureSetting> unknown = parser.parseFeatures(this.options.getFeatures()).stream()
-            .filter(f -> !available.contains(f.feature()))
+            .filter(f -> !available.contains(f.feature().toUpperCase()))
             .findAny();
 
     unknown.ifPresent(setting -> {

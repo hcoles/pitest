@@ -137,4 +137,13 @@ public class SettingsFactoryTest {
 
   }
 
+  @Test
+  public void shouldTreatFeaturesAsCaseInsensitive() {
+    this.options.setFeatures(Arrays.asList("+feNUm"));
+
+    assertThatCode( () ->this.testee.checkRequestedFeatures())
+            .doesNotThrowAnyException();
+
+  }
+
 }
