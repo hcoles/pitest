@@ -1,30 +1,37 @@
 package org.pitest.mutationtest.build;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.pitest.classinfo.ClassByteArraySource;
-import java.util.Optional;
+import org.pitest.coverage.CoverageDatabase;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.plugin.FeatureParameter;
 import org.pitest.plugin.FeatureSetting;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 public final class InterceptorParameters {
 
   private final FeatureSetting conf;
   private final ReportOptions data;
   private final ClassByteArraySource source;
+  private final CoverageDatabase coverage;
 
 
-  public InterceptorParameters(FeatureSetting conf, ReportOptions data,
+  public InterceptorParameters(FeatureSetting conf, ReportOptions data, CoverageDatabase coverage,
       ClassByteArraySource source) {
     this.conf = conf;
     this.data = data;
+    this.coverage = coverage;
     this.source = source;
   }
 
   public ReportOptions data() {
     return this.data;
+  }
+
+  public CoverageDatabase coverage() {
+    return this.coverage;
   }
 
   public Optional<FeatureSetting> settings() {

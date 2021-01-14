@@ -1,16 +1,16 @@
 package org.pitest.mutationtest.build;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
+import org.pitest.plugin.FeatureParameter;
+import org.pitest.plugin.FeatureSetting;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.junit.Test;
 import java.util.Optional;
-import org.pitest.plugin.FeatureParameter;
-import org.pitest.plugin.FeatureSetting;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class InterceptorParametersTest {
 
@@ -30,7 +30,7 @@ public class InterceptorParametersTest {
 
   @Test
   public void shouldReturnNoneWhenFeatureSettingsAbsent() {
-    this.testee = new InterceptorParameters(null, null, null);
+    this.testee = new InterceptorParameters(null, null, null, null);
     assertThat(this.testee.getString(FeatureParameter.named("foo"))).isEqualTo(Optional.empty());
   }
 
@@ -49,8 +49,8 @@ public class InterceptorParametersTest {
   private InterceptorParameters makeFor(String key, String ... vals) {
     final Map<String, List<String>> values = new HashMap<>();
     values.put(key, Arrays.asList(vals));
-    final FeatureSetting fs = new FeatureSetting(null, null,values);
-    return new InterceptorParameters(fs, null, null);
+    final FeatureSetting fs = new FeatureSetting(null, null, values);
+    return new InterceptorParameters(fs, null, null,null);
   }
 
 }

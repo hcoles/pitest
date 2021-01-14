@@ -15,7 +15,12 @@
 
 package org.pitest.coverage;
 
-import static java.util.stream.Collectors.toCollection;
+import org.pitest.classinfo.ClassInfo;
+import org.pitest.classinfo.ClassName;
+import org.pitest.classpath.CodeSource;
+import org.pitest.functional.FCollection;
+import org.pitest.testapi.Description;
+import org.pitest.util.Log;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -35,12 +40,7 @@ import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-import org.pitest.classinfo.ClassInfo;
-import org.pitest.classinfo.ClassName;
-import org.pitest.classpath.CodeSource;
-import org.pitest.functional.FCollection;
-import org.pitest.testapi.Description;
-import org.pitest.util.Log;
+import static java.util.stream.Collectors.toCollection;
 
 public class CoverageData implements CoverageDatabase {
 
@@ -183,6 +183,11 @@ public class CoverageData implements CoverageDatabase {
   @Override
   public CoverageSummary createSummary() {
     return new CoverageSummary(numberOfLines(), coveredLines());
+  }
+
+  @Override
+  public Map<InstructionLocation, Set<TestInfo>> getInstructionCoverage() {
+    return Collections.unmodifiableMap(this.instructionCoverage);
   }
 
   private BigInteger generateCoverageNumber(
