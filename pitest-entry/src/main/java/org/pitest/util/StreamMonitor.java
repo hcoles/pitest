@@ -14,18 +14,25 @@
  */
 package org.pitest.util;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 public class StreamMonitor extends Thread implements Monitor {
   private static final Logger       LOG = Log.getLogger();
 
-  private final byte[]              buf = new byte[256];
   private final InputStream         in;
   private final Consumer<String> inputHandler;
 
+  /**
+   * Constructor.
+   * @param in stream to read from
+   * @param inputHandler all characters read from {@code in} will be forwarded
+   *                    line by line (without the newline) to this handler.
+   */
   public StreamMonitor(final InputStream in,
       final Consumer<String> inputHandler) {
     super("PIT Stream Monitor");
@@ -41,25 +48,25 @@ public class StreamMonitor extends Thread implements Monitor {
 
   @Override
   public void run() {
+    BufferedReader reader = new BufferedReader(new InputStreamReader(this.in));
     while (!this.isInterrupted()) {
-      readFromStream();
+      readFromStream(reader);
     }
   }
 
-  private void readFromStream() {
+  private void readFromStream(final BufferedReader reader) {
     try {
 
       // If child JVM crashes reading stdout/stderr seems to sometimes
       // block and consume 100% cpu, so check stream is available first.
       // May still be an issue if child crashes during later read . . .
-      if (this.in.available() == 0) {
+      if (!reader.ready()) {
         Thread.sleep(100);
         return;
       }
 
-      int i;
-      while ((i = this.in.read(this.buf, 0, this.buf.length)) != -1) {
-        final String output = new String(this.buf, 0, i);
+      String output;
+      while ( ( output = reader.readLine() ) != null ) {
         this.inputHandler.accept(output);
       }
 
