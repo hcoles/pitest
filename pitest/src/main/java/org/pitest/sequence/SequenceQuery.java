@@ -58,7 +58,7 @@ public class SequenceQuery<T> {
   }
 
   static class Literal<T> implements Partial<T> {
-    Match< T> c;
+    final Match< T> c;
 
     Literal(Match<  T> p) {
       this.c = p;
@@ -71,8 +71,8 @@ public class SequenceQuery<T> {
   }
 
   static class Or<T> implements Partial<T> {
-    Partial<T> left;
-    Partial<T> right;
+    final Partial<T> left;
+    final Partial<T> right;
 
     Or(Partial<T> left, Partial<T> right) {
       this.left = left;
@@ -89,8 +89,8 @@ public class SequenceQuery<T> {
   }
 
   static class Concat<T> implements Partial<T> {
-    Partial<T> left;
-    Partial<T> right;
+    final Partial<T> left;
+    final Partial<T> right;
 
     Concat(Partial<T> left, Partial<T> right) {
       this.left = left;
@@ -104,7 +104,7 @@ public class SequenceQuery<T> {
   }
 
   static class Repeat<T> implements Partial<T> {
-    Partial<T> r;
+    final Partial<T> r;
 
     Repeat(Partial<T> r) {
       this.r = r;
@@ -121,7 +121,7 @@ public class SequenceQuery<T> {
   }
 
   static class Plus<T> implements Partial<T> {
-    Partial<T> r;
+    final Partial<T> r;
 
     Plus(Partial<T> r) {
       this.r = r;
@@ -213,7 +213,7 @@ interface State<T> {
 
 class Consume<T> implements State<T> {
   final Match< T> c;
-  State<T>           out;
+  final State<T>  out;
 
   Consume(Match<T> c, State<T> out) {
     this.c = c;
@@ -227,7 +227,7 @@ class Consume<T> implements State<T> {
 
 class Split<T> implements State<T> {
   State<T> out1;
-  State<T> out2;
+  final State<T> out2;
 
   Split(State<T> out1, State<T> out2) {
     this.out1 = out1;
@@ -237,5 +237,5 @@ class Split<T> implements State<T> {
 
 @SuppressWarnings("rawtypes")
 enum EndMatch implements State {
-  MATCH;
+  MATCH
 }

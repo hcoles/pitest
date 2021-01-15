@@ -38,12 +38,8 @@ public class AvoidStringSwitchedMethodAdapter extends MethodVisitor {
   @Override
   public void visitMethodInsn(final int opcode, final String owner,
       final String name, final String desc, boolean itf) {
-    if ((opcode == Opcodes.INVOKEVIRTUAL) && "java/lang/String".equals(owner)
-        && "hashCode".equals(name)) {
-      this.hashCodeWasLastCall = true;
-    } else {
-      this.hashCodeWasLastCall = false;
-    }
+    this.hashCodeWasLastCall = (opcode == Opcodes.INVOKEVIRTUAL) && "java/lang/String".equals(owner)
+            && "hashCode".equals(name);
     super.visitMethodInsn(opcode, owner, name, desc, itf);
   }
 

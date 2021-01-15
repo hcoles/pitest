@@ -15,6 +15,12 @@
 
 package org.pitest.classpath;
 
+import org.pitest.functional.FCollection;
+import org.pitest.util.Log;
+import org.pitest.util.ManifestUtils;
+import org.pitest.util.PitError;
+import org.pitest.util.StreamUtil;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,12 +36,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.zip.ZipException;
-
-import org.pitest.functional.FCollection;
-import org.pitest.util.Log;
-import org.pitest.util.ManifestUtils;
-import org.pitest.util.PitError;
-import org.pitest.util.StreamUtil;
 
 public class ClassPath {
 
@@ -106,11 +106,7 @@ public class ClassPath {
   }
 
   public URL findResource(final String name) {
-    try {
       return this.root.getResource(name);
-    } catch (final IOException exception) {
-      return null;
-    }
   }
 
   public static Collection<String> getClassPathElementsAsPaths() {

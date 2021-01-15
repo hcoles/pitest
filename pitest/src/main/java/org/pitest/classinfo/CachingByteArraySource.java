@@ -40,4 +40,4 @@ class FixedSizeHashMap<K,V> extends LinkedHashMap<K,V> {
   protected boolean removeEldestEntry(Map.Entry <K,V> eldest) {
     return size() > this.maxsize;
 }
-};
+}

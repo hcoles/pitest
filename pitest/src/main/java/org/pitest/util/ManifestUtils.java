@@ -61,7 +61,7 @@ public class ManifestUtils {
 
     File jarFile = File.createTempFile("classpath", ".jar");
     try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(jarFile));
-        ZipOutputStream jarPlugin = new JarOutputStream(out, manifest);
+        ZipOutputStream jarPlugin = new JarOutputStream(out, manifest)
         )  {
       jarFile.deleteOnExit(); 
     }
@@ -71,7 +71,7 @@ public class ManifestUtils {
   
   public static Collection<File> readClasspathManifest(File file) {
     try (FileInputStream fis = new FileInputStream(file);
-        JarInputStream jarStream = new JarInputStream(fis);) {
+        JarInputStream jarStream = new JarInputStream(fis)) {
       Manifest mf = jarStream.getManifest();
       Attributes att = mf.getMainAttributes();
       String cp = att.getValue(Attributes.Name.CLASS_PATH);

@@ -14,11 +14,11 @@
  */
 package org.pitest.testapi.execute;
 
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
+
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * @author henry
@@ -36,7 +36,7 @@ public enum ResultType {
 
   private interface ResultToListenerSideEffect extends
   Function<TestResult, Consumer<TestListener>> {
-  };
+  }
 
   ResultType(final ResultToListenerSideEffect f) {
     this.function = f;
@@ -46,7 +46,7 @@ public enum ResultType {
 
   public Consumer<TestListener> getListenerFunction(final TestResult result) {
     return this.function.apply(result);
-  };
+  }
 
   public static Consumer<TestListener> success(final TestResult result) {
     return a -> a.onTestSuccess(result);

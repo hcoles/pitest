@@ -1,18 +1,5 @@
 package org.pitest.coverage.analysis;
 
-import static org.objectweb.asm.Opcodes.ARETURN;
-import static org.objectweb.asm.Opcodes.ATHROW;
-import static org.objectweb.asm.Opcodes.DRETURN;
-import static org.objectweb.asm.Opcodes.FRETURN;
-import static org.objectweb.asm.Opcodes.IRETURN;
-import static org.objectweb.asm.Opcodes.LRETURN;
-import static org.objectweb.asm.Opcodes.RETURN;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.InsnList;
@@ -24,6 +11,19 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TableSwitchInsnNode;
 import org.objectweb.asm.tree.TryCatchBlockNode;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.objectweb.asm.Opcodes.ARETURN;
+import static org.objectweb.asm.Opcodes.ATHROW;
+import static org.objectweb.asm.Opcodes.DRETURN;
+import static org.objectweb.asm.Opcodes.FRETURN;
+import static org.objectweb.asm.Opcodes.IRETURN;
+import static org.objectweb.asm.Opcodes.LRETURN;
+import static org.objectweb.asm.Opcodes.RETURN;
+
 public class ControlFlowAnalyser {
 
   private static final int LIKELY_NUMBER_OF_LINES_PER_BLOCK = 7;
@@ -32,16 +32,6 @@ public class ControlFlowAnalyser {
     final List<Block> blocks = new ArrayList<>(mn.instructions.size());
 
     final Set<LabelNode> jumpTargets = findJumpTargets(mn.instructions);
-
-    /*
-     * Some projects/libraries have gigantic static initializer methods
-     * that load up huge constant arrays. These methods are nearly at the
-     * size limit - and adding a probe at each store blows it up.
-     *
-     * So, for methods with many instructions, we'll ignore array stores
-     * as ending a block.
-     */
-    final boolean ignoreArrayStores = mn.instructions.size() > 10000;
 
     // not managed to construct bytecode to show need for this
     // as try catch blocks usually have jumps at their boundaries anyway.
@@ -70,7 +60,7 @@ public class ControlFlowAnalyser {
         blocks.add(new Block(blockStart, i - 1, blockLines));
         blockStart = i;
         blockLines = smallSet();
-      } else if (endsBlock(ins, ignoreArrayStores)) {
+      } else if (endsBlock(ins)) {
         if (blockLines.isEmpty() && blocks.size() > 0 && !blocks
             .get(blocks.size() - 1).getLines().isEmpty()) {
           blockLines.addAll(blocks.get(blocks.size() - 1).getLines());
@@ -112,21 +102,13 @@ public class ControlFlowAnalyser {
     }
   }
 
-  private static boolean endsBlock(final AbstractInsnNode ins,
-      final boolean ignoreArrayStores) {
+  private static boolean endsBlock(final AbstractInsnNode ins) {
     return (ins instanceof JumpInsnNode) || isReturn(ins)
-        || isMightThrowException(ins, ignoreArrayStores);
+        || isMightThrowException(ins);
   }
 
-  private static boolean isMightThrowException(final AbstractInsnNode ins,
-      final boolean ignoreArrayStores) {
-    switch (ins.getType()) {
-    case AbstractInsnNode.METHOD_INSN:
-      return true;
-    default:
-      return false;
-    }
-
+  private static boolean isMightThrowException(final AbstractInsnNode ins) {
+    return ins.getType() == AbstractInsnNode.METHOD_INSN;
   }
 
   private static boolean isReturn(final AbstractInsnNode ins) {

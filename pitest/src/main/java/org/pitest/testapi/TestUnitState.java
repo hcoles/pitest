@@ -15,5 +15,5 @@
 package org.pitest.testapi;
 
 public enum TestUnitState {
-  STARTED, FINISHED, NOT_RUN;
+  STARTED, FINISHED, NOT_RUN
 }

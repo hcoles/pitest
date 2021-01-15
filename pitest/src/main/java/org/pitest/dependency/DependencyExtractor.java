@@ -138,7 +138,7 @@ public class DependencyExtractor {
   }
 
   private List<DependencyAccess> extract(final String clazz,
-      final Predicate<DependencyAccess> filter) throws IOException {
+      final Predicate<DependencyAccess> filter) {
     final Optional<byte[]> bytes = this.classToBytes.getBytes(clazz);
     if (!bytes.isPresent()) {
       LOG.warning("No bytes found for " + clazz);
