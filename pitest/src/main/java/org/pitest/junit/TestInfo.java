@@ -14,12 +14,12 @@
  */
 package org.pitest.junit;
 
-import java.util.function.Predicate;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pitest.classinfo.ClassInfo;
+
 import java.util.Optional;
+import java.util.function.Predicate;
 
 abstract class TestInfo {
 
@@ -37,10 +37,7 @@ abstract class TestInfo {
   }
 
   private static boolean isATest(final Optional<ClassInfo> clazz) {
-    if (clazz.isPresent()) {
-      return isATest(clazz.get());
-    }
-    return false;
+    return clazz.filter(TestInfo::isATest).isPresent();
   }
 
   public static Predicate<ClassInfo> isATest() {

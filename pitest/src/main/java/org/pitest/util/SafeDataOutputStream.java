@@ -21,6 +21,7 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 
 public class SafeDataOutputStream {
 
@@ -39,12 +40,8 @@ public class SafeDataOutputStream {
   }
 
   public void writeString(final String str) {
-    try {
-      final byte[] data = str.getBytes("UTF-8");
-      writeBytes(data);
-    } catch (final IOException e) {
-      throw Unchecked.translateCheckedException(e);
-    }
+    final byte[] data = str.getBytes(StandardCharsets.UTF_8);
+    writeBytes(data);
   }
 
 

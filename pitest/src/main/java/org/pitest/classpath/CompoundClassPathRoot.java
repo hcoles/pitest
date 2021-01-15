@@ -1,16 +1,15 @@
 package org.pitest.classpath;
 
+import org.pitest.functional.FCollection;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import org.pitest.functional.FCollection;
 import java.util.Optional;
 
 public class CompoundClassPathRoot implements ClassPathRoot,
@@ -43,7 +42,7 @@ public class CompoundClassPathRoot implements ClassPathRoot,
   }
 
   @Override
-  public URL getResource(String name) throws MalformedURLException {
+  public URL getResource(String name) {
     try {
       return findRootForResource(name);
     } catch (final IOException exception) {

@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -49,7 +50,7 @@ public abstract class ServiceLoader {
       final ClassLoader loader, final Collection<S> services,
       final InputStream is) throws IOException {
     final BufferedReader r = new BufferedReader(new InputStreamReader(is,
-        "UTF-8"));
+            StandardCharsets.UTF_8));
     while (true) {
       String line = r.readLine();
       if (line == null) {

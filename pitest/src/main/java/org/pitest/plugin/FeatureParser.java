@@ -1,13 +1,13 @@
 package org.pitest.plugin;
 
+import org.pitest.functional.FCollection;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
-import org.pitest.functional.FCollection;
 
 /**
  * Cheap and cheerful parser for simple feature config language.
@@ -61,7 +61,7 @@ public class FeatureParser {
   }
 
   private String parseName(String a) {
-    final String name = a.substring(1, a.length());
+    final String name = a.substring(1);
     final int confStart = name.indexOf('(');
     if (confStart == -1) {
       return name;

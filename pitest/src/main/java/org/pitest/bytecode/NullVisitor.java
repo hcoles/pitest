@@ -173,7 +173,7 @@ public class NullVisitor extends ClassVisitor {
     public void visitVarInsn(final int arg0, final int arg1) {
     }
 
-  };
+  }
 
   @Override
   public void visit(final int arg0, final int arg1, final String arg2,

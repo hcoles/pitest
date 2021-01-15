@@ -14,18 +14,15 @@
  */
 package org.pitest.mutationtest.execute;
 
-import java.io.IOException;
-
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.util.ExitCode;
 
 public interface Reporter {
 
-  void describe(MutationIdentifier i) throws IOException;
+  void describe(MutationIdentifier i);
 
-  void report(MutationIdentifier i, MutationStatusTestPair mutationDetected)
-      throws IOException;
+  void report(MutationIdentifier i, MutationStatusTestPair mutationDetected);
 
   void done(ExitCode exitCode);
 

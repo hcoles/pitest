@@ -14,6 +14,8 @@
  */
 package org.pitest.reflection;
 
+import org.pitest.functional.FArray;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -21,8 +23,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
-
-import org.pitest.functional.FArray;
 
 /**
  * @author henry
@@ -62,7 +62,7 @@ public abstract class Reflection {
     return methods;
   }
 
-  public static Method publicMethod(final Class<? extends Object> clazz,
+  public static Method publicMethod(final Class<?> clazz,
       final String name) {
     final Predicate<Method> p = a -> a.getName().equals(name);
     return publicMethod(clazz, p);

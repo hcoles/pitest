@@ -19,7 +19,7 @@ class AdaptingRunListener extends RunListener {
   }
 
   @Override
-  public void testFailure(final Failure failure) throws Exception {
+  public void testFailure(final Failure failure) {
     this.rc.notifyEnd(this.description, failure.getException());
     this.failed = true;
   }
@@ -31,12 +31,12 @@ class AdaptingRunListener extends RunListener {
   }
 
   @Override
-  public void testIgnored(final Description description) throws Exception {
+  public void testIgnored(final Description description) {
     this.rc.notifySkipped(this.description);
   }
 
   @Override
-  public void testStarted(final Description description) throws Exception {
+  public void testStarted(final Description description) {
     if (this.failed) {
       // If the JUnit test has been annotated with @BeforeClass or @AfterClass
       // need to force the exit after the first failure as tests will be run as
@@ -49,7 +49,7 @@ class AdaptingRunListener extends RunListener {
   }
 
   @Override
-  public void testFinished(final Description description) throws Exception {
+  public void testFinished(final Description description) {
     if (!this.failed) {
       this.rc.notifyEnd(this.description);
     }

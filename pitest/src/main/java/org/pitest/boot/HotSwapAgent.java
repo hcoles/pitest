@@ -34,7 +34,7 @@ public class HotSwapAgent {
   }
 
   public static void agentmain(final String agentArguments, // NO_UCD
-      final Instrumentation inst) throws Exception {
+      final Instrumentation inst) {
     instrumentation = inst;
   }
 
