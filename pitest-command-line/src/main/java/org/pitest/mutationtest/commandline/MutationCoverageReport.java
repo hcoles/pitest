@@ -50,7 +50,7 @@ public class MutationCoverageReport {
               data.getTestStrengthThreshold());
       throwErrorIfScoreBelowMutationThreshold(stats.getMutationStatistics(),
           data.getMutationThreshold());
-      throwErrorIfMoreThanMaxSuvivingMutants(stats.getMutationStatistics(), data.getMaximumAllowedSurvivors());
+      throwErrorIfMoreThanMaxSurvivingMutants(stats.getMutationStatistics(), data.getMaximumAllowedSurvivors());
     }
 
   }
@@ -81,9 +81,9 @@ public class MutationCoverageReport {
     }
   }
 
-  private static void throwErrorIfMoreThanMaxSuvivingMutants(
+  private static void throwErrorIfMoreThanMaxSurvivingMutants(
       final MutationStatistics stats, final long threshold) {
-    if ((threshold > 0)
+    if ((threshold >= 0)
         && (stats.getTotalSurvivingMutations() > threshold)) {
       throw new RuntimeException("Had "
           + stats.getTotalSurvivingMutations() + " surviving mutants, but only "
