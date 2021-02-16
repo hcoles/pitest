@@ -259,7 +259,7 @@ public class MutationCoverage {
             coverageData);
 
     final MutationInterceptor interceptor = this.settings.getInterceptor()
-        .createInterceptor(this.data, bas);
+        .createInterceptor(this.data, coverageData, bas);
 
     final MutationSource source = new MutationSource(mutationConfig, testPrioritiser, bas, interceptor);
 

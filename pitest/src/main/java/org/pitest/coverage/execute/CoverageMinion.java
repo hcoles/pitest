@@ -126,8 +126,7 @@ public class CoverageMinion {
   }
 
   private static List<TestUnit> getTestsFromParent(
-      final SafeDataInputStream dis, final CoverageOptions paramsFromParent)
-      throws IOException {
+      final SafeDataInputStream dis, final CoverageOptions paramsFromParent) {
     final List<ClassName> classes = receiveTestClassesFromParent(dis);
     Collections.sort(classes); // ensure classes loaded in a consistent order
 

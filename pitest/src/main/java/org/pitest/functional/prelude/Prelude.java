@@ -73,25 +73,25 @@ public abstract class Prelude {
     return id();
   }
 
-  public static final <T> Consumer<T> print() {
-    return printTo(System.out);
+  public static final <T> Consumer<T> println() {
+    return printlnTo(System.out);
   }
 
-  public static final <T> Consumer<T> print(final Class<T> type) {
-    return print();
+  public static final <T> Consumer<T> println(final Class<T> type) {
+    return println();
   }
 
-  public static final <T> Consumer<T> printTo(final Class<T> type,
+  public static final <T> Consumer<T> printlnTo(final Class<T> type,
       final PrintStream stream) {
-    return printTo(stream);
+    return printlnTo(stream);
   }
 
-  public static final <T> Consumer<T> printTo(final PrintStream stream) {
-    return a -> stream.print(a);
+  public static final <T> Consumer<T> printlnTo(final PrintStream stream) {
+    return a -> stream.println(a);
   }
 
-  public static <T> Consumer<T> printWith(final T t) {
-    return a -> System.out.print(t + " : " + a);
+  public static <T> Consumer<T> printlnWith(final T t) {
+    return a -> System.out.println(t + " : " + a);
   }
 
   public static <T extends Number> Predicate<T> isGreaterThan(final T value) {

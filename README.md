@@ -8,6 +8,13 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.6.2
+
+* #770 and #746 Fix NPE during coverage stage (thanks @LaurentTho3)
+* #849 Make feature names case insensitive
+* #844 Extend feature system to work with listeners
+* #842 Make report options available to listeners
+
 ### 1.6.1
 
 * Automate release to maven central

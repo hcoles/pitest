@@ -1,19 +1,17 @@
 package org.pitest.coverage;
 
-import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.IllegalClassFormatException;
-import java.security.ProtectionDomain;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
-
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.pitest.bytecode.FrameOptions;
 import org.pitest.classinfo.ComputeClassWriter;
 import org.pitest.classpath.ClassloaderByteArraySource;
-
 import sun.pitest.CodeCoverageStore;
+
+import java.lang.instrument.ClassFileTransformer;
+import java.security.ProtectionDomain;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 public class CoverageTransformer implements ClassFileTransformer {
 
@@ -27,8 +25,7 @@ public class CoverageTransformer implements ClassFileTransformer {
   @Override
   public byte[] transform(final ClassLoader loader, final String className,
       final Class<?> classBeingRedefined,
-      final ProtectionDomain protectionDomain, final byte[] classfileBuffer)
-          throws IllegalClassFormatException {
+      final ProtectionDomain protectionDomain, final byte[] classfileBuffer) {
     final boolean include = shouldInclude(className);
     if (include) {
       try {

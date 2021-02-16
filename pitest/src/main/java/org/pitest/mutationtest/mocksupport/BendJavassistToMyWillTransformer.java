@@ -1,19 +1,18 @@
 package org.pitest.mutationtest.mocksupport;
 
-import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.IllegalClassFormatException;
-import java.security.ProtectionDomain;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.pitest.bytecode.FrameOptions;
 import org.pitest.classinfo.ComputeClassWriter;
 import org.pitest.classpath.ClassloaderByteArraySource;
+
+import java.lang.instrument.ClassFileTransformer;
+import java.security.ProtectionDomain;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class BendJavassistToMyWillTransformer implements ClassFileTransformer {
 
@@ -29,8 +28,7 @@ public class BendJavassistToMyWillTransformer implements ClassFileTransformer {
   @Override
   public byte[] transform(final ClassLoader loader, final String className,
       final Class<?> classBeingRedefined,
-      final ProtectionDomain protectionDomain, final byte[] classfileBuffer)
-          throws IllegalClassFormatException {
+      final ProtectionDomain protectionDomain, final byte[] classfileBuffer) {
 
     if (shouldInclude(className)) {
 

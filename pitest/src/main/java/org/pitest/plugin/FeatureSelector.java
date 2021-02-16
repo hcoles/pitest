@@ -39,7 +39,7 @@ public class FeatureSelector<T extends ProvidesFeature> {
     final List<T> active = FCollection.filter(factories, isOnByDefault());
 
     for ( final FeatureSetting each : features ) {
-      final Collection<T> providers = featureMap.get(each.feature());
+      final Collection<T> providers = featureMap.get(each.feature().toLowerCase());
       if ((providers == null) || providers.isEmpty()) {
         continue;
       }
@@ -61,7 +61,7 @@ public class FeatureSelector<T extends ProvidesFeature> {
   }
 
   private Function<T, String> byFeatureName() {
-    return a -> a.provides().name();
+    return a -> a.provides().name().toLowerCase();
   }
 
   private Function<FeatureSetting, String> byFeature() {

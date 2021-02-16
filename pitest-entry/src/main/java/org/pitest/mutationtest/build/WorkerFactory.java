@@ -17,7 +17,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-import static org.pitest.functional.prelude.Prelude.printWith;
+import static org.pitest.functional.prelude.Prelude.printlnWith;
 
 public class WorkerFactory {
 
@@ -58,7 +58,7 @@ public class WorkerFactory {
     final ProcessArgs args = ProcessArgs.withClassPath(this.classPath)
         .andLaunchOptions(this.config.getLaunchOptions())
         .andBaseDir(this.baseDir).andStdout(captureStdOutIfVerbose())
-        .andStderr(printWith("stderr "));
+        .andStderr(printlnWith("stderr "));
 
     final SocketFinder sf = new SocketFinder();
     return new MutationTestProcess(
@@ -67,7 +67,7 @@ public class WorkerFactory {
 
   private Consumer<String> captureStdOutIfVerbose() {
     if (this.verbose) {
-      return Prelude.printWith("stdout ");
+      return printlnWith("stdout ");
     } else {
       return Prelude.noSideEffect(String.class);
     }

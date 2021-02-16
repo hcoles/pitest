@@ -14,8 +14,6 @@
  */
 package org.pitest.mutationtest.commandline;
 
-import java.util.HashMap;
-
 import org.pitest.coverage.CoverageSummary;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
@@ -24,6 +22,8 @@ import org.pitest.mutationtest.tooling.AnalysisResult;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
 import org.pitest.mutationtest.tooling.EntryPoint;
 import org.pitest.util.Unchecked;
+
+import java.util.HashMap;
 
 /**
  * Entry point for command line interface
@@ -50,7 +50,7 @@ public class MutationCoverageReport {
               data.getTestStrengthThreshold());
       throwErrorIfScoreBelowMutationThreshold(stats.getMutationStatistics(),
           data.getMutationThreshold());
-      throwErrorIfMoreThanMaxSuvivingMutants(stats.getMutationStatistics(), data.getMaximumAllowedSurvivors());
+      throwErrorIfMoreThanMaxSurvivingMutants(stats.getMutationStatistics(), data.getMaximumAllowedSurvivors());
     }
 
   }
@@ -81,9 +81,9 @@ public class MutationCoverageReport {
     }
   }
 
-  private static void throwErrorIfMoreThanMaxSuvivingMutants(
+  private static void throwErrorIfMoreThanMaxSurvivingMutants(
       final MutationStatistics stats, final long threshold) {
-    if ((threshold > 0)
+    if ((threshold >= 0)
         && (stats.getTotalSurvivingMutations() > threshold)) {
       throw new RuntimeException("Had "
           + stats.getTotalSurvivingMutations() + " surviving mutants, but only "
@@ -96,7 +96,7 @@ public class MutationCoverageReport {
 
     final EntryPoint e = new EntryPoint();
     final AnalysisResult result = e.execute(null, data, plugins,
-        new HashMap<String, String>());
+        new HashMap<>());
     if (result.getError().isPresent()) {
       throw Unchecked.translateCheckedException(result.getError().get());
     }

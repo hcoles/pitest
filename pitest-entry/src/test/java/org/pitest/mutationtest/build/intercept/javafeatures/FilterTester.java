@@ -2,6 +2,7 @@ package org.pitest.mutationtest.build.intercept.javafeatures;
 
 import org.assertj.core.api.Condition;
 import org.assertj.core.api.SoftAssertions;
+import org.objectweb.asm.util.Textifier;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassByteArraySource;
@@ -31,8 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class FilterTester {
 
-  private static final Collection<String> COMPILERS = Arrays.asList("javac",
-      "ecj", "aspectj");
+  private static final Collection<String> COMPILERS = Arrays.asList("javac", "javac11", "ecj", "aspectj");
 
   private final String path;
   private final ClassByteArraySource source = new ResourceFolderByteArraySource();
@@ -92,8 +92,9 @@ public class FilterTester {
       final Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
 
       softly.assertThat(actual)
-      .describedAs("Wrong number of mutants  with " + s.compiler)
+      .describedAs("Wrong number of mutants  with " + s.compiler + " for class \n" + s.clazz)
       .hasSize(n);
+
     }
 
     softly.assertAll();

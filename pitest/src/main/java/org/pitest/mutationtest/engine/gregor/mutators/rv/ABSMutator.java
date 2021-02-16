@@ -24,6 +24,7 @@ public enum ABSMutator implements MethodMutatorFactory {
         return new ABSMethodVisitor(this, context, methodVisitor);
     }
 
+    @Override
     public String getGloballyUniqueId() {
         return this.getClass().getName();
     }

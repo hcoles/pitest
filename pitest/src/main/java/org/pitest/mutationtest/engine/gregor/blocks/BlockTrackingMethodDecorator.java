@@ -14,18 +14,6 @@
  */
 package org.pitest.mutationtest.engine.gregor.blocks;
 
-import static org.objectweb.asm.Opcodes.ARETURN;
-import static org.objectweb.asm.Opcodes.ATHROW;
-import static org.objectweb.asm.Opcodes.DRETURN;
-import static org.objectweb.asm.Opcodes.FRETURN;
-import static org.objectweb.asm.Opcodes.IRETURN;
-import static org.objectweb.asm.Opcodes.LRETURN;
-import static org.objectweb.asm.Opcodes.RETURN;
-
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
-
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -33,6 +21,18 @@ import org.objectweb.asm.tree.MethodNode;
 import org.pitest.bytecode.ASMVersion;
 import org.pitest.coverage.analysis.Block;
 import org.pitest.coverage.analysis.ControlFlowAnalyser;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Set;
+
+import static org.objectweb.asm.Opcodes.ARETURN;
+import static org.objectweb.asm.Opcodes.ATHROW;
+import static org.objectweb.asm.Opcodes.DRETURN;
+import static org.objectweb.asm.Opcodes.FRETURN;
+import static org.objectweb.asm.Opcodes.IRETURN;
+import static org.objectweb.asm.Opcodes.LRETURN;
+import static org.objectweb.asm.Opcodes.RETURN;
 
 public class BlockTrackingMethodDecorator extends MethodNode {
 
@@ -58,7 +58,7 @@ public class BlockTrackingMethodDecorator extends MethodNode {
     this.accept(new MethodVisitor(ASMVersion.ASM_VERSION, cmv) {
       Block curBlock = blocks.pop();
       int i;
-      private Set<Label> handlers = new HashSet<>();
+      private final Set<Label> handlers = new HashSet<>();
 
       @Override
       public void visitTryCatchBlock(Label start, Label end, Label handler,
