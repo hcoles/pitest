@@ -8,6 +8,14 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.6.3
+
+* #853 Fix case insensitive feature check
+* #855 Make coverage data available to interceptors
+* #857 Pass stderr/out data by line (thanks @kgeilmann)
+* #858 Fix test not failing when maxSurviving is 0 (thanks @alexkoltz)
+* #860 Fix junk mutations in try with resources in java 11+
+
 ### 1.6.2
 
 * #770 and #746 Fix NPE during coverage stage (thanks @LaurentTho3)
