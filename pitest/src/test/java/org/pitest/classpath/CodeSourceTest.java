@@ -33,7 +33,7 @@ public class CodeSourceTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new CodeSource(this.classPath, this.repository);
     this.foo = makeClassInfo("Foo");
     this.bar = makeClassInfo("Bar");

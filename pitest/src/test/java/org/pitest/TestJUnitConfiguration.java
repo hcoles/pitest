@@ -3,7 +3,7 @@ package org.pitest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -64,7 +64,7 @@ public class TestJUnitConfiguration {
 
   @Before
   public void createTestee() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.container = new UnContainer();
 
     this.pitest = new Pitest(this.listener);

@@ -26,7 +26,7 @@ import java.util.Properties;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -44,7 +44,7 @@ public class CompoundListenerFactoryTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
 
     when(firstChild.provides()).thenReturn(MutationResultListenerFactory.LEGACY_MODE);
     when(secondChild.provides()).thenReturn(MutationResultListenerFactory.LEGACY_MODE);
@@ -63,7 +63,7 @@ public class CompoundListenerFactoryTest {
     when(
         this.secondChild.getListener(any(Properties.class),
             any(ListenerArguments.class))).thenReturn(listenerTwo);
-    this.testee.getListener(null, someArgs()).runStart();
+    this.testee.getListener(new Properties(), someArgs()).runStart();
     verify(listenerOne, times(1)).runStart();
     verify(listenerTwo, times(1)).runStart();
   }

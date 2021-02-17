@@ -39,7 +39,7 @@ public class CSVReportListenerTest {
 
   @Before
   public void setup() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new CSVReportListener(this.out);
   }
 

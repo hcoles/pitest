@@ -1,6 +1,6 @@
 package org.pitest.testapi.execute;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
 import java.io.FileNotFoundException;
@@ -31,7 +31,7 @@ public class TestPitest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.container = new UnContainer();
     this.testee = new Pitest(this.listener);
   }

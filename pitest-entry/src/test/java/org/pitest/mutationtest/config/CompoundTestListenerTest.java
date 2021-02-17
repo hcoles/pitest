@@ -40,7 +40,7 @@ public class CompoundTestListenerTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new CompoundTestListener(Arrays.asList(this.firstChild,
         this.secondChild));
   }

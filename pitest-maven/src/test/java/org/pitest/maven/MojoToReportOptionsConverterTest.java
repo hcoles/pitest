@@ -37,7 +37,8 @@ import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -376,7 +377,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
   public void testParsesSurefireConfigWhenFlagSet() {
     parseConfig("<parseSurefireConfig>true</parseSurefireConfig>");
     verify(this.surefireConverter).update(any(ReportOptions.class),
-        any(Xpp3Dom.class));
+        isNull());
   }
 
   public void testIgnoreSurefireConfigWhenFlagNotSet() {

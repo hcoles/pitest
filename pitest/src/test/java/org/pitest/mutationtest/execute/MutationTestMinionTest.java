@@ -1,6 +1,6 @@
 package org.pitest.mutationtest.execute;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.pitest.mutationtest.LocationMother.aMutationId;
@@ -62,7 +62,7 @@ public class MutationTestMinionTest {
 
   @Before
   public void setup() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.mutations = new ArrayList<>();
     this.tests = new ArrayList<>();
 

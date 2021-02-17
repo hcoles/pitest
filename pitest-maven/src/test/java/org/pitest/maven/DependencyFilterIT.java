@@ -36,7 +36,7 @@ public class DependencyFilterIT {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new DependencyFilter(PluginServices.makeForContextLoader());
   }
 

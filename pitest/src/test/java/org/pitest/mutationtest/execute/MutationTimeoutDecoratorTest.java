@@ -24,7 +24,7 @@ import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestUnit;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -50,7 +50,7 @@ public class MutationTimeoutDecoratorTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new MutationTimeoutDecorator(this.child, this.sideEffect,
         this.timeoutStrategy, NORMAL_EXECUTION);
   }

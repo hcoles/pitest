@@ -3,7 +3,8 @@ package org.pitest.maven;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.mockito.Matchers;
+import org.apache.maven.project.MavenProject;
+import org.mockito.Mock;
 import org.pitest.coverage.CoverageSummary;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
@@ -16,18 +17,25 @@ import java.util.Collections;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class PitMojoTest extends BasePitMojoTest {
 
+  @Mock
+  private MavenProject executionProject;
+
   private AbstractPitMojo testee;
 
   @Override
   public void setUp() throws Exception {
     super.setUp();
+
+    when(this.project.getExecutionProject()).thenReturn(executionProject);
+    when(this.executionProject.getBasedir()).thenReturn(new File("BASEDIR"));
   }
 
   public void testRunsAMutationReportWhenMutationCoverageGoalTrigered()
@@ -421,10 +429,6 @@ public class PitMojoTest extends BasePitMojoTest {
         this.executionStrategy.execute(any(File.class),
             any(ReportOptions.class), any(PluginServices.class), anyMap()))
             .thenReturn(cs);
-  }
-
-  private Map<String, String> anyMap() {
-    return Matchers.<Map<String, String>> any();
   }
 
 }

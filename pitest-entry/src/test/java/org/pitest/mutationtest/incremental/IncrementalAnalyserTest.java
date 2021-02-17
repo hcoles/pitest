@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.pitest.mutationtest.DetectionStatus.KILLED;
 import static org.pitest.mutationtest.DetectionStatus.NOT_STARTED;
@@ -69,7 +69,7 @@ public class IncrementalAnalyserTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new IncrementalAnalyser(this.history, this.coverage);
   }
 
@@ -98,6 +98,8 @@ public class IncrementalAnalyserTest {
   public void shouldStartPreviousSurvivedMutationsAtAStatusOfNotStartedWhenCoverageHasChanged() {
     final MutationDetails md = makeMutation("foo");
     setHistoryForAllMutationsTo(DetectionStatus.SURVIVED);
+    when(coverage.getCoverageIdForClass(any(ClassName.class)))
+        .thenReturn(BigInteger.ONE);
     when(
         this.history.hasCoverageChanged(any(ClassName.class),
             any(BigInteger.class))).thenReturn(true);

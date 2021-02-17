@@ -1,7 +1,7 @@
 package org.pitest.mutationtest.build;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.pitest.mutationtest.LocationMother.aLocation;
 
@@ -39,7 +39,7 @@ public class DefaultTestPrioritiserTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new DefaultTestPrioritiser(this.coverage);
   }
 

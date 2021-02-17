@@ -44,7 +44,7 @@ public class AdaptingRunListenerTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.throwable = new NullPointerException();
     this.pitDescription = DescriptionMother.createEmptyDescription("foo");
     this.testee = new AdaptingRunListener(this.pitDescription, this.rc);

@@ -88,7 +88,7 @@ public class TestMutationTesting {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.config = TestPluginArguments.defaults().withTestPlugin(SimpleTestPlugin.NAME);
     this.metaDataExtractor = new MetaDataExtractor();
     this.mae = new MutationAnalysisExecutor(1,

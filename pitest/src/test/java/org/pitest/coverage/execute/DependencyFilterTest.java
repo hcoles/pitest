@@ -2,9 +2,9 @@ package org.pitest.coverage.execute;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -40,12 +40,12 @@ public class DependencyFilterTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
 
     this.aTestUnit = makeTestUnit(new Description("foo", String.class));
     this.anotherTestUnit = makeTestUnit(new Description("bar", Integer.class));
 
-    this.testee = new DependencyFilter(this.extractor, null);
+    this.testee = new DependencyFilter(this.extractor, s -> true);
     this.tus = Arrays.asList(this.aTestUnit, this.anotherTestUnit);
   }
 
@@ -64,9 +64,9 @@ public class DependencyFilterTest {
   public void shouldReturnOnlyTestUnitsForClassesWithinReach()
       throws IOException {
     when(
-        this.extractor.extractCallDependenciesForPackages(eq(this.aTestUnit
-            .getDescription().getFirstTestClass()), any(Predicate.class)))
-            .thenReturn(Arrays.asList("foo"));
+        this.extractor.extractCallDependenciesForPackages(
+            eq(this.aTestUnit.getDescription().getFirstTestClass()),
+            any(Predicate.class))).thenReturn(Arrays.asList("foo"));
     when(
         this.extractor.extractCallDependenciesForPackages(
             eq(this.anotherTestUnit.getDescription().getFirstTestClass()),

@@ -20,7 +20,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.pitest.mutationtest.config.ReportOptions.DEFAULT_CHILD_JVM_ARGS;
 
@@ -56,7 +56,7 @@ public class OptionsParserTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     when(this.filter.test(any(String.class))).thenReturn(true);
     this.testee = new OptionsParser(this.filter);
   }

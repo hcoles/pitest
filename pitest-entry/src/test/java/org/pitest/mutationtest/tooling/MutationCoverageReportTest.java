@@ -16,7 +16,8 @@ package org.pitest.mutationtest.tooling;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -24,13 +25,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassByteArraySource;
@@ -103,12 +102,12 @@ public class MutationCoverageReportTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.data = new ReportOptions();
     this.data.setSourceDirs(Collections.<File> emptyList());
     when(this.coverage.calculateCoverage()).thenReturn(this.coverageDb);
     when(
-        this.listenerFactory.getListener(Matchers.<Properties> any(),
+        this.listenerFactory.getListener(any(),
             any(ListenerArguments.class))).thenReturn(this.listener);
     mockMutationEngine();
   }
@@ -152,7 +151,7 @@ public class MutationCoverageReportTest {
 
     when(this.code.getCodeUnderTestNames()).thenReturn(
         Collections.singleton(clazz));
-    when(this.code.getClassInfo(any(List.class))).thenReturn(
+    when(this.code.getClassInfo(anyCollection())).thenReturn(
         Collections.singletonList(foo));
 
     createAndRunTestee();

@@ -1,6 +1,6 @@
 package org.pitest.mutationtest.execute;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.pitest.mutationtest.LocationMother.aLocation;
@@ -53,7 +53,7 @@ public class MutationTestWorkerTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new MutationTestWorker(this.hotswapper, this.mutater,
         this.loader, false);
   }

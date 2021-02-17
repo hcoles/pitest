@@ -16,8 +16,8 @@ package org.pitest.classpath;
 
 import static java.util.function.Predicate.isEqual;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -46,7 +46,7 @@ public class ClassPathTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new ClassPath(this.firstComponent, this.secondComponent);
     when(this.firstComponent.cacheLocation()).thenReturn(Optional.ofNullable("foo"));
     when(this.firstComponent.classNames()).thenReturn(
