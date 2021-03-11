@@ -8,7 +8,10 @@ public class BlockTest {
 
   @Test
   public void shouldObeyHashcodeEqualsContract() {
-    EqualsVerifier.forClass(Block.class).verify();
+    EqualsVerifier.forClass(Block.class)
+            .withOnlyTheseFields("firstInstruction")
+            .withOnlyTheseFields("lastInstruction")
+            .verify();
   }
 
 }

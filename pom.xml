@@ -137,6 +137,17 @@
 		</profile>
 	</profiles>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>nl.jqno.equalsverifier</groupId>
+				<artifactId>equalsverifier</artifactId>
+				<version>3.5.4</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<!-- common dependencies used in all subprojects -->
 	<dependencies>
 		<dependency>
@@ -154,7 +165,7 @@
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
-			<version>3.9.0</version>
+			<version>3.19.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

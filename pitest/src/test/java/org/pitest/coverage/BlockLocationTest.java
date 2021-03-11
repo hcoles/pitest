@@ -8,7 +8,9 @@ public class BlockLocationTest {
 
   @Test
   public void shouldObeyHashcodeEqualsContract() {
-    EqualsVerifier.forClass(BlockLocation.class).verify();
+    EqualsVerifier.forClass(BlockLocation.class)
+            .withOnlyTheseFields("block", "location")
+            .verify();
   }
 
 }

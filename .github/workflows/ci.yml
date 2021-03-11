@@ -18,8 +18,8 @@ jobs:
             java: 8
           - title: "JDK 11"
             java: 11
-          - title: "JDK 15"
-            java: 15
+          - title: "JDK 16"
+            java: "16-ea"
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout from Git'

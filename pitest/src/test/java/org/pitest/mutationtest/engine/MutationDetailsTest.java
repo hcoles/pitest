@@ -38,7 +38,9 @@ public class MutationDetailsTest {
 
   @Test
   public void shouldObeyHashcodeEqualsContract() {
-    EqualsVerifier.forClass(MutationDetails.class).verify();
+    EqualsVerifier.forClass(MutationDetails.class)
+            .withOnlyTheseFields("id")
+            .verify();
   }
 
 }
