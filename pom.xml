@@ -7,7 +7,7 @@
 	</organization>
 	<artifactId>pitest-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>1.6.${revision}</version>
+	<version>${revision}</version>
 	<name>pitest-parent</name>
 	<url>http://pitest.org</url>
 	<description>Mutation testing system for java - parent project</description>
@@ -395,8 +395,8 @@
 	<!-- versions of libraries which are used in different projects or which 
 		are used for few artifacts -->
 	<properties>
-		<!-- this revision number used only for local builds, release version is held within ci -->
-		<revision>0-SNAPSHOT</revision>
+		<!-- this revision number used only for local builds -->
+		<revision>1.0.0-SNAPSHOT</revision>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 

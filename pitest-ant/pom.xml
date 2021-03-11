@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>pitest-parent</artifactId>
 		<groupId>org.pitest</groupId>
-		<version>1.6.${revision}</version>
+		<version>${revision}</version>
 	</parent>
 	<artifactId>pitest-ant</artifactId>
 	<name>pitest-ant</name>
