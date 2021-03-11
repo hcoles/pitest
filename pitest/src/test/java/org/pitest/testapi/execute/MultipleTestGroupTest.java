@@ -73,7 +73,9 @@ public class MultipleTestGroupTest {
 
   @Test
   public void shouldObeyHashcodeEqualsContract() {
-    EqualsVerifier.forClass(MultipleTestGroup.class).verify();
+    EqualsVerifier.forClass(MultipleTestGroup.class)
+            .withOnlyTheseFields("children")
+            .verify();
   }
 
 }

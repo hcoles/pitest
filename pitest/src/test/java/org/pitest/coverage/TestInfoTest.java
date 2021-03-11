@@ -8,6 +8,8 @@ public class TestInfoTest {
 
   @Test
   public void shouldObeyHashcodeEqualsContract() {
-    EqualsVerifier.forClass(TestInfo.class).verify();
+    EqualsVerifier.forClass(TestInfo.class)
+            .withOnlyTheseFields("name", "definingClass")
+            .verify();
   }
 }
