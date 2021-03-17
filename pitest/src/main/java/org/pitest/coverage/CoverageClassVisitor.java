@@ -41,6 +41,7 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
   private String    className;
   private boolean   foundClinit;
   private boolean   isInterface;
+  private boolean   hasSuper;
 
   public CoverageClassVisitor(final int classId, final ClassWriter writer) {
     super(writer, BridgeMethodFilter.INSTANCE);
@@ -57,9 +58,9 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
     super.visit(version, access, name, signature, superName, interfaces);
     this.className = name;
     this.isInterface = (access & Opcodes.ACC_INTERFACE) != 0;
+    this.hasSuper = !superName.equals("java/lang/Object");
   }
-
-
+  
   @Override
   public MethodVisitor visitMethodIfRequired(final int access,
       final String name, final String desc, final String signature,
@@ -129,6 +130,11 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
     if (isInterface) {
       return Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_PUBLIC
               | Opcodes.ACC_SYNTHETIC;
+    }
+
+    if (!hasSuper) {
+      return Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_PRIVATE
+             | Opcodes.ACC_SYNTHETIC;
     }
 
     return Opcodes.ACC_STATIC | Opcodes.ACC_TRANSIENT | Opcodes.ACC_PRIVATE

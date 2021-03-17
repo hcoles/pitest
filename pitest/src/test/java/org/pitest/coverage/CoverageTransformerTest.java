@@ -1,5 +1,8 @@
 package org.pitest.coverage;
 
+import com.example.coverage.execute.samples.simple.AnInterface;
+import com.example.coverage.execute.samples.simple.EmptyClass;
+import com.example.coverage.execute.samples.simple.EmptyClassWithParent;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,15 +25,20 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.instrument.IllegalClassFormatException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static sun.pitest.CodeCoverageStore.PROBE_FIELD_NAME;
 
 public class CoverageTransformerTest {
 
@@ -55,16 +63,14 @@ public class CoverageTransformerTest {
   }
 
   @Test
-  public void shouldNotTransformClassesNotMatchingPredicate()
-      throws IllegalClassFormatException {
+  public void shouldNotTransformClassesNotMatchingPredicate() {
     final CoverageTransformer testee = new CoverageTransformer(
         False.<String> instance());
     assertNull(testee.transform(null, "anything", null, null, null));
   }
 
   @Test
-  public void shouldTransformClasseMatchingPredicate()
-      throws IllegalClassFormatException {
+  public void shouldTransformClassesMatchingPredicate() {
     final CoverageTransformer testee = new CoverageTransformer(
         s -> true);
     final byte[] bs = this.bytes.getBytes(String.class.getName()).get();
@@ -81,6 +87,61 @@ public class CoverageTransformerTest {
     assertValidClass(Collections.class);
     assertValidClass(ConcurrentHashMap.class);
     assertValidClass(Math.class);
+  }
+
+  @Test
+  public void probeFieldShouldBeFinalForClassWithNoParent() throws Exception {
+    Class<?> transformed = transformToClass(EmptyClass.class);
+    Field probeField = getProbeField(transformed);
+
+    assertThat(Modifier.isFinal(probeField.getModifiers())).isTrue();
+    assertThat(probeField.isSynthetic()).isTrue();
+    assertThat(Modifier.isPrivate(probeField.getModifiers())).isTrue();
+  }
+
+  @Test
+  public void probeFieldShouldBeTransientForClassWithParent() throws Exception {
+    Class<?> transformed = transformToClass(EmptyClassWithParent.class);
+    Field probeField = getProbeField(transformed);
+
+    assertThat(Modifier.isTransient(probeField.getModifiers())).isTrue();
+    assertThat(probeField.isSynthetic()).isTrue();
+    assertThat(Modifier.isPrivate(probeField.getModifiers())).isTrue();
+  }
+
+  @Test
+  public void probeFieldShouldBeFinalForInterface() throws Exception {
+    Class<?> transformed = transformToClass(AnInterface.class);
+    Field probeField = getProbeField(transformed);
+
+    assertThat(Modifier.isFinal(probeField.getModifiers())).isTrue();
+    assertThat(probeField.isSynthetic()).isTrue();
+  }
+
+  private Field getProbeField(Class<?> clazz) {
+    Optional<Field> probeField = Arrays.stream(clazz.getDeclaredFields())
+            .filter(field -> field.getName().equals(PROBE_FIELD_NAME))
+            .findAny();
+    assertThat(probeField).isPresent();
+    return probeField.get();
+  }
+
+  private Class<?> transformToClass(Class<?> clazz) throws ClassNotFoundException {
+    final CoverageTransformer transformer = new CoverageTransformer(
+            s -> true);
+    TransformLoader loader = new TransformLoader();
+    return loader.findClass(clazz.getName());
+  }
+
+  class TransformLoader extends ClassLoader {
+    @Override
+    public Class<?> findClass(final String name) throws ClassNotFoundException {
+      final CoverageTransformer transformer = new CoverageTransformer(
+              s -> true);
+      final byte[] bs = transformer.transform(null, "anything", null, null,
+              bytes.getBytes(name).get());
+      return defineClass(name, bs, 0, bs.length);
+    }
   }
 
   private void assertValidClass(final Class<?> clazz)
