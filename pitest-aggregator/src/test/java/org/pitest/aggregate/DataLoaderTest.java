@@ -1,53 +1,57 @@
 package org.pitest.aggregate;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.pitest.mutationtest.DetectionStatus.KILLED;
 
+import java.io.File;
 import java.util.Arrays;
-import java.util.Map;
+import java.util.Set;
 
 import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import org.pitest.coverage.BlockCoverage;
+import org.pitest.mutationtest.MutationResult;
 
 public class DataLoaderTest {
 
   @Test
   public void testLoadMutationSnippet() throws Exception {
-    final Document doc = DataLoader.readDocument(DataLoaderTest.class.getResourceAsStream("/snippets/mutation.xml"));
-    final Node node = doc.getFirstChild();
+    String file = "/snippets/mutation.xml";
+    MutationResultDataLoader dataLoader = new MutationResultDataLoader(asList(new File(file)));
+    Set<MutationResult> results = dataLoader.loadData(DataLoaderTest.class.getResourceAsStream(file), new File(file));
 
-    final Map<String, Object> map = DataLoader.nodeMap(node);
-
-    assertEquals(13, map.size());
-    assertEquals("true", map.get("detected"));
-    assertEquals("KILLED", map.get("status"));
-    assertEquals("1", map.get("numberOfTestsRun"));
-    assertEquals("OrderedWeightedValueSampler.java", map.get("sourceFile"));
-    assertEquals("com.mycompany.OrderedWeightedValueSampler", map.get("mutatedClass"));
-    assertEquals("<init>", map.get("mutatedMethod"));
-    assertEquals("(JLjava/util/function/Consumer;Ljava/util/function/BiFunction;I)V", map.get("methodDescription"));
-    assertEquals("77", map.get("lineNumber"));
-    assertEquals("org.pitest.mutationtest.engine.gregor.mutators.MathMutator", map.get("mutator"));
-    assertEquals("61", map.get("index"));
+    assertEquals(1, results.size());
+    MutationResult result = results.iterator().next();
+//    assertEquals("true",  result.);
+    assertEquals(KILLED, result.getStatus());
+    assertEquals(1, result.getNumberOfTestsRun());
+    assertEquals("OrderedWeightedValueSampler.java", result.getDetails().getFilename());
+    assertEquals("com.mycompany.OrderedWeightedValueSampler", result.getDetails().getClassName().asJavaName());
+    assertEquals("<init>", result.getDetails().getId().getLocation().getMethodName().name());
+    assertEquals("(JLjava/util/function/Consumer;Ljava/util/function/BiFunction;I)V", result.getDetails().getId().getLocation().getMethodDesc());
+    assertEquals(77, result.getDetails().getLineNumber());
+    assertEquals("org.pitest.mutationtest.engine.gregor.mutators.MathMutator", result.getDetails().getMutator());
+    assertEquals(61, result.getDetails().getFirstIndex());
     assertEquals(
         "com.mycompany.SmallScaleOrderedWeightedValueSamplerTest.shouldSucceedWithVariousGapTimestamps(com.mycompany.SmallScaleOrderedWeightedValueSamplerTest)",
-        map.get("killingTest"));
-    assertEquals("Replaced long multiplication with division", map.get("description"));
-    assertEquals("27", map.get("block"));
+        result.getKillingTest().orElse(null));
+    assertEquals("Replaced long multiplication with division", result.getDetails().getDescription());
+    assertEquals(27, result.getDetails().getBlock());
   }
 
   @Test
   public void testLoadCoverageSnippet() throws Exception {
-    final Document doc = DataLoader.readDocument(DataLoaderTest.class.getResourceAsStream("/snippets/linecoverage.xml"));
-    final Node node = doc.getFirstChild();
-
-    final Map<String, Object> map = DataLoader.nodeMap(node);
-
-    assertEquals(4, map.size());
-    assertEquals("com.example.DividerTest", map.get("classname"));
-    assertEquals("testDivide()V", map.get("method"));
-    assertEquals("0", map.get("number"));
-    assertEquals(Arrays.asList("com.example.DividerTest.testDivide(com.example.DividerTest)"), map.get("tests"));
+    String file = "/snippets/linecoverage.xml";
+    BlockCoverageDataLoader dataLoader = new BlockCoverageDataLoader(asList(new File(file)));
+    Set<BlockCoverage> results = dataLoader.loadData(DataLoaderTest.class.getResourceAsStream(file), new File(file));
+    
+    assertEquals(1, results.size());
+    BlockCoverage result = results.iterator().next();
+    assertEquals("com.example.DividerTest", result.getBlock().getLocation().getClassName().asJavaName());
+    assertEquals("testDivide", result.getBlock().getLocation().getMethodName().name());
+    assertEquals("()V", result.getBlock().getLocation().getMethodDesc());
+    assertEquals(1, result.getBlock().getBlock());
+    assertEquals(Arrays.asList("com.example.DividerTest.testDivide(com.example.DividerTest)"), result.getTests());
   }
 
 }
