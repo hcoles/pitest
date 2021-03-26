@@ -27,6 +27,7 @@ import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.SourceLocator;
 import org.pitest.mutationtest.report.html.MutationHtmlReportListener;
+import org.pitest.mutationtest.report.xml.XMLReportListener;
 import org.pitest.mutationtest.tooling.SmartSourceLocator;
 import org.pitest.util.Log;
 import org.pitest.util.ResultOutputStrategy;
@@ -53,6 +54,23 @@ public final class ReportAggregator {
 
     final MutationResultListener mutationResultListener = createResultListener(mutationMetaData);
 
+    aggregateReport(mutationMetaData, mutationResultListener);
+  }
+
+  public void aggregateXmlReport(boolean fullMutationMatrix) throws ReportAggregationException {
+    final MutationMetaData mutationMetaData =
+        new MutationMetaData(new ArrayList<>(this.mutationLoader.loadData()));
+
+    final MutationResultListener mutationResultListener =
+        new XMLReportListener(this.resultOutputStrategy, fullMutationMatrix);
+
+    aggregateReport(mutationMetaData, mutationResultListener);
+  }
+
+  private void aggregateReport(
+      MutationMetaData mutationMetaData,
+      MutationResultListener mutationResultListener
+  ) {
     mutationResultListener.runStart();
 
     for (final ClassMutationResults mutationResults : mutationMetaData.toClassResults()) {
