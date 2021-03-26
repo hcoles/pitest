@@ -40,6 +40,11 @@
 				    <outputFormats><value>XML</value></outputFormats>
 				    <timestampedReports>false</timestampedReports>
 					<exportLineCoverage>true</exportLineCoverage>
+
+					<!-- could also be left blank, special ALL value only useful to
+					allow property substitution with a default-->
+					<targetClasses>ALL</targetClasses>
+					<targetTests>ALL</targetTests>
  				</configuration>
 			</plugin>
 		</plugins>

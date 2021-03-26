@@ -38,7 +38,7 @@ public class PitMojoTest extends BasePitMojoTest {
     when(this.executionProject.getBasedir()).thenReturn(new File("BASEDIR"));
   }
 
-  public void testRunsAMutationReportWhenMutationCoverageGoalTrigered()
+  public void testRunsAMutationReportWhenMutationCoverageGoalTriggered()
       throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration(""));
     final Build build = new Build();

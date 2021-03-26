@@ -37,5 +37,5 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-maven-
       - name: 'Test'
-        # install rather than verify to ensure correct version used during integration test
+        # install required to ensure integration tests used modified version of plugin
         run: mvn -B install

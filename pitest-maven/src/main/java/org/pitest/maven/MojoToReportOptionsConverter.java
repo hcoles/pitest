@@ -241,7 +241,7 @@ public class MojoToReportOptionsConverter {
 
   private Collection<String> useConfiguredTargetTestsOrFindOccupiedPackages(
       final Collection<String> filters) {
-    if (!hasValue(filters)) {
+    if (!hasValue(filters) || mutateWholeProject(filters)) {
       this.mojo.getLog().info("Defaulting target tests to match packages in test build directory");
       return findOccupiedTestPackages();
     } else {
@@ -287,15 +287,19 @@ public class MojoToReportOptionsConverter {
 
   private Collection<String> useConfiguredTargetClassesOrFindOccupiedPackages(
       final Collection<String> filters) {
-    if (!hasValue(filters)) {
+    if (!hasValue(filters) || mutateWholeProject(filters)) {
       this.mojo.getLog().info("Defaulting target classes to match packages in build directory");
       return findOccupiedPackages();
     } else {
       return filters;
     }
   }
-  
-  
+
+  private boolean mutateWholeProject(Collection<String> filters) {
+    return filters.contains("ALL");
+  }
+
+
   private Collection<String> findOccupiedPackages() {
     String outputDirName = this.mojo.getProject().getBuild()
         .getOutputDirectory();
