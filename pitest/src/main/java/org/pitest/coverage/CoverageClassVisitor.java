@@ -71,7 +71,7 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
     }
 
     return new CoverageAnalyser(this, this.classId, this.probeCount,
-        methodVisitor, access, name, desc, signature, exceptions);
+        methodVisitor, access, name, desc, signature, exceptions, hasSuper);
 
   }
 
