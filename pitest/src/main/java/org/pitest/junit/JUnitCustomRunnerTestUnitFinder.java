@@ -161,12 +161,8 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   private boolean hasClassRuleAnnotations(final Class<?> clazz,
       final Set<Method> methods) {
-    if (!CLASS_RULE.isPresent()) {
-      return false;
-    }
-
-    return hasAnnotation(methods, CLASS_RULE.get())
-        || hasAnnotation(Reflection.publicFields(clazz), CLASS_RULE.get());
+    return CLASS_RULE.filter(aClass -> hasAnnotation(methods, aClass)
+            || hasAnnotation(Reflection.publicFields(clazz), aClass)).isPresent();
   }
 
   private boolean hasAnnotation(final Set<? extends AccessibleObject> methods,

@@ -43,10 +43,8 @@ public class ObjectOutputStreamHistoryStore implements HistoryStore {
   }
 
   private BufferedReader createReader(Optional<Reader> input) {
-    if (input.isPresent()) {
-      return new BufferedReader(input.get());
-    }
-    return null;
+    return input.map(BufferedReader::new)
+            .orElse(null);
   }
 
   @Override

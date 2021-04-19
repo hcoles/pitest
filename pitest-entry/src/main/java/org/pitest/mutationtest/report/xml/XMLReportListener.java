@@ -130,11 +130,8 @@ public class XMLReportListener implements MutationResultListener {
   }
 
   private String createKillingTestDesc(final Optional<String> killingTest) {
-    if (killingTest.isPresent()) {
-      return createTestDesc(Arrays.asList(killingTest.get()));
-    } else {
-      return null;
-    }
+    return killingTest.map(s -> createTestDesc(Arrays.asList(s)))
+            .orElse(null);
   }
   
   private String createTestDesc(final List<String> tests) {
