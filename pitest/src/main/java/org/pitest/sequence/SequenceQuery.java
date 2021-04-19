@@ -49,7 +49,7 @@ public class SequenceQuery<T> {
 
   @SuppressWarnings("unchecked")
   public SequenceMatcher<T> compile(QueryParams<T> params) {
-    return new NFASequenceMatcher<>(params.ignoring(),
+    return new NFASequenceMatcher<T>(params.ignoring(),
         this.token.make(EndMatch.MATCH), params.isDebug());
   }
 

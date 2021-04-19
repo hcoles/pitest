@@ -118,33 +118,33 @@ public abstract class AbstractCRCRVisitor extends MethodVisitor {
     Number translateToNumber(final int opcode) {
         switch (opcode) {
             case Opcodes.ICONST_M1:
-                return Integer.valueOf(-1);
+                return -1;
             case Opcodes.ICONST_0:
-                return Integer.valueOf(0);
+                return 0;
             case Opcodes.ICONST_1:
-                return Integer.valueOf(1);
+                return 1;
             case Opcodes.ICONST_2:
-                return Integer.valueOf(2);
+                return 2;
             case Opcodes.ICONST_3:
-                return Integer.valueOf(3);
+                return 3;
             case Opcodes.ICONST_4:
-                return Integer.valueOf(4);
+                return 4;
             case Opcodes.ICONST_5:
-                return Integer.valueOf(5);
+                return 5;
             case Opcodes.LCONST_0:
-                return Long.valueOf(0L);
+                return 0L;
             case Opcodes.LCONST_1:
-                return Long.valueOf(1L);
+                return 1L;
             case Opcodes.FCONST_0:
-                return Float.valueOf(0F);
+                return 0F;
             case Opcodes.FCONST_1:
-                return Float.valueOf(1F);
+                return 1F;
             case Opcodes.FCONST_2:
-                return Float.valueOf(2F);
+                return 2F;
             case Opcodes.DCONST_0:
-                return Double.valueOf(0D);
+                return 0D;
             case Opcodes.DCONST_1:
-                return Double.valueOf(1D);
+                return 1D;
             default:
                 return null;
         }
