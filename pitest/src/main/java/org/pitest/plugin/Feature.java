@@ -20,7 +20,7 @@ public final class Feature {
   }
 
   public static Feature named(String name) {
-    return new Feature(false, name, "", Collections.<FeatureParameter>emptyList());
+    return new Feature(false, name, "", Collections.emptyList());
   }
 
   public Feature withOnByDefault(boolean onByDefault) {
@@ -33,8 +33,7 @@ public final class Feature {
 
 
   public Feature withParameter(FeatureParameter param) {
-    final List<FeatureParameter> params = new ArrayList<>();
-    params.addAll(this.params);
+    final List<FeatureParameter> params = new ArrayList<>(this.params);
     params.add(param);
     return new Feature(this.onByDefault, this.name, this.description, params);
   }

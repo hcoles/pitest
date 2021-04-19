@@ -56,7 +56,7 @@ public class TimeOutDecoratedTestSource {
           .getName());
       if (tu != null) {
         return Stream
-            .<TestUnit> of(new MutationTimeoutDecorator(tu,
+            .of(new MutationTimeoutDecorator(tu,
                 new TimeOutSystemExitSideEffect(
                     TimeOutDecoratedTestSource.this.r),
                     TimeOutDecoratedTestSource.this.timeoutStrategy, a.getTime()));

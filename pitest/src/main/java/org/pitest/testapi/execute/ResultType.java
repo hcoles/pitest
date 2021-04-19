@@ -26,13 +26,13 @@ import java.util.function.Function;
  */
 public enum ResultType {
 
-  PASS(a -> success(a)),
+  PASS(ResultType::success),
 
-  FAIL(a -> failure(a)),
+  FAIL(ResultType::failure),
 
-  SKIPPED(a -> skipped(a)),
+  SKIPPED(ResultType::skipped),
 
-  STARTED(a -> started(a));
+  STARTED(ResultType::started);
 
   private interface ResultToListenerSideEffect extends
   Function<TestResult, Consumer<TestListener>> {

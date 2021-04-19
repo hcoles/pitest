@@ -81,7 +81,7 @@ class StaticInitializerInterceptor implements MutationInterceptor {
           clinit.get().instructions().stream()
         .flatMap(is(MethodInsnNode.class))
         .filter(calls(tree.name()))
-        .map(toPredicate())
+        .map(StaticInitializerInterceptor::matchesCall)
         .collect(Collectors.toList());
 
       final Predicate<MethodTree> matchingCalls = Prelude.or(selfCalls);
@@ -107,13 +107,6 @@ class StaticInitializerInterceptor implements MutationInterceptor {
         && ((a.rawNode().access & Opcodes.ACC_PRIVATE) != 0);
   }
 
-
-
-  private static Function<MethodInsnNode, Predicate<MethodTree>> toPredicate() {
-    return a -> matchesCall(a);
-  }
-
-
   private static Predicate<MethodTree> matchesCall(final MethodInsnNode call) {
     return a -> a.rawNode().name.equals(call.name)
         && a.rawNode().desc.equals(call.desc);
@@ -124,15 +117,11 @@ class StaticInitializerInterceptor implements MutationInterceptor {
   }
 
   private <T extends AbstractInsnNode> Function<AbstractInsnNode,Stream<T>> is(final Class<T> clazz) {
-    return new  Function<AbstractInsnNode,Stream<T>>() {
-      @SuppressWarnings("unchecked")
-      @Override
-      public Stream<T> apply(AbstractInsnNode a) {
-        if (a.getClass().isAssignableFrom(clazz)) {
-          return Stream.of((T)a);
-        }
-        return Stream.empty();
+    return a -> {
+      if (a.getClass().isAssignableFrom(clazz)) {
+        return Stream.of((T)a);
       }
+      return Stream.empty();
     };
   }
 

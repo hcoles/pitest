@@ -59,10 +59,7 @@ public final class InterceptorParameters {
 
   public Optional<Integer> getInteger(FeatureParameter key) {
     final Optional<String> val = getString(key);
-    if (val.isPresent()) {
-      return Optional.ofNullable(Integer.parseInt(val.get()));
-    }
-    return Optional.empty();
+    return val.map(Integer::parseInt);
   }
 
 }

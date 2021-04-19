@@ -204,12 +204,7 @@ public class MojoToReportOptionsConverter {
   }
 
   private static Predicate<Plugin> hasKey(final String key) {
-    return new Predicate<Plugin>() {
-      @Override
-      public boolean test(Plugin a) {
-        return a.getKey().equals(key);
-      }
-    };
+    return a -> a.getKey().equals(key);
   }
 
   private boolean shouldFailWhenNoMutations() {
@@ -319,11 +314,7 @@ public class MojoToReportOptionsConverter {
   }
 
   private Collection<File> stringsTofiles(final List<String> sourceRoots) {
-    return FCollection.map(sourceRoots, stringToFile());
-  }
-
-  private Function<String, File> stringToFile() {
-    return a -> new File(a);
+    return FCollection.map(sourceRoots, File::new);
   }
 
   private Collection<String> determineOutputFormats() {

@@ -41,7 +41,7 @@ abstract class TestInfo {
   }
 
   public static Predicate<ClassInfo> isATest() {
-    return clazz -> isATest(clazz);
+    return TestInfo::isATest;
   }
 
   private static boolean isJUnit3Test(final ClassInfo clazz) {

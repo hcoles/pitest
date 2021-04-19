@@ -25,7 +25,7 @@ public class Context<T> {
   }
 
   public static <T> Context<T> start(List<T> sequence, boolean debug) {
-    return new Context<>(new HashMap<Slot<?>, Object>(), sequence, -1, debug);
+    return new Context<>(new HashMap<>(), sequence, -1, debug);
   }
 
   public <S> boolean store(SlotWrite<S> slot, S value) {

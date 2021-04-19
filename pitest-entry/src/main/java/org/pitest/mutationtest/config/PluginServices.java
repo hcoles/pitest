@@ -86,7 +86,7 @@ public class PluginServices {
   public Collection<? extends ProvidesFeature> findFeatures() {
     return findToolClasspathPlugins().stream()
             .filter(p -> p instanceof ProvidesFeature)
-            .map(p -> ProvidesFeature.class.cast(p))
+            .map(ProvidesFeature.class::cast)
             .collect(Collectors.toList());
   }
 

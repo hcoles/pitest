@@ -81,7 +81,7 @@ public class DependencyExtractor {
       final Predicate<DependencyAccess> filter) throws IOException {
 
     return this
-        .extractCallDependencies(clazz, new TreeSet<String>(), filter, 0);
+        .extractCallDependencies(clazz, new TreeSet<>(), filter, 0);
   }
 
   public int getMaxDistance() {
@@ -158,7 +158,7 @@ public class DependencyExtractor {
   private Map<String, List<DependencyAccess>> groupDependenciesByClass(
       final Set<DependencyAccess> relevantDependencies) {
     return FCollection.fold(addDependenciesToMap(),
-        new HashMap<String, List<DependencyAccess>>(), relevantDependencies);
+            new HashMap<>(), relevantDependencies);
 
   }
 

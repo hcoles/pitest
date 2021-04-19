@@ -182,7 +182,7 @@ public class SettingsFactory {
   }
 
   private static Function<ProvidesFeature, Feature> toFeature() {
-    return a -> a.provides();
+    return ProvidesFeature::provides;
   }
 
 

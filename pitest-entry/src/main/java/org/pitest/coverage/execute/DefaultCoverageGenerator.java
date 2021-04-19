@@ -40,6 +40,7 @@ import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.process.LaunchOptions;
 import org.pitest.process.ProcessArgs;
+import org.pitest.testapi.Description;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Log;
 import org.pitest.util.PitError;
@@ -109,7 +110,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
   private static void verifyBuildSuitableForMutationTesting(final CoverageData coverage) {
     if (!coverage.allTestsGreen()) {
       LOG.severe("Tests failing without mutation: " + StringUtil.newLine()
-          + coverage.getFailingTestDescriptions().stream().map(test -> test.toString())
+          + coverage.getFailingTestDescriptions().stream().map(Description::toString)
           .collect(Collectors.joining(StringUtil.newLine())));
       throw new PitHelpError(Help.FAILING_TESTS, coverage.getCountFailedTests());
     }

@@ -40,7 +40,7 @@ public enum NullReturnValsMutator implements MethodMutatorFactory {
   private boolean moreStableMutationExits(MethodInfo methodInfo) {
     final Type type = Type.getReturnType(methodInfo.getMethodDescriptor());
     return type.getClassName().equals("java.lang.Boolean")
-        || AReturnMethodVisitor.NON_NULL_MUTATIONS.keySet().contains(type.getClassName());
+        || AReturnMethodVisitor.NON_NULL_MUTATIONS.containsKey(type.getClassName());
   }
 
   @Override

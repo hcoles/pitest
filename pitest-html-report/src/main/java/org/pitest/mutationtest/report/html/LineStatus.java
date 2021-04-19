@@ -16,6 +16,6 @@ package org.pitest.mutationtest.report.html;
 
 enum LineStatus {
 
-  Covered, NotCovered, NotApplicable;
+  Covered, NotCovered, NotApplicable
 
 }

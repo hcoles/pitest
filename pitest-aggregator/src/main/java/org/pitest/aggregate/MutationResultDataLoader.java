@@ -38,7 +38,7 @@ class MutationResultDataLoader extends DataLoader<MutationResult> {
     final Location location = new Location(ClassName.fromString((String) map.get(MUTATED_CLASS)), MethodName.fromString((String) map.get(MUTATED_METHOD)),
         (String) map.get(METHOD_DESCRIPTION));
 
-    final MutationIdentifier id = new MutationIdentifier(location, Arrays.asList(new Integer((String) map.get(INDEX))), (String) map.get(MUTATOR));
+    final MutationIdentifier id = new MutationIdentifier(location, Arrays.asList(Integer.valueOf((String) map.get(INDEX))), (String) map.get(MUTATOR));
 
     final MutationDetails md = new MutationDetails(id, (String) map.get(SOURCE_FILE), (String) map.get(DESCRIPTION),
         Integer.parseInt((String) map.get(LINE_NUMBER)), Integer.parseInt((String) map.get(BLOCK)));

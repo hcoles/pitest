@@ -28,7 +28,7 @@ public class MutationAnalysisExecutor {
       List<MutationResultListener> listeners) {
     this.listeners = listeners;
     this.executor = new ThreadPoolExecutor(numberOfThreads, numberOfThreads,
-        10, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
+        10, TimeUnit.SECONDS, new LinkedBlockingQueue<>(),
         Executors.defaultThreadFactory());
   }
 
@@ -50,9 +50,7 @@ public class MutationAnalysisExecutor {
 
     try {
       processResult(results);
-    } catch (final InterruptedException e) {
-      throw Unchecked.translateCheckedException(e);
-    } catch (final ExecutionException e) {
+    } catch (final InterruptedException | ExecutionException e) {
       throw Unchecked.translateCheckedException(e);
     }
 

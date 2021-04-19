@@ -86,6 +86,13 @@ public class CodeCoverageStoreTest {
   }
 
   @Test
+  public void shouldCodeAndEncodeClassIdAndLineNumber() {
+    final long value = CodeCoverageStore.encode(42, 123);
+    assertEquals(42, CodeCoverageStore.decodeClassId(value));
+    assertEquals(123, CodeCoverageStore.decodeLineId(value));
+  }
+
+  @Test
   public void shouldClearHitCountersWhenReset() {
     final int classId = CodeCoverageStore.registerClass("foo");
 

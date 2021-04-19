@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Function;
 
 /**
  * Common code for report aggregation mojo.
@@ -36,7 +35,7 @@ abstract class AbstractPitAggregationReportMojo extends PitReportMojo {
   @Parameter(property = "reactorProjects", readonly = true)
   List<MavenProject> reactorProjects;
 
-  private ReportSourceLocator reportSourceLocator = new ReportSourceLocator();
+  private final ReportSourceLocator reportSourceLocator = new ReportSourceLocator();
 
   /**
    * @return  projects to inspect for report files.
@@ -70,7 +69,7 @@ abstract class AbstractPitAggregationReportMojo extends PitReportMojo {
 
   private void addProjectFiles(
       final ReportAggregator.Builder reportAggregationBuilder,
-      final MavenProject proj) throws IOException, Exception {
+      final MavenProject proj) throws Exception {
     final File projectBaseDir = proj.getBasedir();
     List<File> files = getProjectFilesByFilter(projectBaseDir,
         MUTATION_RESULT_FILTER);
@@ -98,12 +97,7 @@ abstract class AbstractPitAggregationReportMojo extends PitReportMojo {
     for (final List directoryList : directoryLists) {
       roots.addAll(directoryList);
     }
-    return FCollection.map(roots, new Function<String, File>() {
-      @Override
-      public File apply(final String a) {
-        return new File(a);
-      }
-    });
+    return FCollection.map(roots, File::new);
   }
 
   private List<File> getProjectFilesByFilter(final File projectBaseDir,

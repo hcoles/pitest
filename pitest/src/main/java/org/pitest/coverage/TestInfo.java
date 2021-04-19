@@ -61,7 +61,7 @@ public final class TestInfo implements Serializable {
   }
 
   public static Function<TestInfo, String> toName() {
-    return a -> a.getName();
+    return TestInfo::getName;
   }
 
   public static Function<TestInfo, ClassName> toDefiningClassName() {

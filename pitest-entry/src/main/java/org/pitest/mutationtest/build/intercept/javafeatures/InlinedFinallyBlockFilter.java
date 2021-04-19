@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 import org.pitest.bytecode.analysis.ClassTree;
@@ -83,7 +82,7 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
       final Entry<LineMutatorPair, Collection<MutationDetails>> each) {
 
     final List<MutationDetails> mutationsInHandlerBlock = FCollection
-        .filter(each.getValue(), isInFinallyHandler());
+        .filter(each.getValue(), MutationDetails::isInFinallyBlock);
     if (!isPossibleToCorrectInlining(mutationsInHandlerBlock)) {
       combined.addAll(each.getValue());
       return;
@@ -95,7 +94,7 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
     // check that we have at least on mutation in a different block
     // to the base one (is this not implied by there being only 1 mutation in
     // the handler ????)
-    final List<Integer> ids = map(each.getValue(), mutationToBlock());
+    final List<Integer> ids = map(each.getValue(), MutationDetails::getBlock);
     if (ids.stream().anyMatch(not(isEqual(firstBlock)))) {
       combined.add(makeCombinedMutant(each.getValue()));
     } else {
@@ -113,15 +112,11 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
     return !mutationsInHandlerBlock.isEmpty();
   }
 
-  private static Predicate<MutationDetails> isInFinallyHandler() {
-    return a -> a.isInFinallyBlock();
-  }
-
   private static MutationDetails makeCombinedMutant(
       final Collection<MutationDetails> value) {
     final MutationDetails first = value.iterator().next();
     final Set<Integer> indexes = new HashSet<>();
-    mapTo(value, mutationToIndex(), indexes);
+    mapTo(value, MutationDetails::getFirstIndex, indexes);
 
     final MutationIdentifier id = new MutationIdentifier(first.getId()
         .getLocation(), indexes, first.getId().getMutator());
@@ -130,13 +125,6 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
         first.getLineNumber(), first.getBlock());
   }
 
-  private static Function<MutationDetails, Integer> mutationToIndex() {
-    return a -> a.getFirstIndex();
-  }
-
-  private static Function<MutationDetails, Integer> mutationToBlock() {
-    return a -> a.getBlock();
-  }
 
   private static Function<MutationDetails, LineMutatorPair> toLineMutatorPair() {
     return a -> new LineMutatorPair(a.getLineNumber(), a.getMutator());

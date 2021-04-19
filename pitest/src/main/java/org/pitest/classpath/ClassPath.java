@@ -111,7 +111,7 @@ public class ClassPath {
 
   public static Collection<String> getClassPathElementsAsPaths() {
     final Set<String> filesAsString = new LinkedHashSet<>();
-    FCollection.mapTo(getClassPathElementsAsFiles(), file -> file.getPath(),
+    FCollection.mapTo(getClassPathElementsAsFiles(), File::getPath,
         filesAsString);
     return filesAsString;
   }

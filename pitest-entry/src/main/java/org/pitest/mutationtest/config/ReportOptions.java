@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,7 +30,6 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.pitest.classpath.ClassFilter;
@@ -242,11 +242,7 @@ public class ReportOptions {
 
   private ClassPath createClassPathFromElements() {
     return new ClassPath(
-        FCollection.map(this.classPathElements, stringToFile()));
-  }
-
-  private static Function<String, File> stringToFile() {
-    return a -> new File(a);
+        FCollection.map(this.classPathElements, File::new));
   }
 
   public Collection<String> getTargetClasses() {
@@ -491,8 +487,8 @@ public class ReportOptions {
     try {
       if (this.historyInputLocation.exists()
           && (this.historyInputLocation.length() > 0)) {
-        return Optional.<Reader> ofNullable(new InputStreamReader(new FileInputStream(
-            this.historyInputLocation), "UTF-8"));
+        return Optional.ofNullable(new InputStreamReader(new FileInputStream(
+            this.historyInputLocation), StandardCharsets.UTF_8));
       }
       return Optional.empty();
     } catch (final IOException ex) {

@@ -17,7 +17,6 @@ package org.pitest.mutationtest.engine.gregor;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.pitest.classinfo.ClassByteArraySource;
@@ -55,11 +54,7 @@ public class GregorMutationEngine implements MutationEngine {
 
   @Override
   public Collection<String> getMutatorNames() {
-    return FCollection.map(this.mutationOperators, toName());
-  }
-
-  private static Function<MethodMutatorFactory, String> toName() {
-    return a -> a.getName();
+    return FCollection.map(this.mutationOperators, MethodMutatorFactory::getName);
   }
 
   @Override

@@ -29,9 +29,9 @@ public class TestGroupConfig implements Serializable {
   public TestGroupConfig(final List<String> excludedGroups,
       final List<String> includedGroups) {
     this.excludedGroups = (excludedGroups != null ? excludedGroups
-        : Collections.<String> emptyList());
+        : Collections.emptyList());
     this.includedGroups = (includedGroups != null ? includedGroups
-        : Collections.<String> emptyList());
+        : Collections.emptyList());
   }
 
   public TestGroupConfig() {

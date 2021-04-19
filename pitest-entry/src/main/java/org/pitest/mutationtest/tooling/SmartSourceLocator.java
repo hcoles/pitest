@@ -35,8 +35,7 @@ public class SmartSourceLocator implements SourceLocator {
         collectChildren(0));
     childDirs.addAll(roots);
 
-    final Function<File, SourceLocator> fileToSourceLocator = a -> new DirectorySourceLocator(a);
-    this.children = FCollection.map(childDirs, fileToSourceLocator);
+    this.children = FCollection.map(childDirs, DirectorySourceLocator::new);
   }
 
   private Function<File, Collection<File>> collectChildren(final int depth) {
@@ -54,7 +53,7 @@ public class SmartSourceLocator implements SourceLocator {
   }
 
   private static Collection<File> listFirstLevelDirectories(final File root) {
-    return FArray.filter(root.listFiles(), a -> a.isDirectory());
+    return FArray.filter(root.listFiles(), File::isDirectory);
   }
 
   @Override

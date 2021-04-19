@@ -113,7 +113,7 @@ public final class CodeCoverageStore {
   }
 
   public static int decodeLineId(final long value) {
-    return (int) (value & 0xFFFFFFFF);
+    return (int) value;
   }
 
   public static long encode(final int classId, final int line) {

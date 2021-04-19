@@ -23,6 +23,7 @@ import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.mocksupport.JavassistInterceptor;
+import org.pitest.testapi.Description;
 import org.pitest.testapi.TestResult;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.execute.Container;
@@ -199,16 +200,16 @@ public class MutationTestWorker {
   private MutationStatusTestPair createStatusTestPair(
       final CheckTestHasFailedResultListener listener) {
     List<String> failingTests = listener.getFailingTests().stream()
-        .map(description -> description.getQualifiedName()).collect(Collectors.toList());
+        .map(Description::getQualifiedName).collect(Collectors.toList());
     List<String> succeedingTests = listener.getSucceedingTests().stream()
-        .map(description -> description.getQualifiedName()).collect(Collectors.toList());
+        .map(Description::getQualifiedName).collect(Collectors.toList());
 
     return new MutationStatusTestPair(listener.getNumberOfTestsRun(),
         listener.status(), failingTests, succeedingTests);
   }
 
   private List<TestUnit> createEarlyExitTestGroup(final List<TestUnit> tests) {
-    return Collections.<TestUnit> singletonList(new MultipleTestGroup(tests));
+    return Collections.singletonList(new MultipleTestGroup(tests));
   }
 
 }
