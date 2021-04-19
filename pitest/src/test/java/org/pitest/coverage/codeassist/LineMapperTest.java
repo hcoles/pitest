@@ -1,7 +1,7 @@
 package org.pitest.coverage.codeassist;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.Map;
@@ -11,8 +11,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
-import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.LineMap;
 import org.pitest.coverage.analysis.LineMapper;
@@ -29,7 +29,7 @@ import com.example.coverage.execute.samples.simple.ThreeMultiLineBlocks;
 public class LineMapperTest {
 
   @Mock
-  CodeSource source;
+  ClassByteArraySource source;
 
   @Test
   public void shouldMapAllLinesWhenMethodContainsSingleBlock() throws Exception {
@@ -114,7 +114,7 @@ public class LineMapperTest {
 
   private Map<BlockLocation, Set<Integer>> analyse(Class<?> clazz)
       throws ClassNotFoundException {
-    when(this.source.fetchClassBytes(any(ClassName.class))).thenReturn(
+    when(this.source.getBytes(anyString())).thenReturn(
         Optional.ofNullable(ClassUtils.classAsBytes(clazz)));
     final LineMap testee = new LineMapper(this.source);
     return testee.mapLines(ClassName.fromClass(clazz));
