@@ -56,7 +56,7 @@ public abstract class Prelude {
 
   public static final <A> Consumer<A> accumulateTo(
       final Collection<A> collection) {
-    return a -> collection.add(a);
+    return collection::add;
 
   }
 
@@ -87,7 +87,7 @@ public abstract class Prelude {
   }
 
   public static final <T> Consumer<T> printlnTo(final PrintStream stream) {
-    return a -> stream.println(a);
+    return stream::println;
   }
 
   public static <T> Consumer<T> printlnWith(final T t) {
@@ -99,7 +99,7 @@ public abstract class Prelude {
   }
 
   public static <T> Function<T, Iterable<T>> asList(final Class<T> type) {
-    return a -> Collections.singletonList(a);
+    return Collections::singletonList;
   }
 
   public static <T> Consumer<T> noSideEffect(final Class<T> clazz) {

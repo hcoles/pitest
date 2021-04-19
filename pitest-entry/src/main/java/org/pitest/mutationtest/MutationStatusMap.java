@@ -82,7 +82,7 @@ public class MutationStatusMap {
   }
 
   private static Function<Entry<MutationDetails, MutationStatusTestPair>, MutationDetails> toMutationDetails() {
-    return a -> a.getKey();
+    return Entry::getKey;
   }
 
   private static Predicate<Entry<MutationDetails, MutationStatusTestPair>> hasStatus(

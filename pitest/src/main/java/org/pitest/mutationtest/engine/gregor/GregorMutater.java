@@ -123,7 +123,7 @@ public class GregorMutater implements Mutater {
   }
 
   private static Predicate<MethodInfo> isGroovyClass() {
-    return a -> a.isInGroovyClass();
+    return MethodInfo::isInGroovyClass;
   }
 
   private static Predicate<MethodInfo> filterSyntheticMethods() {
@@ -131,7 +131,7 @@ public class GregorMutater implements Mutater {
   }
 
   private static Predicate<MethodInfo> isGeneratedEnumMethod() {
-    return a -> a.isGeneratedEnumMethod();
+    return MethodInfo::isGeneratedEnumMethod;
   }
 
 }

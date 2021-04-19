@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.pitest.classpath.ClassFilter;
@@ -242,11 +241,7 @@ public class ReportOptions {
 
   private ClassPath createClassPathFromElements() {
     return new ClassPath(
-        FCollection.map(this.classPathElements, stringToFile()));
-  }
-
-  private static Function<String, File> stringToFile() {
-    return a -> new File(a);
+        FCollection.map(this.classPathElements, File::new));
   }
 
   public Collection<String> getTargetClasses() {

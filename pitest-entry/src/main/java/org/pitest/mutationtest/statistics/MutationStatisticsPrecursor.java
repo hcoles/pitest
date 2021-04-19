@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.MutationResult;
@@ -44,12 +43,9 @@ class MutationStatisticsPrecursor {
   }
 
   Iterable<Score> getScores() {
-    return FCollection.map(this.mutatorTotalMap.values(), toScore());
+    return FCollection.map(this.mutatorTotalMap.values(), ScorePrecursor::toScore);
   }
 
-  private static Function<ScorePrecursor, Score> toScore() {
-    return a -> a.toScore();
-  }
 
   private static BiFunction<Long, Score, Long> addTotals() {
     return (a, b) -> a + b.getTotalMutations();

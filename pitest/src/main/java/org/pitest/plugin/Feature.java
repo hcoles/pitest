@@ -33,8 +33,7 @@ public final class Feature {
 
 
   public Feature withParameter(FeatureParameter param) {
-    final List<FeatureParameter> params = new ArrayList<>();
-    params.addAll(this.params);
+    final List<FeatureParameter> params = new ArrayList<>(this.params);
     params.add(param);
     return new Feature(this.onByDefault, this.name, this.description, params);
   }

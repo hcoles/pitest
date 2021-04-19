@@ -39,7 +39,7 @@ public class Glob implements Predicate<String> {
   }
 
   public static Function<String, Predicate<String>> toGlobPredicate() {
-    return glob -> new Glob(glob);
+    return Glob::new;
   }
 
   public static Collection<Predicate<String>> toGlobPredicates(

@@ -58,12 +58,7 @@ public class SurefireConfigConverter {
   }
 
   private Function<String, Predicate<String>> filenameToClassFilter() {
-    return new Function<String, Predicate<String>>() {
-      @Override
-      public Predicate<String> apply(String a) {
-        return new Glob(a.replace(".java", "").replace("/", "."));
-      }
-    };
+    return a -> new Glob(a.replace(".java", "").replace("/", "."));
   }
 
   private List<String> extract(String childname, Xpp3Dom config) {

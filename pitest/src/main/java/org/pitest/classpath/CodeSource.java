@@ -87,7 +87,7 @@ public class CodeSource implements ClassInfoSource {
 
   private Function<ClassName, Stream<ClassInfo>> nameToClassInfo() {
     return new NameToClassInfo(this.classRepository)
-        .andThen(opt -> Streams.fromOptional(opt));
+        .andThen(Streams::fromOptional);
   }
 
 }

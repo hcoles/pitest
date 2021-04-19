@@ -153,7 +153,7 @@ public class ClassInfo {
   }
 
   public static Predicate<ClassInfo> matchIfAbstract() {
-    return a -> a.isAbstract();
+    return ClassInfo::isAbstract;
   }
 
   @Override
@@ -162,10 +162,10 @@ public class ClassInfo {
   }
 
   public static Function<ClassInfo, ClassName> toClassName() {
-    return a -> a.getName();
+    return ClassInfo::getName;
   }
 
   public static Function<ClassInfo, HierarchicalClassId> toFullClassId() {
-    return a -> a.getHierarchicalId();
+    return ClassInfo::getHierarchicalId;
   }
 }

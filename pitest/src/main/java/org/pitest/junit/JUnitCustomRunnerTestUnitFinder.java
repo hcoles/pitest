@@ -26,7 +26,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.junit.AfterClass;
@@ -127,12 +126,8 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
       if (a == null) {
         return Collections.emptyList();
       }
-      return FCollection.map(Arrays.asList(a.value()),toName());
+      return FCollection.map(Arrays.asList(a.value()), Class::getName);
     };
-  }
-
-  private Function<Class<?>,String> toName() {
-    return a -> a.getName();
   }
 
   private boolean isNotARunnableTest(final Runner runner,
@@ -202,17 +197,9 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   private List<TestUnit> splitIntoFilteredUnits(final Description description) {
     return description.getChildren().stream()
-        .filter(isTest())
-        .map(descriptionToTestUnit())
+        .filter(Description::isTest)
+        .map(this::descriptionToTest)
         .collect(Collectors.toList());
-  }
-
-  private Function<Description, TestUnit> descriptionToTestUnit() {
-    return a -> descriptionToTest(a);
-  }
-
-  private Predicate<Description> isTest() {
-    return a -> a.isTest();
   }
 
   private TestUnit descriptionToTest(final Description description) {

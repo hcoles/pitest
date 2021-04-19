@@ -38,7 +38,7 @@ public class NullMutateEverything implements MethodMutatorFactory {
   }
 
   public static List<MethodMutatorFactory> asList() {
-    return Arrays.asList((MethodMutatorFactory) new NullMutateEverything());
+    return Arrays.asList(new NullMutateEverything());
   }
 
 }

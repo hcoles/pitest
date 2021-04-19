@@ -64,8 +64,7 @@ public final class ClassName implements Comparable<ClassName>, Serializable {
   public ClassName getNameWithoutPackage() {
     final int lastSeparator = this.name.lastIndexOf('/');
     if (lastSeparator != -1) {
-      return ClassName.fromString(this.name.substring(lastSeparator + 1,
-          this.name.length()));
+      return ClassName.fromString(this.name.substring(lastSeparator + 1));
     }
     return this;
   }
@@ -82,8 +81,7 @@ public final class ClassName implements Comparable<ClassName>, Serializable {
     final String nameWithoutPackage = this.getNameWithoutPackage().asJavaName();
     return ClassName.fromString(this.getPackage().asJavaName()
         + "/"
-        + nameWithoutPackage.substring(prefixLength,
-            nameWithoutPackage.length()));
+        + nameWithoutPackage.substring(prefixLength));
   }
 
   public ClassName withoutSuffixChars(final int suffixLength) {
@@ -95,7 +93,7 @@ public final class ClassName implements Comparable<ClassName>, Serializable {
   }
 
   public static Function<String, ClassName> stringToClassName() {
-    return clazz -> ClassName.fromString(clazz);
+    return ClassName::fromString;
   }
 
   public static Function<ClassName, Stream<Class<?>>> nameToClass() {

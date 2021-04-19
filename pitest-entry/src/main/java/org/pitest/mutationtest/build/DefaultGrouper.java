@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.FCollection;
@@ -23,7 +22,7 @@ public class DefaultGrouper implements MutationGrouper {
       final Collection<ClassName> codeClasses,
       final Collection<MutationDetails> mutations) {
     final Map<ClassName, Collection<MutationDetails>> bucketed = FCollection
-        .bucket(mutations, byClass());
+        .bucket(mutations, MutationDetails::getClassName);
     final List<List<MutationDetails>> chunked = new ArrayList<>();
     for (final Collection<MutationDetails> each : bucketed.values()) {
       shrinkToMaximumUnitSize(chunked, each);
@@ -43,10 +42,6 @@ public class DefaultGrouper implements MutationGrouper {
     } else {
       chunked.add(new ArrayList<>(each));
     }
-  }
-
-  private static Function<MutationDetails, ClassName> byClass() {
-    return a -> a.getClassName();
   }
 
 }

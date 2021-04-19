@@ -7,7 +7,7 @@ public class AddlerHash implements HashFunction {
   @Override
   public long hash(final byte[] value) {
     final Adler32 adler = new Adler32();
-    adler.update(value);
+    adler.update(value, 0, value.length);
     return adler.getValue();
   }
 

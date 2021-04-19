@@ -39,8 +39,7 @@ class PathToJavaClassConverter implements Function<String, Iterable<String>> {
 
   private Iterable<String> createClassGlobFromFilePath(final String sourceRoot,
       final String modifiedFilePath) {
-    final String rootedPath = modifiedFilePath.substring(
-        sourceRoot.length() + 1, modifiedFilePath.length());
+    final String rootedPath = modifiedFilePath.substring(sourceRoot.length() + 1);
     // some scms report paths in portable format, some in os specific format (i
     // think)
     // replace both possibilities regardless of host os
