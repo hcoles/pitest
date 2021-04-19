@@ -14,7 +14,14 @@
  */
 package org.pitest.mutationtest.build;
 
-import static java.util.Comparator.comparing;
+import org.pitest.classinfo.ClassName;
+import org.pitest.coverage.TestInfo;
+import org.pitest.functional.FCollection;
+import org.pitest.functional.prelude.Prelude;
+import org.pitest.mutationtest.DetectionStatus;
+import org.pitest.mutationtest.MutationAnalyser;
+import org.pitest.mutationtest.MutationResult;
+import org.pitest.mutationtest.engine.MutationDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,14 +32,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.pitest.classinfo.ClassName;
-import org.pitest.coverage.TestInfo;
-import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
-import org.pitest.mutationtest.DetectionStatus;
-import org.pitest.mutationtest.MutationAnalyser;
-import org.pitest.mutationtest.MutationResult;
-import org.pitest.mutationtest.engine.MutationDetails;
+import static java.util.Comparator.comparing;
 
 public class MutationTestBuilder {
 
@@ -42,8 +42,9 @@ public class MutationTestBuilder {
   private final MutationGrouper  grouper;
 
   public MutationTestBuilder(final WorkerFactory workerFactory,
-      final MutationAnalyser analyser, final MutationSource mutationSource,
-      final MutationGrouper grouper) {
+                             final MutationAnalyser analyser,
+                             final MutationSource mutationSource,
+                             final MutationGrouper grouper) {
 
     this.mutationSource = mutationSource;
     this.analyser = analyser;
@@ -55,8 +56,7 @@ public class MutationTestBuilder {
       final Collection<ClassName> codeClasses) {
     final List<MutationAnalysisUnit> tus = new ArrayList<>();
 
-    final List<MutationDetails> mutations = FCollection.flatMap(codeClasses,
-        classToMutations());
+    final List<MutationDetails> mutations = FCollection.flatMap(codeClasses, mutationSource::createMutations);
 
     mutations.sort(comparing(MutationDetails::getId));
 
@@ -65,7 +65,7 @@ public class MutationTestBuilder {
 
     final Collection<MutationDetails> needAnalysis = analysedMutations.stream()
         .filter(statusNotKnown())
-        .map(resultToDetails())
+        .map(MutationResult::getDetails)
         .collect(Collectors.toList());
 
     final List<MutationResult> analysed = FCollection.filter(analysedMutations,
@@ -86,9 +86,6 @@ public class MutationTestBuilder {
     return tus;
   }
 
-  private Function<ClassName, Iterable<MutationDetails>> classToMutations() {
-    return a -> MutationTestBuilder.this.mutationSource.createMutations(a);
-  }
 
   private MutationAnalysisUnit makePreAnalysedUnit(
       final List<MutationResult> analysed) {
@@ -103,10 +100,6 @@ public class MutationTestBuilder {
 
     return new MutationTestUnit(needAnalysis, uniqueTestClasses,
         this.workerFactory);
-  }
-
-  private static Function<MutationResult, MutationDetails> resultToDetails() {
-    return a -> a.getDetails();
   }
 
   private static Predicate<MutationResult> statusNotKnown() {
