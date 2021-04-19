@@ -29,7 +29,7 @@ public class LaunchOptions {
 
   public LaunchOptions(JavaAgent javaAgentFinder) {
     this(javaAgentFinder, new DefaultJavaExecutableLocator(), Collections
-        .<String> emptyList(), new HashMap<String, String>());
+        .emptyList(), new HashMap<>());
   }
   
   public LaunchOptions(JavaAgent javaAgentFinder,

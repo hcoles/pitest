@@ -22,7 +22,6 @@ import java.util.function.Function;
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
-import org.junit.runner.manipulation.Filter;
 import org.junit.runners.Parameterized;
 import org.pitest.functional.FCollection;
 import java.util.Optional;
@@ -60,7 +59,7 @@ public class ParameterisedJUnitTestFinder implements TestUnitFinder {
 
   private Function<Description, TestUnit> parameterizedToTestUnit(final Class<?> clazz) {
     return a -> new AdaptedJUnitTestUnit(clazz,
-        Optional.<Filter> ofNullable(new ParameterisedTestFilter(a.toString())));
+        Optional.ofNullable(new ParameterisedTestFilter(a.toString())));
   }
 
   private boolean isParameterizedTest(final Runner runner) {

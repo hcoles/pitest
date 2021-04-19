@@ -209,7 +209,7 @@ public class MutationTestWorker {
   }
 
   private List<TestUnit> createEarlyExitTestGroup(final List<TestUnit> tests) {
-    return Collections.<TestUnit> singletonList(new MultipleTestGroup(tests));
+    return Collections.singletonList(new MultipleTestGroup(tests));
   }
 
 }

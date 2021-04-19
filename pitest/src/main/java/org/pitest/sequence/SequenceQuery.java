@@ -44,7 +44,7 @@ public class SequenceQuery<T> {
   }
 
   public SequenceMatcher<T> compile() {
-    return compile(QueryParams.<T>params());
+    return compile(QueryParams.params());
   }
 
   @SuppressWarnings("unchecked")

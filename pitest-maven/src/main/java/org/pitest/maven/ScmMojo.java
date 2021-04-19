@@ -130,7 +130,7 @@ public class ScmMojo extends AbstractPitMojo {
     data.setFailWhenNoMutations(false);
 
     return Optional.ofNullable(this.getGoalStrategy().execute(detectBaseDir(), data,
-        getPlugins(), new HashMap<String, String>()));
+        getPlugins(), new HashMap<>()));
 
   }
 

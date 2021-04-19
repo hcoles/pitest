@@ -52,7 +52,7 @@ public class JUnitCompatibleConfiguration implements Configuration {
 
   @Override
   public TestSuiteFinder testSuiteFinder() {
-    return new CompoundTestSuiteFinder(Arrays.<TestSuiteFinder> asList(
+    return new CompoundTestSuiteFinder(Arrays.asList(
         new JUnit4SuiteFinder(), new RunnerSuiteFinder()));
   }
 

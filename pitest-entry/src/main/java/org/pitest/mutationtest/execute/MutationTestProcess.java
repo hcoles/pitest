@@ -7,7 +7,6 @@ import java.util.HashMap;
 import org.pitest.mutationtest.MutationStatusMap;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.process.ProcessArgs;
 import org.pitest.process.WrappingProcess;
 import org.pitest.util.ExitCode;
@@ -22,7 +21,7 @@ public class MutationTestProcess {
     this.process = new WrappingProcess(socket.getLocalPort(), processArgs,
         MutationTestMinion.class);
     this.thread = new MutationTestCommunicationThread(socket, arguments,
-        new HashMap<MutationIdentifier, MutationStatusTestPair>());
+            new HashMap<>());
 
   }
 

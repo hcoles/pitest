@@ -486,7 +486,7 @@ public class ReportOptions {
     try {
       if (this.historyInputLocation.exists()
           && (this.historyInputLocation.length() > 0)) {
-        return Optional.<Reader> ofNullable(new InputStreamReader(new FileInputStream(
+        return Optional.ofNullable(new InputStreamReader(new FileInputStream(
             this.historyInputLocation), "UTF-8"));
       }
       return Optional.empty();

@@ -20,7 +20,7 @@ public final class Feature {
   }
 
   public static Feature named(String name) {
-    return new Feature(false, name, "", Collections.<FeatureParameter>emptyList());
+    return new Feature(false, name, "", Collections.emptyList());
   }
 
   public Feature withOnByDefault(boolean onByDefault) {

@@ -28,7 +28,7 @@ public class MutationAnalysisExecutor {
       List<MutationResultListener> listeners) {
     this.listeners = listeners;
     this.executor = new ThreadPoolExecutor(numberOfThreads, numberOfThreads,
-        10, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
+        10, TimeUnit.SECONDS, new LinkedBlockingQueue<>(),
         Executors.defaultThreadFactory());
   }
 

@@ -78,8 +78,8 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
       final List<TestUnit> filteredUnits = splitIntoFilteredUnits(runner.getDescription());
       return filterUnitsByMethod(filteredUnits);
     } else {
-      return Collections.<TestUnit> singletonList(new AdaptedJUnitTestUnit(
-          clazz, Optional.<Filter> empty()));
+      return Collections.singletonList(new AdaptedJUnitTestUnit(
+          clazz, Optional.empty()));
     }
   }
 
@@ -220,7 +220,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   @SuppressWarnings("rawtypes")
   private static Optional<Class> findClassRuleClass() {
     try {
-      return Optional.<Class> ofNullable(Class.forName("org.junit.ClassRule"));
+      return Optional.ofNullable(Class.forName("org.junit.ClassRule"));
     } catch (final ClassNotFoundException ex) {
       return Optional.empty();
     }
