@@ -82,11 +82,7 @@ abstract class DataLoader<T> {
     try {
       docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
       return docBuilder.parse(inputStream);
-    } catch (final IOException e) {
-      throw new ReportAggregationException(e.getMessage(), e);
-    } catch (final SAXException e) {
-      throw new ReportAggregationException(e.getMessage(), e);
-    } catch (final ParserConfigurationException e) {
+    } catch (final IOException | SAXException | ParserConfigurationException e) {
       throw new ReportAggregationException(e.getMessage(), e);
     } finally {
       try {

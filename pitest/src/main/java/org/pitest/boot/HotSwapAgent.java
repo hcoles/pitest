@@ -46,13 +46,7 @@ public class HotSwapAgent {
       instrumentation.redefineClasses(definitions);
 
       return true;
-    } catch (final ClassNotFoundException e) {
-      // swallow
-    } catch (final UnmodifiableClassException e) {
-      // swallow
-    } catch (final java.lang.VerifyError e) {
-      // swallow
-    } catch (final java.lang.InternalError e) {
+    } catch (final ClassNotFoundException | UnmodifiableClassException | VerifyError | InternalError e) {
       // swallow
     }
     return false;

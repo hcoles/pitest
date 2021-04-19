@@ -50,9 +50,7 @@ public class MutationAnalysisExecutor {
 
     try {
       processResult(results);
-    } catch (final InterruptedException e) {
-      throw Unchecked.translateCheckedException(e);
-    } catch (final ExecutionException e) {
+    } catch (final InterruptedException | ExecutionException e) {
       throw Unchecked.translateCheckedException(e);
     }
 

@@ -59,9 +59,7 @@ public final class MutationTimeoutDecorator extends TestUnitDecorator {
       final FutureTask<?> future, final ResultCollector rc) {
     try {
       future.get(maxTime, TimeUnit.MILLISECONDS);
-    } catch (final TimeoutException ex) {
-      // swallow
-    } catch (final InterruptedException e) {
+    } catch (final TimeoutException | InterruptedException ex) {
       // swallow
     } catch (final ExecutionException e) {
       throw Unchecked.translateCheckedException(e);

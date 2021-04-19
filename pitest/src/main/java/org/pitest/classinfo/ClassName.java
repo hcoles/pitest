@@ -115,11 +115,8 @@ public final class ClassName implements Comparable<ClassName>, Serializable {
         LOG.warning("Could not load " + className
             + " (NoClassDefFoundError: " + e2.getMessage() + ")");
         return Stream.empty();
-      } catch (final LinkageError e3) {
+      } catch (final LinkageError | SecurityException e3) {
         LOG.warning("Could not load " + className + " " + e3.getMessage());
-        return Stream.empty();
-      } catch (final SecurityException e4) {
-        LOG.warning("Could not load " + className + " " + e4.getMessage());
         return Stream.empty();
       }
     };

@@ -29,9 +29,7 @@ public class PluginFilter implements Predicate<String> {
         try {
           return new File(a.getClass().getProtectionDomain().getCodeSource()
               .getLocation().toURI()).getCanonicalPath();
-        } catch (final IOException ex) {
-          throw createPitErrorForExceptionOnClass(ex, a);
-        } catch (final URISyntaxException ex) {
+        } catch (final IOException | URISyntaxException ex) {
           throw createPitErrorForExceptionOnClass(ex, a);
         }
       }
