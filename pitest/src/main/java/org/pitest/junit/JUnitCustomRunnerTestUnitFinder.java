@@ -46,6 +46,7 @@ import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.TestUnitFinder;
 import org.pitest.util.IsolationUtils;
+import org.pitest.util.PitError;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
@@ -201,10 +202,33 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   }
 
   private List<TestUnit> splitIntoFilteredUnits(final Description description) {
-    return description.getChildren().stream()
-        .filter(isTest())
-        .map(descriptionToTestUnit())
-        .collect(Collectors.toList());
+    final ArrayList<Description> allChildren = description.getChildren().stream()
+            .map(child -> {
+              if (isClazz(child)) {
+                return Collections.singletonList(child);
+              } else {
+                return child.getChildren();
+              }
+            }).collect(ArrayList<Description>::new, ArrayList::addAll, ArrayList::addAll);
+
+    return allChildren.stream()
+            .filter(isTest())
+            .map(descriptionToTestUnit())
+            .collect(Collectors.toList());
+  }
+
+  private boolean isClazz(Description description1) {
+    try {
+      IsolationUtils.convertForClassLoader(
+              IsolationUtils.getContextClassLoader(), description1.getClassName());
+    } catch (PitError pitError) {
+      if (pitError.getCause() instanceof ClassNotFoundException) {
+        return false;
+      } else {
+        throw pitError;
+      }
+    }
+    return true;
   }
 
   private Function<Description, TestUnit> descriptionToTestUnit() {
