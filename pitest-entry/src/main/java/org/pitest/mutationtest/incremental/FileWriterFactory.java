@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 import org.pitest.util.Unchecked;
 
@@ -23,7 +24,7 @@ public class FileWriterFactory implements WriterFactory {
     try {
       if (this.writer == null) {
         this.writer = new PrintWriter(new OutputStreamWriter(
-            new FileOutputStream(this.file), "UTF-8"));
+            new FileOutputStream(this.file), StandardCharsets.UTF_8));
       }
 
       return this.writer;

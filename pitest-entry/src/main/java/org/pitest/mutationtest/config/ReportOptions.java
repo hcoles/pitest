@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -487,7 +488,7 @@ public class ReportOptions {
       if (this.historyInputLocation.exists()
           && (this.historyInputLocation.length() > 0)) {
         return Optional.ofNullable(new InputStreamReader(new FileInputStream(
-            this.historyInputLocation), "UTF-8"));
+            this.historyInputLocation), StandardCharsets.UTF_8));
       }
       return Optional.empty();
     } catch (final IOException ex) {
