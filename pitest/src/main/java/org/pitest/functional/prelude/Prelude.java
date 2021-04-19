@@ -33,28 +33,28 @@ import org.pitest.functional.predicate.Or;
 public abstract class Prelude {
 
   @SafeVarargs
-  public static final <A> And<A> and(final Predicate<A>... ps) {
+  public static <A> And<A> and(final Predicate<A>... ps) {
     return new And<>(Arrays.asList(ps));
   }
 
-  public static final <A> And<A> and(final Iterable<? extends Predicate<A>> ps) {
+  public static <A> And<A> and(final Iterable<? extends Predicate<A>> ps) {
     return new And<>(ps);
   }
 
-  public static final <A> Predicate<A> not(final Predicate<A> p) {
+  public static <A> Predicate<A> not(final Predicate<A> p) {
     return p.negate();
   }
 
   @SafeVarargs
-  public static final <A> Or<A> or(final Predicate<A>... ps) {
+  public static <A> Or<A> or(final Predicate<A>... ps) {
     return new Or<>(Arrays.asList(ps));
   }
 
-  public static final <A> Or<A> or(final Iterable<Predicate<A>> ps) {
+  public static <A> Or<A> or(final Iterable<Predicate<A>> ps) {
     return new Or<>(ps);
   }
 
-  public static final <A> Consumer<A> accumulateTo(
+  public static <A> Consumer<A> accumulateTo(
       final Collection<A> collection) {
     return collection::add;
 
@@ -65,28 +65,28 @@ public abstract class Prelude {
     return key -> map.put(key, value);
   }
 
-  public static final <A> Function<A, A> id() {
+  public static <A> Function<A, A> id() {
     return a -> a;
   }
 
-  public static final <A> Function<A, A> id(final Class<A> type) {
+  public static <A> Function<A, A> id(final Class<A> type) {
     return id();
   }
 
-  public static final <T> Consumer<T> println() {
+  public static <T> Consumer<T> println() {
     return printlnTo(System.out);
   }
 
-  public static final <T> Consumer<T> println(final Class<T> type) {
+  public static <T> Consumer<T> println(final Class<T> type) {
     return println();
   }
 
-  public static final <T> Consumer<T> printlnTo(final Class<T> type,
-      final PrintStream stream) {
+  public static <T> Consumer<T> printlnTo(final Class<T> type,
+                                          final PrintStream stream) {
     return printlnTo(stream);
   }
 
-  public static final <T> Consumer<T> printlnTo(final PrintStream stream) {
+  public static <T> Consumer<T> printlnTo(final PrintStream stream) {
     return stream::println;
   }
 
