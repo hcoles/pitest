@@ -5,8 +5,6 @@ import org.pitest.classinfo.ClassName;
 
 import java.math.BigInteger;
 import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
 
 public interface CoverageDatabase {
 
@@ -25,8 +23,5 @@ public interface CoverageDatabase {
   Collection<ClassInfo> getClassesForFile(String sourceFile, String packageName);
 
   CoverageSummary createSummary();
-
-  Map<InstructionLocation, Set<TestInfo>> getInstructionCoverage();
-
 
 }

@@ -6,8 +6,6 @@ import org.pitest.classinfo.ClassName;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
 
 public class NoCoverage implements CoverageDatabase {
     @Override
@@ -50,8 +48,4 @@ public class NoCoverage implements CoverageDatabase {
         return new CoverageSummary(0,0);
     }
 
-    @Override
-    public Map<InstructionLocation, Set<TestInfo>> getInstructionCoverage() {
-        return Collections.emptyMap();
-    }
 }

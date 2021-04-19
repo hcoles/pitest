@@ -167,7 +167,7 @@ public class CoverageData implements CoverageDatabase {
   @Override
   public Collection<ClassInfo> getClassesForFile(final String sourceFile,
       String packageName) {
-    final Collection<ClassInfo> value = this.getClassesForFileCache().get(
+    final Collection<ClassInfo> value = classesForFile.get(
         keyFromSourceAndPackage(sourceFile, packageName));
     if (value == null) {
       return Collections.emptyList();
@@ -176,18 +176,9 @@ public class CoverageData implements CoverageDatabase {
     }
   }
 
-  private Map<String, Collection<ClassInfo>> getClassesForFileCache() {
-    return this.classesForFile;
-  }
-
   @Override
   public CoverageSummary createSummary() {
     return new CoverageSummary(numberOfLines(), coveredLines());
-  }
-
-  @Override
-  public Map<InstructionLocation, Set<TestInfo>> getInstructionCoverage() {
-    return Collections.unmodifiableMap(this.instructionCoverage);
   }
 
   private BigInteger generateCoverageNumber(
@@ -323,8 +314,7 @@ public class CoverageData implements CoverageDatabase {
     return a -> a.getValue().stream();
   }
 
-  private Predicate<Entry<InstructionLocation, Set<TestInfo>>> isFor(
-      final ClassName clazz) {
+  private Predicate<Entry<InstructionLocation, Set<TestInfo>>> isFor(ClassName clazz) {
     return a -> a.getKey().isFor(clazz);
   }
 
