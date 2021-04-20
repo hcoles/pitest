@@ -1,14 +1,5 @@
 package org.pitest.mutationtest.build;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.pitest.mutationtest.engine.MutationDetailsMother.aMutationDetail;
-
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +8,16 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
+
+import java.util.Arrays;
+import java.util.Collection;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.pitest.mutationtest.engine.MutationDetailsMother.aMutationDetail;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CompoundMutationInterceptorTest {
@@ -61,6 +62,16 @@ public class CompoundMutationInterceptorTest {
   }
 
   @Test
+  public void shouldFilterChildren() {
+    this.testee = new CompoundMutationInterceptor(Arrays.asList(this.modifyChild,this.filterChild));
+    final ClassTree aClass = new ClassTree(null);
+
+    this.testee.filter(i -> i == modifyChild).begin(aClass);
+    verify(this.modifyChild).begin(aClass);
+    verify(this.filterChild, never()).begin(aClass);
+  }
+
+  @Test
   public void shouldChainModifiedMutantListsThroughChildrenInCorrectOrder() {
 
     // add out of order
@@ -98,5 +109,6 @@ public class CompoundMutationInterceptorTest {
     verify(this.modifyChild).end();
     verify(this.filterChild).end();
   }
+
 
 }
