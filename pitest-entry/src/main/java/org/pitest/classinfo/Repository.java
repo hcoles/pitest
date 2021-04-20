@@ -108,3 +108,19 @@ public class Repository implements ClassInfoSource {
   }
 
 }
+
+class DeferredClassPointer implements ClassPointer {
+  private final Repository repository;
+  private final ClassName  name;
+
+  DeferredClassPointer(final Repository repository, final ClassName name) {
+    this.repository = repository;
+    this.name = name;
+  }
+
+  @Override
+  public Optional<ClassInfo> fetch() {
+    return this.repository.fetchClass(this.name);
+  }
+
+}
