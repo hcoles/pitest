@@ -20,7 +20,7 @@ public class CompoundInterceptorFactory {
     this.features = new FeatureSelector<>(features, filters);
   }
 
-  public MutationInterceptor createInterceptor(
+  public CompoundMutationInterceptor createInterceptor(
       ReportOptions data,
       CoverageDatabase coverage,
       ClassByteArraySource source) {

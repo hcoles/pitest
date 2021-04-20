@@ -35,6 +35,7 @@ import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationResultListener;
+import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationAnalysisUnit;
 import org.pitest.mutationtest.build.MutationGrouper;
 import org.pitest.mutationtest.build.MutationInterceptor;
@@ -67,6 +68,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -158,7 +160,7 @@ public class MutationCoverage {
 
     this.timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
     final List<MutationAnalysisUnit> tus = buildMutationTests(coverageData, history,
-            engine, args);
+            engine, args, allInterceptors());
     this.timings.registerEnd(Timings.Stage.BUILD_MUTATION_TESTS);
 
     LOG.info("Created  " + tus.size() + " mutation test units");
@@ -186,6 +188,10 @@ public class MutationCoverage {
         coverageData.createSummary());
   }
 
+  private Predicate<MutationInterceptor> allInterceptors() {
+    return i -> true;
+  }
+
   private List<MutationAnalysisUnit> findMutations(MutationEngine engine, EngineArguments args) {
     // Run mutant discovery without coverage data or history.
     // Ideally we'd ony discover mutants once, but the process is currently tightly
@@ -194,9 +200,13 @@ public class MutationCoverage {
     // an initial run here we are able to skip coverage generation when no mutants
     // are found, e.g if pitest is being run against diffs.
     this.timings.registerStart(Timings.Stage.MUTATION_PRE_SCAN);
-    List<MutationAnalysisUnit> mutants = buildMutationTests(new NoCoverage(), new NullHistoryStore(), engine, args);
+    List<MutationAnalysisUnit> mutants = buildMutationTests(new NoCoverage(), new NullHistoryStore(), engine, args, noReports());
     this.timings.registerEnd(Timings.Stage.MUTATION_PRE_SCAN);
     return mutants;
+  }
+
+  private Predicate<MutationInterceptor> noReports() {
+    return i -> !i.type().equals(InterceptorType.REPORT);
   }
 
 
@@ -289,7 +299,8 @@ public class MutationCoverage {
   private List<MutationAnalysisUnit> buildMutationTests(CoverageDatabase coverageData,
                                                         HistoryStore history,
                                                         MutationEngine engine,
-                                                        EngineArguments args) {
+                                                        EngineArguments args,
+                                                        Predicate<MutationInterceptor> interceptorFilter) {
 
     final MutationConfig mutationConfig = new MutationConfig(engine, coverage()
         .getLaunchOptions());
@@ -302,7 +313,8 @@ public class MutationCoverage {
             coverageData);
 
     final MutationInterceptor interceptor = this.settings.getInterceptor()
-        .createInterceptor(this.data, coverageData, bas);
+            .createInterceptor(this.data, coverageData, bas)
+            .filter(interceptorFilter);
 
     final MutationSource source = new MutationSource(mutationConfig, testPrioritiser, bas, interceptor);
 

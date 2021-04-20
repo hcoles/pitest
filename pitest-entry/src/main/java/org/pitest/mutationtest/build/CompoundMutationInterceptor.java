@@ -1,15 +1,17 @@
 package org.pitest.mutationtest.build;
 
-import static java.util.Comparator.comparing;
+import org.pitest.bytecode.analysis.ClassTree;
+import org.pitest.mutationtest.engine.Mutater;
+import org.pitest.mutationtest.engine.MutationDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
-import org.pitest.bytecode.analysis.ClassTree;
-import org.pitest.mutationtest.engine.Mutater;
-import org.pitest.mutationtest.engine.MutationDetails;
+import static java.util.Comparator.comparing;
 
 public class CompoundMutationInterceptor implements MutationInterceptor {
 
@@ -22,6 +24,12 @@ public class CompoundMutationInterceptor implements MutationInterceptor {
 
   public static MutationInterceptor nullInterceptor() {
     return new CompoundMutationInterceptor(Collections.emptyList());
+  }
+
+  public CompoundMutationInterceptor filter(Predicate<MutationInterceptor> p) {
+    return new CompoundMutationInterceptor(children.stream()
+            .filter(p)
+            .collect(Collectors.toList()));
   }
 
   @Override
