@@ -8,6 +8,10 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.6.5
+
+* #882 Avoid running tests when no mutants possible
+
 ### 1.6.4
 
 * #862 Update ASM for Java 16
