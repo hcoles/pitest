@@ -14,10 +14,6 @@
  */
 package org.pitest.mutationtest.build;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.logging.Logger;
-
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.CachingByteArraySource;
 import org.pitest.classinfo.ClassByteArraySource;
@@ -26,11 +22,11 @@ import org.pitest.coverage.TestInfo;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.util.Log;
+
+import java.util.Collection;
+import java.util.List;
 
 public class MutationSource {
-
-  private static final Logger        LOG = Log.getLogger();
 
   private final MutationConfig       mutationConfig;
   private final TestPrioritiser      testPrioritiser;
@@ -76,9 +72,6 @@ public class MutationSource {
     for (final MutationDetails mutation : availableMutations) {
       final List<TestInfo> testDetails = this.testPrioritiser
           .assignTests(mutation);
-      if (testDetails.isEmpty()) {
-        LOG.fine("According to coverage no tests hit the mutation " + mutation);
-      }
       mutation.addTestsInOrder(testDetails);
     }
   }
