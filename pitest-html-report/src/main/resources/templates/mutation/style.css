@@ -25,11 +25,11 @@ body{
     font-family: Consolas, Courier, monospace;
 }
 
-.covered {
+.covered, .COVERED {
     background-color: #ddffdd;
 }
 
-.uncovered {
+.uncovered, .UNCOVERED {
     background-color: #ffdddd;
 }
 
@@ -41,11 +41,11 @@ body{
     background-color: #ffaaaa;
 }
 
-.uncertain {
+.uncertain, .UNCERTAIN {
     background-color: #dde7ef;
 }
 
-.run_error {
+.run_error, .RUN_ERROR {
     background-color: #dde7ef;
 }
 
@@ -53,23 +53,23 @@ body{
     background-color: #eeeeee;
 }
 
-.timed_out {
+.timed_out, .TIMED_OUT {
     background-color: #dde7ef;
 }
 
-.non_viable {
+.non_viable, .NON_VIABLE {
     background-color: #aaffaa;
 }
 
-.memory_error {
+.memory_error, .MEMORY_ERROR {
     background-color: #dde7ef;
 }
 
-.not_started {
+.not_started, .NO_STARTED {
     background-color: #dde7ef; color : red
 }
 
-.no_coverage {
+.no_coverage, .NO_COVERAGE {
     background-color: #ffaaaa;
 }
 
