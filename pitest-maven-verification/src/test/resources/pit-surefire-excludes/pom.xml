@@ -45,7 +45,7 @@
                     <outputFormats>
                         <value>XML</value>
                     </outputFormats>
-                    <maxMutationsPerClass>1</maxMutationsPerClass>
+					<features>+CLASSLIMIT(limit[1])</features>
                     <timestampedReports>false</timestampedReports>
                     <mutators>
                         <mutator>NEGATE_CONDITIONALS</mutator>

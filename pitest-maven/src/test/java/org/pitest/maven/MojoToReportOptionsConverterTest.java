@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -405,8 +406,12 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
   public void testParsesUseClasspathJar() {
     final ReportOptions actual = parseConfig("<useClasspathJar>true</useClasspathJar>");
     assertTrue(actual.useClasspathJar());
-  }  
+  }
 
+  public void testFailsIfObsoleteMaxMutationsParameterUsed() {
+    assertThatCode( () -> parseConfig("<maxMutationsPerClass>1</maxMutationsPerClass>"))
+            .hasMessageContaining("+CLASSLIMIT(limit[1])");
+  }
 
   private ReportOptions parseConfig(final String xml) {
     try {

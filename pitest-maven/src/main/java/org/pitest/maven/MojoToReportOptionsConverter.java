@@ -14,6 +14,19 @@
  */
 package org.pitest.maven;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.pitest.classinfo.ClassName;
+import org.pitest.classpath.DirectoryClassPathRoot;
+import org.pitest.functional.FCollection;
+import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.testapi.TestGroupConfig;
+import org.pitest.util.Glob;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,21 +36,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.model.Plugin;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.pitest.classinfo.ClassName;
-import org.pitest.classpath.DirectoryClassPathRoot;
 import java.util.function.Function;
-import org.pitest.functional.FCollection;
 import java.util.function.Predicate;
-import org.pitest.mutationtest.config.ReportOptions;
-import org.pitest.testapi.TestGroupConfig;
-import org.pitest.util.Glob;
 
 public class MojoToReportOptionsConverter {
 
@@ -150,7 +150,16 @@ public class MojoToReportOptionsConverter {
 
     data.setSkipFailingTests(this.mojo.skipFailingTests());
 
+    checkForObsoleteOptions(this.mojo);
+
     return data;
+  }
+
+  private void checkForObsoleteOptions(AbstractPitMojo mojo) {
+    if (mojo.getMaxMutationsPerClass() > 0) {
+      throw new IllegalArgumentException("The max mutations per class argument is no longer supported, "
+              + "use features=+CLASSLIMIT(limit[" + mojo.getMaxMutationsPerClass() + "]) instead");
+    }
   }
 
 
@@ -289,8 +298,7 @@ public class MojoToReportOptionsConverter {
       return filters;
     }
   }
-  
-  
+
   private Collection<String> findOccupiedPackages() {
     String outputDirName = this.mojo.getProject().getBuild()
         .getOutputDirectory();

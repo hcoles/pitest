@@ -14,8 +14,24 @@
  */
 package org.pitest.mutationtest.config;
 
-import static org.pitest.functional.prelude.Prelude.not;
-import static org.pitest.functional.prelude.Prelude.or;
+import org.pitest.classpath.ClassFilter;
+import org.pitest.classpath.ClassPath;
+import org.pitest.classpath.ClassPathRoot;
+import org.pitest.classpath.PathFilter;
+import org.pitest.classpath.ProjectClassPaths;
+import org.pitest.functional.FCollection;
+import org.pitest.functional.prelude.Prelude;
+import org.pitest.help.Help;
+import org.pitest.help.PitHelpError;
+import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
+import org.pitest.mutationtest.incremental.FileWriterFactory;
+import org.pitest.mutationtest.incremental.NullWriterFactory;
+import org.pitest.mutationtest.incremental.WriterFactory;
+import org.pitest.testapi.TestGroupConfig;
+import org.pitest.testapi.execute.Pitest;
+import org.pitest.util.Glob;
+import org.pitest.util.ResultOutputStrategy;
+import org.pitest.util.Unchecked;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,28 +45,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Predicate;
 
-import org.pitest.classpath.ClassFilter;
-import org.pitest.classpath.ClassPath;
-import org.pitest.classpath.ClassPathRoot;
-import org.pitest.classpath.PathFilter;
-import org.pitest.classpath.ProjectClassPaths;
-import org.pitest.functional.FCollection;
-import java.util.Optional;
-import org.pitest.functional.prelude.Prelude;
-import org.pitest.help.Help;
-import org.pitest.help.PitHelpError;
-import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
-import org.pitest.mutationtest.incremental.FileWriterFactory;
-import org.pitest.mutationtest.incremental.NullWriterFactory;
-import org.pitest.mutationtest.incremental.WriterFactory;
-import org.pitest.testapi.TestGroupConfig;
-import org.pitest.testapi.execute.Pitest;
-import org.pitest.util.Glob;
-import org.pitest.util.ResultOutputStrategy;
-import org.pitest.util.Unchecked;
+import static org.pitest.functional.prelude.Prelude.not;
+import static org.pitest.functional.prelude.Prelude.or;
 
 // FIXME move all logic to SettingsFactory and turn into simple bean
 
@@ -103,8 +103,6 @@ public class ReportOptions {
   private Collection<Predicate<String>>  targetTests;
 
   private Collection<String>             loggingClasses                 = new ArrayList<>();
-
-  private int                            maxMutationsPerClass;
 
   private boolean                        verbose                        = false;
   private boolean                        failWhenNoMutations            = false;
@@ -639,8 +637,7 @@ public class ReportOptions {
         + ", jvmArgs=" + jvmArgs + ", numberOfThreads=" + numberOfThreads
         + ", timeoutFactor=" + timeoutFactor + ", timeoutConstant="
         + timeoutConstant + ", targetTests=" + targetTests + ", loggingClasses="
-        + loggingClasses + ", maxMutationsPerClass=" + maxMutationsPerClass
-        + ", verbose=" + verbose + ", failWhenNoMutations="
+        + loggingClasses + ", verbose=" + verbose + ", failWhenNoMutations="
         + failWhenNoMutations + ", outputs=" + outputs + ", groupConfig="
         + groupConfig + ", fullMutationMatrix=" + fullMutationMatrix + ", mutationUnitSize=" + mutationUnitSize
         + ", shouldCreateTimestampedReports=" + shouldCreateTimestampedReports
