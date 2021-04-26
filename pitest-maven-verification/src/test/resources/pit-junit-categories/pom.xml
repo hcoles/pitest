@@ -35,11 +35,11 @@
                                     </excludedGroups>
 	                            <exportLineCoverage>true</exportLineCoverage>
 				    <outputFormats><value>XML</value></outputFormats>
-				    <maxMutationsPerClass>6</maxMutationsPerClass>
 				    <timestampedReports>false</timestampedReports>
                     <targetTests><param>com.example.*</param></targetTests>
                     <targetClasses><param>com.example*</param></targetClasses>
 					<verbose>true</verbose>
+					<features>+CLASSLIMIT(limit[6])</features>
 				</configuration>
 			</plugin>
 		</plugins>

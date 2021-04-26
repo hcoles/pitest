@@ -27,7 +27,7 @@
                 <configuration>
                     <exportLineCoverage>true</exportLineCoverage>
                     <outputFormats><value>XML</value></outputFormats>
-                    <maxMutationsPerClass>6</maxMutationsPerClass>
+                    <features>+CLASSLIMIT(limit[6])</features>
                     <timestampedReports>false</timestampedReports>
                     <targetClasses><param>sample*</param></targetClasses>
                     <verbose>true</verbose>
