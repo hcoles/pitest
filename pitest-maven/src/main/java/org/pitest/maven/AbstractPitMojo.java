@@ -1,16 +1,5 @@
 package org.pitest.maven;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -26,6 +15,18 @@ import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.plugin.ToolClasspathPlugin;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class AbstractPitMojo extends AbstractMojo {
 
@@ -124,12 +125,6 @@ public class AbstractPitMojo extends AbstractMojo {
    */
   @Parameter(defaultValue = "1", property = "threads")
   private int                         threads;
-
-  /**
-   * Mutate static initializers
-   */
-  @Parameter(defaultValue = "false", property = "mutateStaticInitializers")
-  private boolean                     mutateStaticInitializers;
 
   /**
    * Detect inlined code
@@ -541,10 +536,6 @@ public class AbstractPitMojo extends AbstractMojo {
 
   public int getThreads() {
     return this.threads;
-  }
-
-  public boolean isMutateStaticInitializers() {
-    return this.mutateStaticInitializers;
   }
 
   public List<String> getMutators() {
