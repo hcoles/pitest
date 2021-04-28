@@ -26,6 +26,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,8 +41,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toCollection;
-
 public class CoverageData implements CoverageDatabase {
 
   private static final Logger                                 LOG           = Log
@@ -51,6 +50,8 @@ public class CoverageData implements CoverageDatabase {
   // coverage. Ugly mess of maps below should go when
   // api changed to work via blocks
   private final Map<InstructionLocation, Set<TestInfo>>       instructionCoverage;
+  private final Map<ClassName, Set<TestInfo>>                 classCoverage = new LinkedHashMap<>();
+
   private final Map<BlockLocation, Set<Integer>>              blocksToLines = new LinkedHashMap<>();
   private final Map<ClassName, Map<ClassLine, Set<TestInfo>>> lineCoverage  = new LinkedHashMap<>();
   private final Map<String, Collection<ClassInfo>>            classesForFile;
@@ -72,6 +73,33 @@ public class CoverageData implements CoverageDatabase {
     this.lm = lm;
     this.classesForFile = FCollection.bucket(this.code.getCode(),
         keyFromClassInfo());
+  }
+
+  public void calculateClassCoverage(final CoverageResult cr) {
+
+    checkForFailedTest(cr);
+    final TestInfo ti = this.createTestInfo(cr.getTestUnitDescription(),
+            cr.getExecutionTime(), cr.getNumberOfCoveredBlocks());
+
+    addTestToClasses(ti,cr.getCoverage());
+
+    for (final BlockLocation each : cr.getCoverage()) {
+      for (int i = each.getFirstInsnInBlock();
+           i <= each.getLastInsnInBlock(); i++) {
+        addTestsToBlockMap(ti, new InstructionLocation(each, i));
+      }
+    }
+  }
+
+  private void addTestToClasses(TestInfo ti, Collection<BlockLocation> coverage) {
+    Set<ClassName> classes = coverage.stream()
+            .map(b -> b.getLocation().getClassName())
+            .collect(Collectors.toSet());
+    for (ClassName each : classes) {
+      Set<TestInfo> tests = classCoverage.computeIfAbsent(each, k -> new HashSet<>());
+      tests.add(ti);
+    }
+
   }
 
   @Override
@@ -117,23 +145,7 @@ public class CoverageData implements CoverageDatabase {
 
   @Override
   public Collection<TestInfo> getTestsForClass(final ClassName clazz) {
-    return this.instructionCoverage.entrySet().stream()
-            .filter(isFor(clazz))
-            .flatMap(toTests())
-            .collect(toCollection(() -> new TreeSet<>(new TestInfoNameComparator())));
-  }
-
-  public void calculateClassCoverage(final CoverageResult cr) {
-
-    checkForFailedTest(cr);
-    final TestInfo ti = this.createTestInfo(cr.getTestUnitDescription(),
-        cr.getExecutionTime(), cr.getNumberOfCoveredBlocks());
-    for (final BlockLocation each : cr.getCoverage()) {
-      for (int i = each.getFirstInsnInBlock();
-           i <= each.getLastInsnInBlock(); i++) {
-        addTestsToBlockMap(ti, new InstructionLocation(each, i));
-      }
-    }
+    return classCoverage.getOrDefault(clazz, Collections.emptySet());
   }
 
   private void addTestsToBlockMap(final TestInfo ti, InstructionLocation each) {
@@ -272,8 +284,8 @@ public class CoverageData implements CoverageDatabase {
   }
 
   private static Set<TestInfo> getLineTestSet(ClassName clazz,
-      Map<ClassLine, Set<TestInfo>> linesToTests,
-      Entry<InstructionLocation, Set<TestInfo>> each, int line) {
+                                              Map<ClassLine, Set<TestInfo>> linesToTests,
+                                              Entry<InstructionLocation, Set<TestInfo>> each, int line) {
     final ClassLine cl = new ClassLine(clazz, line);
     Set<TestInfo> tis = linesToTests.get(cl);
     if (tis == null) {
