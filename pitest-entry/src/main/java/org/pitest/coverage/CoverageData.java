@@ -26,7 +26,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +37,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toCollection;
@@ -147,7 +147,7 @@ public class CoverageData implements CoverageDatabase {
 
   @Override
   public BigInteger getCoverageIdForClass(final ClassName clazz) {
-    final Map<ClassLine, Set<TestInfo>> coverage = getLineCoverageForClassName(clazz);
+    final Collection<TestInfo> coverage = getTestsForClass(clazz);
     if (coverage.isEmpty()) {
       return BigInteger.ZERO;
     }
@@ -181,21 +181,17 @@ public class CoverageData implements CoverageDatabase {
     return new CoverageSummary(numberOfLines(), coveredLines());
   }
 
-  private BigInteger generateCoverageNumber(
-      final Map<ClassLine, Set<TestInfo>> coverage) {
+  private BigInteger generateCoverageNumber(Collection<TestInfo> coverage) {
     BigInteger coverageNumber = BigInteger.ZERO;
-    final Set<ClassName> testClasses = new HashSet<>();
-    FCollection.flatMapTo(coverage.values(), testsToClassName(), testClasses);
+    Set<ClassName> testClasses = coverage.stream()
+            .map(TestInfo.toDefiningClassName())
+            .collect(Collectors.toSet());
 
     for (final ClassInfo each : this.code.getClassInfo(testClasses)) {
       coverageNumber = coverageNumber.add(each.getDeepHash());
     }
 
     return coverageNumber;
-  }
-
-  private Function<Set<TestInfo>, Iterable<ClassName>> testsToClassName() {
-    return a -> FCollection.map(a, TestInfo.toDefiningClassName());
   }
 
   private static Function<ClassInfo, String> keyFromClassInfo() {
