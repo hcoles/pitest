@@ -14,14 +14,14 @@
  */
 package org.pitest.classinfo;
 
+import org.pitest.util.IsolationUtils;
+import org.pitest.util.Log;
+
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
-
-import org.pitest.util.IsolationUtils;
-import org.pitest.util.Log;
 
 public final class ClassName implements Comparable<ClassName>, Serializable {
 
@@ -31,6 +31,7 @@ public final class ClassName implements Comparable<ClassName>, Serializable {
   private static final ClassName OBJECT = new ClassName("java/lang/Object");
   private static final ClassName STRING = new ClassName("java/lang/String");
 
+  // always stored in java/lang/String "internal" format
   private final String        name;
 
   private ClassName(final String name) {
@@ -146,7 +147,7 @@ public final class ClassName implements Comparable<ClassName>, Serializable {
 
   @Override
   public int compareTo(final ClassName o) {
-    return this.asJavaName().compareTo(o.asJavaName());
+    return this.name.compareTo(o.name);
   }
 
 }
