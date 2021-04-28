@@ -25,7 +25,6 @@ import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.incremental.FileWriterFactory;
-import org.pitest.mutationtest.incremental.NullWriterFactory;
 import org.pitest.mutationtest.incremental.WriterFactory;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.execute.Pitest;
@@ -469,12 +468,12 @@ public class ReportOptions {
     this.detectInlinedCode = b;
   }
 
-  public WriterFactory createHistoryWriter() {
+  public Optional<WriterFactory> createHistoryWriter() {
     if (this.historyOutputLocation == null) {
-      return new NullWriterFactory();
+      return Optional.empty();
     }
 
-    return new FileWriterFactory(this.historyOutputLocation);
+    return Optional.of(new FileWriterFactory(this.historyOutputLocation));
   }
 
   public Optional<Reader> createHistoryReader() {

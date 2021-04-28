@@ -12,6 +12,8 @@ import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
+import org.pitest.mutationtest.incremental.NullHistoryStore;
+import org.pitest.mutationtest.incremental.NullWriterFactory;
 import org.pitest.mutationtest.incremental.ObjectOutputStreamHistoryStore;
 import org.pitest.mutationtest.incremental.WriterFactory;
 import org.pitest.plugin.Feature;
@@ -79,8 +81,7 @@ public class EntryPoint {
 
     final ClassPath cp = data.getClassPath();
 
-    final Optional<Reader> reader = data.createHistoryReader();
-    final WriterFactory historyWriter = data.createHistoryWriter();
+
 
     // workaround for apparent java 1.5 JVM bug . . . might not play nicely
     // with distributed testing
@@ -108,7 +109,10 @@ public class EntryPoint {
         baseDir, coverageOptions, launchOptions, code,
         settings.createCoverageExporter(), timings, !data.isVerbose());
 
-    final HistoryStore history = new ObjectOutputStreamHistoryStore(historyWriter, reader);
+
+    final Optional<WriterFactory> maybeWriter = data.createHistoryWriter();
+    WriterFactory historyWriter = maybeWriter.orElse(new NullWriterFactory());
+    final HistoryStore history = makeHistoryStore(data, maybeWriter);
 
     final MutationStrategies strategies = new MutationStrategies(
         settings.createEngine(), history, coverageDatabase, reportFactory,
@@ -127,6 +131,14 @@ public class EntryPoint {
       historyWriter.close();
     }
 
+  }
+
+  private HistoryStore makeHistoryStore(ReportOptions data,  Optional<WriterFactory> historyWriter) {
+    final Optional<Reader> reader = data.createHistoryReader();
+    if (!reader.isPresent() && !historyWriter.isPresent()) {
+      return new NullHistoryStore();
+    }
+    return new ObjectOutputStreamHistoryStore(historyWriter.orElse(new NullWriterFactory()), reader);
   }
 
   private void checkMatrixMode(ReportOptions data) {
