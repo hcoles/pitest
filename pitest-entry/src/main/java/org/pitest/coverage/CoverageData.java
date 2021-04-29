@@ -45,7 +45,7 @@ public class CoverageData implements CoverageDatabase {
   // We calculate block coverage, but everything currently runs on line
   // coverage. Ugly mess of maps below should go when
   // api changed to work via blocks
-  private final Map<InstructionLocation, Set<TestInfo>> instructionCoverage  = new LinkedHashMap<>();
+  private final Map<InstructionLocation, Set<TestInfo>> instructionCoverage = new LinkedHashMap<>();
   private final LegacyClassCoverage legacyClassCoverage;
 
   private final CodeSource code;

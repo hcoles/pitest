@@ -40,27 +40,6 @@ public class LegacyClassCoverage implements ReportCoverage {
                 coverageData);
     }
 
-    void addTestToClasses(TestInfo ti, Collection<BlockLocation> coverage) {
-        for (BlockLocation each : coverage) {
-            ClassName clazz = each.getLocation().getClassName();
-            Map<ClassLine, Set<TestInfo>> linesToTests = lineCoverage.getOrDefault(clazz, new LinkedHashMap<>(0));
-            for (int line : getLinesForBlock(each)) {
-                addTestToClassLine(each.getLocation().getClassName(), linesToTests, ti, line);
-            }
-            // can we get blocks from different classes?
-            this.lineCoverage.put(each.getLocation().getClassName(), linesToTests);
-        }
-    }
-    private void addTestToClassLine(ClassName clazz,
-                                    Map<ClassLine, Set<TestInfo>> linesToTests,
-                                    TestInfo test,
-                                    int line) {
-        ClassLine cl = new ClassLine(clazz, line);
-        Set<TestInfo> tis = linesToTests.getOrDefault(cl, new TreeSet<>(new TestInfoNameComparator()));
-        tis.add(test);
-        linesToTests.put(cl, tis);
-    }
-
     @Override
     public Collection<ClassInfo> getClassInfo(final Collection<ClassName> classes) {
         return this.code.getClassInfo(classes);
@@ -97,6 +76,34 @@ public class LegacyClassCoverage implements ReportCoverage {
         }
     }
 
+    public Collection<TestInfo> getTestsForClass(ClassName clazz) {
+        return this.lineCoverage.getOrDefault(clazz, Collections.emptyMap()).values().stream()
+                .flatMap(s -> s.stream())
+                .collect(Collectors.toSet());
+    }
+
+    void addTestToClasses(TestInfo ti, Collection<BlockLocation> coverage) {
+        for (BlockLocation each : coverage) {
+            ClassName clazz = each.getLocation().getClassName();
+            Map<ClassLine, Set<TestInfo>> linesToTests = lineCoverage.getOrDefault(clazz, new LinkedHashMap<>(0));
+            for (int line : getLinesForBlock(each)) {
+                addTestToClassLine(each.getLocation().getClassName(), linesToTests, ti, line);
+            }
+            // can we get blocks from different classes?
+            this.lineCoverage.put(each.getLocation().getClassName(), linesToTests);
+        }
+    }
+    private void addTestToClassLine(ClassName clazz,
+                                    Map<ClassLine, Set<TestInfo>> linesToTests,
+                                    TestInfo test,
+                                    int line) {
+        ClassLine cl = new ClassLine(clazz, line);
+        Set<TestInfo> tis = linesToTests.getOrDefault(cl, new TreeSet<>(new TestInfoNameComparator()));
+        tis.add(test);
+        linesToTests.put(cl, tis);
+    }
+
+
     private Map<ClassLine, Set<TestInfo>> getLineCoverageForClassName(final ClassName clazz) {
         return this.lineCoverage.getOrDefault(clazz, Collections.emptyMap());
     }
@@ -129,9 +136,4 @@ public class LegacyClassCoverage implements ReportCoverage {
         this.blocksToLines.putAll(lines);
     }
 
-    public Collection<TestInfo> getTestsForClass(ClassName clazz) {
-        return this.lineCoverage.getOrDefault(clazz, Collections.emptyMap()).values().stream()
-                .flatMap(s -> s.stream())
-                .collect(Collectors.toSet());
-    }
 }
