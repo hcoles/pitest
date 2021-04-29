@@ -1,23 +1,10 @@
 package org.pitest.aggregate;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.logging.Logger;
-
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.BlockCoverage;
+import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.CoverageData;
-import org.pitest.coverage.CoverageDatabase;
-import org.pitest.coverage.InstructionLocation;
+import org.pitest.coverage.ReportCoverage;
 import org.pitest.coverage.TestInfo;
 import org.pitest.coverage.analysis.LineMapper;
 import org.pitest.functional.FCollection;
@@ -30,6 +17,20 @@ import org.pitest.mutationtest.report.html.MutationHtmlReportListener;
 import org.pitest.mutationtest.tooling.SmartSourceLocator;
 import org.pitest.util.Log;
 import org.pitest.util.ResultOutputStrategy;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public final class ReportAggregator {
   private final ResultOutputStrategy       resultOutputStrategy;
@@ -65,7 +66,7 @@ public final class ReportAggregator {
     final SourceLocator sourceLocator = new SmartSourceLocator(this.sourceCodeDirectories);
 
     final CodeSource codeSource = this.codeSourceAggregator.createCodeSource();
-    final CoverageDatabase coverageDatabase = calculateCoverage(codeSource, mutationMetaData);
+    final ReportCoverage coverageDatabase = calculateCoverage(codeSource);
     final Collection<String> mutatorNames = new HashSet<>(FCollection.flatMap(mutationMetaData.getMutations(), resultToMutatorName()));
 
     return new MutationHtmlReportListener(coverageDatabase, this.resultOutputStrategy, mutatorNames, sourceLocator);
@@ -82,27 +83,34 @@ public final class ReportAggregator {
     };
   }
 
-  private CoverageData calculateCoverage(final CodeSource codeSource, final MutationMetaData metadata) throws ReportAggregationException {
-    final Collection<BlockCoverage> coverageData = this.blockCoverageLoader.loadData();
+  private ReportCoverage calculateCoverage(final CodeSource codeSource) throws ReportAggregationException {
     try {
-      final Map<InstructionLocation, Set<TestInfo>> blockCoverageMap = blocksToMap(coverageData);
-      return new CoverageData(codeSource, new LineMapper(codeSource),blockCoverageMap);
+      Collection<BlockLocation> coverageData = this.blockCoverageLoader.loadData().stream()
+              .map(BlockCoverage::getBlock)
+              .collect(Collectors.toList());
+      CoverageData cd = new CoverageData(codeSource, new LineMapper(codeSource));
+      cd.loadBlockDataOnly(coverageData);
+      return cd;
     } catch (final Exception e) {
       throw new ReportAggregationException(e.getMessage(), e);
     }
   }
 
-  private Map<InstructionLocation, Set<TestInfo>> blocksToMap(
+  private Map<TestInfo, Collection<BlockLocation>>  blocksToMap(
       final Collection<BlockCoverage> coverageData) {
-    final Map<InstructionLocation, Set<TestInfo>> blockCoverageMap = new HashMap<>();
+
+    Map<TestInfo, Collection<BlockLocation>> blockCoverageMap = new HashMap<>();
 
     for (final BlockCoverage blockData : coverageData) {
-      for (int i = blockData.getBlock().getFirstInsnInBlock();
-           i <= blockData.getBlock().getLastInsnInBlock(); i++) {
-        blockCoverageMap.put(new InstructionLocation(blockData.getBlock(), i),
-            new HashSet<>(
-                FCollection.map(blockData.getTests(), toTestInfo(blockData))));
+      List<TestInfo> tests = blockData.getTests().stream()
+              .map(toTestInfo(blockData))
+              .collect(Collectors.toList());
+
+      for (TestInfo each : tests) {
+        Collection<BlockLocation> collection = blockCoverageMap.computeIfAbsent(each, k -> new ArrayList<>());
+        collection.add(blockData.getBlock());
       }
+
     }
     return blockCoverageMap;
   }
