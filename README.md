@@ -8,6 +8,14 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.6.6
+
+* #891 - Fix history performance
+* #889 - Do not scan classpath for history when option not supplied
+* #887 - Fix css for timeouts and memory errors
+* #888 - Remove defunct max mutants per class perameter
+* #890 - Remove defunct mutate static initalizers parameter
+
 ### 1.6.5
 
 * #882 Avoid running tests when no mutants possible
