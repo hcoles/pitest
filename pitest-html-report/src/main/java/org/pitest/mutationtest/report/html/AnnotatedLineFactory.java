@@ -14,6 +14,13 @@
  */
 package org.pitest.mutationtest.report.html;
 
+import org.pitest.classinfo.ClassInfo;
+import org.pitest.coverage.ClassLine;
+import org.pitest.coverage.ReportCoverage;
+import org.pitest.functional.FCollection;
+import org.pitest.mutationtest.MutationResult;
+import org.pitest.util.StringUtil;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Collection;
@@ -22,22 +29,15 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.pitest.classinfo.ClassInfo;
-import org.pitest.coverage.ClassLine;
-import org.pitest.coverage.CoverageDatabase;
-import org.pitest.functional.FCollection;
-import org.pitest.mutationtest.MutationResult;
-import org.pitest.util.StringUtil;
-
 public class AnnotatedLineFactory {
 
   private final Collection<MutationResult>         mutations;
-  private final CoverageDatabase                   statistics;
+  private final ReportCoverage                     statistics;
   private final Collection<ClassInfo>              classesInFile;
 
   public AnnotatedLineFactory(
       final Collection<MutationResult> mutations,
-      final CoverageDatabase statistics, final Collection<ClassInfo> classes) {
+      final ReportCoverage statistics, final Collection<ClassInfo> classes) {
     this.mutations = mutations;
     this.statistics = statistics;
     this.classesInFile = classes;

@@ -268,6 +268,10 @@ public class PitMojoIT {
             projectReportsHtmlContents
                     .contains("<a href=\"./org.example2/index.html\">org.example2</a>"));
 
+
+    assertTrue("coverage included",
+            projectReportsHtmlContents
+                    .contains("89%"));
   }
 
   /*

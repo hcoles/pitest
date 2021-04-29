@@ -40,36 +40,21 @@ import java.util.stream.Collectors;
 
 public class CoverageData implements CoverageDatabase {
 
-  private static final Logger                                 LOG           = Log
-      .getLogger();
+  private static final Logger LOG = Log.getLogger();
 
   // We calculate block coverage, but everything currently runs on line
   // coverage. Ugly mess of maps below should go when
   // api changed to work via blocks
-  private final Map<InstructionLocation, Set<TestInfo>>       instructionCoverage;
-  private final Map<ClassName, Map<ClassLine, Set<TestInfo>>> lineCoverage  = new LinkedHashMap<>();
+  private final Map<InstructionLocation, Set<TestInfo>> instructionCoverage  = new LinkedHashMap<>();
+  private final LegacyClassCoverage legacyClassCoverage;
 
-  private final Map<BlockLocation, Set<Integer>>              blocksToLines = new LinkedHashMap<>();
+  private final CodeSource code;
 
-  private final Map<String, Collection<ClassInfo>>            classesForFile;
-
-  private final CodeSource                                    code;
-
-  private final LineMap                                       lm;
-
-  private final List<Description>                             failingTestDescriptions = new ArrayList<>();
+  private final List<Description> failingTestDescriptions = new ArrayList<>();
 
   public CoverageData(final CodeSource code, final LineMap lm) {
-    this(code, lm, new LinkedHashMap<>());
-  }
-
-
-  public CoverageData(final CodeSource code, final LineMap lm, Map<InstructionLocation, Set<TestInfo>> instructionCoverage) {
-    this.instructionCoverage = instructionCoverage;
     this.code = code;
-    this.lm = lm;
-    this.classesForFile = FCollection.bucket(this.code.getCode(),
-        keyFromClassInfo());
+    this.legacyClassCoverage = new LegacyClassCoverage(code, lm);
   }
 
   public void calculateClassCoverage(final CoverageResult cr) {
@@ -78,7 +63,7 @@ public class CoverageData implements CoverageDatabase {
     final TestInfo ti = this.createTestInfo(cr.getTestUnitDescription(),
             cr.getExecutionTime(), cr.getNumberOfCoveredBlocks());
 
-    addTestToClasses(ti,cr.getCoverage());
+    legacyClassCoverage.addTestToClasses(ti,cr.getCoverage());
 
     for (final BlockLocation each : cr.getCoverage()) {
       for (int i = each.getFirstInsnInBlock();
@@ -88,26 +73,10 @@ public class CoverageData implements CoverageDatabase {
     }
   }
 
-  private void addTestToClasses(TestInfo ti, Collection<BlockLocation> coverage) {
-    for (BlockLocation each : coverage) {
-      ClassName clazz = each.getLocation().getClassName();
-      Map<ClassLine, Set<TestInfo>> linesToTests = lineCoverage.getOrDefault(clazz, new LinkedHashMap<>(0));
-      for (int line : getLinesForBlock(each)) {
-        addTestToClassLine(each.getLocation().getClassName(), linesToTests, ti, line);
-      }
-      // can we get blocks from different classes?
-      this.lineCoverage.put(each.getLocation().getClassName(), linesToTests);
-    }
-  }
 
-  private void addTestToClassLine(ClassName clazz,
-                                  Map<ClassLine, Set<TestInfo>> linesToTests,
-                                  TestInfo test,
-                                  int line) {
-    ClassLine cl = new ClassLine(clazz, line);
-    Set<TestInfo> tis = linesToTests.getOrDefault(cl, new TreeSet<>(new TestInfoNameComparator()));
-    tis.add(test);
-    linesToTests.put(cl, tis);
+  // populates class with class level data only, without block level data
+  public void loadBlockDataOnly(Collection<BlockLocation> coverageData) {
+    legacyClassCoverage.loadBlockDataOnly(coverageData);
   }
 
 
@@ -118,13 +87,7 @@ public class CoverageData implements CoverageDatabase {
 
   @Override
   public Collection<TestInfo> getTestsForClassLine(final ClassLine classLine) {
-    final Collection<TestInfo> result = getLineCoverageForClassName(
-        classLine.getClassName()).get(classLine);
-    if (result == null) {
-      return Collections.emptyList();
-    } else {
-      return result;
-    }
+    return legacyClassCoverage.getTestsForClassLine(classLine);
   }
 
   public boolean allTestsGreen() {
@@ -146,17 +109,12 @@ public class CoverageData implements CoverageDatabase {
 
   @Override
   public int getNumberOfCoveredLines(final Collection<ClassName> mutatedClass) {
-    return mutatedClass.stream()
-        .map(this::getLineCoverageForClassName)
-        .mapToInt(Map::size)
-        .sum();
+    return legacyClassCoverage.getNumberOfCoveredLines(mutatedClass);
   }
 
   @Override
   public Collection<TestInfo> getTestsForClass(final ClassName clazz) {
-    return this.lineCoverage.getOrDefault(clazz, Collections.emptyMap()).values().stream()
-            .flatMap(s -> s.stream())
-            .collect(Collectors.toSet());
+    return legacyClassCoverage.getTestsForClass(clazz);
   }
 
   private void addTestsToBlockMap(final TestInfo ti, InstructionLocation each) {
@@ -190,13 +148,7 @@ public class CoverageData implements CoverageDatabase {
   @Override
   public Collection<ClassInfo> getClassesForFile(final String sourceFile,
       String packageName) {
-    final Collection<ClassInfo> value = classesForFile.get(
-        keyFromSourceAndPackage(sourceFile, packageName));
-    if (value == null) {
-      return Collections.emptyList();
-    } else {
-      return value;
-    }
+    return legacyClassCoverage.getClassesForFile(sourceFile, packageName);
   }
 
   @Override
@@ -215,18 +167,6 @@ public class CoverageData implements CoverageDatabase {
     }
 
     return coverageNumber;
-  }
-
-  private static Function<ClassInfo, String> keyFromClassInfo() {
-
-    return c -> keyFromSourceAndPackage(c.getSourceFileName(), c.getName()
-        .getPackage().asJavaName());
-  }
-
-  private static String keyFromSourceAndPackage(final String sourceFile,
-      final String packageName) {
-
-    return packageName + " " + sourceFile;
   }
 
   private Collection<ClassName> allClasses() {
@@ -260,28 +200,6 @@ public class CoverageData implements CoverageDatabase {
         .getFirstTestClass());
     return new TestInfo(description.getFirstTestClass(),
         description.getQualifiedName(), executionTime, testee, linesCovered);
-  }
-
-  private Map<ClassLine, Set<TestInfo>> getLineCoverageForClassName(final ClassName clazz) {
-    return this.lineCoverage.getOrDefault(clazz, Collections.emptyMap());
-  }
-
-  private Set<Integer> getLinesForBlock(BlockLocation bl) {
-    Set<Integer> lines = this.blocksToLines.get(bl);
-    if (lines == null) {
-      calculateLinesForBlocks(bl.getLocation().getClassName());
-      lines = this.blocksToLines.get(bl);
-      if (lines == null) {
-        lines = Collections.emptySet();
-      }
-    }
-
-    return lines;
-  }
-
-  private void calculateLinesForBlocks(ClassName className) {
-    final Map<BlockLocation, Set<Integer>> lines = this.lm.mapLines(className);
-    this.blocksToLines.putAll(lines);
   }
 
   private void recordTestFailure(final Description testDescription) {
