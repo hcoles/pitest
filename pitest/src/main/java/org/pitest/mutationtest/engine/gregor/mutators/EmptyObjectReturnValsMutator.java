@@ -214,7 +214,7 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
 
       @Override
       public String describe(final int opCode, final MethodInfo methodInfo) {
-        return "replaced return value with Collections.emptyList for " + methodInfo.getDescription();
+        return "replaced return value with Collections.emptySet for " + methodInfo.getDescription();
       }
     };
   }
