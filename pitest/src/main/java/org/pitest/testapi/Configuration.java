@@ -20,6 +20,12 @@ import org.pitest.help.PitHelpError;
 
 public interface Configuration {
 
+  int DEFAULT_PRIORITY = 10;
+
+  default int priority() {
+    return DEFAULT_PRIORITY;
+  }
+
   TestUnitFinder testUnitFinder();
 
   TestSuiteFinder testSuiteFinder();

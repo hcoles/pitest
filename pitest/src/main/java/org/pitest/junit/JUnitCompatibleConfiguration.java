@@ -44,6 +44,12 @@ public class JUnitCompatibleConfiguration implements Configuration {
   }
 
   @Override
+  public int priority() {
+    // make sure we are used after any test plugins added to the classpath
+    return DEFAULT_PRIORITY + 1;
+  }
+
+  @Override
   public TestUnitFinder testUnitFinder() {
     return new CompoundTestUnitFinder(Arrays.asList(
         new JUnitCustomRunnerTestUnitFinder(this.config, this.excludedRunners, this.includedTestMethods),

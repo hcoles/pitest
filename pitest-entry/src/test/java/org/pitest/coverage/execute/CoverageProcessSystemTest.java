@@ -14,6 +14,7 @@ import com.example.coverage.execute.samples.simple.TesteeWithComplexConstructors
 import com.example.coverage.execute.samples.simple.TesteeWithMultipleLines;
 import com.example.coverage.execute.samples.simple.Tests;
 import com.example.coverage.execute.samples.simple.TestsForMultiBlockCoverage;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.pitest.SystemTest;
@@ -285,6 +286,7 @@ public class CoverageProcessSystemTest {
   }
 
   @Test
+  @Ignore("we have testng on the classpath")
   public void shouldFailWithExitCode() throws Exception {
     final Consumer<CoverageResult> noOpHandler = a -> {
     };

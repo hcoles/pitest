@@ -3,8 +3,10 @@ package org.pitest.mutationtest.config;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.testapi.Configuration;
-import org.pitest.testapi.TestPluginFactory;
 import org.pitest.util.PitError;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MinionSettings {
 
@@ -26,16 +28,15 @@ public class MinionSettings {
 
 
   public Configuration getTestFrameworkPlugin(TestPluginArguments options, ClassByteArraySource source) {
-    for (final TestPluginFactory each : this.plugins.findTestFrameworkPlugins()) {
-      if (each.name().equals(options.getTestPlugin())) {
-        return each.createTestFrameworkConfiguration(options.getGroupConfig(),
-            source,
-            options.getExcludedRunners(),
-            options.getIncludedTestMethods());
-      }
-    }
-    throw new PitError("Could not load requested test plugin "
-        + options.getTestPlugin());
+    List<Configuration> configurations = this.plugins.findTestFrameworkPlugins().stream()
+            .map(p -> p.createTestFrameworkConfiguration(options.getGroupConfig(),
+                    source,
+                    options.getExcludedRunners(),
+                    options.getIncludedTestMethods()))
+            .collect(Collectors.toList());
+
+    return new PrioritisingTestConfiguration(configurations);
+
   }
 
 }
