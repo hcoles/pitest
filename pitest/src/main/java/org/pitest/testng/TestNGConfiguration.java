@@ -18,6 +18,8 @@ import java.util.Collection;
 
 import org.pitest.extension.common.NoTestSuiteFinder;
 import java.util.Optional;
+
+import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestGroupConfig;
@@ -46,6 +48,12 @@ public class TestNGConfiguration implements Configuration {
 
   @Override
   public Optional<PitHelpError> verifyEnvironment() {
+    try {
+      Class.forName("org.testng.annotations.Test");
+    } catch (NoClassDefFoundError | ClassNotFoundException er) {
+      return Optional.ofNullable(new PitHelpError(Help.NO_TEST_LIBRARY));
+    }
+
     return Optional.empty();
   }
 
