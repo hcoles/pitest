@@ -37,6 +37,8 @@ import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.zip.ZipException;
 
+import static org.pitest.util.ManifestUtils.CLASSPATH_JAR_FILE_PREFIX;
+
 public class ClassPath {
 
   private static final Logger         LOG = Log.getLogger();
@@ -128,14 +130,14 @@ public class ClassPath {
   /**
    * Because classpaths can become longer than the OS supports pitest creates temporary jar files and places the classpath
    * in the manifest where there is no size limit.
-   * 
+   *
    * We must therefore parse them out again here. 
-   * 
+   *
    * @param elements existing elements
    */
   private static void addEntriesFromClasspathManifest(final Set<File> elements) {
-    Optional<File> maybeJar = elements.stream().filter( f -> f.getName().startsWith("classpath") && f.getName().endsWith(".jar"))
-    .findFirst();
+    Optional<File> maybeJar = elements.stream().filter(f -> f.getName().startsWith(CLASSPATH_JAR_FILE_PREFIX) && f.getName().endsWith(".jar"))
+            .findFirst();
     maybeJar.ifPresent(file -> elements.addAll(ManifestUtils.readClasspathManifest(file)));
   }
 

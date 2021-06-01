@@ -182,10 +182,12 @@ public class MutationCoverage {
 
     LOG.info("Completed in " + timeSpan(t0));
 
-    printStats(stats);
+    CombinedStatistics combined = new CombinedStatistics(stats.getStatistics(),
+            coverageData.createSummary());
 
-    return new CombinedStatistics(stats.getStatistics(),
-        coverageData.createSummary());
+    printStats(combined);
+
+    return combined;
   }
 
   private Predicate<MutationInterceptor> allInterceptors() {
@@ -274,13 +276,14 @@ public class MutationCoverage {
     this.strategies.buildVerifier().verify(this.code);
   }
 
-  private void printStats(final MutationStatisticsListener stats) {
+  private void printStats(CombinedStatistics combinedStatistics) {
+    MutationStatistics stats = combinedStatistics.getMutationStatistics();
     final PrintStream ps = System.out;
 
     ps.println(StringUtil.separatorLine('='));
     ps.println("- Mutators");
     ps.println(StringUtil.separatorLine('='));
-    for (final Score each : stats.getStatistics().getScores()) {
+    for (final Score each : stats.getScores()) {
       each.report(ps);
       ps.println(StringUtil.separatorLine());
     }
@@ -293,7 +296,14 @@ public class MutationCoverage {
     ps.println(StringUtil.separatorLine('='));
     ps.println("- Statistics");
     ps.println(StringUtil.separatorLine('='));
-    stats.getStatistics().report(ps);
+
+    final CoverageSummary coverage = combinedStatistics.getCoverageSummary();
+    if (coverage != null) {
+      ps.println(String.format(">> Line Coverage: %d/%d (%d%%)", coverage.getNumberOfCoveredLines(),
+              coverage.getNumberOfLines(), coverage.getCoverage()));
+    }
+
+    stats.report(ps);
   }
 
   private List<MutationAnalysisUnit> buildMutationTests(CoverageDatabase coverageData,
