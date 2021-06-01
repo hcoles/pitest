@@ -139,11 +139,11 @@
 			<artifactId>asm-util</artifactId>
 			<version>${asm.version}</version>
 		</dependency>
-		<!-- for the xstream history store. cannot used shaded version -->
+		<!-- for the xstream history store. cannot use shaded version -->
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
-			<version>1.4.15</version>
+			<version>1.4.17</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

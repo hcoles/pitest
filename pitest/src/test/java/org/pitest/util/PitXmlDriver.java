@@ -16,7 +16,7 @@ package org.pitest.util;
 
 import com.thoughtworks.xstream.io.xml.AbstractXppDriver;
 import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
-import org.xmlpull.mxp1.MXParser;
+import io.github.xstream.mxparser.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 
 /**
