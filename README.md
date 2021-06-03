@@ -8,6 +8,16 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.6.7
+
+* #897 Fix description when replacing value with empty set
+* #900 Support multiple test engines
+* #822 Fix regression of NPE when reading classpath manifest
+* #798 Fix regression of jvmArgs parameter support via maven
+* #797 Fix regression of line coverage on console
+
+As a result of #900 the `testPlugin` parameter is now defunct, but pitest will continue to accept it without error for this release. Pitest will use any test-engines supplied on the classpath, falling back to the built in JUnit4 support when other test engines cannot handle the class.
+
 ### 1.6.6
 
 * #891 - Fix history performance
