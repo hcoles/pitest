@@ -417,12 +417,11 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     try {
       final String pom = createPomWithConfiguration(xml);
       final AbstractPitMojo mojo = createPITMojo(pom);
-      Predicate<Artifact> filter = Mockito.mock(Predicate.class);
       when(
           this.surefireConverter.update(any(ReportOptions.class),
               any(Xpp3Dom.class))).then(returnsFirstArg());
       this.testee = new MojoToReportOptionsConverter(mojo,
-          this.surefireConverter, filter);
+          this.surefireConverter);
       return this.testee.convert();
     } catch (final Exception ex) {
       throw Unchecked.translateCheckedException(ex);

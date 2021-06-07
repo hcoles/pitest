@@ -50,9 +50,6 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
   protected List<String>        classPath;
 
   @Mock
-  protected Predicate<Artifact> filter;
-
-  @Mock
   protected PluginServices      plugins;
 
   @Override
@@ -92,7 +89,7 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
   }
 
   protected AbstractPitMojo createPITMojo(final String config) throws Exception {
-    final AbstractPitMojo pitMojo = new AbstractPitMojo(this.executionStrategy, this.filter,
+    final AbstractPitMojo pitMojo = new AbstractPitMojo(this.executionStrategy,
         this.plugins, p -> true);
     configurePitMojo(pitMojo, config);
     return pitMojo;

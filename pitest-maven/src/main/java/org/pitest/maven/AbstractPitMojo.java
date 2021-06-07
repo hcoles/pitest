@@ -32,8 +32,6 @@ public class AbstractPitMojo extends AbstractMojo {
 
   private final Predicate<MavenProject> notEmptyProject;
   
-  private final Predicate<Artifact>   filter;
-
   private final PluginServices        plugins;
 
   // Concrete List types declared for all fields to work around maven 2 bug
@@ -370,15 +368,13 @@ public class AbstractPitMojo extends AbstractMojo {
   private final GoalStrategy          goalStrategy;
 
   public AbstractPitMojo() {
-    this(new RunPitStrategy(), new DependencyFilter(new PluginServices(
-        AbstractPitMojo.class.getClassLoader())), new PluginServices(
+    this(new RunPitStrategy(), new PluginServices(
         AbstractPitMojo.class.getClassLoader()), new NonEmptyProjectCheck());
   }
 
-  public AbstractPitMojo(final GoalStrategy strategy, final Predicate<Artifact> filter,
-      final PluginServices plugins, final Predicate<MavenProject> emptyProjectCheck) {
+  public AbstractPitMojo(final GoalStrategy strategy, final PluginServices plugins,
+      final Predicate<MavenProject> emptyProjectCheck) {
     this.goalStrategy = strategy;
-    this.filter = filter;
     this.plugins = plugins;
     this.notEmptyProject = emptyProjectCheck;
   }
@@ -471,7 +467,7 @@ public class AbstractPitMojo extends AbstractMojo {
 
   protected Optional<CombinedStatistics> analyse() throws MojoExecutionException {
     final ReportOptions data = new MojoToReportOptionsConverter(this,
-        new SurefireConfigConverter(), this.filter).convert();
+        new SurefireConfigConverter()).convert();
     return Optional.ofNullable(this.goalStrategy.execute(detectBaseDir(), data,
         this.plugins, this.environmentVariables));
   }
@@ -484,10 +480,6 @@ public class AbstractPitMojo extends AbstractMojo {
       return null;
     }
     return executionProject.getBasedir();
-  }
-
-  protected Predicate<Artifact> getFilter() {
-    return filter;
   }
 
   protected GoalStrategy getGoalStrategy() {

@@ -42,15 +42,12 @@ import java.util.function.Predicate;
 public class MojoToReportOptionsConverter {
 
   private final AbstractPitMojo                 mojo;
-  private final Predicate<Artifact>     dependencyFilter;
   private final Log                     log;
   private final SurefireConfigConverter surefireConverter;
 
   public MojoToReportOptionsConverter(final AbstractPitMojo mojo,
-      SurefireConfigConverter surefireConverter,
-      Predicate<Artifact> dependencyFilter) {
+      SurefireConfigConverter surefireConverter) {
     this.mojo = mojo;
-    this.dependencyFilter = dependencyFilter;
     this.log = mojo.getLog();
     this.surefireConverter = surefireConverter;
   }
@@ -227,7 +224,7 @@ public class MojoToReportOptionsConverter {
   }
 
   private void addOwnDependenciesToClassPath(final List<String> classPath) {
-    for (final Artifact dependency : filteredDependencies()) {
+    for (final Artifact dependency : this.mojo.getPluginArtifactMap().values()) {
       this.log.info("Adding " + dependency.getGroupId() + ":"
           + dependency.getArtifactId() + " to SUT classpath");
       classPath.add(dependency.getFile().getAbsolutePath());
@@ -262,11 +259,6 @@ public class MojoToReportOptionsConverter {
     } else {
         return Collections.emptyList();
     }
-  }
-
-  private Collection<Artifact> filteredDependencies() {
-    return FCollection.filter(this.mojo.getPluginArtifactMap().values(),
-        this.dependencyFilter);
   }
 
   private Collection<String> determineMutators() {

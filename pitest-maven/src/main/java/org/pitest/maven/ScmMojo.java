@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -97,9 +96,9 @@ public class ScmMojo extends AbstractPitMojo {
   private File            scmRootDir;
 
   public ScmMojo(final RunPitStrategy executionStrategy,
-                 final ScmManager manager, Predicate<Artifact> filter,
-                 PluginServices plugins, boolean analyseLastCommit, Predicate<MavenProject> nonEmptyProjectCheck) {
-    super(executionStrategy, filter, plugins, nonEmptyProjectCheck);
+                 final ScmManager manager, PluginServices plugins,
+                 boolean analyseLastCommit, Predicate<MavenProject> nonEmptyProjectCheck) {
+    super(executionStrategy, plugins, nonEmptyProjectCheck);
     this.manager = manager;
     this.analyseLastCommit = analyseLastCommit;
   }
@@ -126,7 +125,7 @@ public class ScmMojo extends AbstractPitMojo {
     logClassNames();
     defaultTargetTestsIfNoValueSet();
     final ReportOptions data = new MojoToReportOptionsConverter(this,
-        new SurefireConfigConverter(), getFilter()).convert();
+        new SurefireConfigConverter()).convert();
     data.setFailWhenNoMutations(false);
 
     return Optional.ofNullable(this.getGoalStrategy().execute(detectBaseDir(), data,
