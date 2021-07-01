@@ -1,13 +1,17 @@
 package org.pitest.aggregate;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.logging.Logger;
+import java.util.zip.ZipException;
 
 import org.pitest.classinfo.ClassName;
+import org.pitest.classpath.ArchiveClassPathRoot;
 import org.pitest.classpath.ClassFilter;
 import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassPathRoot;
@@ -20,9 +24,9 @@ import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.config.DefaultCodePathPredicate;
 import org.pitest.mutationtest.config.DefaultDependencyPathPredicate;
 import org.pitest.util.Glob;
+import org.pitest.util.Log;
 
 class CodeSourceAggregator {
-
   private final Collection<File> compiledCodeDirectories;
 
   CodeSourceAggregator(final Collection<File> compiledCodeDirectories) {
@@ -43,11 +47,17 @@ class CodeSourceAggregator {
 
   private Predicate<String> createClassPredicate() {
     final Collection<String> classes = new HashSet<>();
-    for (final File buildOutputDirectory : this.compiledCodeDirectories) {
-      if (buildOutputDirectory.exists()) {
-        final DirectoryClassPathRoot dcRoot = new DirectoryClassPathRoot(buildOutputDirectory);
-        classes.addAll(FCollection.map(dcRoot.classNames(), toPredicate()));
+    for (final File f : this.compiledCodeDirectories) {
+      ClassPathRoot classPathRoot;
+      if (f.isDirectory()) {
+        classPathRoot = new DirectoryClassPathRoot(f);
+      } else {
+        if (!f.canRead()) {
+          throw new IllegalStateException("Can't read the file " + f);
+        }
+        classPathRoot = new ArchiveClassPathRoot(f);
       }
+      classes.addAll(FCollection.map(classPathRoot.classNames(), toPredicate()));
     }
     return Prelude.or(FCollection.map(classes, Glob.toGlobPredicate()));
   }
