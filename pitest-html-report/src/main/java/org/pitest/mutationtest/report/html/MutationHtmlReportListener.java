@@ -87,6 +87,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
       final StringTemplate st = group
           .getInstanceOf("templates/mutation/mutation_report");
       st.setAttribute("css", this.css);
+      st.setAttribute("outputCharset", FileUtil.OUTPUT_CHARSET);
 
       st.setAttribute("tests", mutationMetaData.getTests());
 
