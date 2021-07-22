@@ -287,6 +287,10 @@ public final class Mutator {
     return fromStrings(MUTATORS.keySet());
   }
 
+  public static Collection<String> getAllMutatorIds() {
+    return MUTATORS.keySet();
+  }
+
   private static Collection<MethodMutatorFactory> stronger() {
     return combine(
         newDefaults(),
