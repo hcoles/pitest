@@ -14,10 +14,13 @@
  */
 package org.pitest.mutationtest.engine.gregor.config;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -30,7 +33,7 @@ public class MutatorTest {
   @Test
   public void shouldReturnRequestedMutators() {
     assertThat(parseStrings("MATH", "INVERT_NEGS")).containsAll(
-        Arrays.asList(MathMutator.MATH_MUTATOR,
+        asList(MathMutator.MATH_MUTATOR,
             InvertNegsMutator.INVERT_NEGS_MUTATOR));
   }
 
@@ -46,12 +49,20 @@ public class MutatorTest {
   }
 
   private Collection<MethodMutatorFactory> parseStrings(final String... s) {
-    return Mutator.fromStrings(Arrays.asList(s));
+    return Mutator.fromStrings(asList(s));
   }
 
   @Test
   public void allContainsReplaceMethodMutator() throws Exception {
     assertThat(Mutator.all()).contains(
         ArgumentPropagationMutator.ARGUMENT_PROPAGATION_MUTATOR);
+  }
+
+  @Test
+  public void allMutatorIdsReturnsKeysForAllMutators() {
+    List<String> incompleteSample = asList("DEFAULTS", "INCREMENTS", "EMPTY_RETURNS", "AOR");
+
+    // method is used by pitclipse
+    assertThat(Mutator.allMutatorIds()).containsAll(incompleteSample);
   }
 }
