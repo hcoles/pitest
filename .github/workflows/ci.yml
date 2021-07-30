@@ -19,7 +19,9 @@ jobs:
           - title: "JDK 11"
             java: 11
           - title: "JDK 16"
-            java: "16-ea"
+            java: "16"
+          - title: "JDK 17"
+            java: "17-ea"
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout from Git'
