@@ -2,7 +2,10 @@ package org.pitest.mutationtest.build.intercept.javafeatures;
 
 import org.junit.Test;
 import org.pitest.mutationtest.build.InterceptorType;
+import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
+
+import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,6 +28,15 @@ public class RecordFilterTest {
     @Test
     public void shouldFindMutantsInNormalClass() {
         this.verifier.assertFiltersNoMutationsMatching(m -> true, NotARecord.class);
+    }
+
+    @Test
+    public void shouldMutateNonRecordMethods() {
+        this.verifier.assertFiltersNoMutationsMatching(inMethodCalled("extraMethod"), "CustomRecord");
+    }
+
+    private Predicate<MutationDetails> inMethodCalled(String name) {
+        return m -> m.getMethod().name().equals(name);
     }
 
 }
