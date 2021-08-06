@@ -1,5 +1,6 @@
 package org.pitest.mutationtest.build.intercept.javafeatures;
 
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.RecordComponentNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.mutationtest.build.InterceptorType;
@@ -39,15 +40,22 @@ public class RecordFilter implements MutationInterceptor {
     }
 
     private Predicate<MutationDetails> makeMethodFilter(ClassTree currentClass) {
-        Set<String> accessorNames = currentClass.rawNode().recordComponents.stream()
+        Set<String> accessorNames = currentClass.recordComponents().stream()
                 .map(this::toName)
                 .collect(Collectors.toSet());
-        return m -> !accessorNames.contains(m.getMethod().name()) && !isStandardMethod(currentClass, m);
+        return m -> !accessorNames.contains(m.getMethod().name()) && !isStandardMethod(accessorNames.size(), m);
     }
 
-    private boolean isStandardMethod(ClassTree currentClass, MutationDetails m) {
+    private boolean isStandardMethod(int numberOfComponents, MutationDetails m) {
         String name = m.getMethod().name();
-        return name.equals("<init>") || name.equals("equals") || name.equals("hashCode") || name.equals("toString");
+        return isRecordInit(m, numberOfComponents) || name.equals("equals") || name.equals("hashCode") || name.equals("toString");
+    }
+
+    private boolean isRecordInit(MutationDetails m, int numberOfComponents) {
+        // constructors with the same airty as the generated ones, but different
+        // types won't get mutated. They're probably rare enough that this doesn't matter.
+        int airty = Type.getArgumentTypes(m.getId().getLocation().getMethodDesc()).length;
+        return m.getMethod().name().equals("<init>") && airty == numberOfComponents;
     }
 
     private String toName(RecordComponentNode recordComponentNode) {

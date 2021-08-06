@@ -21,6 +21,11 @@ public class RecordFilterTest {
     }
 
     @Test
+    public void shouldFindNoMutantsInEmptyRecord() {
+        this.verifier.assertLeavesNMutants(0, "NoDataRecord");
+    }
+
+    @Test
     public void shouldFindNoMutantsInPureRecord() {
         this.verifier.assertLeavesNMutants(0, "PureRecord");
     }
@@ -33,6 +38,16 @@ public class RecordFilterTest {
     @Test
     public void shouldMutateNonRecordMethods() {
         this.verifier.assertFiltersNoMutationsMatching(inMethodCalled("extraMethod"), "CustomRecord");
+    }
+
+    @Test
+    public void shouldMutateCustomConstructors() {
+        this.verifier.assertFiltersNoMutationsMatching(inMethodCalled("<init>").and(removesSysOutCall()),
+                "RecordWithCustomConstructor");
+    }
+
+    private Predicate<MutationDetails> removesSysOutCall() {
+        return m -> m.getDescription().contains("PrintStream::println");
     }
 
     private Predicate<MutationDetails> inMethodCalled(String name) {
