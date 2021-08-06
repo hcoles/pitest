@@ -3,6 +3,7 @@ package org.pitest.bytecode.analysis;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -11,6 +12,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.RecordComponentNode;
 import org.objectweb.asm.util.Textifier;
 import org.objectweb.asm.util.TraceClassVisitor;
 import org.pitest.classinfo.ClassName;
@@ -55,6 +57,14 @@ public class ClassTree {
       annotaions.addAll(this.rawNode.visibleAnnotations);
     }
     return annotaions;
+  }
+
+  public List<RecordComponentNode> recordComponents() {
+    if (rawNode.recordComponents == null) {
+      return Collections.emptyList();
+    }
+
+    return rawNode.recordComponents;
   }
 
   private static Function<MethodNode, MethodTree> toTree(final ClassName name) {

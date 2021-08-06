@@ -134,6 +134,17 @@ public class FilterTester {
     softly.assertAll();
   }
 
+  public void assertFiltersNoMutationsMatching(Predicate<MutationDetails> match, String sample) {
+    final GregorMutater mutator = mutateFromResourceDir();
+    final SoftAssertions softly = new SoftAssertions();
+
+    for (final Sample s : samples(sample)) {
+      assertFiltersNoMatchingMutants(match, mutator, s, softly);
+    }
+
+    softly.assertAll();
+  }
+
   public void assertFiltersMutationsMatching(Predicate<MutationDetails> match, Class<?> clazz) {
     final Sample s = makeSampleForCurrentCompiler(clazz);
 

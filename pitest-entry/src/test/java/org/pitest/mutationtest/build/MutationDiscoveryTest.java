@@ -211,6 +211,19 @@ public class MutationDiscoveryTest {
     assertThat(actual).isEmpty();
   }
 
+  @Test
+  public void filterMutantsInJavaRecords() {
+    this.data.setDetectInlinedCode(true);
+
+    final ClassName clazz = ClassName.fromString("records/PureRecord_javac");
+    final Collection<MutationDetails> actual = findMutants(clazz);
+    assertThat(actual).isEmpty();
+
+    this.data.setFeatures(Collections.singletonList("-FRECORD"));
+    final Collection<MutationDetails> actualWithoutFilter = findMutants(clazz);
+    assertThat(actualWithoutFilter).isNotEmpty();
+  }
+
   public static class AnnotatedToAvoidMethod {
     public int a() {
       return 1;

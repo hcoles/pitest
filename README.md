@@ -8,6 +8,10 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### current snapshot
+
+* #919 Filter junk mutations in java records
+
 ### 1.6.8
 
 * #917 - Add method to retrieve all mutator ids for pitclipse and other tooling
