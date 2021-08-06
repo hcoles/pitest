@@ -51,8 +51,10 @@ public class RecordFilter implements MutationInterceptor {
     }
 
     private boolean isStandardMethod(int numberOfComponents, MutationDetails m) {
-        String name = m.getMethod().name();
-        return isRecordInit(m, numberOfComponents) || isRecordEquals(m) || name.equals("hashCode") || name.equals("toString");
+        return isRecordInit(m, numberOfComponents)
+                || isRecordEquals(m)
+                || isRecordHashCode(m)
+                || isRecordToString(m);
     }
 
     private boolean isRecordInit(MutationDetails m, int numberOfComponents) {
@@ -68,9 +70,21 @@ public class RecordFilter implements MutationInterceptor {
                 && hasDynamicObjectMethodsCall(m);
     }
 
+    private boolean isRecordHashCode(MutationDetails m) {
+        return m.getId().getLocation().getMethodDesc().equals("()I")
+                && m.getMethod().name().equals("hashCode")
+                && hasDynamicObjectMethodsCall(m);
+    }
+
+    private boolean isRecordToString(MutationDetails m) {
+        return m.getId().getLocation().getMethodDesc().equals("()Ljava/lang/String;")
+                && m.getMethod().name().equals("toString")
+                && hasDynamicObjectMethodsCall(m);
+    }
+
     private boolean hasDynamicObjectMethodsCall(MutationDetails mutation) {
         // java/lang/runtime/ObjectMethods was added to support records and can be used as a marker
-        // for an auth generated equals method. It's not likely that a custom equals method would
+        // for an auth generated equals method. It's not likely that a custom method would
         // contain a dynamic call to it
         Optional<MethodTree> method = currentClass.method(mutation.getId().getLocation());
         return method.filter(m -> m.instructions().stream().anyMatch(this::isInvokeDynamicCallToObjectMethods))
@@ -80,8 +94,8 @@ public class RecordFilter implements MutationInterceptor {
     private boolean isInvokeDynamicCallToObjectMethods(AbstractInsnNode node) {
         if (node instanceof InvokeDynamicInsnNode) {
             InvokeDynamicInsnNode call = (InvokeDynamicInsnNode) node;
-            return call.bsm.getOwner().equals("java/lang/runtime/ObjectMethods") &&
-                   call.bsm.getName().equals("bootstrap");
+            return call.bsm.getOwner().equals("java/lang/runtime/ObjectMethods")
+                && call.bsm.getName().equals("bootstrap");
 
         }
         return false;

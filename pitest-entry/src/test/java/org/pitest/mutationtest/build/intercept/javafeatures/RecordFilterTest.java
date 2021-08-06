@@ -52,6 +52,18 @@ public class RecordFilterTest {
                 "RecordWithCustomEquals");
     }
 
+    @Test
+    public void mutatesCustomHashCodeMethods() {
+        this.verifier.assertFiltersNoMutationsMatching(inMethodCalled("hashCode"),
+                "RecordWithCustomHashCode");
+    }
+
+    @Test
+    public void mutatesCustomToStringMethods() {
+        this.verifier.assertFiltersNoMutationsMatching(inMethodCalled("toString"),
+                "RecordWithCustomToString");
+    }
+
     private Predicate<MutationDetails> removesSysOutCall() {
         return m -> m.getDescription().contains("PrintStream::println");
     }
