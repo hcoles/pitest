@@ -16,34 +16,40 @@ public class RecordFilterTest {
     FilterTester verifier = new FilterTester(PATH, this.testee, Mutator.all());
 
     @Test
-    public void shouldDeclareTypeAsFilter() {
+    public void declaresTypeAsFilter() {
         assertThat(this.testee.type()).isEqualTo(InterceptorType.FILTER);
     }
 
     @Test
-    public void shouldFindNoMutantsInEmptyRecord() {
+    public void findsNoMutantsInEmptyRecord() {
         this.verifier.assertLeavesNMutants(0, "NoDataRecord");
     }
 
     @Test
-    public void shouldFindNoMutantsInPureRecord() {
+    public void findsNoMutantsInPureRecord() {
         this.verifier.assertLeavesNMutants(0, "PureRecord");
     }
 
     @Test
-    public void shouldFindMutantsInNormalClass() {
+    public void findsMutantsInNormalClass() {
         this.verifier.assertFiltersNoMutationsMatching(m -> true, NotARecord.class);
     }
 
     @Test
-    public void shouldMutateNonRecordMethods() {
+    public void mutatesNonRecordMethods() {
         this.verifier.assertFiltersNoMutationsMatching(inMethodCalled("extraMethod"), "CustomRecord");
     }
 
     @Test
-    public void shouldMutateCustomConstructors() {
+    public void mutatesCustomConstructors() {
         this.verifier.assertFiltersNoMutationsMatching(inMethodCalled("<init>").and(removesSysOutCall()),
                 "RecordWithCustomConstructor");
+    }
+
+    @Test
+    public void mutatesCustomEqualsMethods() {
+        this.verifier.assertFiltersNoMutationsMatching(inMethodCalled("equals"),
+                "RecordWithCustomEquals");
     }
 
     private Predicate<MutationDetails> removesSysOutCall() {

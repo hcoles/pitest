@@ -1,14 +1,18 @@
 package org.pitest.mutationtest.build.intercept.javafeatures;
 
 import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import org.objectweb.asm.tree.RecordComponentNode;
 import org.pitest.bytecode.analysis.ClassTree;
+import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -48,7 +52,7 @@ public class RecordFilter implements MutationInterceptor {
 
     private boolean isStandardMethod(int numberOfComponents, MutationDetails m) {
         String name = m.getMethod().name();
-        return isRecordInit(m, numberOfComponents) || name.equals("equals") || name.equals("hashCode") || name.equals("toString");
+        return isRecordInit(m, numberOfComponents) || isRecordEquals(m) || name.equals("hashCode") || name.equals("toString");
     }
 
     private boolean isRecordInit(MutationDetails m, int numberOfComponents) {
@@ -56,6 +60,31 @@ public class RecordFilter implements MutationInterceptor {
         // types won't get mutated. They're probably rare enough that this doesn't matter.
         int airty = Type.getArgumentTypes(m.getId().getLocation().getMethodDesc()).length;
         return m.getMethod().name().equals("<init>") && airty == numberOfComponents;
+    }
+
+    private boolean isRecordEquals(MutationDetails m) {
+        return m.getId().getLocation().getMethodDesc().equals("(Ljava/lang/Object;)Z")
+                && m.getMethod().name().equals("equals")
+                && hasDynamicObjectMethodsCall(m);
+    }
+
+    private boolean hasDynamicObjectMethodsCall(MutationDetails mutation) {
+        // java/lang/runtime/ObjectMethods was added to support records and can be used as a marker
+        // for an auth generated equals method. It's not likely that a custom equals method would
+        // contain a dynamic call to it
+        Optional<MethodTree> method = currentClass.method(mutation.getId().getLocation());
+        return method.filter(m -> m.instructions().stream().anyMatch(this::isInvokeDynamicCallToObjectMethods))
+                .isPresent();
+    }
+
+    private boolean isInvokeDynamicCallToObjectMethods(AbstractInsnNode node) {
+        if (node instanceof InvokeDynamicInsnNode) {
+            InvokeDynamicInsnNode call = (InvokeDynamicInsnNode) node;
+            return call.bsm.getOwner().equals("java/lang/runtime/ObjectMethods") &&
+                   call.bsm.getName().equals("bootstrap");
+
+        }
+        return false;
     }
 
     private String toName(RecordComponentNode recordComponentNode) {
