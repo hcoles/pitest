@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.intercept.javafeatures.FilterTester;
+import org.pitest.mutationtest.engine.gregor.mutators.NullMutateEverything;
 import org.pitest.mutationtest.engine.gregor.mutators.NullReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
 
@@ -17,7 +18,7 @@ public class NullFlatmapTest {
     MutationInterceptor testee = new NullFlatMapFilterFactory().createInterceptor(null);
 
     FilterTester verifier = new FilterTester("", this.testee, NullReturnValsMutator.NULL_RETURN_VALUES,
-            VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR);
+            new NullMutateEverything());
 
     @Test
     public void declaresTypeAsFilter() {
@@ -25,8 +26,8 @@ public class NullFlatmapTest {
     }
 
     @Test
-    public void filtersNullReturnMutantWhenMethodUsedOnlyInFlatMap() {
-        verifier.assertFiltersNMutationFromClass(111, HasPrivateStreamMethodUsedOnlyInSingleFlatMap.class);
+    public void filtersNullReturnMutantWhenMethodUsedOnlyInFlatMap() { //
+        verifier.assertFiltersNMutationFromClass(1, HasPrivateStreamMethodUsedOnlyInSingleFlatMap.class);
     }
 
     @Test
