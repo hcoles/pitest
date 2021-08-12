@@ -1,6 +1,5 @@
 package org.pitest.mutationtest.build.intercept.equivalent;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
@@ -46,7 +45,11 @@ public class NullFlatmapTest {
     }
 
     @Test
-    @Ignore
+    public void doesNotFilterNullReturnsWhenNoFlatMapCallsExist() {
+        verifier.assertFiltersNMutationFromClass(0, NotCalledFromFlatMap.class);
+    }
+
+    @Test
     public void doesNotFilterNullReturnsWhenNonFlatMapCallsExist() {
         verifier.assertFiltersNMutationFromClass(0, HasPrivateStreamMethodCalledNotFromFlatMap.class);
     }
@@ -74,6 +77,17 @@ class HasPrivateStreamMethodUsedOnlyInSingleFlatMapThatHasOtherMutableCode {
 
     private Stream<String> aStream(String l) {
         System.out.println("Keep mutating me");
+        return Stream.empty();
+    }
+}
+
+class NotCalledFromFlatMap {
+    public Stream<String> makesCall() {
+        return aStream("")
+                .map(s -> s + "boo");
+    }
+
+    private Stream<String> aStream(String l) {
         return Stream.empty();
     }
 }
