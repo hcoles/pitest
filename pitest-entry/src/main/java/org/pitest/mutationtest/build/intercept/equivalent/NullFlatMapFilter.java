@@ -50,11 +50,10 @@ public class NullFlatMapFilter implements MutationInterceptor {
                     .withDebug(DEBUG)
             );
 
-    private static final Slot<ClassName> METHOD_OWNER = Slot.create(ClassName.class);
-    private static final Slot<String> METHOD_DESC = Slot.create(String.class);
+    private static final Slot<Location> METHOD_DESC = Slot.create(Location.class);
     static final SequenceMatcher<AbstractInsnNode> HAS_FLAT_MAP_CALL = QueryStart
             .any(AbstractInsnNode.class)
-            .then(dynamicCallTo(METHOD_OWNER.read(), METHOD_DESC.read()))
+            .then(dynamicCallTo(METHOD_DESC.read()))
             .then(methodCallTo(ClassName.fromClass(Stream.class), "flatMap"))
             .zeroOrMore(QueryStart.match(anyInstruction()))
             .compile(QueryParams.params(AbstractInsnNode.class)
@@ -116,15 +115,15 @@ public class NullFlatMapFilter implements MutationInterceptor {
 
     private boolean callsTarget(MethodTree target, MethodTree method) {
         return method.instructions().stream()
-                .anyMatch(callTo(target.asLocation().getClassName(), target.asLocation().getMethodName().name())
-                        .or(dynamicCallTo(target.asLocation().getClassName(), target.asLocation().getMethodName().name())));
+                .anyMatch(callTo(target.asLocation().getClassName(), target.asLocation().getMethodName().name(), target.asLocation().getMethodDesc())
+                        .or(dynamicCallTo(target.asLocation())));
     }
 
-    private Predicate<AbstractInsnNode> callTo(ClassName className, String name) {
+    private Predicate<AbstractInsnNode> callTo(ClassName className, String name, String desc) {
         return n -> {
             if (n instanceof MethodInsnNode) {
                 MethodInsnNode call = (MethodInsnNode) n;
-                return call.owner.equals(className.asInternalName()) && call.name.equals(name);
+                return call.owner.equals(className.asInternalName()) && call.name.equals(name) && call.desc.equals(desc);
             }
             return false;
         };
@@ -132,34 +131,34 @@ public class NullFlatMapFilter implements MutationInterceptor {
 
     private boolean isFlatMapCall(MethodTree mutated, MethodTree each) {
         final Context<AbstractInsnNode> context = Context.start(each.instructions(), DEBUG);
-        context.store(METHOD_OWNER.write(), mutated.asLocation().getClassName());
-        context.store(METHOD_DESC.write(), mutated.asLocation().getMethodName().name());
+        context.store(METHOD_DESC.write(), mutated.asLocation());
         boolean hasFlatMapCall = HAS_FLAT_MAP_CALL.matches(each.instructions(), context);
         return hasFlatMapCall;
     }
 
 
-    private static Match<AbstractInsnNode> dynamicCallTo(SlotRead<ClassName> owner, SlotRead<String> desc) {
-        return (c, t) -> dynamicCallTo(c.retrieve(owner).get(), c.retrieve(desc).get()).test(t);
+    private static Match<AbstractInsnNode> dynamicCallTo(SlotRead<Location> desc) {
+        return (c, t) -> dynamicCallTo(c.retrieve(desc).get()).test(t);
     }
 
-    private static Predicate<AbstractInsnNode> dynamicCallTo(ClassName owner, String desc) {
+    private static Predicate<AbstractInsnNode> dynamicCallTo(Location desc) {
         return (t) -> {
             if ( t instanceof InvokeDynamicInsnNode) {
                 InvokeDynamicInsnNode call = (InvokeDynamicInsnNode) t;
                 return Arrays.stream(call.bsmArgs)
-                        .anyMatch(isHandle(owner, desc));
+                        .anyMatch(isHandle(desc.getClassName(), desc.getMethodName().name(), desc.getMethodDesc()));
             }
             return false;
         };
     }
 
-    private static Predicate<Object> isHandle(ClassName owner, String name) {
+    private static Predicate<Object> isHandle(ClassName owner, String name, String desc) {
         return o -> {
             if (o instanceof Handle) {
                 Handle handle = (Handle) o;
-                return handle.getOwner().equals(owner.asInternalName()) &&
-                        handle.getName().equals(name);
+                return handle.getOwner().equals(owner.asInternalName())
+                        && handle.getName().equals(name)
+                        && handle.getDesc().equals(desc);
             }
             return false;
         };

@@ -54,6 +54,10 @@ public class NullFlatmapTest {
         verifier.assertFiltersNMutationFromClass(0, HasPrivateStreamMethodCalledNotFromFlatMap.class);
     }
 
+    @Test
+    public void doesNotFilterEligibleMutantsInMethodsWithSameName() {
+        verifier.assertFiltersNMutationFromClass(1, HasMutableMethodWithSameNameButDifferentSignature.class);
+    }
 }
 
 class HasPrivateStreamMethodUsedOnlyInSingleFlatMap {
@@ -130,6 +134,29 @@ class HasPublicStreamMethodUsedOnlyInSingleFlatMap {
     }
 
     public Stream<String> aStream(String l) {
+        return Stream.empty();
+    }
+}
+
+class HasMutableMethodWithSameNameButDifferentSignature {
+    public Stream<String> makesCall(List<String> l) {
+        return l.stream()
+                .flatMap(this::aStream);
+
+    }
+
+    public Stream<Object> makesCall(List<Integer> l, int unused) {
+        return l.stream()
+                .map(this::aStream);
+
+    }
+
+    private Stream<String> aStream(String l) {
+        return Stream.empty();
+    }
+
+    // can mutate this one
+    private Stream<String> aStream(int i) {
         return Stream.empty();
     }
 }
