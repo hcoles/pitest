@@ -14,9 +14,7 @@
  */
 package org.pitest.mutationtest.engine.gregor;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.function.Predicate;
 
 import org.objectweb.asm.ClassVisitor;
@@ -32,15 +30,15 @@ class MutatingClassVisitor extends ClassVisitor {
 
   private final Predicate<MethodInfo>    filter;
   private final ClassContext              context;
-  private final Set<MethodMutatorFactory> methodMutators = new HashSet<>();
+  private final List<MethodMutatorFactory> methodMutators;
 
   MutatingClassVisitor(final ClassVisitor delegateClassVisitor,
       final ClassContext context, final Predicate<MethodInfo> filter,
-      final Collection<MethodMutatorFactory> mutators) {
+      final List<MethodMutatorFactory> mutators) {
     super(ASMVersion.ASM_VERSION, delegateClassVisitor);
     this.context = context;
     this.filter = filter;
-    this.methodMutators.addAll(mutators);
+    this.methodMutators = mutators;
   }
 
   @Override
