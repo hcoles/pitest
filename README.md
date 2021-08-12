@@ -10,6 +10,7 @@ Read all about it at http://pitest.org
 
 ### current snapshot
 
+* #922 Filter equivalent stream.empty mutants in flatMap calls
 * #919 Filter junk mutations in java records
 
 ### 1.6.8

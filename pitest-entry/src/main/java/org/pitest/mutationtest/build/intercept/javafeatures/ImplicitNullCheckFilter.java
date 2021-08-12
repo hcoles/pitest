@@ -14,7 +14,6 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.pitest.bytecode.analysis.ClassTree;
-import org.pitest.bytecode.analysis.MethodMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.FCollection;
@@ -68,9 +67,7 @@ public class ImplicitNullCheckFilter implements MutationInterceptor {
   private Predicate<MutationDetails> isAnImplicitNullCheck() {
     return a -> {
       final int instruction = a.getInstructionIndex();
-      final MethodTree method = ImplicitNullCheckFilter.this.currentClass.methods().stream()
-          .filter(MethodMatchers.forLocation(a.getId().getLocation()))
-          .findFirst()
+      final MethodTree method = ImplicitNullCheckFilter.this.currentClass.method(a.getId().getLocation())
           .get();
 
       final AbstractInsnNode mutatedInstruction = method.instruction(instruction);

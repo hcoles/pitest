@@ -59,6 +59,14 @@ public class MethodTree {
     return (this.rawNode.access & Opcodes.ACC_SYNTHETIC) != 0;
   }
 
+  public boolean isPrivate() {
+    return (this.rawNode.access & Opcodes.ACC_PRIVATE) != 0;
+  }
+
+  public boolean returns(ClassName clazz) {
+    return this.rawNode.desc.endsWith("L" + clazz.asInternalName() + ";");
+  }
+
   public List<AnnotationNode> annotations() {
     final List<AnnotationNode> annotaions = new ArrayList<>();
     if (this.rawNode.invisibleAnnotations != null) {

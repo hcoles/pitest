@@ -18,5 +18,6 @@ org.pitest.mutationtest.build.intercept.kotlin.KotlinFilterFactory
 org.pitest.mutationtest.filter.LimitNumberOfMutationsPerClassFilterFactory
 org.pitest.mutationtest.build.intercept.equivalent.EqualsPerformanceShortcutFilterFactory
 org.pitest.mutationtest.build.intercept.equivalent.EquivalentReturnMutationFilter
+org.pitest.mutationtest.build.intercept.equivalent.NullFlatMapFilterFactory
 
 org.pitest.plugin.export.MutantExportFactory

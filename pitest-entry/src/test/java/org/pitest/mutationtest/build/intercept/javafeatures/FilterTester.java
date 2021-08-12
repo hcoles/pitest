@@ -247,8 +247,14 @@ public class FilterTester {
     softly.assertThat(actual)
     .describedAs("Expected to filter out " + n + " mutants but filtered "
                   + (mutations.size() - actual.size()) + " for compiler " + s.compiler
-                  + " " + s.clazz)
+                  + " " + s.clazz + " [original mutants " + describe(mutations) + "]")
     .hasSize(mutations.size() - n);
+  }
+
+  private String describe(List<MutationDetails> mutations) {
+    return mutations.stream()
+            .map(m -> m.getMutator())
+            .collect(Collectors.joining(","));
   }
 
   private void checkHasNMutants(int n, Sample s, SoftAssertions softly,
