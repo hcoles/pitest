@@ -25,6 +25,8 @@ import org.pitest.sequence.SlotRead;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,6 +38,18 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
 
+/**
+ * Filters out mutants of the form
+ *    private aMethod() {
+ *      .. clever logic ..
+ *      return Stream.empty() -> return null
+ *    }
+ *
+ * Iff the method is only ever called from flatMap.
+ *
+ * Flat map treats null and Stream.empty as equivalent, but forcing the programmer
+ * to return null if they wish to kill the mutant would be controversial at best.
+ */
 public class NullFlatMapFilter implements MutationInterceptor {
 
     private static final boolean DEBUG = false;
@@ -62,6 +76,7 @@ public class NullFlatMapFilter implements MutationInterceptor {
             );
 
     private ClassTree currentClass;
+    private Map<Location,Boolean> calledOnlyByFlatMap;
 
     @Override
     public InterceptorType type() {
@@ -71,16 +86,17 @@ public class NullFlatMapFilter implements MutationInterceptor {
     @Override
     public void begin(ClassTree clazz) {
         currentClass = clazz;
+        calledOnlyByFlatMap = new HashMap<>();
     }
 
     @Override
     public Collection<MutationDetails> intercept(Collection<MutationDetails> mutations, Mutater unused) {
         return mutations.stream()
-                .filter(m -> !this.mutatesStreamEmpty(m))
+                .filter(m -> !this.isStreamEmptyMutantWithOnlyFlatMapCalls(m))
                 .collect(Collectors.toList());
     }
 
-    private boolean mutatesStreamEmpty(MutationDetails mutationDetails) {
+    private boolean isStreamEmptyMutantWithOnlyFlatMapCalls(MutationDetails mutationDetails) {
         if (!mutationDetails.getMutator().equals(NullReturnValsMutator.NULL_RETURN_VALUES.getGloballyUniqueId())) {
             return false;
         }
@@ -93,7 +109,7 @@ public class NullFlatMapFilter implements MutationInterceptor {
         final Context<AbstractInsnNode> context = Context.start(method.instructions(), DEBUG);
         context.store(MUTATED_INSTRUCTION.write(), method.instruction(mutationDetails.getInstructionIndex()));
         return RETURN_EMPTY_STREAM.matches(method.instructions(), context)
-                && calledOnlyFromFlatMap(mutationDetails.getId().getLocation());
+                && calledOnlyByFlatMap.computeIfAbsent(mutationDetails.getId().getLocation(), this::calledOnlyFromFlatMap);
     }
 
     private boolean calledOnlyFromFlatMap(Location location) {
@@ -132,8 +148,7 @@ public class NullFlatMapFilter implements MutationInterceptor {
     private boolean isFlatMapCall(MethodTree mutated, MethodTree each) {
         final Context<AbstractInsnNode> context = Context.start(each.instructions(), DEBUG);
         context.store(METHOD_DESC.write(), mutated.asLocation());
-        boolean hasFlatMapCall = HAS_FLAT_MAP_CALL.matches(each.instructions(), context);
-        return hasFlatMapCall;
+        return HAS_FLAT_MAP_CALL.matches(each.instructions(), context);
     }
 
 
@@ -167,5 +182,6 @@ public class NullFlatMapFilter implements MutationInterceptor {
     @Override
     public void end() {
         currentClass = null;
+        calledOnlyByFlatMap = null;
     }
 }
