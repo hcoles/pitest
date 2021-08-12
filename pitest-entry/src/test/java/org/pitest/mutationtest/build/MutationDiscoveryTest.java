@@ -1,5 +1,6 @@
 package org.pitest.mutationtest.build;
 
+import com.example.HasPrivateStreamMethodUsedOnlyInSingleFlatMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.classinfo.ClassByteArraySource;
@@ -209,6 +210,16 @@ public class MutationDiscoveryTest {
     this.data.setMutators(Collections.singletonList("PRIMITIVE_RETURNS"));
     final Collection<MutationDetails>  actual = findMutants(AlreadyReturnsConstZero.class);
     assertThat(actual).isEmpty();
+  }
+
+  @Test
+  public void filtersEquivalentNullStreamMutantsUsedInFlatMapCalls() {
+    final Collection<MutationDetails> actual = findMutants(HasPrivateStreamMethodUsedOnlyInSingleFlatMap.class);
+
+    this.data.setFeatures(Collections.singletonList("-FNULLSTREAM"));
+    final Collection<MutationDetails> actualWithoutFilter = findMutants(HasPrivateStreamMethodUsedOnlyInSingleFlatMap.class);
+
+    assertThat(actual.size()).isLessThan(actualWithoutFilter.size());
   }
 
   @Test

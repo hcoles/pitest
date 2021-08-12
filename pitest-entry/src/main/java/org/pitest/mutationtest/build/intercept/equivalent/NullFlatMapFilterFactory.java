@@ -14,11 +14,13 @@ public class NullFlatMapFilterFactory implements MutationInterceptorFactory {
 
     @Override
     public Feature provides() {
-        return null;
+        return Feature.named("FNULLSTREAM")
+                .withOnByDefault(true)
+                .withDescription("Filters equivalent mutations where null is passed to flatmap in place of Stream.empty");
     }
 
     @Override
     public String description() {
-        return null;
+        return "Null stream flatmap filter";
     }
 }
