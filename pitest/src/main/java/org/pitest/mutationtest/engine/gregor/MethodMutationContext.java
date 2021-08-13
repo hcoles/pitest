@@ -6,7 +6,6 @@ import java.util.Set;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.engine.PoisonStatus;
 import org.pitest.mutationtest.engine.gregor.analysis.InstructionCounter;
 
 class MethodMutationContext implements MutationContext, InstructionCounter {
@@ -32,7 +31,7 @@ class MethodMutationContext implements MutationContext, InstructionCounter {
     final MutationDetails details = new MutationDetails(newId,
         this.classContext.getFileName(), description, this.lastLineNumber,
         this.classContext.getCurrentBlock(),
-        this.classContext.isWithinFinallyBlock(), PoisonStatus.NORMAL);
+        this.classContext.isWithinFinallyBlock());
     registerMutation(details);
     return newId;
   }

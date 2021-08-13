@@ -23,7 +23,6 @@ import org.pitest.functional.FCollection;
 import java.util.Optional;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.engine.PoisonStatus;
 
 public class DefaultTestPrioritiserTest {
 
