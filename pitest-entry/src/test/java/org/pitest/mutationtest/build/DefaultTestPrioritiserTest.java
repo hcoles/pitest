@@ -53,16 +53,6 @@ public class DefaultTestPrioritiserTest {
   }
 
   @Test
-  public void shouldAssignAllTestsForClassWhenMutationInStaticInitialiser() {
-    final List<TestInfo> expected = makeTestInfos(0);
-    when(this.coverage.getTestsForClass(this.foo)).thenReturn(expected);
-    final List<TestInfo> actual = this.testee
-        .assignTests(makeMutation("<clinit>")
-            .withPoisonStatus(PoisonStatus.IS_STATIC_INITIALIZER_CODE));
-    assertEquals(expected, actual);
-  }
-
-  @Test
   public void shouldPrioritiseTestsByExecutionTime() {
     final List<TestInfo> unorderedTests = makeTestInfos(10000, 100, 1000, 1);
     when(this.coverage.getTestsForInstructionLocation(any(InstructionLocation.class))).thenReturn(

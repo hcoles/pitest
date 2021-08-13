@@ -109,11 +109,11 @@ public class SettingsFactoryTest {
     final Consumer<Feature> disabled = Mockito.mock(Consumer.class);
     final Consumer<Feature> enabled = Mockito.mock(Consumer.class);
 
-    this.options.setFeatures(Arrays.asList("+FSTATINIT"));
+    this.options.setFeatures(Arrays.asList("+FSTATI"));
 
     this.testee.describeFeatures(enabled, disabled);
-    verify(enabled).accept(Feature.named("FSTATINIT"));
-    verify(disabled, never()).accept(Feature.named("FSTATINIT"));
+    verify(enabled).accept(Feature.named("FSTATI"));
+    verify(disabled, never()).accept(Feature.named("FSTATI"));
   }
 
   @Test
@@ -121,11 +121,11 @@ public class SettingsFactoryTest {
     final Consumer<Feature> disabled = Mockito.mock(Consumer.class);
     final Consumer<Feature> enabled = Mockito.mock(Consumer.class);
 
-    this.options.setFeatures(Arrays.asList("-FSTATINIT"));
+    this.options.setFeatures(Arrays.asList("-FSTATI"));
 
     this.testee.describeFeatures(enabled, disabled);
-    verify(enabled, never()).accept(Feature.named("FSTATINIT"));
-    verify(disabled).accept(Feature.named("FSTATINIT"));
+    verify(enabled, never()).accept(Feature.named("FSTATI"));
+    verify(disabled).accept(Feature.named("FSTATI"));
   }
 
   @Test

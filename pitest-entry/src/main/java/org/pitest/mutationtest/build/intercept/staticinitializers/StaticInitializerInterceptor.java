@@ -15,13 +15,11 @@ import org.pitest.bytecode.analysis.AnalysisFunctions;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.PoisonStatus;
 
 /**
  * Identifies and marks mutations in code that is active during class
@@ -50,17 +48,9 @@ class StaticInitializerInterceptor implements MutationInterceptor {
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
     if (this.isStaticInitCode != null) {
-      final List<MutationDetails> altered =
-          mutations.stream()
-          .filter(this.isStaticInitCode)
-          .map(setStaticInitializerFlag())
-          .collect(Collectors.toList());
-
-      final List<MutationDetails> notAltered =
-          FCollection.filter(mutations, Prelude.not(this.isStaticInitCode));
-
-      notAltered.addAll(altered);
-      return notAltered;
+      return mutations.stream()
+              .filter(this.isStaticInitCode.negate())
+              .collect(Collectors.toList());
     }
     return mutations;
   }
@@ -126,14 +116,9 @@ class StaticInitializerInterceptor implements MutationInterceptor {
     return a -> a.rawNode().name.equals(name);
   }
 
-
-  private Function<MutationDetails, MutationDetails> setStaticInitializerFlag() {
-    return a -> a.withPoisonStatus(PoisonStatus.IS_STATIC_INITIALIZER_CODE);
-  }
-
   @Override
   public InterceptorType type() {
-    return InterceptorType.MODIFY;
+    return InterceptorType.FILTER;
   }
 
 }

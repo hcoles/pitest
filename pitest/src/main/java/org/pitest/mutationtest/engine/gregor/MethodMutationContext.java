@@ -90,11 +90,15 @@ class MethodMutationContext implements MutationContext, InstructionCounter {
   }
 
   @Override
+  @Deprecated
+  // create a mutation interceptor instead
   public void disableMutations(final String reason) {
     this.mutationFindingDisabledReasons.add(reason);
   }
 
   @Override
+  @Deprecated
+  // create a mutation interceptor instead
   public void enableMutatations(final String reason) {
     this.mutationFindingDisabledReasons.remove(reason);
   }

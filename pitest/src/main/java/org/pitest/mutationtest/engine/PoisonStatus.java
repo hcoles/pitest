@@ -1,5 +1,6 @@
 package org.pitest.mutationtest.engine;
 
+@Deprecated
 public enum PoisonStatus {
   NORMAL(false), MAY_POISON_JVM(true), IS_STATIC_INITIALIZER_CODE(true);
 

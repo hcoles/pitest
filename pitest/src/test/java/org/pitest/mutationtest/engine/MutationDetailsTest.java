@@ -15,7 +15,6 @@ public class MutationDetailsTest {
     final MutationDetails actual = testee.withPoisonStatus(PoisonStatus.IS_STATIC_INITIALIZER_CODE);
     assertThat(actual).isNotSameAs(testee);
     assertThat(actual.mayPoisonJVM()).isTrue();
-    assertThat(actual.isInStaticInitializer()).isTrue();
   }
 
   @Test

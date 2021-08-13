@@ -1,118 +1,57 @@
 package org.pitest.mutationtest.build.intercept.staticinitializers;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import org.junit.Before;
 import org.junit.Test;
-import org.pitest.bytecode.analysis.ClassTree;
-import org.pitest.classinfo.ClassName;
-import org.pitest.classpath.ClassloaderByteArraySource;
+import org.pitest.mutationtest.build.intercept.javafeatures.FilterTester;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.gregor.GregorMutater;
-import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
-import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.NullMutateEverything;
+
+import java.util.function.Predicate;
+
 
 public class StaticInitializerInterceptorTest {
 
-  StaticInitializerInterceptor testee;
-  GregorMutater mutator;
+  StaticInitializerInterceptor testee = new StaticInitializerInterceptor();
 
-  @Before
-  public void setup() {
-    final ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
-    final Collection<MethodMutatorFactory> mutators = Collections.singleton((MethodMutatorFactory)VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR);
-    this.mutator = new GregorMutater(source, m -> true, mutators);
-    this.testee = new StaticInitializerInterceptor();
+  FilterTester verifier = new FilterTester("", this.testee, NullMutateEverything.asList());
+
+
+  @Test
+  public void shouldNotFilterMutationsInClassWithoutStaticInitializer() {
+    verifier.assertFiltersNMutationFromClass(0, NoStaticInializer.class);
   }
 
   @Test
-  public void shouldNotMarkAnyMutationsInClassWithoutStaticInitializer() {
-    final Class<?> clazz = NoStaticInializer.class;
-    final List<MutationDetails> mutations = findMutationsFor(clazz);
-
-    this.testee.begin(treeFor(clazz));
-    final Collection<MutationDetails> actual = this.testee.intercept(mutations, this.mutator);
-    this.testee.end();
-
-    assertThat(actual).isSameAs(mutations);
-  }
-
-  @Test
-  public void shouldMarkMutationsInStaticInitializer() {
-    final Collection<MutationDetails> actual = processWithTestee(HasStaticInializer.class);
-    assertAllMarkedAsInStaticInitializers(actual);
+  public void shouldFilterMutationsInStaticInitializer() {
+    verifier.assertFiltersMutationsMatching(inMethodNamed("<clinit>"), HasStaticInializer.class);
   }
 
   @Test
   public void shouldMarkMutationsInPrivateMethodsCalledFromStaticInitializer() {
-    final Collection<MutationDetails> actual = processWithTestee(HasPrivateCallsFromStaticInializer.class);
-    assertAllMarkedAsInStaticInitializers(actual);
+    verifier.assertFiltersMutationsMatching(inMethodNamed("a"), HasPrivateCallsFromStaticInializer.class);
   }
 
   @Test
   public void shouldNotMarkMutationsInPackageDefaultMethodsCalledFromStaticInitializer() {
-    final Collection<MutationDetails> actual = processWithTestee(HasDefaultCallsFromStaticInializer.class);
-    assertOnlyClinitMethodsMarked(actual);
+    verifier.assertFiltersNoMutationsMatching(inMethodNamed("a"), HasDefaultCallsFromStaticInializer.class);
   }
 
 
   @Test
   public void shouldNotMarkMutationsInPrivateStaticMethodsNotInvolvedInInit() {
-    final Collection<MutationDetails> actual = processWithTestee(HasOtherPrivateStaticMethods.class);
-    assertOnlyClinitMethodsMarked(actual);
+    verifier.assertFiltersNoMutationsMatching(inMethodNamed("b"), HasOtherPrivateStaticMethods.class);
   }
 
   @Test
   public void shouldNotMarkMutationsInOverriddenMethodsNotInvolvedInStaticInit() {
-    final Collection<MutationDetails> actual = processWithTestee(HasOverloadedMethodsThatAreNotUsedInStaticInitialization.class);
-    assertOnlyClinitMethodsMarked(actual);
+    verifier.assertFiltersNoMutationsMatching(inMethod("a", "(I)V"), HasOverloadedMethodsThatAreNotUsedInStaticInitialization.class);
   }
 
-  Collection<MutationDetails> processWithTestee(Class<?> clazz) {
-    this.testee.begin(treeFor(clazz));
-    final Collection<MutationDetails> actual = this.testee.intercept(findMutationsFor(clazz), this.mutator);
-    this.testee.end();
-    return actual;
+  private Predicate<MutationDetails> inMethodNamed(String name) {
+    return m -> m.getMethod().equals(name);
   }
 
-  private List<MutationDetails> findMutationsFor(Class<?> clazz) {
-    final List<MutationDetails> mutations = this.mutator.findMutations(ClassName.fromClass(clazz));
-    assertThat(mutations).isNotEmpty();
-    return mutations;
-  }
-
-
-  private ClassTree treeFor(Class<?> clazz) {
-    final ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
-    return ClassTree.fromBytes(source.getBytes(clazz.getName()).get());
-  }
-
-
-
-  private void assertAllMarkedAsInStaticInitializers(
-      Collection<MutationDetails> actual) {
-    for (final MutationDetails each : actual ) {
-      if (!each.isInStaticInitializer()) {
-        fail("Expected all mutants to be marked as for static initialization but " + each + " was not");
-      }
-    }
-
-  }
-
-  private void assertOnlyClinitMethodsMarked(Collection<MutationDetails> actual) {
-    for (final MutationDetails each : actual ) {
-      if (each.isInStaticInitializer()) {
-        if (!each.getId().getLocation().getMethodName().equals("<clinit>")) {
-          fail("Expected no mutants to be marked as for static initialization but " + each + " was");
-        }
-      }
-    }
-
+  private Predicate<MutationDetails> inMethod(String name, String desc) {
+    return m -> m.getMethod().equals(name) && m.getId().getLocation().getMethodDesc().equals(desc);
   }
 
 }

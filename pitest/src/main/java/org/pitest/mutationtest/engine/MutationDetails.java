@@ -193,15 +193,6 @@ public final class MutationDetails implements Serializable {
   }
 
   /**
-   * Indicates if this mutation is in a static initializer block
-   *
-   * @return true if in a static initializer otherwise false
-   */
-  public boolean isInStaticInitializer() {
-    return this.poison == PoisonStatus.IS_STATIC_INITIALIZER_CODE;
-  }
-
-  /**
    * Returns the basic block in which this mutation occurs. See
    * https://github.com/hcoles/pitest/issues/131 for discussion on block
    * coverage
