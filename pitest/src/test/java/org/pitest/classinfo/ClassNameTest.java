@@ -19,9 +19,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import org.junit.Test;
 
@@ -169,4 +173,33 @@ public class ClassNameTest {
     assertThat(ClassName.fromClass(String.class)).isSameAs(ClassName.fromClass(String.class));
   }
 
+  @Test
+  public void shouldUseCachedInstancesForInteger() {
+    assertThat(ClassName.fromClass(Integer.class)).isSameAs(ClassName.fromClass(Integer.class));
+  }
+
+  @Test
+  public void shouldUseCachedInstancesForList() {
+    assertThat(ClassName.fromClass(List.class)).isSameAs(ClassName.fromClass(List.class));
+  }
+
+  @Test
+  public void shouldUseCachedInstancesForArrayList() {
+    assertThat(ClassName.fromClass(ArrayList.class)).isSameAs(ClassName.fromClass(ArrayList.class));
+  }
+
+  @Test
+  public void shouldUseCachedInstancesForStream() {
+    assertThat(ClassName.fromClass(Stream.class)).isSameAs(ClassName.fromClass(Stream.class));
+  }
+
+  @Test
+  public void shouldUseCachedInstancesForFunction() {
+    assertThat(ClassName.fromClass(Function.class)).isSameAs(ClassName.fromClass(Function.class));
+  }
+
+  @Test
+  public void shouldUseCachedInstancesForPredicate() {
+    assertThat(ClassName.fromClass(Predicate.class)).isSameAs(ClassName.fromClass(Predicate.class));
+  }
 }
