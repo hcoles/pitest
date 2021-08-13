@@ -10,7 +10,6 @@ import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
@@ -35,7 +34,7 @@ class MutationResultDataLoader extends DataLoader<MutationResult> {
 
   @Override
   protected MutationResult mapToData(final Map<String, Object> map) {
-    final Location location = new Location(ClassName.fromString((String) map.get(MUTATED_CLASS)), MethodName.fromString((String) map.get(MUTATED_METHOD)),
+    final Location location = new Location(ClassName.fromString((String) map.get(MUTATED_CLASS)), (String) map.get(MUTATED_METHOD),
         (String) map.get(METHOD_DESCRIPTION));
 
     final MutationIdentifier id = new MutationIdentifier(location, Arrays.asList(Integer.valueOf((String) map.get(INDEX))), (String) map.get(MUTATOR));

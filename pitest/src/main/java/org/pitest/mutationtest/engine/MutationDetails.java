@@ -121,7 +121,7 @@ public final class MutationDetails implements Serializable {
    *
    * @return class in which mutation is located
    */
-  public MethodName getMethod() {
+  public String getMethod() {
     return this.id.getLocation().getMethodName();
   }
 

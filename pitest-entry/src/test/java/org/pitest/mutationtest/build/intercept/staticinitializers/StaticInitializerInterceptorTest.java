@@ -107,7 +107,7 @@ public class StaticInitializerInterceptorTest {
   private void assertOnlyClinitMethodsMarked(Collection<MutationDetails> actual) {
     for (final MutationDetails each : actual ) {
       if (each.isInStaticInitializer()) {
-        if (!each.getId().getLocation().getMethodName().name().equals("<clinit>")) {
+        if (!each.getId().getLocation().getMethodName().equals("<clinit>")) {
           fail("Expected no mutants to be marked as for static initialization but " + each + " was");
         }
       }

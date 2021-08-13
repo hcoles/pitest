@@ -4,7 +4,6 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.CoverageResult;
 import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.testapi.Description;
 import org.pitest.util.Id;
 import org.pitest.util.ReceiveStrategy;
@@ -55,7 +54,7 @@ final class Receive implements ReceiveStrategy {
     final int first = is.readInt();
     final int last = is.readInt();
     final Location loc = Location.location(this.classIdToName.get(classId),
-        MethodName.fromString(methodName), methodSig);
+        methodName, methodSig);
     for (int i = first; i != (last + 1); i++) {
       // nb, convert from classwide id to method scoped index within
       // BlockLocation

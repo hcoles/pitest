@@ -48,7 +48,7 @@ public class DefaultCoverageExporter implements CoverageExporter {
         out,
         "<block classname='" + l.getClassName().asJavaName() + "'"
             + " method='"
-            + StringUtil.escapeBasicHtmlChars(l.getMethodName().name()) + StringUtil.escapeBasicHtmlChars(l.getMethodDesc())
+            + StringUtil.escapeBasicHtmlChars(l.getMethodName()) + StringUtil.escapeBasicHtmlChars(l.getMethodDesc())
             + "' number='" + each.getBlock().getBlock()
             + "' firstInstruction='" + each.getBlock().getFirstInsnInBlock()
             + "' lastInstruction='" + each.getBlock().getLastInsnInBlock()

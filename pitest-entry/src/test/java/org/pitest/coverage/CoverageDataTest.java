@@ -28,7 +28,6 @@ import org.pitest.coverage.CoverageMother.BlockLocationBuilder;
 import org.pitest.coverage.CoverageMother.CoverageResultBuilder;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.testapi.Description;
 
 import java.util.Arrays;
@@ -291,7 +290,7 @@ public class CoverageDataTest {
   private Collection<BlockLocation> makeCoverage(final String clazz,
       final int block) {
     final BlockLocation cs = new BlockLocation(Location.location(
-        ClassName.fromString(clazz), MethodName.fromString("foo"), "V"), block, -1, -1);
+        ClassName.fromString(clazz), "foo", "V"), block, -1, -1);
 
     return Collections.singleton(cs);
   }

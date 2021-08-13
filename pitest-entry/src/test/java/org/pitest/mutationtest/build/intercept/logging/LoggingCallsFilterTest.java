@@ -66,7 +66,7 @@ public class LoggingCallsFilterTest {
   return new  Condition< MutationDetails>("mutants in the methed " + name) {
     @Override
     public boolean matches(MutationDetails value) {
-        return value.getId().getLocation().getMethodName().name().equals(name);
+        return value.getId().getLocation().getMethodName().equals(name);
     }
   };
   }

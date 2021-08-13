@@ -22,7 +22,6 @@ import org.objectweb.asm.MethodVisitor;
 import org.pitest.bytecode.ASMVersion;
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.mutationtest.engine.gregor.analysis.InstructionTrackingMethodVisitor;
 import org.pitest.mutationtest.engine.gregor.blocks.BlockTrackingMethodDecorator;
 
@@ -63,7 +62,7 @@ class MutatingClassVisitor extends ClassVisitor {
     final MethodMutationContext methodContext = new MethodMutationContext(
         this.context, Location.location(
             ClassName.fromString(this.context.getClassInfo().getName()),
-            MethodName.fromString(methodName), methodDescriptor));
+            methodName, methodDescriptor));
 
     final MethodVisitor methodVisitor = this.cv.visitMethod(access, methodName,
         methodDescriptor, signature, exceptions);

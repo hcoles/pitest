@@ -12,7 +12,6 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator;
@@ -146,7 +145,7 @@ public class InfiniteForLoopFilterFactoryTest extends InfiniteLoopBaseTest {
   @Test
   public void shouldMatchRealInfiniteLoopFromJodaTimeMutants() {      
     Location l1 = Location.location(ClassName.fromString("org.joda.time.field.BaseDateTimeField")
-        , MethodName.fromString("set")
+        , "set"
         , "(Lorg/joda/time/ReadablePartial;I[II)[I");
     checkFiltered(ClassName.fromString("BaseDateTimeFieldMutated"),forLocation(l1));
     
@@ -160,7 +159,7 @@ public class InfiniteForLoopFilterFactoryTest extends InfiniteLoopBaseTest {
     checkFiltered(ClassName.fromString("BaseChronologyMutated2"),"set");
     
     Location l = Location.location(ClassName.fromString("org.joda.time.MonthDay")
-        , MethodName.fromString("withPeriodAdded")
+        , "withPeriodAdded"
         , "(Lorg/joda/time/ReadablePeriod;I)Lorg/joda/time/MonthDay;");
     checkFiltered(ClassName.fromString("MonthDayMutated2"),forLocation(l));
   }

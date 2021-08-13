@@ -14,7 +14,6 @@ import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.LineMap;
 import java.util.Optional;
 import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MethodName;
 
 public class LineMapper implements LineMap {
 
@@ -40,7 +39,7 @@ public class LineMapper implements LineMap {
       for (final Object m : classNode.methods) {
         final MethodNode mn = (MethodNode) m;
         final Location l = Location.location(clazz,
-            MethodName.fromString(mn.name), mn.desc);
+            mn.name, mn.desc);
         final List<Block> blocks = ControlFlowAnalyser.analyze(mn);
         for (int i = 0; i != blocks.size(); i++) {
           final Block each = blocks.get(i);

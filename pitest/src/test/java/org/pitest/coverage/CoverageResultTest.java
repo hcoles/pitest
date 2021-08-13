@@ -3,7 +3,6 @@ package org.pitest.coverage;
 import org.junit.Test;
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MethodName;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,7 +36,7 @@ public class CoverageResultTest {
 
   private BlockLocation makeCoverage(final String name, final int block) {
     final Location l = Location.location(ClassName.fromString(name),
-        MethodName.fromString("amethod"), "methodDesc");
+        "amethod", "methodDesc");
     return new BlockLocation(l, block, 0, 1);
   }
 

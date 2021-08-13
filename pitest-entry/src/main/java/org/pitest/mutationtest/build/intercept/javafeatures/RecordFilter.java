@@ -47,7 +47,7 @@ public class RecordFilter implements MutationInterceptor {
         Set<String> accessorNames = currentClass.recordComponents().stream()
                 .map(this::toName)
                 .collect(Collectors.toSet());
-        return m -> !accessorNames.contains(m.getMethod().name()) && !isStandardMethod(accessorNames.size(), m);
+        return m -> !accessorNames.contains(m.getMethod()) && !isStandardMethod(accessorNames.size(), m);
     }
 
     private boolean isStandardMethod(int numberOfComponents, MutationDetails m) {
@@ -61,24 +61,24 @@ public class RecordFilter implements MutationInterceptor {
         // constructors with the same airty as the generated ones, but different
         // types won't get mutated. They're probably rare enough that this doesn't matter.
         int airty = Type.getArgumentTypes(m.getId().getLocation().getMethodDesc()).length;
-        return m.getMethod().name().equals("<init>") && airty == numberOfComponents;
+        return m.getMethod().equals("<init>") && airty == numberOfComponents;
     }
 
     private boolean isRecordEquals(MutationDetails m) {
         return m.getId().getLocation().getMethodDesc().equals("(Ljava/lang/Object;)Z")
-                && m.getMethod().name().equals("equals")
+                && m.getMethod().equals("equals")
                 && hasDynamicObjectMethodsCall(m);
     }
 
     private boolean isRecordHashCode(MutationDetails m) {
         return m.getId().getLocation().getMethodDesc().equals("()I")
-                && m.getMethod().name().equals("hashCode")
+                && m.getMethod().equals("hashCode")
                 && hasDynamicObjectMethodsCall(m);
     }
 
     private boolean isRecordToString(MutationDetails m) {
         return m.getId().getLocation().getMethodDesc().equals("()Ljava/lang/String;")
-                && m.getMethod().name().equals("toString")
+                && m.getMethod().equals("toString")
                 && hasDynamicObjectMethodsCall(m);
     }
 

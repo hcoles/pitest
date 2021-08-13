@@ -74,7 +74,7 @@ public class MutationDetailsMother {
 
   public static MutationDetails makeMutation(final ClassName clazz) {
     return new MutationDetails(new MutationIdentifier(Location.location(clazz,
-        new MethodName("aMethod"), "()V"), 1, "mutatorId"), "foo.java",
+        "aMethod", "()V"), 1, "mutatorId"), "foo.java",
         "A mutation", 0, 0);
   }
 
