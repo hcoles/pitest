@@ -30,8 +30,7 @@ class MethodMutationContext implements MutationContext, InstructionCounter {
         this.classContext.getJavaClassName());
     final MutationDetails details = new MutationDetails(newId,
         this.classContext.getFileName(), description, this.lastLineNumber,
-        this.classContext.getCurrentBlock(),
-        this.classContext.isWithinFinallyBlock());
+        this.classContext.getCurrentBlock());
     registerMutation(details);
     return newId;
   }
@@ -66,16 +65,6 @@ class MethodMutationContext implements MutationContext, InstructionCounter {
   @Override
   public void registerNewMethodStart() {
     this.classContext.registerNewMethodStart();
-  }
-
-  @Override
-  public void registerFinallyBlockStart() {
-    this.classContext.registerFinallyBlockStart();
-  }
-
-  @Override
-  public void registerFinallyBlockEnd() {
-    this.classContext.registerFinallyBlockEnd();
   }
 
   @Override

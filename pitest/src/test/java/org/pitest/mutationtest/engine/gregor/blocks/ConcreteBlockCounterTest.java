@@ -24,13 +24,4 @@ public class ConcreteBlockCounterTest {
     assertEquals(2, this.testee.getCurrentBlock());
   }
 
-  @Test
-  public void shouldTrackWhenCodeIsWithinFinallyBlocks() {
-    assertFalse(this.testee.isWithinFinallyBlock());
-    this.testee.registerFinallyBlockStart();
-    assertTrue(this.testee.isWithinFinallyBlock());
-    this.testee.registerFinallyBlockEnd();
-    assertFalse(this.testee.isWithinFinallyBlock());
-  }
-
 }

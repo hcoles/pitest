@@ -38,34 +38,25 @@ public final class MutationDetails implements Serializable {
   private final int                 lineNumber;
   private final String              description;
   private final ArrayList<TestInfo> testsInOrder = new ArrayList<>();
-  private final boolean             isInFinallyBlock;
 
   public MutationDetails(final MutationIdentifier id, final String filename,
       final String description, final int lineNumber, final int block) {
-    this(id, filename, description, lineNumber, block, false);
-  }
-
-  public MutationDetails(final MutationIdentifier id, final String filename,
-      final String description, final int lineNumber, final int block,
-      final boolean isInFinallyBlock) {
     this.id = id;
     this.description = Objects.requireNonNull(description);
     this.filename = defaultFilenameIfNotSupplied(filename);
     this.lineNumber = lineNumber;
     this.block = block;
-    this.isInFinallyBlock = isInFinallyBlock;
   }
 
   @Override
   public String toString() {
     return "MutationDetails [id=" + this.id + ", filename=" + this.filename + ", block="
         + this.block + ", lineNumber=" + this.lineNumber + ", description=" + this.description
-        + ", testsInOrder=" + this.testsInOrder + ", isInFinallyBlock="
-        + this.isInFinallyBlock + "]";
+        + ", testsInOrder=" + this.testsInOrder + "]";
   }
 
   public MutationDetails withDescription(String desc) {
-    return new MutationDetails(this.id, this.filename, desc, this.lineNumber, this.block, this.isInFinallyBlock);
+    return new MutationDetails(this.id, this.filename, desc, this.lineNumber, this.block);
   }
 
   /**
@@ -225,15 +216,7 @@ public final class MutationDetails implements Serializable {
     return getFirstIndex() - 1;
   }
 
-  /**
-   * Indicates if the mutation is within a finally block
-   *
-   * @return true if in finally block otherwise false
-   */
-  public boolean isInFinallyBlock() {
-    return this.isInFinallyBlock;
-  }
-  
+
   private String defaultFilenameIfNotSupplied(String filename) {
     // the BuildVerifier should throw an error if classes are compiled 
     // without filename debug info, however classes may be generated

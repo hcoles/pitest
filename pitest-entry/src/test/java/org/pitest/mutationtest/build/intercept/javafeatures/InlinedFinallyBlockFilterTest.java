@@ -1,104 +1,111 @@
 package org.pitest.mutationtest.build.intercept.javafeatures;
 
-import static org.junit.Assert.assertEquals;
-import static org.pitest.mutationtest.LocationMother.aLocation;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.junit.Test;
 import org.pitest.mutationtest.build.InterceptorType;
-import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.MutationIdentifier;
+import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+
+import java.util.function.Predicate;
+
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
+import static org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator.INCREMENTS_MUTATOR;
+import static org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR;
 
 public class InlinedFinallyBlockFilterTest {
 
-  InlinedFinallyBlockFilter testee = new InlinedFinallyBlockFilter();
-  Mutater unused;
+    InlinedFinallyBlockFilter testee = new InlinedFinallyBlockFilter();
 
-  @Test
-  public void shouldDeclareTypeAsFilter() {
-    assertEquals(InterceptorType.FILTER, this.testee.type());
-  }
+    FilterTester verifier = new FilterTester("trywithresources/{0}_{1}", this.testee,
+            // omit aspectJ. Filter doesn't work correctly with it, but slack is picked up by the
+            // try with resources filter
+            asList("javac", "javac11", "ecj"),
+            VOID_METHOD_CALL_MUTATOR, INCREMENTS_MUTATOR);
 
-  @Test
-  public void shouldNotCombineMutantsWhenOnSameLineAndDifferentBlocksButFromDifferentMutators() {
-    final int line = 100;
-    final int block = 1;
-    final List<MutationDetails> mutations = Arrays.asList(
-        makeMutant(line, block, "Foo", 0),
-        makeMutant(line, block + 1, "NotFoo", 1));
-    assertEquals(mutations, this.testee.intercept(mutations, this.unused));
-  }
+    @Test
+    public void shouldDeclareTypeAsFilter() {
+        assertEquals(InterceptorType.FILTER, this.testee.type());
+    }
 
-  @Test
-  public void shouldNotCombineMutantsWhenOnSameLineAndBlock() {
-    final int line = 100;
-    final int block = 1;
-    final String mutator = "foo";
-    final List<MutationDetails> mutations = Arrays.asList(
-        makeMutant(line, block, mutator, 0),
-        makeMutant(line, block, mutator, 1));
-    assertEquals(mutations, this.testee.intercept(mutations, this.unused));
-  }
+    @Test
+    public void doesNotFilterWhenNoFinallyBlock() {
+        verifier.assertFiltersNMutationFromClass(0, TryCatchNoFinally.class);
+    }
 
-  @Test
-  public void shouldCreateSingleMutantWhenSameMutationCreatedOnSameLineInDifferentBlocksAndOneIsInAHandlerBlock() {
-    final int line = 100;
-    final String mutator = "foo";
-    final int block = 1000;
-    final List<MutationDetails> mutations = Arrays.asList(
-        makeMutantInHandlerBlock(line, block, mutator, 0),
-        makeMutant(line, block + 1, mutator, 1));
-    assertEquals(
-        Arrays.asList(makeMutantInHandlerBlock(line, block, mutator,
-            Arrays.asList(0, 1))), this.testee.intercept(mutations, this.unused));
-  }
+    @Test
+    public void combinesMutationsInSimpleFinallyBlocks() {
+        verifier.assertFiltersNMutationFromClass(1, HasFinallyBlock.class);
+        verifier.assertCombinedMutantExists(forMutator(INCREMENTS_MUTATOR), HasFinallyBlock.class);
+    }
 
-  @Test
-  public void shouldNotCombineMutationsWhenMoreThanOneInAHandlerBlock() {
-    final int line = 100;
-    final String mutator = "foo";
-    final int block = 1000;
-    final List<MutationDetails> mutations = Arrays.asList(
-        makeMutantInHandlerBlock(line, block, mutator, 0),
-        makeMutantInHandlerBlock(line, block, mutator, 2),
-        makeMutant(line, block + 1, mutator, 1));
-    final Collection<MutationDetails> actual = this.testee.intercept(mutations, this.unused);
-    assertEquals(mutations, actual);
-  }
+    @Test
+    public void combinesMutationsInFinallyBlocksWithExceptionHandlers() {
+        verifier.assertFiltersNMutationFromClass(2, HasFinallyBlockAndExceptionHandler.class);
+        verifier.assertCombinedMutantExists(forMutator(INCREMENTS_MUTATOR), HasFinallyBlockAndExceptionHandler.class);
+    }
 
-  private MutationDetails makeMutantInHandlerBlock(final int line,
-      final int block, final String mutator, final int index) {
-    return new MutationDetails(makeId(Collections.singleton(index), mutator),
-        "file", "desc", line, block, true);
-  }
+    @Test
+    public void combinesSimilarMutationsInFinallyBlocksWhenOnDifferentLines() {
+        verifier.assertFiltersNMutationFromClass(2, HasSimilarMutationsFinallyBlock.class);
+        verifier.assertCombinedMutantExists(forMutator(INCREMENTS_MUTATOR), HasSimilarMutationsFinallyBlock.class);
+    }
 
-  private MutationDetails makeMutantInHandlerBlock(final int line,
-      final int block, final String mutator, final Collection<Integer> indexes) {
-    return new MutationDetails(makeId(new HashSet<>(indexes), mutator),
-        "file", "desc", line, block, true);
-  }
+    @Test
+    public void filtersMutantsInTryCatchFinallySamples() {
+        verifier.assertFiltersNMutationFromSample(3, "TryCatchFinallyExample");
+    }
 
-  private MutationDetails makeMutant(final int line, final int block,
-      final String mutator, final Collection<Integer> indexes) {
-    return new MutationDetails(makeId(new HashSet<>(indexes), mutator),
-        "file", "desc", line, block);
-  }
+    @Test
+    public void filtersMutantsInTryFinallySamples() {
+        verifier.assertFiltersNMutationFromSample(2, "TryFinallyExample");
+    }
 
-  private MutationDetails makeMutant(final int line, final int block,
-      final String mutator, final int index) {
-    return makeMutant(line, block, mutator, Arrays.asList(index));
-  }
+    private Predicate<MutationDetails> forMutator(MethodMutatorFactory mutator) {
+        return m -> m.getMutator().equals(mutator.getGloballyUniqueId());
+    }
 
-  private MutationIdentifier makeId(final Set<Integer> indexes,
-      final String mutator) {
-    return new MutationIdentifier(aLocation().build(), indexes, mutator);
-  }
 
+}
+
+class TryCatchNoFinally {
+    public void foo(int i) {
+        try {
+            System.out.println("foo");
+        } catch(Exception ex) {
+            i++;
+        }
+    }
+}
+
+class HasFinallyBlock {
+    public void foo(int i) {
+        try {
+            System.out.println("foo");
+        } finally {
+            i++;
+        }
+    }
+}
+
+class HasSimilarMutationsFinallyBlock {
+    public void foo(int i) {
+        try {
+            System.out.println("foo");
+        } finally {
+            i++;
+            i++;
+        }
+    }
+}
+
+class HasFinallyBlockAndExceptionHandler {
+    public void foo(int i) {
+        try {
+            System.out.println("foo");
+        } catch (final Exception x) {
+            System.out.println("bar");
+        } finally {
+            i++;
+        }
+    }
 }
