@@ -10,8 +10,14 @@ Read all about it at http://pitest.org
 
 ### current snapshot
 
-* #922 Filter equivalent stream.empty mutants in flatMap calls
-* #919 Filter junk mutations in java records
+TBC - release version will be 1.7.0 due to internal changes that may 
+break some 3rd party plugins.
+
+### 1.6.9
+
+*    #922 Filter equivalent stream.empty mutants in flatMap calls
+*    #921 Guarantee order of mutation operators
+*    #919 Filter junk mutations in java records
 
 ### 1.6.8
 
