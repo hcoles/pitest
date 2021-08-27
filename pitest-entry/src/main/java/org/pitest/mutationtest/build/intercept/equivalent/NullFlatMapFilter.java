@@ -131,7 +131,7 @@ public class NullFlatMapFilter implements MutationInterceptor {
 
     private boolean callsTarget(MethodTree target, MethodTree method) {
         return method.instructions().stream()
-                .anyMatch(callTo(target.asLocation().getClassName(), target.asLocation().getMethodName().name(), target.asLocation().getMethodDesc())
+                .anyMatch(callTo(target.asLocation().getClassName(), target.asLocation().getMethodName(), target.asLocation().getMethodDesc())
                         .or(dynamicCallTo(target.asLocation())));
     }
 
@@ -161,7 +161,7 @@ public class NullFlatMapFilter implements MutationInterceptor {
             if ( t instanceof InvokeDynamicInsnNode) {
                 InvokeDynamicInsnNode call = (InvokeDynamicInsnNode) t;
                 return Arrays.stream(call.bsmArgs)
-                        .anyMatch(isHandle(desc.getClassName(), desc.getMethodName().name(), desc.getMethodDesc()));
+                        .anyMatch(isHandle(desc.getClassName(), desc.getMethodName(), desc.getMethodDesc()));
             }
             return false;
         };

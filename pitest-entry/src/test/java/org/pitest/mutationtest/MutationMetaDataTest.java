@@ -4,7 +4,6 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.mutationtest.engine.MutationDetails;
 
 import java.util.Arrays;
@@ -56,7 +55,7 @@ public class MutationMetaDataTest {
 
   private MutationResult makeResult(String clazz, String method) {
     final Location location = Location.location(ClassName.fromString(clazz),
-        MethodName.fromString(method), "()V");
+        method, "()V");
     final MutationDetails md = aMutationDetail().withId(
         aMutationId().withLocation(location)).build();
     return new MutationResult(md,

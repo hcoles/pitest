@@ -38,40 +38,25 @@ public final class MutationDetails implements Serializable {
   private final int                 lineNumber;
   private final String              description;
   private final ArrayList<TestInfo> testsInOrder = new ArrayList<>();
-  private final boolean             isInFinallyBlock;
-  private final PoisonStatus        poison;
 
   public MutationDetails(final MutationIdentifier id, final String filename,
       final String description, final int lineNumber, final int block) {
-    this(id, filename, description, lineNumber, block, false, PoisonStatus.NORMAL);
-  }
-
-  public MutationDetails(final MutationIdentifier id, final String filename,
-      final String description, final int lineNumber, final int block,
-      final boolean isInFinallyBlock, final PoisonStatus poison) {
     this.id = id;
     this.description = Objects.requireNonNull(description);
-    this.filename = defaultFilenameIfNotSupplued(filename);
+    this.filename = defaultFilenameIfNotSupplied(filename);
     this.lineNumber = lineNumber;
     this.block = block;
-    this.isInFinallyBlock = isInFinallyBlock;
-    this.poison = poison;
   }
 
   @Override
   public String toString() {
     return "MutationDetails [id=" + this.id + ", filename=" + this.filename + ", block="
         + this.block + ", lineNumber=" + this.lineNumber + ", description=" + this.description
-        + ", testsInOrder=" + this.testsInOrder + ", isInFinallyBlock="
-        + this.isInFinallyBlock + ", poison=" + this.poison + "]";
+        + ", testsInOrder=" + this.testsInOrder + "]";
   }
 
   public MutationDetails withDescription(String desc) {
-    return new MutationDetails(this.id, this.filename, desc, this.lineNumber, this.block, this.isInFinallyBlock, this.poison);
-  }
-
-  public MutationDetails withPoisonStatus(PoisonStatus poisonStatus) {
-    return new MutationDetails(this.id, this.filename, this.description, this.lineNumber, this.block, this.isInFinallyBlock, poisonStatus);
+    return new MutationDetails(this.id, this.filename, desc, this.lineNumber, this.block);
   }
 
   /**
@@ -121,7 +106,7 @@ public final class MutationDetails implements Serializable {
    *
    * @return class in which mutation is located
    */
-  public MethodName getMethod() {
+  public String getMethod() {
     return this.id.getLocation().getMethodName();
   }
 
@@ -183,25 +168,6 @@ public final class MutationDetails implements Serializable {
   }
 
   /**
-   * Indicates if this mutation might poison state within the jvm (e.g affect
-   * the values of static variable)
-   *
-   * @return true if the mutation might poison the jvm otherwise false
-   */
-  public boolean mayPoisonJVM() {
-    return this.poison.mayPoison();
-  }
-
-  /**
-   * Indicates if this mutation is in a static initializer block
-   *
-   * @return true if in a static initializer otherwise false
-   */
-  public boolean isInStaticInitializer() {
-    return this.poison == PoisonStatus.IS_STATIC_INITIALIZER_CODE;
-  }
-
-  /**
    * Returns the basic block in which this mutation occurs. See
    * https://github.com/hcoles/pitest/issues/131 for discussion on block
    * coverage
@@ -250,16 +216,8 @@ public final class MutationDetails implements Serializable {
     return getFirstIndex() - 1;
   }
 
-  /**
-   * Indicates if the mutation is within a finally block
-   *
-   * @return true if in finally block otherwise false
-   */
-  public boolean isInFinallyBlock() {
-    return this.isInFinallyBlock;
-  }
-  
-  private String defaultFilenameIfNotSupplued(String filename) {
+
+  private String defaultFilenameIfNotSupplied(String filename) {
     // the BuildVerifier should throw an error if classes are compiled 
     // without filename debug info, however classes may be generated
     // by annotation processors. These can be dealt with based on their

@@ -8,7 +8,6 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.BlockCoverage;
 import org.pitest.coverage.BlockLocation;
 import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MethodName;
 
 class BlockCoverageDataLoader extends DataLoader<BlockCoverage> {
 
@@ -29,7 +28,7 @@ class BlockCoverageDataLoader extends DataLoader<BlockCoverage> {
   protected BlockCoverage mapToData(final Map<String, Object> map) {
     final String method = (String) map.get(METHOD);
     final Location location = new Location(ClassName.fromString((String) map.get(CLASSNAME)),
-        MethodName.fromString(method.substring(0, method.indexOf(OPEN_PAREN))), method.substring(method.indexOf(OPEN_PAREN)));
+        method.substring(0, method.indexOf(OPEN_PAREN)), method.substring(method.indexOf(OPEN_PAREN)));
 
     final BlockLocation blockLocation = new BlockLocation(location, Integer.parseInt((String) map.get(NUMBER)),
         Integer.parseInt((String) map.get(FIRST_INSN)),Integer.parseInt((String) map.get(LAST_INSN)));

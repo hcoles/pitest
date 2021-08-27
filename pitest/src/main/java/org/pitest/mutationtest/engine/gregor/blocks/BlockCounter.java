@@ -4,10 +4,6 @@ public interface BlockCounter {
 
   void registerNewBlock();
 
-  void registerFinallyBlockStart();
-
-  void registerFinallyBlockEnd();
-
   void registerNewMethodStart();
 
 }

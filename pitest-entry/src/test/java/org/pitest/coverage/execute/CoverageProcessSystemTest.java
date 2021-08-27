@@ -25,7 +25,6 @@ import org.pitest.coverage.CoverageResult;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.mutationtest.execute.DefaultPITClassloader;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.process.LaunchOptions;
@@ -55,8 +54,6 @@ import static org.junit.Assert.assertTrue;
 
 @Category(SystemTest.class)
 public class CoverageProcessSystemTest {
-
-  private final MethodName foo = MethodName.fromString("foo");
 
   @Test
   public void shouldRecordSomeCoverage() throws Exception {
@@ -203,11 +200,11 @@ public class CoverageProcessSystemTest {
         .fromClass(ThrowsExceptionTestee.class);
 
     assertThat(coveredClasses).anyMatch(coverageFor(BlockLocation.blockLocation(
-        Location.location(throwsException, this.foo, "()V"), 0)));
+        Location.location(throwsException, "foo", "()V"), 0)));
 
         assertThat(coveredClasses).anyMatch(coverageFor(BlockLocation.blockLocation(
         Location.location(throwsException,
-            MethodName.fromString("throwsException"), "()V"), 0)));
+            "throwsException", "()V"), 0)));
 
   }
 
@@ -220,10 +217,10 @@ public class CoverageProcessSystemTest {
         .fromClass(ThrowsExceptionInFinallyBlockTestee.class);
 
     assertThat(coveredClasses).anyMatch(coverageFor(BlockLocation.blockLocation(
-        Location.location(clazz, this.foo, "()V"), 0)));
+        Location.location(clazz, "foo", "()V"), 0)));
 
         assertThat(coveredClasses).anyMatch(coverageFor(BlockLocation.blockLocation(
-        Location.location(clazz, this.foo, "()V"), 4)));
+        Location.location(clazz, "foo", "()V"), 4)));
   }
 
   @Test
@@ -235,7 +232,7 @@ public class CoverageProcessSystemTest {
         .fromClass(ThrowsExceptionFromLargeMethodTestee.class);
 
     assertThat(coveredClasses).anyMatch(coverageFor(BlockLocation.blockLocation(
-        Location.location(clazz, this.foo, "()I"), 0)));
+        Location.location(clazz, "foo", "()I"), 0)));
 
   }
 

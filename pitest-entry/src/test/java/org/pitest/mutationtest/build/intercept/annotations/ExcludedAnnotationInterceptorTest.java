@@ -64,7 +64,7 @@ public class ExcludedAnnotationInterceptorTest {
     final List<MutationDetails> mutations = this.mutator.findMutations(ClassName.fromClass(MethodAnnotatedWithGenerated.class));
     final Collection<MutationDetails> actual = runWithTestee(mutations, MethodAnnotatedWithGenerated.class);
     assertThat(actual).hasSize(1);
-    assertThat(actual.iterator().next().getId().getLocation().getMethodName().name()).isEqualTo("bar");
+    assertThat(actual.iterator().next().getId().getLocation().getMethodName()).isEqualTo("bar");
   }
 
   private Collection<MutationDetails> runWithTestee(

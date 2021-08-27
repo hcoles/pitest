@@ -38,15 +38,25 @@ public class FilterTester {
   private final ClassByteArraySource source = new ResourceFolderByteArraySource();
   private final MutationInterceptor testee;
   private final Collection<MethodMutatorFactory> mutators;
+  private final Collection<String> compilers;
 
-  public FilterTester(String path, MutationInterceptor testee, MethodMutatorFactory ... mutators) {
-    this(path, testee, Arrays.asList(mutators));
+  public FilterTester(String path, MutationInterceptor testee, Collection<String> compilers, MethodMutatorFactory ... mutators) {
+    this(path, testee, compilers, Arrays.asList(mutators));
   }
 
   public FilterTester(String path, MutationInterceptor testee, Collection<MethodMutatorFactory> mutators) {
+    this(path, testee, COMPILERS, mutators);
+  }
+
+  public FilterTester(String path, MutationInterceptor testee, MethodMutatorFactory ... mutators) {
+    this(path, testee, COMPILERS, Arrays.asList(mutators));
+  }
+
+  public FilterTester(String path, MutationInterceptor testee, Collection<String> compilers, Collection<MethodMutatorFactory> mutators) {
     this.mutators = mutators;
     this.testee = testee;
     this.path = path;
+    this.compilers = compilers;
   }
 
 
@@ -79,6 +89,15 @@ public class FilterTester {
       l.node = method.instruction(a.getInstructionIndex());
       return l;
     };
+  }
+
+  public void assertCombinedMutantExists(Predicate<MutationDetails> match, Class<?> clazz) {
+    Sample s = makeSampleForCurrentCompiler(clazz);
+    GregorMutater mutator = mutateFromClassLoader();
+    List<MutationDetails> mutations = mutator.findMutations(s.className);
+    Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
+
+    assertThat(actual).anyMatch(match.and( m -> m.getId().getIndexes().size() > 1));
   }
 
   public void assertLeavesNMutants(int n, String sample) {
@@ -122,6 +141,7 @@ public class FilterTester {
 
     softly.assertAll();
   }
+
 
   public void assertFiltersNoMutationsMatching(Predicate<MutationDetails> match, Class<?> clazz) {
     final Sample s = makeSampleForCurrentCompiler(clazz);
@@ -298,11 +318,11 @@ public class FilterTester {
       return Stream.empty();
 
     };
-    return COMPILERS.stream().flatMap(toPair).collect(Collectors.toList());
+    return compilers.stream().flatMap(toPair).collect(Collectors.toList());
   }
 
   private boolean atLeastOneSampleExists(String sample) {
-    for (final String compiler : COMPILERS) {
+    for (final String compiler : compilers) {
       final String clazz = makeClassName(sample, compiler);
       if (this.source.getBytes(clazz).isPresent()) {
         return true;

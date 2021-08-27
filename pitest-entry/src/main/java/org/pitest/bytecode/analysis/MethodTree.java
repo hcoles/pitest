@@ -9,7 +9,6 @@ import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MethodName;
 
 public class MethodTree {
 
@@ -27,7 +26,7 @@ public class MethodTree {
   }
 
   public Location asLocation() {
-    return Location.location(this.owner,MethodName.fromString(this.rawNode.name), this.rawNode.desc);
+    return Location.location(this.owner, this.rawNode.name, this.rawNode.desc);
   }
     
   /**

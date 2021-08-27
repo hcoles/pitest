@@ -2,12 +2,12 @@ package org.pitest.mutationtest.build.intercept.javafeatures;
 
 import java.util.Objects;
 
-public class LineMutatorPair {
+final class LineMutatorPair {
 
   private final int    lineNumber;
   private final String mutator;
 
-  public LineMutatorPair(final int lineNumber, final String mutator) {
+  LineMutatorPair(final int lineNumber, final String mutator) {
     this.lineNumber = lineNumber;
     this.mutator = mutator;
   }

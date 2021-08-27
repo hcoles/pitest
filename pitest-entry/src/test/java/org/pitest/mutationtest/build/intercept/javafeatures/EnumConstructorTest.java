@@ -28,7 +28,7 @@ public class EnumConstructorTest {
     }
 
     private Predicate<MutationDetails> inMethodNamed(String name) {
-        return m -> m.getMethod().name().equals(name);
+        return m -> m.getMethod().equals(name);
     }
 }
 

@@ -96,16 +96,6 @@ class ClassContext implements BlockCounter {
 
   }
 
-  @Override
-  public void registerFinallyBlockStart() {
-    this.blockCounter.registerFinallyBlockStart();
-  }
-
-  @Override
-  public void registerFinallyBlockEnd() {
-    this.blockCounter.registerFinallyBlockEnd();
-  }
-
   public int getCurrentBlock() {
     return this.blockCounter.getCurrentBlockThisMethod();
   }
@@ -113,10 +103,6 @@ class ClassContext implements BlockCounter {
   @Override
   public void registerNewMethodStart() {
     this.blockCounter.registerNewMethodStart();
-  }
-
-  public boolean isWithinFinallyBlock() {
-    return this.blockCounter.isWithinFinallyBlock();
   }
 
 }

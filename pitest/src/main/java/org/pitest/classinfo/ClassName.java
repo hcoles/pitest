@@ -30,6 +30,12 @@ public final class ClassName implements Comparable<ClassName>, Serializable {
 
   private static final ClassName OBJECT = new ClassName("java/lang/Object");
   private static final ClassName STRING = new ClassName("java/lang/String");
+  private static final ClassName INTEGER = new ClassName("java/lang/Integer");
+  private static final ClassName LIST = new ClassName("java/util/List");
+  private static final ClassName ARRAY_LIST = new ClassName("java/util/ArrayList");
+  private static final ClassName STREAM = new ClassName("java/util/stream/Stream");
+  private static final ClassName FUNCTION = new ClassName("java/util/function/Function");
+  private static final ClassName PREDICATE = new ClassName("java/util/function/Predicate");
 
   // always stored in java/lang/String "internal" format
   private final String        name;
@@ -49,6 +55,24 @@ public final class ClassName implements Comparable<ClassName>, Serializable {
     }
     if (name.equals(STRING.asInternalName())) {
       return STRING;
+    }
+    if (name.equals(INTEGER.asInternalName())) {
+      return INTEGER;
+    }
+    if (name.equals(LIST.asInternalName())) {
+      return LIST;
+    }
+    if (name.equals(ARRAY_LIST.asInternalName())) {
+      return ARRAY_LIST;
+    }
+    if (name.equals(STREAM.asInternalName())) {
+      return STREAM;
+    }
+    if (name.equals(FUNCTION.asInternalName())) {
+      return FUNCTION;
+    }
+    if (name.equals(PREDICATE.asInternalName())) {
+      return PREDICATE;
     }
     return new ClassName(name);
   }

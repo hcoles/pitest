@@ -69,7 +69,7 @@ public class RecordFilterTest {
     }
 
     private Predicate<MutationDetails> inMethodCalled(String name) {
-        return m -> m.getMethod().name().equals(name);
+        return m -> m.getMethod().equals(name);
     }
 
 }

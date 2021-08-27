@@ -142,7 +142,7 @@ class MutateEveryThing extends MethodVisitor {
   @Override
   public void visitTryCatchBlock(Label start, Label end, Label handler,
       String type) {
-    mutate("visitTryCatchBlock");
+    // Can't mutate try catch blocks as they are not modelled as an instruction in ASM
     super.visitTryCatchBlock(start, end, handler, type);
   }
 

@@ -15,7 +15,6 @@
 package org.pitest.mutationtest.engine.gregor;
 
 import org.junit.Test;
-import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
@@ -270,52 +269,6 @@ public class TestGregorMutater extends MutatorTestBase {
     assertTwoMutationsInDifferentBlocks(actualDetails);
   }
 
-  @Test
-  public void shouldNotRecordMutationsAsInFinallyBlockWhenTheyAreNot() {
-    createTesteeWith(Mutator.byName("INCREMENTS"));
-    final List<MutationDetails> actualDetails = findMutationsFor(HasExceptionBlock.class);
-    assertFalse(actualDetails.get(0).isInFinallyBlock());
-    assertFalse(actualDetails.get(1).isInFinallyBlock());
-  }
-
-  public static class HasFinallyBlock {
-    public void foo(int i) {
-      try {
-        System.out.println("foo");
-      } finally {
-        i++;
-      }
-    }
-  }
-
-  @Test
-  public void shouldMarkMutationsWithinFinallyBlocks() {
-    createTesteeWith(Mutator.byName("INCREMENTS"));
-    final List<MutationDetails> actualDetails = findMutationsFor(HasFinallyBlock.class);
-    assertEquals(1, FCollection.filter(actualDetails, isInFinallyBlock())
-        .size());
-  }
-
-  public static class HasFinallyBlockAndExceptionHandler {
-    public void foo(int i) {
-      try {
-        System.out.println("foo");
-      } catch (final Exception x) {
-        System.out.println("bar");
-      } finally {
-        i++;
-      }
-    }
-  }
-
-  @Test
-  public void shouldMarkMutationsWithinFinallyBlocksWhenExceptionHandlerAlsoPresent() {
-    createTesteeWith(Mutator.byName("INCREMENTS"));
-    final List<MutationDetails> actualDetails = findMutationsFor(HasFinallyBlockAndExceptionHandler.class);
-    assertEquals(1, FCollection.filter(actualDetails, isInFinallyBlock())
-        .size());
-  }
-
   public static class HasTwoMutableMethods {
     public int a() {
       return 1;
@@ -348,10 +301,6 @@ public class TestGregorMutater extends MutatorTestBase {
     assertThat(actualDetails).isEmpty();
   }
 
-
-  private static Predicate<MutationDetails> isInFinallyBlock() {
-    return a -> a.isInFinallyBlock();
-  }
 
   private void assertTwoMutationsInDifferentBlocks(
       final List<MutationDetails> actualDetails) {
