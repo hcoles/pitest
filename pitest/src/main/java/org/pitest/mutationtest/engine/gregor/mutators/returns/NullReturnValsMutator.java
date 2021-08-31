@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.engine.gregor.mutators;
+package org.pitest.mutationtest.engine.gregor.mutators.returns;
 
 import java.util.Collections;
 import java.util.Map;
@@ -23,7 +23,7 @@ import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
  */
 public enum NullReturnValsMutator implements MethodMutatorFactory {
 
-  NULL_RETURN_VALUES;
+  NULL_RETURNS;
 
   @Override
   public MethodVisitor create(final MutationContext context,

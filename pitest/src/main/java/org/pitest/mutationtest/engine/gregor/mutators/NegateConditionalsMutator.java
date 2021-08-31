@@ -26,7 +26,7 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
 
 public enum NegateConditionalsMutator implements MethodMutatorFactory {
 
-  NEGATE_CONDITIONALS_MUTATOR;
+  NEGATE_CONDITIONALS;
 
   @Override
   public MethodVisitor create(final MutationContext context,

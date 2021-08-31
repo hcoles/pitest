@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.EmptyObjectReturnValsMutator;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -17,7 +18,7 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyReturnVals() {
-    createTesteeWith(EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES);
+    createTesteeWith(EmptyObjectReturnValsMutator.EMPTY_RETURNS);
   }
 
   @Test

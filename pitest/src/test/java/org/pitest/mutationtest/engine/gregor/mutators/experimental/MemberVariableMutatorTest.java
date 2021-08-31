@@ -41,7 +41,7 @@ public class MemberVariableMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldProvideAMeaningfulName() {
-    assertEquals("EXPERIMENTAL_MEMBER_VARIABLE_MUTATOR",
+    assertEquals("EXPERIMENTAL_MEMBER_VARIABLE",
         new MemberVariableMutator().getName());
   }
 

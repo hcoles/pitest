@@ -4,9 +4,9 @@ import org.junit.Test;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.intercept.javafeatures.FilterTester;
-import org.pitest.mutationtest.engine.gregor.mutators.EmptyObjectReturnValsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.NullReturnValsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.PrimitiveReturnsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.EmptyObjectReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.PrimitiveReturnsMutator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,18 +15,18 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN;
-import static org.pitest.mutationtest.engine.gregor.mutators.BooleanTrueReturnValsMutator.BOOLEAN_TRUE_RETURN;
+import static org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanFalseReturnValsMutator.FALSE_RETURNS;
+import static org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanTrueReturnValsMutator.TRUE_RETURNS;
 
 public class EquivalentReturnMutationFilterTest {
 
   MutationInterceptor testee = new EquivalentReturnMutationFilter().createInterceptor(null);
 
-  FilterTester verifier = new FilterTester("", this.testee, PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR
-                                                     , EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES
-                                                     , NullReturnValsMutator.NULL_RETURN_VALUES
-                                                     , BOOLEAN_FALSE_RETURN
-                                                     , BOOLEAN_TRUE_RETURN);
+  FilterTester verifier = new FilterTester("", this.testee, PrimitiveReturnsMutator.PRIMITIVE_RETURNS
+                                                     , EmptyObjectReturnValsMutator.EMPTY_RETURNS
+                                                     , NullReturnValsMutator.NULL_RETURNS
+                                                     , FALSE_RETURNS
+                                                     , TRUE_RETURNS);
 
   @Test
   public void shouldDeclareTypeAsFilter() {
@@ -55,19 +55,19 @@ public class EquivalentReturnMutationFilterTest {
   
   @Test
   public void filtersEquivalentPrimitiveBooleanMutants() {
-    this.verifier.assertFiltersMutationsFromMutator(BOOLEAN_FALSE_RETURN.getGloballyUniqueId()
+    this.verifier.assertFiltersMutationsFromMutator(FALSE_RETURNS.getGloballyUniqueId()
         , AlreadyReturnsFalse.class);
   }
 
   @Test
   public void filtersEquivalentPrimitiveBooleanTrueMutants() {
-    this.verifier.assertFiltersMutationsFromMutator(BOOLEAN_TRUE_RETURN.getGloballyUniqueId()
+    this.verifier.assertFiltersMutationsFromMutator(TRUE_RETURNS.getGloballyUniqueId()
         , ReturnsTrue.class);
   }
   
   @Test
   public void filtersEquivalentPrimitiveBooleanTrueMutantsInTryCatch() {
-    this.verifier.assertFiltersMutationsFromMutator(BOOLEAN_TRUE_RETURN.getGloballyUniqueId()
+    this.verifier.assertFiltersMutationsFromMutator(TRUE_RETURNS.getGloballyUniqueId()
         , ReturnsTrueInTryCatch.class);
   }
 
@@ -93,7 +93,7 @@ public class EquivalentReturnMutationFilterTest {
 
   @Test
   public void filtersEquivalentBoxedBooleanTrueMutants() {
-    this.verifier.assertFiltersMutationsFromMutator(BOOLEAN_TRUE_RETURN.getGloballyUniqueId()
+    this.verifier.assertFiltersMutationsFromMutator(TRUE_RETURNS.getGloballyUniqueId()
         , AlreadyReturnsBoxedTrue.class);
   }
 

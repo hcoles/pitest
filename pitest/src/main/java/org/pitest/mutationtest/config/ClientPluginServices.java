@@ -18,7 +18,6 @@ public class ClientPluginServices {
     return new ClientPluginServices(IsolationUtils.getContextClassLoader());
   }
 
-
   Collection<? extends TestPluginFactory> findTestFrameworkPlugins() {
     return ServiceLoader.load(TestPluginFactory.class, this.loader);
   }

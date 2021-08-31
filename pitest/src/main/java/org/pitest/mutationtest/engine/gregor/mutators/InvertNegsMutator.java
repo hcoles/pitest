@@ -28,7 +28,7 @@ import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
 
 public enum InvertNegsMutator implements MethodMutatorFactory {
 
-  INVERT_NEGS_MUTATOR;
+  INVERT_NEGS;
 
   @Override
   public MethodVisitor create(final MutationContext context,

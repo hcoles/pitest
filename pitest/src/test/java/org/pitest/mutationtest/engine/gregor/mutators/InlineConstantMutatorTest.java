@@ -42,7 +42,7 @@ public class InlineConstantMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldProvideAMeaningfulName() {
-    assertEquals("INLINE_CONSTANT_MUTATOR",
+    assertEquals("INLINE_CONSTS",
         new InlineConstantMutator().getName());
   }
 

@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.engine.gregor.mutators;
+package org.pitest.mutationtest.engine.gregor.mutators.returns;
 
 import static org.objectweb.asm.Opcodes.ARETURN;
 import static org.objectweb.asm.Opcodes.IRETURN;
@@ -18,7 +18,7 @@ import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
 
 public enum BooleanTrueReturnValsMutator implements MethodMutatorFactory {
 
-  BOOLEAN_TRUE_RETURN;
+  TRUE_RETURNS;
 
   @Override
   public MethodVisitor create(final MutationContext context,

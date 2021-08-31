@@ -9,12 +9,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.PrimitiveReturnsMutator;
 
 public class PrimitiveReturnMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyReturnVals() {
-    createTesteeWith(PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR);
+    createTesteeWith(PrimitiveReturnsMutator.PRIMITIVE_RETURNS);
   }
 
   @Test

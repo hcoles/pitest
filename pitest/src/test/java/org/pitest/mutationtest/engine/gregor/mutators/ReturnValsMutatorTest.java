@@ -27,7 +27,7 @@ public class ReturnValsMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyReturnVals() {
-    createTesteeWith(ReturnValsMutator.RETURN_VALS_MUTATOR);
+    createTesteeWith(ReturnValsMutator.RETURN_VALS);
   }
 
   private static class IReturn implements Callable<String> {

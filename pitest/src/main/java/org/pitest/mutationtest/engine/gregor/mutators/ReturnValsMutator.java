@@ -34,9 +34,10 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
 
+@Deprecated
 public enum ReturnValsMutator implements MethodMutatorFactory {
 
-  RETURN_VALS_MUTATOR;
+  RETURN_VALS;
 
   @Override
   public MethodVisitor create(final MutationContext context,

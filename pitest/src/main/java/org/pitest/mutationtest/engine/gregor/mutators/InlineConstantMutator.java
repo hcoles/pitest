@@ -298,7 +298,7 @@ public class InlineConstantMutator implements MethodMutatorFactory {
 
   @Override
   public String toString() {
-    return "INLINE_CONSTANT_MUTATOR";
+    return "INLINE_CONSTS";
   }
 
   @Override

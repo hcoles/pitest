@@ -14,7 +14,7 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
  */
 public enum AOD1Mutator implements MethodMutatorFactory  {
 
-    AOD_1_MUTATOR;
+    AOD1;
 
     public MethodVisitor create(final MutationContext context,
                                 final MethodInfo methodInfo, final MethodVisitor methodVisitor)  {

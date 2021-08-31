@@ -59,7 +59,6 @@ class MethodMutationContext implements MutationContext, InstructionCounter {
   @Override
   public void registerNewBlock() {
     this.classContext.registerNewBlock();
-
   }
 
   @Override

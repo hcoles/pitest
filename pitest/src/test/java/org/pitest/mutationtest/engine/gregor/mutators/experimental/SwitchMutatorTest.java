@@ -33,7 +33,7 @@ public class SwitchMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldProvideAMeaningfulName() {
-    assertEquals("EXPERIMENTAL_SWITCH_MUTATOR", new SwitchMutator().getName());
+    assertEquals("EXPERIMENTAL_SWITCH", new SwitchMutator().getName());
   }
 
   private static class HasIntSwitchWithDefault implements Callable<Integer> {

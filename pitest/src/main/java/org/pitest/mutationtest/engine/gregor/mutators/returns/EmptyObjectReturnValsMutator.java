@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.engine.gregor.mutators;
+package org.pitest.mutationtest.engine.gregor.mutators.returns;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,7 +24,7 @@ import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
  */
 public enum EmptyObjectReturnValsMutator implements MethodMutatorFactory {
 
-  EMPTY_RETURN_VALUES;
+  EMPTY_RETURNS;
 
   @Override
   public MethodVisitor create(final MutationContext context,

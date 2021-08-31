@@ -8,16 +8,23 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### current snapshot
+### current snapshot (1.7.0)
 
-TBC - release version will be 1.7.0 due to internal changes that may 
-break some 3rd party plugins.
+* #923 Internal interface changes
+* #930 Pluggable mutators
+
+Due to internal changes some third party plugins maybe incompatible with this release.
+
+All history files should be deleted before upgrading.
+
+The names of the remove conditionals mutators have changed slightly as a result of #930 and
+may need to be updated in build scripts if explicitly activated.
 
 ### 1.6.9
 
-*    #922 Filter equivalent stream.empty mutants in flatMap calls
-*    #921 Guarantee order of mutation operators
-*    #919 Filter junk mutations in java records
+* #922 Filter equivalent stream.empty mutants in flatMap calls
+* #921 Guarantee order of mutation operators
+* #919 Filter junk mutations in java records
 
 ### 1.6.8
 

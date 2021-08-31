@@ -25,7 +25,7 @@ public class NegateConditionalsMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyConditionals() {
-    createTesteeWith(NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR);
+    createTesteeWith(NegateConditionalsMutator.NEGATE_CONDITIONALS);
   }
 
   private static int getZeroButPreventInlining() {

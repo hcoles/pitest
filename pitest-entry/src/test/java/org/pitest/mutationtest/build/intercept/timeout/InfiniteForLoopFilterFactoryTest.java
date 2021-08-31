@@ -28,7 +28,7 @@ public class InfiniteForLoopFilterFactoryTest extends InfiniteLoopBaseTest {
   
   @Test
   public void shouldFilterMutationsThatRemoveForLoopIncrement() {
-    GregorMutater mutator = createMutator(RemoveIncrementsMutator.REMOVE_INCREMENTS_MUTATOR);
+    GregorMutater mutator = createMutator(RemoveIncrementsMutator.REMOVE_INCREMENTS);
     List<MutationDetails> mutations = mutator.findMutations(ClassName.fromClass(MutateMyForLoop.class));
     assertThat(mutations).hasSize(2);
     
@@ -41,7 +41,7 @@ public class InfiniteForLoopFilterFactoryTest extends InfiniteLoopBaseTest {
   
   @Test
   public void shouldNotFilterMutationsInMethodsThatAppearToAlreadyHaveInfiniteLoops() {
-    GregorMutater mutator = createMutator(RemoveIncrementsMutator.REMOVE_INCREMENTS_MUTATOR);
+    GregorMutater mutator = createMutator(RemoveIncrementsMutator.REMOVE_INCREMENTS);
     // our analysis incorrectly identifies some loops as infinite - must skip these
     List<MutationDetails> mutations = mutator.findMutations(ClassName.fromClass(DontFilterMyAlreadyInfiniteLoop.class));
     assertThat(mutations).hasSize(1);

@@ -24,7 +24,7 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
 
 public enum ConstructorCallMutator implements MethodMutatorFactory {
 
-  CONSTRUCTOR_CALL_MUTATOR;
+  CONSTRUCTOR_CALLS;
 
   @Override
   public MethodVisitor create(final MutationContext context,

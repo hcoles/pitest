@@ -25,7 +25,7 @@ public class MathMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyMathFunctions() {
-    createTesteeWith(MathMutator.MATH_MUTATOR);
+    createTesteeWith(MathMutator.MATH);
   }
 
   private static class HasIAdd implements Callable<String> {

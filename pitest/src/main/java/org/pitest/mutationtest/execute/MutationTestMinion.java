@@ -131,7 +131,7 @@ public class MutationTestMinion {
 
       final Reporter reporter = new DefaultReporter(s.getOutputStream());
       addMemoryWatchDog(reporter);
-      final ClientPluginServices plugins = new ClientPluginServices(IsolationUtils.getContextClassLoader());
+      final ClientPluginServices plugins = ClientPluginServices.makeForContextLoader();
       final MinionSettings factory = new MinionSettings(plugins);
       final MutationTestMinion instance = new MutationTestMinion(factory, dis, reporter);
       instance.run();

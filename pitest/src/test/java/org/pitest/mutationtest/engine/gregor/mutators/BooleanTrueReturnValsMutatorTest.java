@@ -5,12 +5,13 @@ import java.util.concurrent.Callable;
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanTrueReturnValsMutator;
 
 public class BooleanTrueReturnValsMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyReturnVals() {
-    createTesteeWith(BooleanTrueReturnValsMutator.BOOLEAN_TRUE_RETURN);
+    createTesteeWith(BooleanTrueReturnValsMutator.TRUE_RETURNS);
   }
 
   @Test

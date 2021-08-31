@@ -36,7 +36,7 @@ public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
   @Before
   public void setupEngineToRemoveVoidMethods() {
     createTesteeWith(mutateOnlyCallMethod(),
-        NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+        NonVoidMethodCallMutator.NON_VOID_METHOD_CALLS);
   }
 
   @Test
@@ -246,7 +246,7 @@ public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
   @Ignore("functionality moving to filter")
   public void shouldNotGenerateRunErrorsWhenMutatingLoggers() throws Exception {
     createTesteeWith(i -> true,
-        NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+        NonVoidMethodCallMutator.NON_VOID_METHOD_CALLS);
     assertTrue(this.findMutationsFor(HasLogger.class).isEmpty());
 
   }

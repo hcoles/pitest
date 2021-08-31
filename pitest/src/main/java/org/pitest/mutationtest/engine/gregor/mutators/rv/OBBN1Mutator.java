@@ -17,7 +17,7 @@ import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
  */
 public enum OBBN1Mutator implements MethodMutatorFactory {
 
-    OBBN_1_MUTATOR;
+    OBBN1;
 
     public MethodVisitor create(final MutationContext context,
                                 final MethodInfo methodInfo, final MethodVisitor methodVisitor) {

@@ -26,34 +26,34 @@ public class ForEachFilterTest {
 
   @Test
   public void filtersMutationsToForEachLoopJumps() {
-    this.verifier = new FilterTester(PATH, this.testee, NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR);
+    this.verifier = new FilterTester(PATH, this.testee, NegateConditionalsMutator.NEGATE_CONDITIONALS);
     this.verifier.assertFiltersNMutationFromSample(1, "HasForEachLoop");
   }
 
   @Test
   public void filtersMutationsToHasNextAndNext() {
-    this.verifier = new FilterTester(PATH, this.testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+    this.verifier = new FilterTester(PATH, this.testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALLS);
     // can mutate calls to iterator, hasNext and next
     this.verifier.assertFiltersNMutationFromSample(3, "HasForEachLoop");
   }
 
   @Test
   public void filtersMutationsToForEachOverField() {
-    this.verifier = new FilterTester(PATH, this.testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+    this.verifier = new FilterTester(PATH, this.testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALLS);
     // can mutate calls to iterator, hasNext and next
     this.verifier.assertFiltersNMutationFromClass(3, HasForEachLoopOverField.class);
   }
 
   @Test
   public void filtersMutationsToForEachOverMethodReturn() {
-    this.verifier = new FilterTester(PATH, this.testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+    this.verifier = new FilterTester(PATH, this.testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALLS);
     // can mutate calls to iterator, hasNext and next
     this.verifier.assertFiltersNMutationFromClass(3, HasForEachLoopOverMethodReturn.class);
   }
 
   @Test
   public void filtersMutationsToForEachOverCollections() {
-    this.verifier = new FilterTester(PATH, this.testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+    this.verifier = new FilterTester(PATH, this.testee, NonVoidMethodCallMutator.NON_VOID_METHOD_CALLS);
     // can mutate calls to iterator, hasNext and next
     this.verifier.assertFiltersNMutationFromClass(3, HasForEachLoopOverCollection.class);
   }
@@ -67,7 +67,7 @@ public class ForEachFilterTest {
 
   @Test
   public void doesNotFilterMutationsToIndexedForLoopJumps() {
-    this.verifier = new FilterTester("forloops/{0}_{1}", this.testee, NegateConditionalsMutator.NEGATE_CONDITIONALS_MUTATOR);
+    this.verifier = new FilterTester("forloops/{0}_{1}", this.testee, NegateConditionalsMutator.NEGATE_CONDITIONALS);
     this.verifier.assertFiltersNMutationFromSample(0, "HasAForLoop");
   }
 

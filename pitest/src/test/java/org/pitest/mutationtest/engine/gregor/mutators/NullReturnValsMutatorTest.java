@@ -9,12 +9,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator;
 
 public class NullReturnValsMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyReturnVals() {
-    createTesteeWith(NullReturnValsMutator.NULL_RETURN_VALUES);
+    createTesteeWith(NullReturnValsMutator.NULL_RETURNS);
   }
 
   @Test

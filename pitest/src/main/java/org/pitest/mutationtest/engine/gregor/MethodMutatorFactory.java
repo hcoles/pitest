@@ -46,6 +46,9 @@ public interface MethodMutatorFactory {
    * <code>MethodVisitor</code> created by this
    * <code>MethodMutatorFactory</code>.
    *
+   * The name is also the key by which mutators are activated and deactivated.
+   * More than one MethodMutatorFactory instance might have the same name so
+   * they can be activated together. Their globalIds must however be unique.
    *
    * @return a human readable string representation for end-user report
    *         generation.
