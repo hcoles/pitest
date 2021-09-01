@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-package org.pitest.mutationtest.engine.gregor.mutators;
+package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
 import org.objectweb.asm.MethodVisitor;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
@@ -47,7 +47,7 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
  */
 public enum ArgumentPropagationMutator implements MethodMutatorFactory {
 
-  ARGUMENT_PROPAGATION_MUTATOR;
+  EXPERIMENTAL_ARGUMENT_PROPAGATION;
 
   @Override
   public MethodVisitor create(final MutationContext context,

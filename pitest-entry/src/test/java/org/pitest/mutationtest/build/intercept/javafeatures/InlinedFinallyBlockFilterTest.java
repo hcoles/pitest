@@ -9,8 +9,8 @@ import java.util.function.Predicate;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
-import static org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator.INCREMENTS_MUTATOR;
-import static org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR;
+import static org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator.INCREMENTS;
+import static org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator.VOID_METHOD_CALLS;
 
 public class InlinedFinallyBlockFilterTest {
 
@@ -20,7 +20,7 @@ public class InlinedFinallyBlockFilterTest {
             // omit aspectJ. Filter doesn't work correctly with it, but slack is picked up by the
             // try with resources filter
             asList("javac", "javac11", "ecj"),
-            VOID_METHOD_CALL_MUTATOR, INCREMENTS_MUTATOR);
+            VOID_METHOD_CALLS, INCREMENTS);
 
     @Test
     public void shouldDeclareTypeAsFilter() {
@@ -35,19 +35,19 @@ public class InlinedFinallyBlockFilterTest {
     @Test
     public void combinesMutationsInSimpleFinallyBlocks() {
         verifier.assertFiltersNMutationFromClass(1, HasFinallyBlock.class);
-        verifier.assertCombinedMutantExists(forMutator(INCREMENTS_MUTATOR), HasFinallyBlock.class);
+        verifier.assertCombinedMutantExists(forMutator(INCREMENTS), HasFinallyBlock.class);
     }
 
     @Test
     public void combinesMutationsInFinallyBlocksWithExceptionHandlers() {
         verifier.assertFiltersNMutationFromClass(2, HasFinallyBlockAndExceptionHandler.class);
-        verifier.assertCombinedMutantExists(forMutator(INCREMENTS_MUTATOR), HasFinallyBlockAndExceptionHandler.class);
+        verifier.assertCombinedMutantExists(forMutator(INCREMENTS), HasFinallyBlockAndExceptionHandler.class);
     }
 
     @Test
     public void combinesSimilarMutationsInFinallyBlocksWhenOnDifferentLines() {
         verifier.assertFiltersNMutationFromClass(2, HasSimilarMutationsFinallyBlock.class);
-        verifier.assertCombinedMutantExists(forMutator(INCREMENTS_MUTATOR), HasSimilarMutationsFinallyBlock.class);
+        verifier.assertCombinedMutantExists(forMutator(INCREMENTS), HasSimilarMutationsFinallyBlock.class);
     }
 
     @Test

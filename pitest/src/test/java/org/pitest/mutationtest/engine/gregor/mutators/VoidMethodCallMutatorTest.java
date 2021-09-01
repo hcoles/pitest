@@ -31,7 +31,7 @@ public class VoidMethodCallMutatorTest extends MutatorTestBase {
   @Before
   public void setupEngineToRemoveVoidMethods() {
     createTesteeWith(mutateOnlyCallMethod(),
-        VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR);
+        VoidMethodCallMutator.VOID_METHOD_CALLS);
   }
 
   static class HasVoidMethodCall implements Callable<String> {

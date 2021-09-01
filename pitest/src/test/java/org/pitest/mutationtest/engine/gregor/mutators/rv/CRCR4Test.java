@@ -19,7 +19,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.CRCR4Mutator;
 
 import java.util.concurrent.Callable;
 
@@ -27,7 +26,7 @@ public class CRCR4Test extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyInlineConstants() {
-    createTesteeWith(CRCR4Mutator.CRCR_4_MUTATOR);
+    createTesteeWith(CRCR4Mutator.CRCR4);
   }
 
   private static class HasIntegerICONST0 implements Callable<Integer> {

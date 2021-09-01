@@ -4,13 +4,13 @@ import org.junit.Test;
 import org.pitest.mutationtest.engine.MutationDetails;
 import java.util.function.Predicate;
 
-import static org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR;
+import static org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator.VOID_METHOD_CALLS;
 
 public class EnumConstructorTest {
 
     EnumConstructorFilter testee = new EnumConstructorFilter();
 
-    FilterTester verifier = new FilterTester("unused", this.testee, VOID_METHOD_CALL_MUTATOR);
+    FilterTester verifier = new FilterTester("unused", this.testee, VOID_METHOD_CALLS);
 
     @Test
     public void filtersMutantsFromEnumConstructor() {

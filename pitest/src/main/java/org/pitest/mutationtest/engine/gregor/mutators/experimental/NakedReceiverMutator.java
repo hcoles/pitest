@@ -47,7 +47,7 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
  */
 public enum NakedReceiverMutator implements MethodMutatorFactory {
 
-  NAKED_RECEIVER;
+  EXPERIMENTAL_NAKED_RECEIVER;
 
   @Override
   public MethodVisitor create(final MutationContext context,

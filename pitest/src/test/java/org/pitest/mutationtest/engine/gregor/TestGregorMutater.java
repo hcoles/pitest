@@ -25,11 +25,9 @@ import org.pitest.util.ResourceFolderByteArraySource;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class TestGregorMutater extends MutatorTestBase {
@@ -49,10 +47,10 @@ public class TestGregorMutater extends MutatorTestBase {
   @Test
   public void shouldFindMutationsFromAllSuppliedMutators() throws Exception {
 
-    createTesteeWith(MathMutator.MATH_MUTATOR,
-        ReturnValsMutator.RETURN_VALS_MUTATOR,
-        InvertNegsMutator.INVERT_NEGS_MUTATOR,
-        IncrementsMutator.INCREMENTS_MUTATOR);
+    createTesteeWith(MathMutator.MATH,
+        ReturnValsMutator.RETURN_VALS,
+        InvertNegsMutator.INVERT_NEGS,
+        IncrementsMutator.INCREMENTS);
 
     final List<MutationDetails> actualDetails = findMutationsFor(HasMultipleMutations.class);
 

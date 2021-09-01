@@ -1,0 +1,6 @@
+org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutatorGroup
+org.pitest.mutationtest.engine.gregor.mutators.returns.ReturnsMutatorGroup
+org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutatorGroup
+org.pitest.mutationtest.engine.gregor.mutators.rv.RVMutatorGroups
+
+org.pitest.mutationtest.engine.gregor.config.StandardMutatorGroups

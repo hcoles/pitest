@@ -12,7 +12,7 @@ import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 
 public enum BigIntegerMutator implements MethodMutatorFactory {
-  INSTANCE;
+  EXPERIMENTAL_BIG_INTEGER;
 
   @Override
   public MethodVisitor create(MutationContext context, MethodInfo info, MethodVisitor visitor) {
@@ -26,7 +26,7 @@ public enum BigIntegerMutator implements MethodMutatorFactory {
 
   @Override
   public String toString() {
-    return "EXPERIMENTAL_BIGINTEGER_MUTATOR";
+    return "EXPERIMENTAL_BIG_INTEGER";
   }
 
   @Override

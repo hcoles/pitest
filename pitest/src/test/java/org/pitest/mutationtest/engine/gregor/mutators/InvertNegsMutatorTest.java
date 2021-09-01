@@ -30,7 +30,7 @@ public class InvertNegsMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyNegs() {
-    createTesteeWith(InvertNegsMutator.INVERT_NEGS_MUTATOR);
+    createTesteeWith(InvertNegsMutator.INVERT_NEGS);
   }
 
   private static class NothingToMutate {

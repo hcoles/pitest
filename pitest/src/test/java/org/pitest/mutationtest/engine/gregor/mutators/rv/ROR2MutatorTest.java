@@ -18,7 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.ROR2Mutator;
 
 import java.util.concurrent.Callable;
 
@@ -26,7 +25,7 @@ public class ROR2MutatorTest extends MutatorTestBase {
 
     @Before
     public void setupEngineToMutateOnlyConditionals() {
-        createTesteeWith(ROR2Mutator.ROR_2_MUTATOR);
+        createTesteeWith(ROR2Mutator.ROR2);
     }
 
     private static int getZeroButPreventInlining() {

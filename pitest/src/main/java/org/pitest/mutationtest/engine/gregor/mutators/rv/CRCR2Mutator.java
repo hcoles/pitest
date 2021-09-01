@@ -11,7 +11,7 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
  */
 public enum CRCR2Mutator implements MethodMutatorFactory {
 
-    CRCR_2_MUTATOR;
+    CRCR2;
 
     private final class CRCRVisitor1 extends AbstractCRCRVisitor {
 

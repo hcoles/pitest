@@ -39,7 +39,7 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
     this.replaceWith = rc;
   }
 
-  public static Iterable<MethodMutatorFactory> makeMutators() {
+  public static Iterable<MethodMutatorFactory> factory() {
     final List<MethodMutatorFactory> variations = new ArrayList<>();
     final Choice[] allChoices = { Choice.EQUAL, Choice.ORDER };
     final boolean[] arrWith = { true, false };
@@ -68,7 +68,11 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
   @Override
   public String getName() {
     return "REMOVE_CONDITIONALS_" + this.kind + "_"
-        + (this.replaceWith ? "IF" : "ELSE") + "_MUTATOR";
+        + (this.replaceWith ? "IF" : "ELSE");
+  }
+
+  public String toString() {
+    return getName();
   }
 
   private final class RemoveConditionalMethodVisitor extends MethodVisitor {

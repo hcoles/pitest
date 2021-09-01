@@ -18,7 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.UOI2Mutator;
 
 import java.util.concurrent.Callable;
 
@@ -26,7 +25,7 @@ public class UOI2MutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyMathFunctions() {
-    createTesteeWith(mutateOnlyCallMethod(), UOI2Mutator.UOI_2_MUTATOR);
+    createTesteeWith(mutateOnlyCallMethod(), UOI2Mutator.UOI2);
   }
 
   private static class HasILoad implements Callable<String> {

@@ -5,7 +5,7 @@ import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.intercept.javafeatures.FilterTester;
 import org.pitest.mutationtest.engine.gregor.mutators.NullMutateEverything;
-import org.pitest.mutationtest.engine.gregor.mutators.NullReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -16,7 +16,7 @@ public class NullFlatmapTest {
 
     MutationInterceptor testee = new NullFlatMapFilterFactory().createInterceptor(null);
 
-    FilterTester verifier = new FilterTester("", this.testee, NullReturnValsMutator.NULL_RETURN_VALUES,
+    FilterTester verifier = new FilterTester("", this.testee, NullReturnValsMutator.NULL_RETURNS,
             new NullMutateEverything());
 
     @Test

@@ -14,7 +14,7 @@ import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.gregor.mutators.NullReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator;
 import org.pitest.sequence.Context;
 import org.pitest.sequence.Match;
 import org.pitest.sequence.QueryParams;
@@ -97,7 +97,7 @@ public class NullFlatMapFilter implements MutationInterceptor {
     }
 
     private boolean isStreamEmptyMutantWithOnlyFlatMapCalls(MutationDetails mutationDetails) {
-        if (!mutationDetails.getMutator().equals(NullReturnValsMutator.NULL_RETURN_VALUES.getGloballyUniqueId())) {
+        if (!mutationDetails.getMutator().equals(NullReturnValsMutator.NULL_RETURNS.getGloballyUniqueId())) {
             return false;
         }
 

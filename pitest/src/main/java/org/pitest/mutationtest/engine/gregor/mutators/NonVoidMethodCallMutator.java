@@ -24,7 +24,7 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
 
 public enum NonVoidMethodCallMutator implements MethodMutatorFactory {
 
-  NON_VOID_METHOD_CALL_MUTATOR;
+  NON_VOID_METHOD_CALLS;
 
   @Override
   public MethodVisitor create(final MutationContext context,

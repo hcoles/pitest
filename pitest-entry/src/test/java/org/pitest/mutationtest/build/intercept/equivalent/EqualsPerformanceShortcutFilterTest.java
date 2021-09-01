@@ -40,7 +40,7 @@ public class EqualsPerformanceShortcutFilterTest {
   @Test
   public void shouldNotFilterGeneralMutantsInEqualMethods() {
     final GregorMutater mutator = createMutator(
-        ReturnValsMutator.RETURN_VALS_MUTATOR);
+        ReturnValsMutator.RETURN_VALS);
     final List<MutationDetails> mutations = mutator
         .findMutations(ClassName.fromClass(HasNonShortCutEquals.class));
     assertThat(mutations).hasSize(1);

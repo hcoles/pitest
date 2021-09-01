@@ -1,8 +1,5 @@
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.pitest.bytecode.ASMVersion;
@@ -10,6 +7,9 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Remove switch statements. We get an array of labels to jump to, plus a
@@ -27,7 +27,7 @@ public class RemoveSwitchMutator implements MethodMutatorFactory {
     this.key = i;
   }
 
-  public static Iterable<MethodMutatorFactory> makeMutators() {
+  static List<MethodMutatorFactory> makeMutators() {
     final List<MethodMutatorFactory> variations = new ArrayList<>();
     for (int i = GENERATE_FROM_INCLUDING; i != GENERATE_UPTO_EXCLUDING; i++) {
       variations.add(new RemoveSwitchMutator(i));

@@ -17,7 +17,7 @@ public class AvoidForLoopCounterTest {
 
   AvoidForLoopCounterFilter testee = new AvoidForLoopCounterFilter();
   private static final String             PATH      = "forloops/{0}_{1}";
-  FilterTester verifier = new FilterTester(PATH, this.testee, IncrementsMutator.INCREMENTS_MUTATOR);
+  FilterTester verifier = new FilterTester(PATH, this.testee, IncrementsMutator.INCREMENTS);
 
 
   @Test

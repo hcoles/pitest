@@ -13,7 +13,7 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
  */
 public enum UOI3Mutator implements MethodMutatorFactory {
 
-    UOI_3_MUTATOR;
+    UOI3;
 
     public MethodVisitor create(final MutationContext context, final MethodInfo methodInfo,
                                 final MethodVisitor methodVisitor) {

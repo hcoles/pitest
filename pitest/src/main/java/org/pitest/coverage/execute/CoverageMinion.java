@@ -31,7 +31,6 @@ import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.execute.FindTestUnits;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Glob;
-import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
 import org.pitest.util.SafeDataInputStream;
 import sun.pitest.CodeCoverageStore;
@@ -159,7 +158,7 @@ public class CoverageMinion {
 
   private static Configuration createTestPlugin(
       final CoverageOptions paramsFromParent) {
-    final ClientPluginServices plugins = new ClientPluginServices(IsolationUtils.getContextClassLoader());
+    final ClientPluginServices plugins = ClientPluginServices.makeForContextLoader();
     final MinionSettings factory = new MinionSettings(plugins);
     return factory.getTestFrameworkPlugin(paramsFromParent.getPitConfig(), ClassloaderByteArraySource.fromContext());
   }

@@ -29,7 +29,7 @@ public class SwitchMutator implements MethodMutatorFactory {
 
   @Override
   public String getName() {
-    return "EXPERIMENTAL_SWITCH_MUTATOR";
+    return "EXPERIMENTAL_SWITCH";
   }
 
   private final class SwitchMethodVisitor extends MethodVisitor {

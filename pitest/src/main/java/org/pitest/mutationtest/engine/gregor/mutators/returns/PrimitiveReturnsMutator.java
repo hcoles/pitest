@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.engine.gregor.mutators;
+package org.pitest.mutationtest.engine.gregor.mutators.returns;
 
 import static org.objectweb.asm.Opcodes.DRETURN;
 import static org.objectweb.asm.Opcodes.FRETURN;
@@ -23,7 +23,7 @@ import org.pitest.mutationtest.engine.gregor.ZeroOperandMutation;
  */
 public enum PrimitiveReturnsMutator implements MethodMutatorFactory {
 
-  PRIMITIVE_RETURN_VALS_MUTATOR;
+  PRIMITIVE_RETURNS;
 
   @Override
   public MethodVisitor create(final MutationContext context,

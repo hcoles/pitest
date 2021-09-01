@@ -29,7 +29,7 @@ public class IncrementsMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyIncrements() {
-    createTesteeWith(IncrementsMutator.INCREMENTS_MUTATOR);
+    createTesteeWith(IncrementsMutator.INCREMENTS);
   }
 
   private static class HasIncrement implements Callable<String> {

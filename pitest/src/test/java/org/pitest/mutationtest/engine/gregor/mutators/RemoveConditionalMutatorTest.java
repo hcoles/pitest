@@ -14,13 +14,13 @@ public class RemoveConditionalMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldProvideAMeaningfulName() {
-    assertEquals("REMOVE_CONDITIONALS_EQUAL_IF_MUTATOR",
+    assertEquals("REMOVE_CONDITIONALS_EQUAL_IF",
         new RemoveConditionalMutator(Choice.EQUAL, true).getName());
-    assertEquals("REMOVE_CONDITIONALS_EQUAL_ELSE_MUTATOR",
+    assertEquals("REMOVE_CONDITIONALS_EQUAL_ELSE",
         new RemoveConditionalMutator(Choice.EQUAL, false).getName());
-    assertEquals("REMOVE_CONDITIONALS_ORDER_IF_MUTATOR",
+    assertEquals("REMOVE_CONDITIONALS_ORDER_IF",
         new RemoveConditionalMutator(Choice.ORDER, true).getName());
-    assertEquals("REMOVE_CONDITIONALS_ORDER_ELSE_MUTATOR",
+    assertEquals("REMOVE_CONDITIONALS_ORDER_ELSE",
         new RemoveConditionalMutator(Choice.ORDER, false).getName());
   }
 

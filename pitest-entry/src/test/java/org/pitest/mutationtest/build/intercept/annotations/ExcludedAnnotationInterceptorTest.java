@@ -30,7 +30,7 @@ public class ExcludedAnnotationInterceptorTest {
   @Before
   public void setUp() {
     final ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
-    final Collection<MethodMutatorFactory> mutators = Collections.singleton((MethodMutatorFactory)VoidMethodCallMutator.VOID_METHOD_CALL_MUTATOR);
+    final Collection<MethodMutatorFactory> mutators = Collections.singleton((MethodMutatorFactory)VoidMethodCallMutator.VOID_METHOD_CALLS);
     this.mutator = new GregorMutater(source, m -> true, mutators);
   }
 

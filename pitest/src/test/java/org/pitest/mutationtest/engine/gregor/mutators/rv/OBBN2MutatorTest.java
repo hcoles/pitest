@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.OBBN2Mutator;
 
 import java.util.concurrent.Callable;
 
@@ -12,7 +11,7 @@ public class OBBN2MutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyMathFunctions() {
-    createTesteeWith(OBBN2Mutator.OBBN_2_MUTATOR);
+    createTesteeWith(OBBN2Mutator.OBBN2);
   }
 
   private static class HasIOr implements Callable<String> {
