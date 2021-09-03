@@ -8,7 +8,7 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### current snapshot (1.7.0)
+### 1.7.0
 
 * #923 Internal interface changes
 * #930 Pluggable mutators
