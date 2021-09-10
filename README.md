@@ -8,6 +8,10 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.7.1 (unreleased)
+
+* #932 Improve switch mutation descriptions
+
 ### 1.7.0
 
 * #923 Internal interface changes
