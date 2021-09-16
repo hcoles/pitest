@@ -76,12 +76,10 @@ public class EntryPoint {
     settings.checkRequestedFeatures();
 
     checkMatrixMode(data);
-    
+
     selectTestPlugin(data);
 
     final ClassPath cp = data.getClassPath();
-
-
 
     // workaround for apparent java 1.5 JVM bug . . . might not play nicely
     // with distributed testing
