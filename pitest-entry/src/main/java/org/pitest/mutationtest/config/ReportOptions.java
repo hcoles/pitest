@@ -602,16 +602,8 @@ public class ReportOptions {
    * Creates a serializable subset of data for use in child processes
    */
   public TestPluginArguments createMinionSettings() {
-    return new TestPluginArguments(getTestPlugin(), this.getGroupConfig(), this.getExcludedRunners(),
+    return new TestPluginArguments(this.getGroupConfig(), this.getExcludedRunners(),
             this.getIncludedTestMethods(), this.skipFailingTests());
-  }
-
-  public String getTestPlugin() {
-    return this.testPlugin;
-  }
-
-  public void setTestPlugin(String testPlugin) {
-    this.testPlugin = testPlugin;
   }
 
   public boolean useClasspathJar() {

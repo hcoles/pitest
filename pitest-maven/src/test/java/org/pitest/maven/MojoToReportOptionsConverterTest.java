@@ -393,9 +393,8 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertEquals("bar", actual.getFreeFormProperties().get("bar"));
   }
   
-  public void testParsesTestPlugin() {
-    final ReportOptions actual = parseConfig("<testPlugin>testng</testPlugin>");
-    assertEquals("testng", actual.getTestPlugin());
+  public void testDoesNotErrorIfDefunctTestPluginArgumentSupplied() {
+    parseConfig("<testPlugin>testng</testPlugin>");
   }  
   
   public void testDoesNotUseClasspathJarByDefault() {
