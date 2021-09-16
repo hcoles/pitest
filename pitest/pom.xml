@@ -17,14 +17,14 @@
 	</properties>
 	<profiles>
 		<profile>
-			<id>jdk16</id>
+			<id>jdk17</id>
 			<activation>
-				<jdk>16</jdk>
+				<jdk>17</jdk>
 			</activation>
 			<properties>
 				<!-- pitest does not use reflection, but some of the tests depend on xstream, which does. Jdk 16 fails with
 				 errors due to the module system. jdk8 does not support the add-opens option, so it must be activated here by jdk-->
-				<surefire.argline>--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.ref=ALL-UNNAMED</surefire.argline>
+				<surefire.argline>--illegal-access=permit --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.ref=ALL-UNNAMED</surefire.argline>
 			</properties>
 		</profile>
 	</profiles>
