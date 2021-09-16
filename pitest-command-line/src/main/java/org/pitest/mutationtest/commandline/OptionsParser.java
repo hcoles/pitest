@@ -387,7 +387,6 @@ public class OptionsParser {
    */
   private ParseResult parseCommandLine(final ReportOptions data,
       final OptionSet userArgs) {
-    data.setTestPlugin(userArgs.valueOf(this.testPluginSpec));
     data.setReportDir(userArgs.valueOf(this.reportDirSpec));
     data.setTargetClasses(this.targetClassesSpec.values(userArgs));
     data.setTargetTests(FCollection.map(this.targetTestsSpec.values(userArgs),

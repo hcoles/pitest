@@ -67,7 +67,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   @Before
   public void excludeTests() {
     this.data.setExcludedClasses(asList("*Test"));
-    this.data.setTestPlugin("junit");
   }
 
   @Test
@@ -268,7 +267,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     this.data
     .setTargetClasses(asList("com.example.testng.FullyCovered*"));
     this.data.setVerbose(true);
-    this.data.setTestPlugin("testng");
     createAndRun();
     verifyResults(KILLED);
   }

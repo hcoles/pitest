@@ -77,8 +77,6 @@ public class EntryPoint {
 
     checkMatrixMode(data);
 
-    selectTestPlugin(data);
-
     final ClassPath cp = data.getClassPath();
 
     // workaround for apparent java 1.5 JVM bug . . . might not play nicely
@@ -142,25 +140,6 @@ public class EntryPoint {
   private void checkMatrixMode(ReportOptions data) {
     if (data.isFullMutationMatrix() && !data.getOutputFormats().contains("XML")) {
       throw new PitError("Full mutation matrix is only supported in the output format XML.");
-    }
-  }
-
-  private void selectTestPlugin(ReportOptions data) {
-    if ((data.getTestPlugin() == null) || data.getTestPlugin().equals("")) {
-      if (junit5PluginIsOnClasspath()) {
-        data.setTestPlugin("junit5");
-      } else {
-        data.setTestPlugin("junit");
-      }
-    }
-  }
-
-  private boolean junit5PluginIsOnClasspath() {
-    try {
-      Class.forName("org.pitest.junit5.JUnit5TestPluginFactory");
-      return true;
-    } catch (final ClassNotFoundException e) {
-      return false;
     }
   }
 

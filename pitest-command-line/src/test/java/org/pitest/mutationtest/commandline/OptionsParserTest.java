@@ -15,6 +15,7 @@
 package org.pitest.mutationtest.commandline;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -64,8 +65,8 @@ public class OptionsParserTest {
   @Test
   public void shouldParseTestPlugin() {
     final String value = "foo";
-    final ReportOptions actual = parseAddingRequiredArgs("--testPlugin", value);
-    assertEquals(value, actual.getTestPlugin());
+    assertThatCode(() -> parseAddingRequiredArgs("--testPlugin", value))
+            .doesNotThrowAnyException();
   }
 
   @Test
