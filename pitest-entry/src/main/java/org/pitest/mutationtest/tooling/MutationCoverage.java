@@ -73,7 +73,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.util.Collections.emptyList;
-import static org.pitest.util.Verbosity.VERBOSE;
 
 public class MutationCoverage {
 
@@ -101,7 +100,7 @@ public class MutationCoverage {
 
   public CombinedStatistics runReport() throws IOException {
 
-    if (this.data.getVerbosity() != VERBOSE) {
+    if (!this.data.getVerbosity().showMinionOutput()) {
       LOG.info("Verbose logging is disabled. If you encounter a problem, please enable it before reporting an issue.");
     }
     Log.setVerbose(this.data.getVerbosity());

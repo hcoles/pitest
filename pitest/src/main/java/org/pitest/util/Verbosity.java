@@ -3,23 +3,33 @@ package org.pitest.util;
 import java.util.logging.Level;
 
 public enum Verbosity {
-    SILENT(true, false, Level.OFF),
-    QUIET(false, false, Level.SEVERE),
-    VERBOSE(false, true, Level.FINEST),
-    DEFAULT(false, true, Level.INFO);
+    QUIET(MinionLogging.DONT_SHOW, false, Level.SEVERE),
+    VERBOSE(MinionLogging.SHOW, true, Level.FINEST),
+    DEFAULT(MinionLogging.DONT_SHOW, true, Level.INFO);
 
-    private final boolean disableInMinions;
+    private final MinionLogging minion;
     private final boolean showSpinner;
     private final Level level;
 
-    Verbosity(boolean disableInMinions, boolean showSpinner, Level level) {
-        this.disableInMinions = disableInMinions;
+    Verbosity(MinionLogging minion, boolean showSpinner, Level level) {
+        this.minion = minion;
         this.showSpinner = showSpinner;
         this.level = level;
     }
 
-    public boolean disableInMinions() {
-        return disableInMinions;
+    public static Verbosity fromString(String verbosity) {
+        if (verbosity == null) {
+            return DEFAULT;
+        }
+        try {
+            return valueOf(verbosity.toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException("Unrecognised verbosity " + verbosity);
+        }
+    }
+
+    public boolean showMinionOutput() {
+        return minion == MinionLogging.SHOW;
     }
 
     public boolean showSpinner() {
@@ -29,4 +39,8 @@ public enum Verbosity {
     public Level level() {
         return level;
     }
+}
+
+enum MinionLogging {
+    SHOW, DONT_SHOW
 }

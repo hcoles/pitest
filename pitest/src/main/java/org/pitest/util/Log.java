@@ -46,6 +46,10 @@ public class Log {
     setLevel(v.level());
   }
 
+  public static void disable() {
+    setLevel(Level.OFF);
+  }
+
   private static void setLevel(final Level level) {
     LOGGER.setLevel(level);
     for (final Handler each : LOGGER.getHandlers()) {

@@ -48,7 +48,6 @@ import org.pitest.util.ExitCode;
 import org.pitest.util.Glob;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
-import org.pitest.util.Quiet;
 import org.pitest.util.SafeDataInputStream;
 
 public class MutationTestMinion {
@@ -110,8 +109,8 @@ public class MutationTestMinion {
 
   private void configureVerbosity(MinionArguments paramsFromParent) {
     Log.setVerbose(paramsFromParent.verbosity());
-    if (paramsFromParent.verbosity().disableInMinions()) {
-      Quiet.disableStdOutAndErr();
+    if (!paramsFromParent.verbosity().showMinionOutput()) {
+      Log.disable();
     }
   }
 
@@ -124,7 +123,7 @@ public class MutationTestMinion {
   }
 
   public static void main(final String[] args) {
-    LOG.log(Level.FINE, "minion started");
+    LOG.fine(() -> "minion started");
 
     enablePowerMockSupport();
 
@@ -191,7 +190,7 @@ public class MutationTestMinion {
     r.done(ExitCode.OUT_OF_MEMORY);
 
     } else {
-    LOG.warning("Unknown notification: " + notification);
+      LOG.warning("Unknown notification: " + notification);
     }
    };
 

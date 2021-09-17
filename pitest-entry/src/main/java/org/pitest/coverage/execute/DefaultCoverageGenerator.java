@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Logger;
@@ -49,8 +48,6 @@ import org.pitest.util.StringUtil;
 import org.pitest.util.Timings;
 import org.pitest.util.Unchecked;
 import org.pitest.util.Verbosity;
-
-import static org.pitest.util.Verbosity.VERBOSE;
 
 public class DefaultCoverageGenerator implements CoverageGenerator {
 
@@ -120,8 +117,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
   }
 
   private void gatherCoverageData(final Collection<ClassInfo> tests,
-      final CoverageData coverage) throws IOException, InterruptedException,
-      ExecutionException {
+      final CoverageData coverage) throws IOException, InterruptedException {
 
     final List<String> filteredTests = FCollection
         .map(tests, classInfoToName());
@@ -160,7 +156,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
   }
 
   private Consumer<String> captureStandardOutIfVerbose() {
-    if (this.verbosity == VERBOSE) {
+    if (this.verbosity.showMinionOutput()) {
       return log();
     } else {
       return Prelude.noSideEffect(String.class);

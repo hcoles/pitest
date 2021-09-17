@@ -32,7 +32,6 @@ import org.pitest.testapi.execute.FindTestUnits;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Glob;
 import org.pitest.util.Log;
-import org.pitest.util.Quiet;
 import org.pitest.util.SafeDataInputStream;
 import sun.pitest.CodeCoverageStore;
 
@@ -82,7 +81,7 @@ public class CoverageMinion {
 
       final List<TestUnit> tus = getTestsFromParent(dis, paramsFromParent);
 
-      LOG.info(tus.size() + " tests received");
+      LOG.info(() -> tus.size() + " tests received");
 
       final CoverageWorker worker = new CoverageWorker(invokeQueue, tus);
 
@@ -142,7 +141,7 @@ public class CoverageMinion {
     final List<TestUnit> filteredTus = filter
         .filterTestsByDependencyAnalysis(tus);
 
-    LOG.info("Dependency analysis reduced number of potential tests by "
+    LOG.info(() -> "Dependency analysis reduced number of potential tests by "
         + (tus.size() - filteredTus.size()));
     return filteredTus;
 
@@ -153,7 +152,7 @@ public class CoverageMinion {
     final FindTestUnits finder = new FindTestUnits(testPlugin);
     final List<TestUnit> tus = finder
         .findTestUnitsForAllSuppliedClasses(classes.stream().flatMap(ClassName.nameToClass()).collect(Collectors.toList()));
-    LOG.info("Found  " + tus.size() + " tests");
+    LOG.info(() -> "Found  " + tus.size() + " tests");
     return tus;
   }
 
@@ -165,7 +164,7 @@ public class CoverageMinion {
   }
 
   private static void verifyEnvironment(Configuration config) {
-    LOG.info("Checking environment");
+    LOG.info(() -> "Checking environment");
     if (config.verifyEnvironment().isPresent()) {
       throw config.verifyEnvironment().get();
     }
@@ -174,20 +173,20 @@ public class CoverageMinion {
   private static List<ClassName> receiveTestClassesFromParent(
       final SafeDataInputStream dis) {
     final int count = dis.readInt();
-    LOG.fine("Expecting " + count + " tests classes from parent");
+    LOG.fine(() -> "Expecting " + count + " tests classes from parent");
     final List<ClassName> classes = new ArrayList<>(count);
     for (int i = 0; i != count; i++) {
       classes.add(ClassName.fromString(dis.readString()));
     }
-    LOG.fine("Tests classes received");
+    LOG.fine(() -> "Tests classes received");
 
     return classes;
   }
 
   private static void configureVerbosity(CoverageOptions paramsFromParent) {
     Log.setVerbose(paramsFromParent.verbosity());
-    if (paramsFromParent.verbosity().disableInMinions()) {
-      Quiet.disableStdOutAndErr();
+    if (!paramsFromParent.verbosity().showMinionOutput()) {
+      Log.disable();
     }
   }
 

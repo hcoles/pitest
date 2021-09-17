@@ -85,6 +85,7 @@ import static org.pitest.mutationtest.config.ConfigOption.TIME_STAMPED_REPORTS;
 import static org.pitest.mutationtest.config.ConfigOption.USE_CLASSPATH_JAR;
 import static org.pitest.mutationtest.config.ConfigOption.USE_INLINED_CODE_DETECTION;
 import static org.pitest.mutationtest.config.ConfigOption.VERBOSE;
+import static org.pitest.mutationtest.config.ConfigOption.VERBOSITY;
 
 public class OptionsParser {
 
@@ -109,6 +110,7 @@ public class OptionsParser {
   private final OptionSpec<Long>                     timeoutConstSpec;
   private final OptionSpec<String>                   excludedMethodsSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> verboseSpec;
+  private final ArgumentAcceptingOptionSpec<String>  verbositySpec;
   private final OptionSpec<String>                   excludedClassesSpec;
   private final OptionSpec<String>                   excludedTestClassesSpec;
   private final OptionSpec<String>                   outputFormatSpec;
@@ -147,7 +149,7 @@ public class OptionsParser {
         .withRequiredArg()
         .ofType(String.class)
         .defaultsTo("junit")
-        .describedAs("test plugin to use");
+        .describedAs("this parameter is ignored and will be removed in a future release");
 
     this.reportDirSpec = parserAccepts(REPORT_DIR).withRequiredArg()
         .describedAs("directory to create report folder in").required();
@@ -249,6 +251,10 @@ public class OptionsParser {
     this.verboseSpec = parserAccepts(VERBOSE).withOptionalArg()
         .ofType(Boolean.class).defaultsTo(true)
         .describedAs("whether or not to generate verbose output");
+
+    this.verbositySpec = parserAccepts(VERBOSITY).withOptionalArg()
+            .ofType(String.class).defaultsTo("DEFAULT")
+            .describedAs("the verbosity of output");
 
     this.exportLineCoverageSpec = parserAccepts(EXPORT_LINE_COVERAGE)
         .withOptionalArg()
@@ -460,7 +466,7 @@ public class OptionsParser {
     if (isVerbose) {
       data.setVerbosity(Verbosity.VERBOSE);
     } else {
-      data.setVerbosity(Verbosity.DEFAULT);
+      data.setVerbosity(Verbosity.fromString(this.verbositySpec.value(userArgs)));
     }
 
   }

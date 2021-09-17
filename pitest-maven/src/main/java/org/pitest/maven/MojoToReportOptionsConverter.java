@@ -156,11 +156,11 @@ public class MojoToReportOptionsConverter {
   }
 
   private void configureVerbosity(ReportOptions data) {
-    // TODO expand options
     if (this.mojo.isVerbose()) {
       data.setVerbosity(Verbosity.VERBOSE);
     } else {
-      data.setVerbosity(Verbosity.DEFAULT);
+      Verbosity v = Verbosity.fromString(mojo.getVerbosity());
+      data.setVerbosity(v);
     }
 
   }
@@ -171,7 +171,6 @@ public class MojoToReportOptionsConverter {
               + "use features=+CLASSLIMIT(limit[" + mojo.getMaxMutationsPerClass() + "]) instead");
     }
   }
-
 
   private void determineHistory(final ReportOptions data) {
     if (this.mojo.useHistory()) {

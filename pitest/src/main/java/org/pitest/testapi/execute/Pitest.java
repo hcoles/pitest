@@ -41,7 +41,7 @@ public class Pitest {
   public void run(final Container container,
       final List<? extends TestUnit> testUnits) {
 
-    LOG.fine("Running " + testUnits.size() + " units");
+    LOG.fine(() -> "Running " + testUnits.size() + " units");
 
     signalRunStartToAllListeners();
 
