@@ -22,6 +22,7 @@ import org.pitest.mutationtest.EngineArguments;
 import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.MutationDetails;
+import org.pitest.util.Verbosity;
 
 public class MinionArguments implements Serializable {
 
@@ -32,26 +33,26 @@ public class MinionArguments implements Serializable {
   final String                      engine;
   final EngineArguments             engineArgs;
   final TimeoutLengthStrategy       timeoutStrategy;
-  final boolean                     verbose;
+  final Verbosity verbosity;
   final boolean                     fullMutationMatrix;
   final TestPluginArguments         pitConfig;
 
   public MinionArguments(final Collection<MutationDetails> mutations,
       final Collection<ClassName> tests, final String engine,   final EngineArguments engineArgs,
-      final TimeoutLengthStrategy timeoutStrategy, final boolean verbose, final boolean fullMutationMatrix,
+      final TimeoutLengthStrategy timeoutStrategy, final Verbosity verbosity, final boolean fullMutationMatrix,
       final TestPluginArguments pitConfig) {
     this.mutations = mutations;
     this.testClasses = tests;
     this.engine = engine;
     this.engineArgs = engineArgs;
     this.timeoutStrategy = timeoutStrategy;
-    this.verbose = verbose;
+    this.verbosity = verbosity;
     this.fullMutationMatrix = fullMutationMatrix;
     this.pitConfig = pitConfig;
   }
 
-  public boolean isVerbose() {
-    return this.verbose;
+  public Verbosity verbosity() {
+    return this.verbosity;
   }
 
 }

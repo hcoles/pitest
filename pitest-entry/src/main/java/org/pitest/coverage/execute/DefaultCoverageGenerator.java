@@ -48,6 +48,9 @@ import org.pitest.util.SocketFinder;
 import org.pitest.util.StringUtil;
 import org.pitest.util.Timings;
 import org.pitest.util.Unchecked;
+import org.pitest.util.Verbosity;
+
+import static org.pitest.util.Verbosity.VERBOSE;
 
 public class DefaultCoverageGenerator implements CoverageGenerator {
 
@@ -59,19 +62,19 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
   private final Timings          timings;
   private final File             workingDir;
   private final CoverageExporter exporter;
-  private final boolean          showProgress;
+  private final Verbosity        verbosity;
 
   public DefaultCoverageGenerator(final File workingDir,
       final CoverageOptions coverageOptions, final LaunchOptions launchOptions,
       final CodeSource code, final CoverageExporter exporter,
-      final Timings timings, final boolean showProgress) {
+      final Timings timings, Verbosity verbosity) {
     this.coverageOptions = coverageOptions;
     this.code = code;
     this.launchOptions = launchOptions;
     this.timings = timings;
     this.workingDir = workingDir;
     this.exporter = exporter;
-    this.showProgress = showProgress;
+    this.verbosity = verbosity;
   }
 
   @Override
@@ -157,7 +160,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
   }
 
   private Consumer<String> captureStandardOutIfVerbose() {
-    if (this.coverageOptions.isVerbose()) {
+    if (this.verbosity == VERBOSE) {
       return log();
     } else {
       return Prelude.noSideEffect(String.class);
@@ -184,7 +187,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
         if (cr.isGreenTest() || !coverageOptions.getPitConfig().skipFailingTests()) {
           coverage.calculateClassCoverage(cr);
         }
-        if (DefaultCoverageGenerator.this.showProgress) {
+        if (DefaultCoverageGenerator.this.verbosity.showSpinner()) {
           System.out.printf("%s", this.spinner[this.i % this.spinner.length]);
         }
         this.i++;

@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static org.pitest.util.Verbosity.VERBOSE;
+
 public class EntryPoint {
 
   /**
@@ -66,7 +68,7 @@ public class EntryPoint {
   public AnalysisResult execute(File baseDir, ReportOptions data,
       SettingsFactory settings, Map<String, String> environmentVariables) {
 
-    if (data.isVerbose()) {
+    if (data.getVerbosity() == VERBOSE) {
       Log.getLogger().info("---------------------------------------------------------------------------");
       Log.getLogger().info("Enabled (+) and disabled (-) features.");
       Log.getLogger().info("-----------------------------------------");
@@ -103,7 +105,7 @@ public class EntryPoint {
     final Timings timings = new Timings();
     final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
         baseDir, coverageOptions, launchOptions, code,
-        settings.createCoverageExporter(), timings, !data.isVerbose());
+        settings.createCoverageExporter(), timings, data.getVerbosity());
 
 
     final Optional<WriterFactory> maybeWriter = data.createHistoryWriter();

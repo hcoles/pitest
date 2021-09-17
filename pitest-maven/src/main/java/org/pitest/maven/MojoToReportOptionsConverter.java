@@ -26,6 +26,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
+import org.pitest.util.Verbosity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -110,7 +111,7 @@ public class MojoToReportOptionsConverter {
     data.setExcludedRunners(this.mojo.getExcludedRunners());
 
     data.setReportDir(this.mojo.getReportsDirectory().getAbsolutePath());
-    data.setVerbose(this.mojo.isVerbose());
+    configureVerbosity(data);
     if (this.mojo.getJvmArgs() != null) {
       data.addChildJVMArgs(this.mojo.getJvmArgs());
     }
@@ -152,6 +153,16 @@ public class MojoToReportOptionsConverter {
     checkForObsoleteOptions(this.mojo);
 
     return data;
+  }
+
+  private void configureVerbosity(ReportOptions data) {
+    // TODO expand options
+    if (this.mojo.isVerbose()) {
+      data.setVerbosity(Verbosity.VERBOSE);
+    } else {
+      data.setVerbosity(Verbosity.DEFAULT);
+    }
+
   }
 
   private void checkForObsoleteOptions(AbstractPitMojo mojo) {

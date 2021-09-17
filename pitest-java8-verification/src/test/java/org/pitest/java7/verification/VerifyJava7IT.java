@@ -5,6 +5,7 @@ import static java.util.Arrays.asList;
 
 import org.junit.Test;
 import org.pitest.mutationtest.ReportTestBase;
+import org.pitest.util.Verbosity;
 
 public class VerifyJava7IT extends ReportTestBase {
 
@@ -13,7 +14,7 @@ public class VerifyJava7IT extends ReportTestBase {
     setMutators("REMOVE_CONDITIONALS");
     this.data.setTargetClasses(
         asList("com.example.java7.HasIfOnAStringEqualityTestee*"));
-    this.data.setVerbose(true);
+    this.data.setVerbosity(Verbosity.VERBOSE);
     createAndRun();
     verifyResults(KILLED, KILLED, KILLED, KILLED, KILLED, KILLED);
   }
@@ -23,7 +24,7 @@ public class VerifyJava7IT extends ReportTestBase {
     setMutators("REMOVE_CONDITIONALS");
     this.data.setTargetClasses(asList(
         "com.example.java7.HasIfOnAStringEqualityInsideSwitchTestee*"));
-    this.data.setVerbose(true);
+    this.data.setVerbosity(Verbosity.VERBOSE);
     createAndRun();
     verifyResults(KILLED, KILLED);
   }
@@ -33,7 +34,7 @@ public class VerifyJava7IT extends ReportTestBase {
     setMutators("REMOVE_CONDITIONALS");
     this.data.setTargetClasses(
         asList("com.example.java7.HasSwitchOnStringTestee*"));
-    this.data.setVerbose(true);
+    this.data.setVerbosity(Verbosity.VERBOSE);
     createAndRun();
     verifyResults();
   }

@@ -58,6 +58,7 @@ import com.example.JUnitThreeSuite;
 import com.example.KeepAliveThread;
 import com.example.MultipleMutations;
 import com.example.coverage.execute.samples.mutationMatrix.TestsForSimpleCalculator;
+import org.pitest.util.Verbosity;
 
 @Category(SystemTest.class)
 public class MutationCoverageReportSystemTest extends ReportTestBase {
@@ -72,7 +73,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   @Test
   public void shouldPickRelevantTestsAndKillMutationsBasedOnCoverageData() {
     this.data.setTargetClasses(asList("com.example.FullyCovered*"));
-    this.data.setVerbose(true);
+    this.data.setVerbosity(Verbosity.VERBOSE);
     createAndRun();
     verifyResults(KILLED);
   }
@@ -130,7 +131,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     setMutators("RETURN_VALS");
     this.data
     .setTargetClasses(asList("com.example.LoadsResourcesFromClassPath*"));
-    this.data.setVerbose(true);
+    this.data.setVerbosity(Verbosity.VERBOSE);
     createAndRun();
     verifyResults(KILLED);
   }
@@ -174,7 +175,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldWorkWithMockitoJUnitRunner() {
     this.data.setTargetClasses(asList("com.example.MockitoCallFoo"));
     this.data.setTargetTests(predicateFor(com.example.MockitoRunnerTest.class));
-    this.data.setVerbose(true);
+    this.data.setVerbosity(Verbosity.VERBOSE);
     createAndRun();
     verifyResults(KILLED);
   }
@@ -266,7 +267,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldSupportTestNG() {
     this.data
     .setTargetClasses(asList("com.example.testng.FullyCovered*"));
-    this.data.setVerbose(true);
+    this.data.setVerbosity(Verbosity.VERBOSE);
     createAndRun();
     verifyResults(KILLED);
   }
@@ -308,7 +309,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     setMutators("RETURN_VALS");
     this.data.setTargetClasses(asGlobs(CoveredByJUnitThreeSuite.class));
     this.data.setTargetTests(predicateFor(JUnitThreeSuite.class));
-    this.data.setVerbose(true);
+    this.data.setVerbosity(Verbosity.VERBOSE);
     createAndRun();
 
     verifyResults(KILLED);

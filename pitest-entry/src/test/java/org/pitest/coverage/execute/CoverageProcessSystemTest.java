@@ -31,6 +31,7 @@ import org.pitest.process.LaunchOptions;
 import org.pitest.process.ProcessArgs;
 import org.pitest.util.ExitCode;
 import org.pitest.util.SocketFinder;
+import org.pitest.util.Verbosity;
 import org.pitest.util.XStreamCloning;
 
 import java.io.BufferedReader;
@@ -51,6 +52,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.pitest.util.Verbosity.VERBOSE;
 
 @Category(SystemTest.class)
 public class CoverageProcessSystemTest {
@@ -288,7 +290,7 @@ public class CoverageProcessSystemTest {
     final Consumer<CoverageResult> noOpHandler = a -> {
     };
 
-    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), excludeTests(), TestPluginArguments.defaults(), true, -1);
+    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), excludeTests(), TestPluginArguments.defaults(), VERBOSE, -1);
 
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     final LaunchOptions lo = new LaunchOptions(agent);
@@ -337,7 +339,7 @@ public class CoverageProcessSystemTest {
       InterruptedException {
     final Consumer<CoverageResult> handler = a -> coveredClasses.add(a);
 
-    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), excludeTests(), TestPluginArguments.defaults(), true, -1);
+    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), excludeTests(), TestPluginArguments.defaults(), VERBOSE, -1);
 
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     try {

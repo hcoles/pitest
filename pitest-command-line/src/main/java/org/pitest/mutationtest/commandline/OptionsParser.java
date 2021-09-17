@@ -29,6 +29,7 @@ import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
 import org.pitest.util.Log;
 import org.pitest.util.Unchecked;
+import org.pitest.util.Verbosity;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -418,8 +419,7 @@ public class OptionsParser {
     data.setExcludedClasses(this.excludedClassesSpec.values(userArgs));
     data.setExcludedTestClasses(FCollection.map(
         this.excludedTestClassesSpec.values(userArgs), Glob.toGlobPredicate()));
-    data.setVerbose(userArgs.has(this.verboseSpec)
-        && userArgs.valueOf(this.verboseSpec));
+    configureVerbosity(data, userArgs);
 
     data.addOutputFormats(this.outputFormatSpec.values(userArgs));
     data.setFailWhenNoMutations(this.failWhenNoMutations.value(userArgs));
@@ -452,6 +452,17 @@ public class OptionsParser {
     } else {
       return new ParseResult(data, null);
     }
+  }
+
+  private void configureVerbosity(ReportOptions data, OptionSet userArgs) {
+    boolean isVerbose = userArgs.has(this.verboseSpec)
+            && userArgs.valueOf(this.verboseSpec);
+    if (isVerbose) {
+      data.setVerbosity(Verbosity.VERBOSE);
+    } else {
+      data.setVerbosity(Verbosity.DEFAULT);
+    }
+
   }
 
   private void setClassPath(final OptionSet userArgs, final ReportOptions data) {

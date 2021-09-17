@@ -32,6 +32,7 @@ import org.pitest.testapi.execute.FindTestUnits;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Glob;
 import org.pitest.util.Log;
+import org.pitest.util.Quiet;
 import org.pitest.util.SafeDataInputStream;
 import sun.pitest.CodeCoverageStore;
 
@@ -69,7 +70,7 @@ public class CoverageMinion {
 
       final CoverageOptions paramsFromParent = dis.read(CoverageOptions.class);
 
-      Log.setVerbose(paramsFromParent.isVerbose());
+      configureVerbosity(paramsFromParent);
 
       invokeQueue = new CoveragePipe(new BufferedOutputStream(
           s.getOutputStream()));
@@ -181,6 +182,13 @@ public class CoverageMinion {
     LOG.fine("Tests classes received");
 
     return classes;
+  }
+
+  private static void configureVerbosity(CoverageOptions paramsFromParent) {
+    Log.setVerbose(paramsFromParent.verbosity());
+    if (paramsFromParent.verbosity().disableInMinions()) {
+      Quiet.disableStdOutAndErr();
+    }
   }
 
 }

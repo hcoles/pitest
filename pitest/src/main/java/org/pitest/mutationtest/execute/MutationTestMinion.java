@@ -48,6 +48,7 @@ import org.pitest.util.ExitCode;
 import org.pitest.util.Glob;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
+import org.pitest.util.Quiet;
 import org.pitest.util.SafeDataInputStream;
 
 public class MutationTestMinion {
@@ -75,7 +76,7 @@ public class MutationTestMinion {
       final MinionArguments paramsFromParent = this.dis
           .read(MinionArguments.class);
 
-      Log.setVerbose(paramsFromParent.isVerbose());
+      configureVerbosity(paramsFromParent);
 
       final ClassLoader loader = IsolationUtils.getContextClassLoader();
 
@@ -107,6 +108,13 @@ public class MutationTestMinion {
 
   }
 
+  private void configureVerbosity(MinionArguments paramsFromParent) {
+    Log.setVerbose(paramsFromParent.verbosity());
+    if (paramsFromParent.verbosity().disableInMinions()) {
+      Quiet.disableStdOutAndErr();
+    }
+  }
+
   private MutationEngine createEngine(String engine, EngineArguments args) {
     return this.plugins.createEngine(engine).createEngine(args);
   }
@@ -116,7 +124,6 @@ public class MutationTestMinion {
   }
 
   public static void main(final String[] args) {
-
     LOG.log(Level.FINE, "minion started");
 
     enablePowerMockSupport();

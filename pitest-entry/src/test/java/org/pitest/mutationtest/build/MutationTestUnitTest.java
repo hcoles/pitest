@@ -26,6 +26,7 @@ import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.process.JavaAgent;
 import org.pitest.process.LaunchOptions;
 import org.pitest.testapi.Configuration;
+import org.pitest.util.Verbosity;
 
 public class MutationTestUnitTest {
 
@@ -56,7 +57,7 @@ public class MutationTestUnitTest {
     this.tests = new ArrayList<>();
     this.testee = new MutationTestUnit(this.mutations, this.tests,
         new WorkerFactory(null, TestPluginArguments.defaults(), this.mutationConfig, EngineArguments.arguments(), this.timeout,
-            false, false, null));
+            Verbosity.DEFAULT, false, null));
 
   }
 
