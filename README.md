@@ -11,6 +11,7 @@ Read all about it at http://pitest.org
 ### 1.7.1 (unreleased)
 
 * #932 Improve switch mutation descriptions
+* #934 Configure console output verbosity
 
 ### 1.7.0
 

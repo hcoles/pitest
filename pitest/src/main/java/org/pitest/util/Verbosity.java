@@ -4,8 +4,11 @@ import java.util.logging.Level;
 
 public enum Verbosity {
     QUIET(MinionLogging.DONT_SHOW, false, Level.SEVERE),
-    VERBOSE(MinionLogging.SHOW, true, Level.FINEST),
-    DEFAULT(MinionLogging.DONT_SHOW, true, Level.INFO);
+    QUIET_WITH_PROGRESS(MinionLogging.DONT_SHOW, true, Level.SEVERE),
+    DEFAULT(MinionLogging.DONT_SHOW, true, Level.INFO),
+    NO_SPINNER(MinionLogging.DONT_SHOW, false, Level.INFO),
+    VERBOSE_NO_SPINNER(MinionLogging.SHOW, false, Level.FINEST),
+    VERBOSE(MinionLogging.SHOW, true, Level.FINEST);
 
     private final MinionLogging minion;
     private final boolean showSpinner;
