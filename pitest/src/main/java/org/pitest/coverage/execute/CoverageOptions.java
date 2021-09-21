@@ -23,6 +23,7 @@ import java.util.function.Predicate;
 
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.config.TestPluginArguments;
+import org.pitest.util.Verbosity;
 import org.pitest.util.Glob;
 
 public class CoverageOptions implements Serializable {
@@ -31,17 +32,17 @@ public class CoverageOptions implements Serializable {
 
   private final Collection<String>      include;
   private final Collection<String>      exclude;
-  private final boolean           verbose;
+  private final Verbosity verbosity;
   private final TestPluginArguments pitConfig;
   private final int               maxDependencyDistance;
 
   public CoverageOptions(final Collection<String> include, final Collection<String> exclude,
-      final TestPluginArguments pitConfig, final boolean verbose,
+      final TestPluginArguments pitConfig, final Verbosity verbose,
       final int maxDependencyDistance) {
     Objects.requireNonNull(pitConfig);
     this.include = include;
     this.exclude = exclude;
-    this.verbose = verbose;
+    this.verbosity = verbose;
     this.pitConfig = pitConfig;
     this.maxDependencyDistance = maxDependencyDistance;
   }
@@ -52,8 +53,8 @@ public class CoverageOptions implements Serializable {
         Prelude.not(commonClasses()));
   }
 
-  public boolean isVerbose() {
-    return this.verbose;
+  public Verbosity verbosity() {
+    return this.verbosity;
   }
 
   public TestPluginArguments getPitConfig() {

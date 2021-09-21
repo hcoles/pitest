@@ -75,7 +75,7 @@ public class MutationTestMinion {
       final MinionArguments paramsFromParent = this.dis
           .read(MinionArguments.class);
 
-      Log.setVerbose(paramsFromParent.isVerbose());
+      configureVerbosity(paramsFromParent);
 
       final ClassLoader loader = IsolationUtils.getContextClassLoader();
 
@@ -107,6 +107,13 @@ public class MutationTestMinion {
 
   }
 
+  private void configureVerbosity(MinionArguments paramsFromParent) {
+    Log.setVerbose(paramsFromParent.verbosity());
+    if (!paramsFromParent.verbosity().showMinionOutput()) {
+      Log.disable();
+    }
+  }
+
   private MutationEngine createEngine(String engine, EngineArguments args) {
     return this.plugins.createEngine(engine).createEngine(args);
   }
@@ -116,8 +123,7 @@ public class MutationTestMinion {
   }
 
   public static void main(final String[] args) {
-
-    LOG.log(Level.FINE, "minion started");
+    LOG.fine(() -> "minion started");
 
     enablePowerMockSupport();
 
@@ -184,7 +190,7 @@ public class MutationTestMinion {
     r.done(ExitCode.OUT_OF_MEMORY);
 
     } else {
-    LOG.warning("Unknown notification: " + notification);
+      LOG.warning("Unknown notification: " + notification);
     }
    };
 

@@ -100,13 +100,12 @@ public class MutationCoverage {
 
   public CombinedStatistics runReport() throws IOException {
 
-    Log.setVerbose(this.data.isVerbose());
-
-    final Runtime runtime = Runtime.getRuntime();
-
-    if (!this.data.isVerbose()) {
+    if (!this.data.getVerbosity().showMinionOutput()) {
       LOG.info("Verbose logging is disabled. If you encounter a problem, please enable it before reporting an issue.");
     }
+    Log.setVerbose(this.data.getVerbosity());
+
+    final Runtime runtime = Runtime.getRuntime();
 
     LOG.fine("Running report with " + this.data);
 
@@ -248,7 +247,7 @@ public class MutationCoverage {
     ls.add(mutationReportListener);
     ls.add(new HistoryListener(history));
 
-    if (!this.data.isVerbose()) {
+    if (this.data.getVerbosity().showSpinner()) {
       ls.add(new SpinnerListener(System.out));
     }
     return ls;
@@ -334,7 +333,7 @@ public class MutationCoverage {
     final WorkerFactory wf = new WorkerFactory(this.baseDir, coverage()
         .getConfiguration(), mutationConfig, args,
         new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
-            this.data.getTimeoutConstant()), this.data.isVerbose(), this.data.isFullMutationMatrix(),
+            this.data.getTimeoutConstant()), this.data.getVerbosity(), this.data.isFullMutationMatrix(),
             this.data.getClassPath().getLocalClassPath());
 
     final MutationGrouper grouper = this.settings.getMutationGrouper().makeFactory(

@@ -98,6 +98,12 @@ public enum ConfigOption {
    * Flag to indicate if verbose logging should be enabled
    */
   VERBOSE("verbose", false),
+
+  /**
+   * Verbosity of output to produce
+   */
+  VERBOSITY("verbosity", "default"),
+
   /**
    * Filter defining classes to exclude from mutation
    */

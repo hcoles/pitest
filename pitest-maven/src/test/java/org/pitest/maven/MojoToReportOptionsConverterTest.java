@@ -43,6 +43,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.pitest.util.Verbosity.DEFAULT;
+import static org.pitest.util.Verbosity.QUIET;
+import static org.pitest.util.Verbosity.VERBOSE;
 
 public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
 
@@ -218,8 +221,18 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
   }
 
   public void testParsesVerboseFlag() {
-    assertTrue(parseConfig("<verbose>true</verbose>").isVerbose());
-    assertFalse(parseConfig("<verbose>false</verbose>").isVerbose());
+    assertThat(parseConfig("<verbose>true</verbose>").getVerbosity()).isEqualTo(VERBOSE);
+    assertThat(parseConfig("<verbose>false</verbose>").getVerbosity()).isEqualTo(DEFAULT);
+  }
+
+  public void testParsesVerbosity() {
+    assertThat(parseConfig("<verbosity>quiet</verbosity>").getVerbosity())
+            .isEqualTo(QUIET);
+  }
+
+  public void testVerboseFlagOverridesVerbosity() {
+    assertThat(parseConfig("<verbose>true</verbose><verbosity>DEFAULT</verbosity>").getVerbosity())
+            .isEqualTo(VERBOSE);
   }
 
   public void testParsesDetectInlineCodeFlag() {

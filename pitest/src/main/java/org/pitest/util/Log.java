@@ -14,6 +14,8 @@ import java.util.logging.Logger;
 public class Log {
 
   private static final Logger LOGGER = Logger.getLogger("PIT");
+  // mutable static is ugly, but that's logging for you
+  private static Verbosity verbosity = Verbosity.DEFAULT;
 
   public static Logger getLogger() {
     return LOGGER;
@@ -39,12 +41,13 @@ public class Log {
     }
   }
 
-  public static void setVerbose(final boolean on) {
-    if (on) {
-      setLevel(Level.FINEST);
-    } else {
-      setLevel(Level.INFO);
-    }
+  public static void setVerbose(final Verbosity v) {
+    verbosity = v;
+    setLevel(v.level());
+  }
+
+  public static void disable() {
+    setLevel(Level.OFF);
   }
 
   private static void setLevel(final Level level) {
@@ -84,8 +87,8 @@ public class Log {
 
   }
 
-  public static boolean isVerbose() {
-    return Level.FINEST.equals(LOGGER.getLevel());
+  public static Verbosity verbosity() {
+    return verbosity;
   }
 
 }

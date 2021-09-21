@@ -37,10 +37,11 @@ public class AbstractPitMojo extends AbstractMojo {
   private final PluginServices        plugins;
 
   // Concrete List types declared for all fields to work around maven 2 bug
-  
+
   /**
    * Test plugin to use
    */
+  // No longer used, retained here temporarily for backwards compatibility in buildscripts
   @Parameter(property = "testPlugin", defaultValue = "")
   private String testPlugin;
 
@@ -362,10 +363,18 @@ public class AbstractPitMojo extends AbstractMojo {
   /**
    * Communicate the classpath using a temporary jar with a classpath
    * manifest. This allows support of very large classpaths but may cause
-   * issues with certian libraries.
+   * issues with certain libraries.
    */
   @Parameter(property = "useClasspathJar", defaultValue = "false")
   private boolean                     useClasspathJar;
+
+  /**
+   * Amount of debug information/noise to output. The boolean
+   * verbose flag overrides this value when it is set to true.
+   */
+  @Parameter(property = "verbosity", defaultValue = "DEFAULT")
+  // should be able to use an enum here, but test harness is broken
+  private String verbosity;
 
   private final GoalStrategy          goalStrategy;
 
@@ -597,10 +606,6 @@ public class AbstractPitMojo extends AbstractMojo {
   public boolean isFullMutationMatrix() {
     return fullMutationMatrix;
   }
-  
-  public void setFullMutationMatrix(boolean fullMutationMatrix) {
-    this.fullMutationMatrix = fullMutationMatrix;
-}
 
   public int getMutationUnitSize() {
     return this.mutationUnitSize;
@@ -630,6 +635,7 @@ public class AbstractPitMojo extends AbstractMojo {
     return this.exportLineCoverage;
   }
 
+
   protected RunDecision shouldRun() {
     RunDecision decision = new RunDecision();
 
@@ -658,10 +664,6 @@ public class AbstractPitMojo extends AbstractMojo {
 
   public String getJavaExecutable() {
     return this.jvm;
-  }
-
-  public void setJavaExecutable(final String javaExecutable) {
-    this.jvm = javaExecutable;
   }
 
   public List<String> getAdditionalClasspathElements() {
@@ -700,12 +702,12 @@ public class AbstractPitMojo extends AbstractMojo {
     return withoutNulls(features);
   }
 
-  public String getTestPlugin() {
-    return testPlugin;
-  }
-   
   public boolean isUseClasspathJar() {
     return this.useClasspathJar;
+  }
+
+  public String getVerbosity() {
+    return verbosity;
   }
 
   static class RunDecision {

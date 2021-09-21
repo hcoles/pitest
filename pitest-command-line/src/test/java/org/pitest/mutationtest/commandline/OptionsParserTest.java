@@ -43,6 +43,7 @@ import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
 import org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
+import org.pitest.util.Verbosity;
 
 public class OptionsParserTest {
 
@@ -259,9 +260,27 @@ public class OptionsParserTest {
   }
 
   @Test
+  public void shouldDefaultToDefaultVerbosity() {
+    final ReportOptions actual = parseAddingRequiredArgs("");
+    assertThat(actual.getVerbosity()).isEqualTo(Verbosity.DEFAULT);
+  }
+
+  @Test
   public void shouldParseVerboseFlag() {
     final ReportOptions actual = parseAddingRequiredArgs("--verbose");
-    assertTrue(actual.isVerbose());
+    assertThat(actual.getVerbosity()).isEqualTo(Verbosity.VERBOSE);
+  }
+
+  @Test
+  public void shouldParseVerbosity() {
+    final ReportOptions actual = parseAddingRequiredArgs("--verbosity", "quiet");
+    assertThat(actual.getVerbosity()).isEqualTo(Verbosity.QUIET);
+  }
+
+  @Test
+  public void verboseFlagOveridesVerbosity() {
+    final ReportOptions actual = parseAddingRequiredArgs("--verbose", "--verbosity", "quiet");
+    assertThat(actual.getVerbosity()).isEqualTo(Verbosity.VERBOSE);
   }
 
   @Test

@@ -26,6 +26,7 @@ import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
+import org.pitest.util.Verbosity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -110,7 +111,7 @@ public class MojoToReportOptionsConverter {
     data.setExcludedRunners(this.mojo.getExcludedRunners());
 
     data.setReportDir(this.mojo.getReportsDirectory().getAbsolutePath());
-    data.setVerbose(this.mojo.isVerbose());
+    configureVerbosity(data);
     if (this.mojo.getJvmArgs() != null) {
       data.addChildJVMArgs(this.mojo.getJvmArgs());
     }
@@ -154,13 +155,22 @@ public class MojoToReportOptionsConverter {
     return data;
   }
 
+  private void configureVerbosity(ReportOptions data) {
+    if (this.mojo.isVerbose()) {
+      data.setVerbosity(Verbosity.VERBOSE);
+    } else {
+      Verbosity v = Verbosity.fromString(mojo.getVerbosity());
+      data.setVerbosity(v);
+    }
+
+  }
+
   private void checkForObsoleteOptions(AbstractPitMojo mojo) {
     if (mojo.getMaxMutationsPerClass() > 0) {
       throw new IllegalArgumentException("The max mutations per class argument is no longer supported, "
               + "use features=+CLASSLIMIT(limit[" + mojo.getMaxMutationsPerClass() + "]) instead");
     }
   }
-
 
   private void determineHistory(final ReportOptions data) {
     if (this.mojo.useHistory()) {

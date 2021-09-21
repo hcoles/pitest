@@ -84,18 +84,6 @@ public final class ProcessArgs {
     return this.javaAgentFinder;
   }
 
-  public void setStdout(final Consumer<String> stdout) {
-    this.stdout = stdout;
-  }
-
-  public void setStdErr(final Consumer<String> stdErr) {
-    this.stdErr = stdErr;
-  }
-
-  public void setJvmArgs(final List<String> jvmArgs) {
-    this.jvmArgs = jvmArgs;
-  }
-
   public File getWorkingDir() {
     return this.workingDir;
   }

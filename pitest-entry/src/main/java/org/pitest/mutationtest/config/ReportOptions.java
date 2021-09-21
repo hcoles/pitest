@@ -31,6 +31,7 @@ import org.pitest.testapi.execute.Pitest;
 import org.pitest.util.Glob;
 import org.pitest.util.ResultOutputStrategy;
 import org.pitest.util.Unchecked;
+import org.pitest.util.Verbosity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -103,7 +104,7 @@ public class ReportOptions {
 
   private Collection<String>             loggingClasses                 = new ArrayList<>();
 
-  private boolean                        verbose                        = false;
+  private Verbosity                      verbosity                      = Verbosity.DEFAULT;
   private boolean                        failWhenNoMutations            = false;
   private boolean                        skipFailingTests               = false;
 
@@ -139,8 +140,8 @@ public class ReportOptions {
   private boolean                        useClasspathJar;
 
 
-  public boolean isVerbose() {
-    return this.verbose;
+  public Verbosity getVerbosity() {
+    return this.verbosity;
   }
 
   /**
@@ -335,8 +336,8 @@ public class ReportOptions {
     this.excludedMethods = excludedMethods;
   }
 
-  public void setVerbose(final boolean verbose) {
-    this.verbose = verbose;
+  public void setVerbosity(Verbosity verbose) {
+    this.verbosity = verbose;
   }
 
   public void setExcludedClasses(
@@ -628,7 +629,7 @@ public class ReportOptions {
         + ", jvmArgs=" + jvmArgs + ", numberOfThreads=" + numberOfThreads
         + ", timeoutFactor=" + timeoutFactor + ", timeoutConstant="
         + timeoutConstant + ", targetTests=" + targetTests + ", loggingClasses="
-        + loggingClasses + ", verbose=" + verbose + ", failWhenNoMutations="
+        + loggingClasses + ", verbosity=" + verbosity + ", failWhenNoMutations="
         + failWhenNoMutations + ", outputs=" + outputs + ", groupConfig="
         + groupConfig + ", fullMutationMatrix=" + fullMutationMatrix + ", mutationUnitSize=" + mutationUnitSize
         + ", shouldCreateTimestampedReports=" + shouldCreateTimestampedReports
