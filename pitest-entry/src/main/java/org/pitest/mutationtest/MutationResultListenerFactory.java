@@ -24,6 +24,7 @@ import java.util.Properties;
 public interface MutationResultListenerFactory extends ToolClasspathPlugin, ProvidesFeature {
 
   Feature LEGACY_MODE = Feature.named("_internal_activate_by_output_string")
+          .asInternalFeature()
           .withOnByDefault(true);
 
   MutationResultListener getListener(Properties props, ListenerArguments args);

@@ -95,6 +95,7 @@ public class SettingsFactory {
 
     List<Feature> enabledFeatures = selector.getActiveFeatures().stream()
       .map(toFeature())
+      .filter(f -> !f.isInternal())
       .distinct()
       .sorted(byName())
       .collect(Collectors.toList());
@@ -103,6 +104,7 @@ public class SettingsFactory {
 
     available.stream()
       .map(toFeature())
+      .filter(f -> !f.isInternal())
       .distinct()
       .sorted(byName())
       .filter(f -> !enabledFeatures.contains(f))

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class FeatureSelector<T extends ProvidesFeature> {
 
@@ -36,7 +37,9 @@ public class FeatureSelector<T extends ProvidesFeature> {
     final List<T> factories = new ArrayList<>(filters);
     final Map<String, Collection<T>> featureMap = FCollection.bucket(factories, byFeatureName());
 
-    final List<T> active = FCollection.filter(factories, isOnByDefault());
+    final List<T> active = factories.stream()
+            .filter(isOnByDefault())
+            .collect(Collectors.toCollection(ArrayList::new));
 
     for ( final FeatureSetting each : features ) {
       final Collection<T> providers = featureMap.get(each.feature().toLowerCase());
@@ -49,7 +52,10 @@ public class FeatureSelector<T extends ProvidesFeature> {
       }
 
       if (each.removesFeature()) {
-        active.removeAll(providers);
+        Collection<T> removable = providers.stream()
+                .filter(p -> !p.provides().isInternal())
+                .collect(Collectors.toList());
+        active.removeAll(removable);
       }
     }
 

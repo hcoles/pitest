@@ -26,7 +26,6 @@ public final class FeatureSetting {
     return this.status;
   }
 
-
   public boolean addsFeature() {
     return this.status == ToggleStatus.ACTIVATE;
   }
