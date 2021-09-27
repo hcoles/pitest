@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest.tooling;
 
+import org.pitest.classinfo.CachingByteArraySource;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
@@ -314,8 +315,8 @@ public class MutationCoverage {
     final MutationConfig mutationConfig = new MutationConfig(engine, coverage()
         .getLaunchOptions());
 
-    final ClassByteArraySource bas = fallbackToClassLoader(new ClassPathByteArraySource(
-        this.data.getClassPath()));
+    final ClassByteArraySource bas = new CachingByteArraySource(fallbackToClassLoader(new ClassPathByteArraySource(
+        this.data.getClassPath())), 200);
 
     final TestPrioritiser testPrioritiser = this.settings.getTestPrioritiser()
         .makeTestPrioritiser(this.data.getFreeFormProperties(), this.code,

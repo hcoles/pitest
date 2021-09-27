@@ -15,7 +15,6 @@
 package org.pitest.mutationtest.build;
 
 import org.pitest.bytecode.analysis.ClassTree;
-import org.pitest.classinfo.CachingByteArraySource;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.TestInfo;
@@ -39,7 +38,7 @@ public class MutationSource {
       final MutationInterceptor interceptor) {
     this.mutationConfig = mutationConfig;
     this.testPrioritiser = testPrioritiser;
-    this.source = new CachingByteArraySource(source, 200);
+    this.source = source;
     this.interceptor = interceptor;
   }
 
