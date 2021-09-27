@@ -15,6 +15,7 @@ public class FeatureSelectorTest {
 
   FeatureSelector<AFeature> testee;
 
+  ProvidesInternalFeature internalFeature = new ProvidesInternalFeature();
   ProvidesFooByDefault onByDefault = new ProvidesFooByDefault();
   ProvidesBarOptionally offByDefault = new ProvidesBarOptionally();
 
@@ -50,6 +51,14 @@ public class FeatureSelectorTest {
     this.testee = new FeatureSelector<>(Arrays.asList(disableFoo), features(this.onByDefault));
 
     assertThat(this.testee.getActiveFeatures()).isEmpty();
+  }
+
+  @Test
+  public void shouldNoDisableInternalFeatures() {
+    final FeatureSetting disableFoo = new FeatureSetting("foo", ToggleStatus.DEACTIVATE, new HashMap<>());
+    this.testee = new FeatureSelector<>(Arrays.asList(disableFoo), features(this.internalFeature));
+
+    assertThat(this.testee.getActiveFeatures()).isNotEmpty();
   }
 
   @Test
@@ -96,6 +105,15 @@ class ProvidesBarOptionally implements AFeature {
   @Override
   public Feature provides() {
     return Feature.named("bar").withOnByDefault(false);
+  }
+
+}
+
+class ProvidesInternalFeature implements AFeature {
+
+  @Override
+  public Feature provides() {
+    return Feature.named("bar").withOnByDefault(true).asInternalFeature();
   }
 
 }
