@@ -15,6 +15,7 @@
 package org.pitest.mutationtest.engine.gregor;
 
 import org.objectweb.asm.MethodVisitor;
+import org.pitest.plugin.ClientClasspathPlugin;
 
 /**
  * A <code>MethodMutatorFactory</code> is a factory creating method mutating
@@ -32,7 +33,7 @@ import org.objectweb.asm.MethodVisitor;
  *
  * @author Henry Coles
  */
-public interface MethodMutatorFactory {
+public interface MethodMutatorFactory extends ClientClasspathPlugin {
 
   MethodVisitor create(MutationContext context,
       MethodInfo methodInfo, MethodVisitor methodVisitor);
@@ -54,5 +55,10 @@ public interface MethodMutatorFactory {
    *         generation.
    */
   String getName();
+
+  @Override
+  default String description() {
+    return getName();
+  }
 
 }
