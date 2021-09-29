@@ -9,9 +9,9 @@ import org.apache.maven.project.MavenProject;
 import org.pitest.coverage.CoverageSummary;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
-import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.plugin.ToolClasspathPlugin;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
@@ -405,11 +405,16 @@ public class AbstractPitMojo extends AbstractMojo {
         this.getLog().info("Found plugin : " + each.description());
       }
 
-      for (final ClientClasspathPlugin each : this.plugins
-          .findClientClasspathPlugins()) {
-        this.getLog().info(
-            "Found shared classpath plugin : " + each.description());
-      }
+      this.plugins.findClientClasspathPlugins().stream()
+              .filter(p -> !(p instanceof MethodMutatorFactory))
+              .forEach(p -> this.getLog().info(
+                      "Found shared classpath plugin : " + p.description()));
+
+      String operators =  this.plugins.findMutationOperators().stream()
+              .map(m -> m.getName())
+              .collect(Collectors.joining(","));
+
+      this.getLog().info("Available mutators : " + operators);
 
       final Optional<CombinedStatistics> result = analyse();
       if (result.isPresent()) {
