@@ -8,10 +8,13 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.7.1 (unreleased)
+### 1.7.1
 
 * #932 Improve switch mutation descriptions
 * #934 Configure console output verbosity
+* #940 Hide internal features
+* #942 Fix for 3rd party mutation operators not added to client classpath
+* #939 Improve caching of bytecode retrieval
 
 ### 1.7.0
 
