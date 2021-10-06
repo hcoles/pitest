@@ -8,6 +8,10 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.7.2 (unreleased)
+
+* #943 Change default mutators - replace negate conditional with remove conditional
+
 ### 1.7.1
 
 * #932 Improve switch mutation descriptions

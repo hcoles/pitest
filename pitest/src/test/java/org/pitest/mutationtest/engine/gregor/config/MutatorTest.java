@@ -160,7 +160,7 @@ public class MutatorTest {
 
   @Test
   public void providesDefaultsGroup() {
-    assertGroupHasSize("DEFAULTS", 11);
+    assertGroupHasSize("DEFAULTS", 12);
   }
 
   @Test
@@ -170,7 +170,7 @@ public class MutatorTest {
 
   @Test
   public void providesStrongerGroup() {
-    assertGroupHasSize("STRONGER", 13);
+    assertGroupHasSize("STRONGER", 15);
   }
 
   @Test
