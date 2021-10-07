@@ -20,13 +20,15 @@ public class StandardMutatorGroups implements MutatorGroup {
         mutators.put("DEFAULTS", gather(mutators,"INVERT_NEGS",
                 "MATH",
                 "VOID_METHOD_CALLS",
-                "NEGATE_CONDITIONALS",
+                "REMOVE_CONDITIONALS_ORDER_ELSE",
+                "REMOVE_CONDITIONALS_EQUAL_ELSE",
                 "CONDITIONALS_BOUNDARY",
                 "INCREMENTS", "RETURNS"));
 
         mutators.put("STRONGER", gather(mutators,"DEFAULTS",
                 "EXPERIMENTAL_SWITCH",
-                "REMOVE_CONDITIONALS_EQUAL_ELSE"));
+                "REMOVE_CONDITIONALS_ORDER_IF",
+                "REMOVE_CONDITIONALS_EQUAL_IF"));
 
     }
 
