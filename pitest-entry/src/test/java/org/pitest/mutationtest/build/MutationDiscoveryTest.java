@@ -213,16 +213,6 @@ public class MutationDiscoveryTest {
   }
 
   @Test
-  public void filtersEquivalentNullStreamMutantsUsedInFlatMapCalls() {
-    final Collection<MutationDetails> actual = findMutants(HasPrivateStreamMethodUsedOnlyInSingleFlatMap.class);
-
-    this.data.setFeatures(Collections.singletonList("-FNULLSTREAM"));
-    final Collection<MutationDetails> actualWithoutFilter = findMutants(HasPrivateStreamMethodUsedOnlyInSingleFlatMap.class);
-
-    assertThat(actual.size()).isLessThan(actualWithoutFilter.size());
-  }
-
-  @Test
   public void filterMutantsInJavaRecords() {
     this.data.setDetectInlinedCode(true);
 

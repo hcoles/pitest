@@ -266,6 +266,7 @@ class EmptyReturnsFilter implements MutationInterceptor {
         return returnsZeroValue(method, mutatedInstruction)
             || returnsEmptyString(method, mutatedInstruction)
             || returns(method, mutatedInstruction, "java/util/Optional","empty")
+            || returns(method, mutatedInstruction, "java/util/stream/Stream","empty")
             || returns(method, mutatedInstruction, "java/util/Collections","emptyList")
             || returns(method, mutatedInstruction, "java/util/Collections","emptySet")
             || returns(method, mutatedInstruction, "java/util/List","of")
