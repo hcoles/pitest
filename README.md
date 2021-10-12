@@ -8,7 +8,7 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.7.2 (unreleased)
+### 1.7.2 
 
 * #943 Change default mutators - replace negate conditional with remove conditional
 * #946 Mutate stream returns to empty stream instead of null
