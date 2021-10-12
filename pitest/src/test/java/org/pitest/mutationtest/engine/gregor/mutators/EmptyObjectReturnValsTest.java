@@ -9,8 +9,10 @@ import org.pitest.mutationtest.engine.gregor.mutators.returns.EmptyObjectReturnV
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -141,12 +143,19 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
         createFirstMutant(ACollection.class), Collections.<String>emptyList());
   }
 
-// must build on java 7
-//  @Test
-//  public void mutatesToOptionalEmpty() throws Exception {
-//    assertMutantCallableReturns(new AnOptional(),
-//        createFirstMutant(AnOptional.class), Optional.<String>empty());
-//  }
+
+  @Test
+  public void mutatesToOptionalEmpty() throws Exception {
+    assertMutantCallableReturns(new AnOptional(),
+        createFirstMutant(AnOptional.class), Optional.<String>empty());
+  }
+
+  @Test
+  public void mutatesToEmptyStream() {
+    Stream<String> actual = mutateAndCall(new AStream(),
+            createFirstMutant(AStream.class));
+    assertThat(actual).isEmpty();
+  }
 
   private static class ObjectReturn implements Callable<Object> {
     @Override
@@ -240,12 +249,18 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
     }
   }
 
-//  private static class AnOptional implements Callable<Optional<String>> {
-//    @Override
-//    public Optional<String> call() throws Exception {
-//      return Optional.of("hello");
-//    }
-//  }
+  private static class AnOptional implements Callable<Optional<String>> {
+    @Override
+    public Optional<String> call() throws Exception {
+      return Optional.of("hello");
+    }
+  }
 
+  private static class AStream implements Callable<Stream<String>> {
+    @Override
+    public Stream<String> call() throws Exception {
+      return Stream.of("hello");
+    }
+  }
 
 }

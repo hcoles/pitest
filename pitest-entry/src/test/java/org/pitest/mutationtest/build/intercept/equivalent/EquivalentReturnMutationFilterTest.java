@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanFalseReturnValsMutator.FALSE_RETURNS;
@@ -156,6 +157,11 @@ public class EquivalentReturnMutationFilterTest {
   @Test
   public void filtersEquivalentOptionalMutants() {
     verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyOptional.class);
+  }
+
+  @Test
+  public void filtersEquivalentStreamMutants() {
+    verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyStream.class);
   }
 }
 
@@ -332,5 +338,11 @@ class AlreadyReturnsEmptySet {
 class AlreadyReturnsEmptyOptional {
   public Optional<String> a() {
     return Optional.empty();
+  }
+}
+
+class AlreadyReturnsEmptyStream {
+  public Stream<String> a() {
+    return Stream.empty();
   }
 }
