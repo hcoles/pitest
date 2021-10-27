@@ -69,6 +69,7 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
     NON_NULL_MUTATIONS.put("java.util.Optional", returnEmptyOptional());
     NON_NULL_MUTATIONS.put("java.util.stream.Stream", returnEmptyStream());
     NON_NULL_MUTATIONS.put("java.util.List", returnEmptyList());
+    NON_NULL_MUTATIONS.put("java.util.Map", returnEmptyMap());
     NON_NULL_MUTATIONS.put("java.util.Set", returnEmptySet());
     NON_NULL_MUTATIONS.put("java.util.Collection", returnEmptyList());
   }
@@ -200,6 +201,22 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
       @Override
       public String describe(final int opCode, final MethodInfo methodInfo) {
         return "replaced return value with Collections.emptyList for " + methodInfo.getDescription();
+      }
+    };
+  }
+
+  private static ZeroOperandMutation returnEmptyMap() {
+    return new ZeroOperandMutation() {
+      @Override
+      public void apply(final int opCode, final MethodVisitor mv) {
+        mv.visitInsn(Opcodes.POP);
+        mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/util/Collections", "emptyMap", "()Ljava/util/Map;", false);
+        mv.visitInsn(Opcodes.ARETURN);
+      }
+
+      @Override
+      public String describe(final int opCode, final MethodInfo methodInfo) {
+        return "replaced return value with Collections.emptyMap for " + methodInfo.getDescription();
       }
     };
   }

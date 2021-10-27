@@ -8,6 +8,10 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.7.3 (unreleased)
+
+* #952 Mutate map return to emptyMap instead of null
+
 ### 1.7.2 
 
 * #943 Change default mutators - replace negate conditional with remove conditional

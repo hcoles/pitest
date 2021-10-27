@@ -11,6 +11,7 @@ import org.pitest.mutationtest.engine.gregor.mutators.returns.PrimitiveReturnsMu
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -141,6 +142,11 @@ public class EquivalentReturnMutationFilterTest {
   @Test
   public void filtersEquivalentListMutants() {
     this.verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyList.class);
+  }
+
+  @Test
+  public void filtersEquivalentMapMutants() {
+    this.verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyMap.class);
   }
 
   @Test
@@ -317,6 +323,11 @@ class AlreadyReturnsEmptyList {
   }
 }
 
+class AlreadyReturnsEmptyMap {
+  public Map<Integer, Integer> a() {
+    return Collections.emptyMap();
+  }
+}
 
 class AlreadyReturnsEmptyListInTryCatch {
   public List<Integer> a(String s) {

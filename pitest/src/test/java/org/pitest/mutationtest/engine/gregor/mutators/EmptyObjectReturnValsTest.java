@@ -8,7 +8,9 @@ import org.pitest.mutationtest.engine.gregor.mutators.returns.EmptyObjectReturnV
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -132,6 +134,12 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
   }
 
   @Test
+  public void mutatesMapToEmptyMap() throws Exception {
+    assertMutantCallableReturns(new AMap(),
+            createFirstMutant(AMap.class), Collections.emptyMap());
+  }
+
+  @Test
   public void mutatesSetToEmptySet() throws Exception {
     assertMutantCallableReturns(new ASet(),
         createFirstMutant(ASet.class), Collections.<String>emptySet());
@@ -232,6 +240,13 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
     @Override
     public List<String> call() throws Exception {
       return Collections.singletonList("");
+    }
+  }
+
+  private static class AMap implements Callable<Map<String, String>> {
+    @Override
+    public Map<String, String> call() throws Exception {
+      return new HashMap<>();
     }
   }
 
