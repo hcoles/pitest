@@ -123,8 +123,23 @@ public final class Mutator {
   public static Collection<MethodMutatorFactory> fromStrings(
       final Collection<String> names) {
 
+    List<String> exclusions = names.stream()
+            .filter(s -> s.startsWith("-"))
+            .map(s -> s.substring(1))
+            .collect(Collectors.toList());
+
+    List<String> inclusions = names.stream()
+            .filter(s -> !s.startsWith("-"))
+            .collect(Collectors.toList());
+
     final Set<MethodMutatorFactory> unique = new TreeSet<>(compareId());
-    FCollection.flatMapTo(names, fromString(MUTATORS), unique);
+    FCollection.flatMapTo(inclusions, fromString(MUTATORS), unique);
+
+    final Set<MethodMutatorFactory> excluded = new TreeSet<>(compareId());
+    FCollection.flatMapTo(exclusions, fromString(MUTATORS), excluded);
+
+    unique.removeAll(excluded);
+
     return unique;
   }
 

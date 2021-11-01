@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
+import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.ArgumentPropagationMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
@@ -288,6 +289,17 @@ public class MutatorTest {
   public void overlappingGroupsDoNotCauseDuplicates() {
     assertThat(parseStrings("DEFAULTS", "DEFAULTS", "INCREMENTS", "INCREMENTS"))
             .hasSameSizeAs(parseStrings("DEFAULTS", "INCREMENTS"));
+  }
+
+  @Test
+  public void parsesExclusions() {
+    assertThat(parseStrings("DEFAULTS", "-INCREMENTS"))
+            .noneMatch(m -> m.getName().equals("INCREMENTS"));
+  }
+
+  @Test
+  public void excludesGroups() {
+    assertThat(parseStrings("DEFAULTS", "STRONGER", "-ALL")).isEmpty();
   }
 
   private Collection<MethodMutatorFactory> parseStrings(final String... s) {

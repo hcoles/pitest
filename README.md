@@ -10,7 +10,8 @@ Read all about it at http://pitest.org
 
 ### 1.7.3 (unreleased)
 
-* #952 Mutate map return to emptyMap instead of null
+* #952 Mutate map return to `emptyMap` instead of null
+* #954 Allow mutators to be excluded
 
 ### 1.7.2 
 
