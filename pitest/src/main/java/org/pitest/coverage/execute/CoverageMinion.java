@@ -134,6 +134,11 @@ public class CoverageMinion {
 
     final List<TestUnit> tus = discoverTests(testPlugin, classes);
 
+    if (tus.isEmpty()) {
+      LOG.warning("No executable tests were found after examining the " + classes.size()
+              + " test classes supplied. This may indicate an issue with the classpath or a missing test plugin (e.g for JUnit 5).");
+    }
+
     final DependencyFilter filter = new DependencyFilter(
         new DependencyExtractor(new ClassPathByteArraySource(),
             paramsFromParent.getDependencyAnalysisMaxDistance()),
