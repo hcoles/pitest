@@ -8,7 +8,7 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.7.3 (unreleased)
+### 1.7.3
 
 * #952 Mutate map return to `emptyMap` instead of null
 * #954 Allow mutators to be excluded
