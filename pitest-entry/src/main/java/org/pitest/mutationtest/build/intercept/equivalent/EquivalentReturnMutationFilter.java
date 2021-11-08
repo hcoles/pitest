@@ -1,6 +1,7 @@
 package org.pitest.mutationtest.build.intercept.equivalent;
 
 import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
+import static org.pitest.bytecode.analysis.InstructionMatchers.getStatic;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallNamed;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
@@ -40,6 +41,7 @@ import org.pitest.sequence.Match;
 import org.pitest.sequence.QueryParams;
 import org.pitest.sequence.QueryStart;
 import org.pitest.sequence.SequenceMatcher;
+import org.pitest.sequence.SequenceQuery;
 import org.pitest.sequence.Slot;
 
 /**
@@ -80,16 +82,22 @@ public class EquivalentReturnMutationFilter implements MutationInterceptorFactor
 
 class HardCodedTrueEquivalentFilter implements MutationInterceptor {   
   private static final Slot<AbstractInsnNode> MUTATED_INSTRUCTION = Slot.create(AbstractInsnNode.class);
-  
-  static final SequenceMatcher<AbstractInsnNode> BOXED_TRUE = QueryStart
-      .any(AbstractInsnNode.class)
-      .zeroOrMore(QueryStart.match(anyInstruction()))
-      .then(opCode(Opcodes.ICONST_1))
-      .then(methodCallNamed("valueOf"))
-      .then(isInstruction(MUTATED_INSTRUCTION.read()))
-      .zeroOrMore(QueryStart.match(anyInstruction()))
-      .compile(QueryParams.params(AbstractInsnNode.class)
-          .withIgnores(notAnInstruction())
+
+  static final SequenceQuery<AbstractInsnNode> BOXED_TRUE = QueryStart
+      .match(opCode(Opcodes.ICONST_1))
+      .then(methodCallNamed("valueOf"));
+
+  static final SequenceQuery<AbstractInsnNode> CONSTANT_TRUE = QueryStart
+          .match(getStatic("java/lang/Boolean","TRUE"));
+
+  static final SequenceMatcher<AbstractInsnNode> EQUIVALENT_TRUE = QueryStart
+          .any(AbstractInsnNode.class)
+          .zeroOrMore(QueryStart.match(anyInstruction()))
+          .then(BOXED_TRUE.or(CONSTANT_TRUE))
+          .then(isInstruction(MUTATED_INSTRUCTION.read()))
+          .zeroOrMore(QueryStart.match(anyInstruction()))
+          .compile(QueryParams.params(AbstractInsnNode.class)
+                  .withIgnores(notAnInstruction())
           );
 
   private static final Set<String> MUTATOR_IDS = new HashSet<>();
@@ -137,7 +145,7 @@ class HardCodedTrueEquivalentFilter implements MutationInterceptor {
       private boolean boxedTrue(int instruction, MethodTree method) {
           final Context<AbstractInsnNode> context = Context.start(method.instructions(), false);
           context.store(MUTATED_INSTRUCTION.write(), method.instruction(instruction));
-          return BOXED_TRUE.matches(method.instructions(), context);         
+          return EQUIVALENT_TRUE.matches(method.instructions(), context);
       }
     };
   }
@@ -146,6 +154,7 @@ class HardCodedTrueEquivalentFilter implements MutationInterceptor {
   public void end() {
     this.currentClass = null;
   }
+
 }
 
 
@@ -201,21 +210,32 @@ class PrimitiveEquivalentFilter implements MutationInterceptor {
 
 }
 
+/**
+ * Handles methods already returning a 0 value, and also
+ * those returning Boolean.FALSE
+ */
 class EmptyReturnsFilter implements MutationInterceptor {
 
     private static final Slot<AbstractInsnNode> MUTATED_INSTRUCTION = Slot.create(AbstractInsnNode.class);
-    
-    private static final SequenceMatcher<AbstractInsnNode> CONSTANT_ZERO = QueryStart
-        .any(AbstractInsnNode.class)
-        .zeroOrMore(QueryStart.match(anyInstruction()))
-        .then(isZeroConstant())
-        .then(methodCallNamed("valueOf"))
-        .then(isInstruction(MUTATED_INSTRUCTION.read()))
-        .zeroOrMore(QueryStart.match(anyInstruction()))
-        .compile(QueryParams.params(AbstractInsnNode.class)
-            .withIgnores(notAnInstruction())
-            );
-    
+
+  static final SequenceQuery<AbstractInsnNode> CONSTANT_ZERO = QueryStart
+          .match(isZeroConstant())
+          .then(methodCallNamed("valueOf"));
+
+  static final SequenceQuery<AbstractInsnNode> CONSTANT_FALSE = QueryStart
+          .match(getStatic("java/lang/Boolean","FALSE"));
+
+  static final SequenceMatcher<AbstractInsnNode> ZERO_VALUES = QueryStart
+          .any(AbstractInsnNode.class)
+          .zeroOrMore(QueryStart.match(anyInstruction()))
+          .then(CONSTANT_ZERO.or(CONSTANT_FALSE))
+          .then(isInstruction(MUTATED_INSTRUCTION.read()))
+          .zeroOrMore(QueryStart.match(anyInstruction()))
+          .compile(QueryParams.params(AbstractInsnNode.class)
+                  .withIgnores(notAnInstruction())
+          );
+
+
   private static final Set<String> MUTATOR_IDS = new HashSet<>();
   private static final Set<Integer> ZERO_CONSTANTS = new HashSet<>();
   static {
@@ -278,7 +298,7 @@ class EmptyReturnsFilter implements MutationInterceptor {
           int mutatedInstruction) {
           final Context<AbstractInsnNode> context = Context.start(method.instructions(), false);
           context.store(MUTATED_INSTRUCTION.write(), method.instruction(mutatedInstruction));
-          return CONSTANT_ZERO.matches(method.instructions(), context);              
+          return ZERO_VALUES.matches(method.instructions(), context);
       }
           
       private boolean returns(MethodTree method, int mutatedInstruction, String owner, String name) {

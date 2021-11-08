@@ -231,7 +231,7 @@ public class FilterTester {
 
     final List<MutationDetails> filteredOut = FCollection.filter(mutations, notIn(actual));
 
-    softly.assertThat(filteredOut).describedAs("No mutants filtered").isNotEmpty();
+    softly.assertThat(filteredOut).describedAs("No mutants filtered " + s).isNotEmpty();
     softly.assertThat(filteredOut).have(mutatedBy(id));
     softly.assertAll();
 
@@ -354,4 +354,9 @@ class Sample {
   ClassName className;
   String compiler;
   ClassTree clazz;
+
+  @Override
+  public String toString() {
+    return "Compiled by " + compiler + "\n" + clazz.toString();
+  }
 }

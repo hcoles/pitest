@@ -13,6 +13,7 @@ import static org.objectweb.asm.Opcodes.ISTORE;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.IincInsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
@@ -155,6 +156,16 @@ public class InstructionMatchers {
 
   public static  Match<AbstractInsnNode> isInstruction(final SlotRead<AbstractInsnNode> target) {
     return (c, t) -> c.retrieve(target).get() == t;
+  }
+
+  public static Match<AbstractInsnNode> getStatic(String owner, String field) {
+    return (c, t) -> {
+       if (t instanceof FieldInsnNode) {
+         FieldInsnNode fieldNode = (FieldInsnNode) t;
+         return t.getOpcode() == Opcodes.GETSTATIC && fieldNode.name.equals(field) && fieldNode.owner.equals(owner);
+       }
+       return false;
+    };
   }
 
   /**
