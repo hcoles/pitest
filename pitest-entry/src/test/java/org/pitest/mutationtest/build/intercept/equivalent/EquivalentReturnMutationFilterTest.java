@@ -90,13 +90,26 @@ public class EquivalentReturnMutationFilterTest {
 
   @Test
   public void filtersEquivalentBoxedBooleanMutants() {
-    this.verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsBoxedFalse.class);
+    this.verifier.assertFiltersMutationsFromMutator(FALSE_RETURNS.getGloballyUniqueId()
+            , AlreadyReturnsBoxedFalse.class);
   }
 
   @Test
   public void filtersEquivalentBoxedBooleanTrueMutants() {
     this.verifier.assertFiltersMutationsFromMutator(TRUE_RETURNS.getGloballyUniqueId()
         , AlreadyReturnsBoxedTrue.class);
+  }
+
+  @Test
+  public void filtersEquivalentConstantTrueMutants() {
+    this.verifier.assertFiltersMutationsFromMutator(TRUE_RETURNS.getGloballyUniqueId()
+            , ReturnsConstantTrue.class);
+  }
+
+  @Test
+  public void filtersEquivalentConstantFalseMutants() {
+    this.verifier.assertFiltersMutationsFromMutator(FALSE_RETURNS.getGloballyUniqueId()
+            , ReturnsConstantFalse.class);
   }
 
   @Test
@@ -249,6 +262,19 @@ class AlreadyReturnsBoxedZeroInteger {
     return 0;
   }
 }
+
+class ReturnsConstantTrue {
+  public Boolean a() {
+    return Boolean.TRUE;
+  }
+}
+
+class ReturnsConstantFalse {
+  public Boolean a() {
+    return Boolean.FALSE;
+  }
+}
+
 
 class CallsAnIntegerReturningStaticWith0 {
 
