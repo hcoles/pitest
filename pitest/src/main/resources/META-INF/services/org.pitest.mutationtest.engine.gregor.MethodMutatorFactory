@@ -15,6 +15,7 @@ org.pitest.mutationtest.engine.gregor.mutators.returns.PrimitiveReturnsMutator
 org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator
 org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator
 org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator
+org.pitest.mutationtest.engine.gregor.mutators.experimental.BigDecimalMutator
 org.pitest.mutationtest.engine.gregor.mutators.experimental.BigIntegerMutator
 org.pitest.mutationtest.engine.gregor.mutators.experimental.MemberVariableMutator
 org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator
@@ -23,6 +24,7 @@ org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMuta
 #org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveSwitchMutator
 org.pitest.mutationtest.engine.gregor.mutators.experimental.ReturnValuesMutator
 org.pitest.mutationtest.engine.gregor.mutators.experimental.SwitchMutator
+org.pitest.mutationtest.engine.gregor.mutators.experimental.BigDecimalMutator
 org.pitest.mutationtest.engine.gregor.mutators.experimental.BigIntegerMutator
 org.pitest.mutationtest.engine.gregor.mutators.rv.ABSMutator
 org.pitest.mutationtest.engine.gregor.mutators.rv.AOD1Mutator
