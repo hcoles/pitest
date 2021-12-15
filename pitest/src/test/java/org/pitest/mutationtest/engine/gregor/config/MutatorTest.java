@@ -180,6 +180,7 @@ public class MutatorTest {
     assertProvides("EXPERIMENTAL_SWITCH");
     assertProvides("EXPERIMENTAL_ARGUMENT_PROPAGATION");
     assertProvides("EXPERIMENTAL_NAKED_RECEIVER");
+    assertProvides("EXPERIMENTAL_BIG_DECIMAL");
     assertProvides("EXPERIMENTAL_BIG_INTEGER");
   }
 
