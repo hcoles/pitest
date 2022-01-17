@@ -19,14 +19,14 @@ import static org.pitest.functional.prelude.Prelude.and;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -46,13 +46,13 @@ public class GregorMutater implements Mutater {
   private final Map<String, String>       computeCache   = new HashMap<>();
   private final Predicate<MethodInfo>     filter;
   private final ClassByteArraySource      byteSource;
-  private final Set<MethodMutatorFactory> mutators       = new HashSet<>();
+  private final List<MethodMutatorFactory> mutators;
 
   public GregorMutater(final ClassByteArraySource byteSource,
       final Predicate<MethodInfo> filter,
       final Collection<MethodMutatorFactory> mutators) {
     this.filter = filter;
-    this.mutators.addAll(mutators);
+    this.mutators = orderAndDeDuplicate(mutators);
     this.byteSource = byteSource;
   }
 
@@ -61,12 +61,12 @@ public class GregorMutater implements Mutater {
       final ClassName classToMutate) {
 
     final ClassContext context = new ClassContext();
-    context.setTargetMutation(Optional.<MutationIdentifier> empty());
+    context.setTargetMutation(Optional.empty());
     Optional<byte[]> bytes = GregorMutater.this.byteSource.getBytes(
         classToMutate.asInternalName());
     
     return bytes.map(findMutations(context))
-        .orElse(Collections.<MutationDetails>emptyList());
+        .orElse(Collections.emptyList());
 
   }
 
@@ -123,7 +123,7 @@ public class GregorMutater implements Mutater {
   }
 
   private static Predicate<MethodInfo> isGroovyClass() {
-    return a -> a.isInGroovyClass();
+    return MethodInfo::isInGroovyClass;
   }
 
   private static Predicate<MethodInfo> filterSyntheticMethods() {
@@ -131,7 +131,16 @@ public class GregorMutater implements Mutater {
   }
 
   private static Predicate<MethodInfo> isGeneratedEnumMethod() {
-    return a -> a.isGeneratedEnumMethod();
+    return MethodInfo::isGeneratedEnumMethod;
+  }
+
+  private List<MethodMutatorFactory> orderAndDeDuplicate(Collection<MethodMutatorFactory> mutators) {
+    // deduplication is based on object identity, so dubious that this adds any value
+    // however left in place for now to replicate HashSet behaviour
+    return mutators.stream()
+            .distinct()
+            .sorted(Comparator.comparing(MethodMutatorFactory::getGloballyUniqueId))
+            .collect(Collectors.toList());
   }
 
 }

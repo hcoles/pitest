@@ -1,12 +1,5 @@
 package org.pitest.mutationtest.execute;
 
-import static org.junit.Assert.assertEquals;
-import static org.pitest.mutationtest.LocationMother.aMutationId;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.DetectionStatus;
@@ -15,6 +8,13 @@ import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Id;
 import org.pitest.util.SafeDataInputStream;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.pitest.mutationtest.LocationMother.aMutationId;
 
 public class DefaultReporterTest {
 
@@ -52,9 +52,8 @@ public class DefaultReporterTest {
   }
 
   private SafeDataInputStream resultToStream() {
-    final SafeDataInputStream is = new SafeDataInputStream(
+    return new SafeDataInputStream(
         new ByteArrayInputStream(this.os.toByteArray()));
-    return is;
   }
 
   @Test

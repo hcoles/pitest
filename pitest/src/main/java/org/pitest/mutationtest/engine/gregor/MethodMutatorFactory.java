@@ -15,6 +15,7 @@
 package org.pitest.mutationtest.engine.gregor;
 
 import org.objectweb.asm.MethodVisitor;
+import org.pitest.plugin.ClientClasspathPlugin;
 
 /**
  * A <code>MethodMutatorFactory</code> is a factory creating method mutating
@@ -32,7 +33,7 @@ import org.objectweb.asm.MethodVisitor;
  *
  * @author Henry Coles
  */
-public interface MethodMutatorFactory {
+public interface MethodMutatorFactory extends ClientClasspathPlugin {
 
   MethodVisitor create(MutationContext context,
       MethodInfo methodInfo, MethodVisitor methodVisitor);
@@ -46,10 +47,18 @@ public interface MethodMutatorFactory {
    * <code>MethodVisitor</code> created by this
    * <code>MethodMutatorFactory</code>.
    *
+   * The name is also the key by which mutators are activated and deactivated.
+   * More than one MethodMutatorFactory instance might have the same name so
+   * they can be activated together. Their globalIds must however be unique.
    *
    * @return a human readable string representation for end-user report
    *         generation.
    */
   String getName();
+
+  @Override
+  default String description() {
+    return getName();
+  }
 
 }

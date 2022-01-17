@@ -1,6 +1,9 @@
 package org.pitest.maven;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -10,7 +13,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Map;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Scm;
@@ -27,7 +29,6 @@ import org.apache.maven.scm.command.changelog.ChangeLogSet;
 import org.apache.maven.scm.command.status.StatusScmResult;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.repository.ScmRepository;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
@@ -61,7 +62,7 @@ public class ScmMojoTest extends BasePitMojoTest {
     when(this.build.getOutputDirectory()).thenReturn("foo");
     when(this.build.getTestOutputDirectory()).thenReturn("foo");
     when(this.project.getScm()).thenReturn(this.scm);
-    when(this.manager.makeScmRepository(any(String.class))).thenReturn(
+    when(this.manager.makeScmRepository(anyString())).thenReturn(
         this.repository);
     configurePitMojo(this.testee, createPomWithConfiguration(""));
   }
@@ -102,7 +103,7 @@ public class ScmMojoTest extends BasePitMojoTest {
     setupConnection();
     setFileWithStatus(ScmFileStatus.ADDED);
     this.testee.execute();
-    verify(this.executionStrategy).execute(any(File.class),
+    verify(this.executionStrategy).execute(isNull(),
         any(ReportOptions.class), any(PluginServices.class), anyMap());
   }
 
@@ -118,7 +119,7 @@ public class ScmMojoTest extends BasePitMojoTest {
     setupConnection();
     setFileWithStatus(ScmFileStatus.MODIFIED);
     this.testee.execute();
-    verify(this.executionStrategy).execute(any(File.class),
+    verify(this.executionStrategy).execute(isNull(),
         any(ReportOptions.class), any(PluginServices.class), anyMap());
   }
 
@@ -129,7 +130,7 @@ public class ScmMojoTest extends BasePitMojoTest {
             createPomWithConfiguration("<analyseLastCommit>true</analyseLastCommit>"));
     givenChangeLogWithLastCommit();
     this.testee.execute();
-    verify(this.executionStrategy).execute(any(File.class),
+    verify(this.executionStrategy).execute(isNull(),
             any(ReportOptions.class), any(PluginServices.class), anyMap());
   }
 
@@ -169,7 +170,7 @@ public class ScmMojoTest extends BasePitMojoTest {
         this.testee,
         createPomWithConfiguration("<include><value>DELETED</value><value>UNKNOWN</value></include>"));
     this.testee.execute();
-    verify(this.executionStrategy, times(1)).execute(any(File.class),
+    verify(this.executionStrategy, times(1)).execute(isNull(),
         any(ReportOptions.class), any(PluginServices.class), anyMap());
   }
 
@@ -192,7 +193,4 @@ public class ScmMojoTest extends BasePitMojoTest {
         .thenReturn(new StatusScmResult("", Collections.<ScmFile> emptyList()));
   }
 
-  private Map<String, String> anyMap() {
-    return Matchers.<Map<String, String>> any();
-  }
 }

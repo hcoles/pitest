@@ -34,52 +34,54 @@ import java.util.zip.ZipOutputStream;
  */
 public class ManifestUtils {
 
+  public static final String CLASSPATH_JAR_FILE_PREFIX = "pitest-classpath-jar-file-";
+
   // Method based on
   // https://github.com/JetBrains/intellij-community/blob/master/java/java-runtime/src/com/intellij/rt/execution/testFrameworks/ForkedByModuleSplitter.java
   // JetBrains copyright notice and licence retained above.
   public static File createClasspathJarFile(String classpath)
-      throws IOException {
+          throws IOException {
     final Manifest manifest = new Manifest();
     final Attributes attributes = manifest.getMainAttributes();
     attributes.put(Attributes.Name.MANIFEST_VERSION, "1.0");
 
-    String classpathForManifest = "";
+    StringBuilder classpathForManifest = new StringBuilder();
     int idx = 0;
     int endIdx = 0;
     while (endIdx >= 0) {
       endIdx = classpath.indexOf(File.pathSeparator, idx);
       String path = endIdx < 0 ? classpath.substring(idx)
-          : classpath.substring(idx, endIdx);
+              : classpath.substring(idx, endIdx);
       if (classpathForManifest.length() > 0) {
-        classpathForManifest += " ";
+        classpathForManifest.append(" ");
       }
 
-      classpathForManifest += new File(path).toURI().toURL().toString();
+      classpathForManifest.append(new File(path).toURI().toURL());
       idx = endIdx + File.pathSeparator.length();
     }
-    attributes.put(Attributes.Name.CLASS_PATH, classpathForManifest);
+    attributes.put(Attributes.Name.CLASS_PATH, classpathForManifest.toString());
 
-    File jarFile = File.createTempFile("classpath", ".jar");
+    File jarFile = File.createTempFile(CLASSPATH_JAR_FILE_PREFIX, ".jar");
     try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(jarFile));
-        ZipOutputStream jarPlugin = new JarOutputStream(out, manifest);
-        )  {
-      jarFile.deleteOnExit(); 
+         ZipOutputStream jarPlugin = new JarOutputStream(out, manifest)
+    )  {
+      jarFile.deleteOnExit();
     }
 
     return jarFile;
   }
-  
+
   public static Collection<File> readClasspathManifest(File file) {
     try (FileInputStream fis = new FileInputStream(file);
-        JarInputStream jarStream = new JarInputStream(fis);) {
+         JarInputStream jarStream = new JarInputStream(fis)) {
       Manifest mf = jarStream.getManifest();
       Attributes att = mf.getMainAttributes();
       String cp = att.getValue(Attributes.Name.CLASS_PATH);
       String[] parts = cp.split("file:");
       return Arrays.stream(parts)
-          .filter(part -> !part.isEmpty())
-          .map(part -> new File(part.trim()))
-          .collect(Collectors.toList());      
+              .filter(part -> !part.isEmpty())
+              .map(part -> new File(part.trim()))
+              .collect(Collectors.toList());
     } catch (IOException ex) {
       throw new RuntimeException("Could not read classpath jar manifest", ex);
     }

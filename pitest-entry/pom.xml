@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>pitest-parent</artifactId>
 		<groupId>org.pitest</groupId>
-		<version>1.5.3-SNAPSHOT</version>
+		<version>${revision}</version>
 	</parent>
 	<artifactId>pitest-entry</artifactId>
 	<name>pitest-entry</name>
@@ -34,6 +34,11 @@
 					</execution>
 				</executions>
 
+			</plugin>
+			<!-- must run after shade -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -134,11 +139,11 @@
 			<artifactId>asm-util</artifactId>
 			<version>${asm.version}</version>
 		</dependency>
-		<!-- for the xstream history store. cannot used shaded version -->
+		<!-- for the xstream history store. cannot use shaded version -->
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
-			<version>1.4.8</version>
+			<version>1.4.18</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -151,7 +156,6 @@
 		<dependency>
 			<groupId>nl.jqno.equalsverifier</groupId>
 			<artifactId>equalsverifier</artifactId>
-			<version>1.7.5</version>
 			<scope>test</scope>
 		</dependency>
 

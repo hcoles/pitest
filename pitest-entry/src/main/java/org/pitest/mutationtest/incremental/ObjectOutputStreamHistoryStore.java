@@ -43,10 +43,8 @@ public class ObjectOutputStreamHistoryStore implements HistoryStore {
   }
 
   private BufferedReader createReader(Optional<Reader> input) {
-    if (input.isPresent()) {
-      return new BufferedReader(input.get());
-    }
-    return null;
+    return input.map(BufferedReader::new)
+            .orElse(null);
   }
 
   @Override
@@ -109,7 +107,7 @@ public class ObjectOutputStreamHistoryStore implements HistoryStore {
 
   private void restoreClassPath() {
     try {
-      final long classPathSize = Long.valueOf(this.input.readLine());
+      final long classPathSize = Long.parseLong(this.input.readLine());
       for (int i = 0; i != classPathSize; i++) {
         final ClassHistory coverage = deserialize(this.input.readLine(),
             ClassHistory.class);

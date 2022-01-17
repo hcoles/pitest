@@ -80,13 +80,9 @@ class LoggingLineScanner extends MethodVisitor {
   @Override
   public void visitMethodInsn(final int opcode, final String owner,
       final String name, final String desc, boolean itf) {
-    if (FCollection.contains(this.loggingClasses, matches(owner))) {
+    if (FCollection.contains(this.loggingClasses, owner::startsWith)) {
       this.lines.add(this.currentLineNumber);
     }
-  }
-
-  private static Predicate<String> matches(final String owner) {
-    return a -> owner.startsWith(a);
   }
 
   @Override

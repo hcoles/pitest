@@ -93,9 +93,9 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
       if (Integer.class == declaredReturnType) {
         final Integer intValue = (Integer) object;
         if (intValue == null) {
-          return Integer.valueOf(1);
+          return 1;
         } else if (intValue == 1) {
-          return Integer.valueOf(0);
+          return 0;
         } else {
           return intValue + 1;
         }
@@ -104,7 +104,7 @@ public class ReturnValuesMutator implements MethodMutatorFactory {
       if (Long.class == declaredReturnType) {
         final Long longValue = (Long) object;
         if (longValue == null) {
-          return Long.valueOf(1L);
+          return 1L;
         } else {
           return longValue + 1L;
         }

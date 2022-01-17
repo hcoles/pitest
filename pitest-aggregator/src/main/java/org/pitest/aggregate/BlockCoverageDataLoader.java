@@ -18,7 +18,6 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.BlockCoverage;
 import org.pitest.coverage.BlockLocation;
 import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MethodName;
 
 class BlockCoverageDataLoader extends DataLoader<BlockCoverage> {
 
@@ -74,7 +73,7 @@ class BlockCoverageDataLoader extends DataLoader<BlockCoverage> {
     BlockLocation block;
     ClassName className = ClassName.fromString(getAttributeValue(enclosingNode, CLASSNAME));
     String method = getAttributeValue(enclosingNode, METHOD);
-    MethodName methodName = MethodName.fromString(method.substring(0, method.indexOf(OPEN_PAREN)));
+    String methodName = method.substring(0, method.indexOf(OPEN_PAREN));
     int blockNum = getAttributeValueAsInt(enclosingNode, NUMBER);
     int firstInstruction = getAttributeValueAsInt(enclosingNode, FIRST_INSN);
     int lastInstruction = getAttributeValueAsInt(enclosingNode, LAST_INSN);

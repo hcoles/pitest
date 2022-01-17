@@ -15,18 +15,6 @@
  */
 package org.pitest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeFalse;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
@@ -42,6 +30,18 @@ import org.pitest.support.DirectoriesOnlyWalker;
 import org.pitest.testapi.execute.Pitest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeFalse;
 
 /**
  * @author Stefan Penndorf <stefan.penndorf@gmail.com>
@@ -268,6 +268,10 @@ public class PitMojoIT {
             projectReportsHtmlContents
                     .contains("<a href=\"./org.example2/index.html\">org.example2</a>"));
 
+
+    assertTrue("coverage included",
+            projectReportsHtmlContents
+                    .contains("89%"));
   }
 
   /*
@@ -561,6 +565,16 @@ public class PitMojoIT {
     String actual = readResults(testDir);
     assertThat(actual).contains(
         "<mutation detected='true' status='KILLED' numberOfTestsRun='1'><sourceFile>DiscoveredClass.java</sourceFile>");
+  }
+
+  @Test
+  public void shouldNotNullPointerWhenEnumInitializerNotCalled() throws IOException, VerificationException {
+    File testDir = prepare("/pit-enum-constructor-npe");
+    verifier.executeGoal("test");
+    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+
+    String actual = readResults(testDir);
+    assertThat(actual).isNotEmpty();
   }
 
 }

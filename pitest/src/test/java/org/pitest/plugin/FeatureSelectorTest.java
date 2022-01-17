@@ -1,20 +1,21 @@
 package org.pitest.plugin;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class FeatureSelectorTest {
 
   FeatureSelector<AFeature> testee;
 
+  ProvidesInternalFeature internalFeature = new ProvidesInternalFeature();
   ProvidesFooByDefault onByDefault = new ProvidesFooByDefault();
   ProvidesBarOptionally offByDefault = new ProvidesBarOptionally();
 
@@ -38,7 +39,7 @@ public class FeatureSelectorTest {
 
   @Test
   public void shouldEnableFeaturesWhenRequested() {
-    final FeatureSetting enableBar = new FeatureSetting("bar", ToggleStatus.ACTIVATE,  new HashMap<String, List<String>>());
+    final FeatureSetting enableBar = new FeatureSetting("bar", ToggleStatus.ACTIVATE, new HashMap<>());
     this.testee = new FeatureSelector<>(Arrays.asList(enableBar), features(this.onByDefault, this.offByDefault));
 
     assertThat(this.testee.getActiveFeatures()).containsOnly(this.offByDefault, this.onByDefault);
@@ -46,27 +47,35 @@ public class FeatureSelectorTest {
 
   @Test
   public void shouldDisableFeaturesWhenRequested() {
-    final FeatureSetting disableFoo = new FeatureSetting("foo", ToggleStatus.DEACTIVATE,  new HashMap<String, List<String>>());
+    final FeatureSetting disableFoo = new FeatureSetting("foo", ToggleStatus.DEACTIVATE, new HashMap<>());
     this.testee = new FeatureSelector<>(Arrays.asList(disableFoo), features(this.onByDefault));
 
     assertThat(this.testee.getActiveFeatures()).isEmpty();
   }
 
   @Test
-  public void shouldThrowErrorWhenConfigForUnknownFeatureProvided() {
-    final FeatureSetting wrong = new FeatureSetting("unknown", ToggleStatus.DEACTIVATE,  new HashMap<String, List<String>>());
+  public void shouldNoDisableInternalFeatures() {
+    final FeatureSetting disableFoo = new FeatureSetting("foo", ToggleStatus.DEACTIVATE, new HashMap<>());
+    this.testee = new FeatureSelector<>(Arrays.asList(disableFoo), features(this.internalFeature));
 
-    this.thrown.expect(IllegalArgumentException.class);
-    this.testee = new FeatureSelector<>(Arrays.asList(wrong), features(this.onByDefault));
+    assertThat(this.testee.getActiveFeatures()).isNotEmpty();
   }
 
   @Test
   public void shouldProvideConfigurationForFeatureWhenProvided() {
-    final FeatureSetting fooConfig = new FeatureSetting("foo", ToggleStatus.DEACTIVATE,  new HashMap<String, List<String>>());
+    final FeatureSetting fooConfig = new FeatureSetting("foo", ToggleStatus.DEACTIVATE,  new HashMap<>());
     this.testee = new FeatureSelector<>(Arrays.asList(fooConfig), features(this.onByDefault));
 
     assertThat(this.testee.getSettingForFeature("foo")).isEqualTo(fooConfig);
     assertThat(this.testee.getSettingForFeature("bar")).isNull();
+  }
+
+  @Test
+  public void featureNamesAreCaseInsensitive() {
+    final FeatureSetting fooConfig = new FeatureSetting("foo", ToggleStatus.DEACTIVATE,  new HashMap<>());
+    this.testee = new FeatureSelector<>(Arrays.asList(fooConfig), features(this.onByDefault));
+
+    assertThat(this.testee.getSettingForFeature("FOO")).isEqualTo(fooConfig);
   }
 
   private List<FeatureSetting> noSettings() {
@@ -96,6 +105,15 @@ class ProvidesBarOptionally implements AFeature {
   @Override
   public Feature provides() {
     return Feature.named("bar").withOnByDefault(false);
+  }
+
+}
+
+class ProvidesInternalFeature implements AFeature {
+
+  @Override
+  public Feature provides() {
+    return Feature.named("bar").withOnByDefault(true).asInternalFeature();
   }
 
 }

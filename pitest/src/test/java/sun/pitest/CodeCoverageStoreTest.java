@@ -41,7 +41,7 @@ public class CodeCoverageStoreTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     CodeCoverageStore.init(this.receiver);
   }
 
@@ -83,6 +83,13 @@ public class CodeCoverageStoreTest {
     final long value = CodeCoverageStore.encode(0, 0);
     assertEquals(0, CodeCoverageStore.decodeClassId(value));
     assertEquals(0, CodeCoverageStore.decodeLineId(value));
+  }
+
+  @Test
+  public void shouldCodeAndEncodeClassIdAndLineNumber() {
+    final long value = CodeCoverageStore.encode(42, 123);
+    assertEquals(42, CodeCoverageStore.decodeClassId(value));
+    assertEquals(123, CodeCoverageStore.decodeLineId(value));
   }
 
   @Test

@@ -18,7 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.AOR4Mutator;
 
 import java.util.concurrent.Callable;
 
@@ -26,7 +25,7 @@ public class AOR4MutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyMathFunctions() {
-    createTesteeWith(AOR4Mutator.AOR_4_MUTATOR);
+    createTesteeWith(AOR4Mutator.AOR4);
   }
 
   private static class HasIAdd implements Callable<String> {

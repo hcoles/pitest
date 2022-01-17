@@ -40,6 +40,7 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
 
   private String    className;
   private boolean   foundClinit;
+  private boolean   isInterface;
 
   public CoverageClassVisitor(final int classId, final ClassWriter writer) {
     super(writer, BridgeMethodFilter.INSTANCE);
@@ -55,6 +56,7 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
       String superName, String[] interfaces) {
     super.visit(version, access, name, signature, superName, interfaces);
     this.className = name;
+    this.isInterface = (access & Opcodes.ACC_INTERFACE) != 0;
   }
 
 
@@ -93,12 +95,10 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
 
   private void addCoverageProbeField() {
 
-    super.visitField(Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_PUBLIC
-            | Opcodes.ACC_SYNTHETIC, CodeCoverageStore.PROBE_FIELD_NAME, "[Z", null,
+    super.visitField(fieldModifiers(), CodeCoverageStore.PROBE_FIELD_NAME, "[Z", null,
         null);
 
-    super.visitField(Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_PUBLIC
-            | Opcodes.ACC_SYNTHETIC, CodeCoverageStore.PROBE_LENGTH_FIELD_NAME, "I",
+    super.visitField(fieldModifiers(), CodeCoverageStore.PROBE_LENGTH_FIELD_NAME, "I",
         null, this.probeCount + 1);
 
     //If there is no <clinit>, then generate one that sets the probe field directly
@@ -106,7 +106,6 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
       MethodVisitor clinitMv = this.cv
           .visitMethod(Opcodes.ACC_STATIC, "<clinit>", "()V", null, null);
       clinitMv.visitCode();
-
 
       pushConstant(clinitMv, this.classId);
       pushConstant(clinitMv, this.probeCount);
@@ -120,6 +119,20 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
       clinitMv.visitMaxs(0, 0);
       clinitMv.visitEnd();
     }
+  }
+
+  private int fieldModifiers() {
+    // For interfaces field must be final.
+    // For classes cannot be final as we must cover the corner case of child classes
+    // referenced in their parent's static initializer. The probe field for these
+    // must be initialised lazyily outside of the static initializer block.
+    if (isInterface) {
+      return Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_PUBLIC
+              | Opcodes.ACC_SYNTHETIC;
+    }
+
+    return Opcodes.ACC_STATIC | Opcodes.ACC_TRANSIENT | Opcodes.ACC_PRIVATE
+            | Opcodes.ACC_SYNTHETIC;
   }
 
   private void pushConstant(MethodVisitor mv, int value) {

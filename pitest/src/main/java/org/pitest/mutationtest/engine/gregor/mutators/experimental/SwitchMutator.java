@@ -29,7 +29,7 @@ public class SwitchMutator implements MethodMutatorFactory {
 
   @Override
   public String getName() {
-    return "EXPERIMENTAL_SWITCH_MUTATOR";
+    return "EXPERIMENTAL_SWITCH";
   }
 
   private final class SwitchMethodVisitor extends MethodVisitor {
@@ -91,7 +91,7 @@ public class SwitchMutator implements MethodMutatorFactory {
 
     private boolean shouldMutate() {
       final MutationIdentifier mutationId = this.context.registerMutation(
-          SwitchMutator.this, "Switch mutation");
+              SwitchMutator.this, "Changed switch default to be first case");
       return this.context.shouldMutate(mutationId);
     }
 

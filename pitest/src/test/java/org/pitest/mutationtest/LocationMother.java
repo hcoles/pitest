@@ -2,7 +2,6 @@ package org.pitest.mutationtest;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.quickbuilder.Builder;
 import org.pitest.quickbuilder.Generator;
@@ -57,7 +56,7 @@ public class LocationMother {
 
   private static Generator<LocationBuilder, Location> locationSeed() {
     return b -> Location.location(b._Class(),
-        MethodName.fromString(b._Method()), b._MethodDescription());
+        b._Method(), b._MethodDescription());
   }
 
   public static MutationIdentifierBuilder aMutationId() {

@@ -22,9 +22,11 @@ import java.util.Map.Entry;
 public class Timings {
 
   public enum Stage {
-    BUILD_MUTATION_TESTS("build mutation tests"), RUN_MUTATION_TESTS(
-        "run mutation analysis"), SCAN_CLASS_PATH("scan classpath"), COVERAGE(
-            "coverage and dependency analysis");
+    MUTATION_PRE_SCAN("pre-scan for mutations"),
+    BUILD_MUTATION_TESTS("build mutation tests"),
+    RUN_MUTATION_TESTS("run mutation analysis"),
+    SCAN_CLASS_PATH("scan classpath"),
+    COVERAGE("coverage and dependency analysis");
 
     private final String description;
 

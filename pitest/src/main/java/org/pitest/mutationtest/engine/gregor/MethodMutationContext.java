@@ -6,7 +6,6 @@ import java.util.Set;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.engine.PoisonStatus;
 import org.pitest.mutationtest.engine.gregor.analysis.InstructionCounter;
 
 class MethodMutationContext implements MutationContext, InstructionCounter {
@@ -31,8 +30,7 @@ class MethodMutationContext implements MutationContext, InstructionCounter {
         this.classContext.getJavaClassName());
     final MutationDetails details = new MutationDetails(newId,
         this.classContext.getFileName(), description, this.lastLineNumber,
-        this.classContext.getCurrentBlock(),
-        this.classContext.isWithinFinallyBlock(), PoisonStatus.NORMAL);
+        this.classContext.getCurrentBlock());
     registerMutation(details);
     return newId;
   }
@@ -61,22 +59,11 @@ class MethodMutationContext implements MutationContext, InstructionCounter {
   @Override
   public void registerNewBlock() {
     this.classContext.registerNewBlock();
-
   }
 
   @Override
   public void registerNewMethodStart() {
     this.classContext.registerNewMethodStart();
-  }
-
-  @Override
-  public void registerFinallyBlockStart() {
-    this.classContext.registerFinallyBlockStart();
-  }
-
-  @Override
-  public void registerFinallyBlockEnd() {
-    this.classContext.registerFinallyBlockEnd();
   }
 
   @Override
@@ -90,11 +77,15 @@ class MethodMutationContext implements MutationContext, InstructionCounter {
   }
 
   @Override
+  @Deprecated
+  // create a mutation interceptor instead
   public void disableMutations(final String reason) {
     this.mutationFindingDisabledReasons.add(reason);
   }
 
   @Override
+  @Deprecated
+  // create a mutation interceptor instead
   public void enableMutatations(final String reason) {
     this.mutationFindingDisabledReasons.remove(reason);
   }

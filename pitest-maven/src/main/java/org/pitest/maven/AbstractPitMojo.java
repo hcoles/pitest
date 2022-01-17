@@ -1,5 +1,21 @@
 package org.pitest.maven;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.pitest.coverage.CoverageSummary;
+import org.pitest.mutationtest.config.PluginServices;
+import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.statistics.MutationStatistics;
+import org.pitest.mutationtest.tooling.CombinedStatistics;
+import org.pitest.plugin.ToolClasspathPlugin;
+import org.slf4j.bridge.SLF4JBridgeHandler;
+import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,21 +27,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-import org.pitest.coverage.CoverageSummary;
-import org.pitest.mutationtest.config.PluginServices;
-import org.pitest.mutationtest.config.ReportOptions;
-import org.pitest.mutationtest.statistics.MutationStatistics;
-import org.pitest.mutationtest.tooling.CombinedStatistics;
-import org.pitest.plugin.ClientClasspathPlugin;
-import org.pitest.plugin.ToolClasspathPlugin;
-import org.slf4j.bridge.SLF4JBridgeHandler;
-import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
 public class AbstractPitMojo extends AbstractMojo {
 
@@ -36,10 +37,11 @@ public class AbstractPitMojo extends AbstractMojo {
   private final PluginServices        plugins;
 
   // Concrete List types declared for all fields to work around maven 2 bug
-  
+
   /**
    * Test plugin to use
    */
+  // No longer used, retained here temporarily for backwards compatibility in buildscripts
   @Parameter(property = "testPlugin", defaultValue = "")
   private String testPlugin;
 
@@ -126,12 +128,6 @@ public class AbstractPitMojo extends AbstractMojo {
   private int                         threads;
 
   /**
-   * Mutate static initializers
-   */
-  @Parameter(defaultValue = "false", property = "mutateStaticInitializers")
-  private boolean                     mutateStaticInitializers;
-
-  /**
    * Detect inlined code
    */
   @Parameter(defaultValue = "true", property = "detectInlinedCode")
@@ -171,7 +167,7 @@ public class AbstractPitMojo extends AbstractMojo {
   /**
    * Arguments to pass to child processes
    */
-  @Parameter
+  @Parameter(property = "jvmArgs")
   private ArrayList<String>           jvmArgs;
 
   /**
@@ -367,10 +363,18 @@ public class AbstractPitMojo extends AbstractMojo {
   /**
    * Communicate the classpath using a temporary jar with a classpath
    * manifest. This allows support of very large classpaths but may cause
-   * issues with certian libraries.
+   * issues with certain libraries.
    */
   @Parameter(property = "useClasspathJar", defaultValue = "false")
   private boolean                     useClasspathJar;
+
+  /**
+   * Amount of debug information/noise to output. The boolean
+   * verbose flag overrides this value when it is set to true.
+   */
+  @Parameter(property = "verbosity", defaultValue = "DEFAULT")
+  // should be able to use an enum here, but test harness is broken
+  private String verbosity;
 
   private final GoalStrategy          goalStrategy;
 
@@ -401,11 +405,16 @@ public class AbstractPitMojo extends AbstractMojo {
         this.getLog().info("Found plugin : " + each.description());
       }
 
-      for (final ClientClasspathPlugin each : this.plugins
-          .findClientClasspathPlugins()) {
-        this.getLog().info(
-            "Found shared classpath plugin : " + each.description());
-      }
+      this.plugins.findClientClasspathPlugins().stream()
+              .filter(p -> !(p instanceof MethodMutatorFactory))
+              .forEach(p -> this.getLog().info(
+                      "Found shared classpath plugin : " + p.description()));
+
+      String operators =  this.plugins.findMutationOperators().stream()
+              .map(m -> m.getName())
+              .collect(Collectors.joining(","));
+
+      this.getLog().info("Available mutators : " + operators);
 
       final Optional<CombinedStatistics> result = analyse();
       if (result.isPresent()) {
@@ -543,10 +552,6 @@ public class AbstractPitMojo extends AbstractMojo {
     return this.threads;
   }
 
-  public boolean isMutateStaticInitializers() {
-    return this.mutateStaticInitializers;
-  }
-
   public List<String> getMutators() {
     return withoutNulls(this.mutators);
   }
@@ -606,10 +611,6 @@ public class AbstractPitMojo extends AbstractMojo {
   public boolean isFullMutationMatrix() {
     return fullMutationMatrix;
   }
-  
-  public void setFullMutationMatrix(boolean fullMutationMatrix) {
-    this.fullMutationMatrix = fullMutationMatrix;
-}
 
   public int getMutationUnitSize() {
     return this.mutationUnitSize;
@@ -639,6 +640,7 @@ public class AbstractPitMojo extends AbstractMojo {
     return this.exportLineCoverage;
   }
 
+
   protected RunDecision shouldRun() {
     RunDecision decision = new RunDecision();
 
@@ -667,10 +669,6 @@ public class AbstractPitMojo extends AbstractMojo {
 
   public String getJavaExecutable() {
     return this.jvm;
-  }
-
-  public void setJavaExecutable(final String javaExecutable) {
-    this.jvm = javaExecutable;
   }
 
   public List<String> getAdditionalClasspathElements() {
@@ -709,12 +707,12 @@ public class AbstractPitMojo extends AbstractMojo {
     return withoutNulls(features);
   }
 
-  public String getTestPlugin() {
-    return testPlugin;
-  }
-   
   public boolean isUseClasspathJar() {
     return this.useClasspathJar;
+  }
+
+  public String getVerbosity() {
+    return verbosity;
   }
 
   static class RunDecision {

@@ -1,11 +1,5 @@
 package org.pitest.mutationtest.build;
 
-import static org.pitest.functional.prelude.Prelude.printWith;
-
-import java.io.File;
-import java.util.Collection;
-import java.util.function.Consumer;
-
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.EngineArguments;
@@ -18,6 +12,13 @@ import org.pitest.mutationtest.execute.MutationTestProcess;
 import org.pitest.process.ProcessArgs;
 import org.pitest.util.Log;
 import org.pitest.util.SocketFinder;
+import org.pitest.util.Verbosity;
+
+import java.io.File;
+import java.util.Collection;
+import java.util.function.Consumer;
+
+import static org.pitest.functional.prelude.Prelude.printlnWith;
 
 public class WorkerFactory {
 
@@ -25,7 +26,7 @@ public class WorkerFactory {
   private final File                  baseDir;
   private final TestPluginArguments   pitConfig;
   private final TimeoutLengthStrategy timeoutStrategy;
-  private final boolean               verbose;
+  private final Verbosity             verbosity;
   private final boolean               fullMutationMatrix;
   private final MutationConfig        config;
   private final EngineArguments       args;
@@ -35,12 +36,12 @@ public class WorkerFactory {
       final MutationConfig mutationConfig,
       final EngineArguments args,
       final TimeoutLengthStrategy timeoutStrategy,
-      final boolean verbose,
+      final Verbosity verbosity,
       final boolean fullMutationMatrix,
       final String classPath) {
     this.pitConfig = pitConfig;
     this.timeoutStrategy = timeoutStrategy;
-    this.verbose = verbose;
+    this.verbosity = verbosity;
     this.fullMutationMatrix = fullMutationMatrix;
     this.classPath = classPath;
     this.baseDir = baseDir;
@@ -53,26 +54,32 @@ public class WorkerFactory {
       final Collection<ClassName> testClasses) {
     final MinionArguments fileArgs = new MinionArguments(remainingMutations,
         testClasses, this.config.getEngine().getName(), this.args, this.timeoutStrategy,
-        Log.isVerbose(), this.fullMutationMatrix, this.pitConfig);
+        Log.verbosity(), this.fullMutationMatrix, this.pitConfig);
 
     final ProcessArgs args = ProcessArgs.withClassPath(this.classPath)
         .andLaunchOptions(this.config.getLaunchOptions())
         .andBaseDir(this.baseDir).andStdout(captureStdOutIfVerbose())
-        .andStderr(printWith("stderr "));
+        .andStderr(captureStdErrIfVerbose());
 
     final SocketFinder sf = new SocketFinder();
-    final MutationTestProcess worker = new MutationTestProcess(
+    return new MutationTestProcess(
         sf.getNextAvailableServerSocket(), args, fileArgs);
-    return worker;
   }
 
   private Consumer<String> captureStdOutIfVerbose() {
-    if (this.verbose) {
-      return Prelude.printWith("stdout ");
+    if (this.verbosity.showMinionOutput()) {
+      return printlnWith("stdout ");
     } else {
       return Prelude.noSideEffect(String.class);
     }
+  }
 
+  private Consumer<String> captureStdErrIfVerbose() {
+    if (this.verbosity.showMinionOutput()) {
+      return printlnWith("stderr ");
+    } else {
+      return Prelude.noSideEffect(String.class);
+    }
   }
 
 }

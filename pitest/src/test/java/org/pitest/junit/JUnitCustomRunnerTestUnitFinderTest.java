@@ -62,7 +62,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
 
   @Before
   public void setup() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new JUnitCustomRunnerTestUnitFinder(new TestGroupConfig(), Collections.<String>emptyList(),
             Collections.<String>emptyList());
   }

@@ -14,6 +14,20 @@
  */
 package org.pitest.maven;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.pitest.classinfo.ClassName;
+import org.pitest.classpath.DirectoryClassPathRoot;
+import org.pitest.functional.FCollection;
+import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.testapi.TestGroupConfig;
+import org.pitest.util.Glob;
+import org.pitest.util.Verbosity;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,21 +37,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.model.Plugin;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.pitest.classinfo.ClassName;
-import org.pitest.classpath.DirectoryClassPathRoot;
 import java.util.function.Function;
-import org.pitest.functional.FCollection;
 import java.util.function.Predicate;
-import org.pitest.mutationtest.config.ReportOptions;
-import org.pitest.testapi.TestGroupConfig;
-import org.pitest.util.Glob;
 
 public class MojoToReportOptionsConverter {
 
@@ -94,7 +95,6 @@ public class MojoToReportOptionsConverter {
     }
 
     data.setUseClasspathJar(this.mojo.isUseClasspathJar());
-    data.setTestPlugin(this.mojo.getTestPlugin());
     data.setClassPathElements(classPath);
     data.setDependencyAnalysisMaxDistance(this.mojo.getMaxDependencyDistance());
     data.setFailWhenNoMutations(shouldFailWhenNoMutations());
@@ -111,7 +111,7 @@ public class MojoToReportOptionsConverter {
     data.setExcludedRunners(this.mojo.getExcludedRunners());
 
     data.setReportDir(this.mojo.getReportsDirectory().getAbsolutePath());
-    data.setVerbose(this.mojo.isVerbose());
+    configureVerbosity(data);
     if (this.mojo.getJvmArgs() != null) {
       data.addChildJVMArgs(this.mojo.getJvmArgs());
     }
@@ -150,9 +150,27 @@ public class MojoToReportOptionsConverter {
 
     data.setSkipFailingTests(this.mojo.skipFailingTests());
 
+    checkForObsoleteOptions(this.mojo);
+
     return data;
   }
 
+  private void configureVerbosity(ReportOptions data) {
+    if (this.mojo.isVerbose()) {
+      data.setVerbosity(Verbosity.VERBOSE);
+    } else {
+      Verbosity v = Verbosity.fromString(mojo.getVerbosity());
+      data.setVerbosity(v);
+    }
+
+  }
+
+  private void checkForObsoleteOptions(AbstractPitMojo mojo) {
+    if (mojo.getMaxMutationsPerClass() > 0) {
+      throw new IllegalArgumentException("The max mutations per class argument is no longer supported, "
+              + "use features=+CLASSLIMIT(limit[" + mojo.getMaxMutationsPerClass() + "]) instead");
+    }
+  }
 
   private void determineHistory(final ReportOptions data) {
     if (this.mojo.useHistory()) {
@@ -204,12 +222,7 @@ public class MojoToReportOptionsConverter {
   }
 
   private static Predicate<Plugin> hasKey(final String key) {
-    return new Predicate<Plugin>() {
-      @Override
-      public boolean test(Plugin a) {
-        return a.getKey().equals(key);
-      }
-    };
+    return a -> a.getKey().equals(key);
   }
 
   private boolean shouldFailWhenNoMutations() {
@@ -294,8 +307,7 @@ public class MojoToReportOptionsConverter {
       return filters;
     }
   }
-  
-  
+
   private Collection<String> findOccupiedPackages() {
     String outputDirName = this.mojo.getProject().getBuild()
         .getOutputDirectory();
@@ -319,11 +331,7 @@ public class MojoToReportOptionsConverter {
   }
 
   private Collection<File> stringsTofiles(final List<String> sourceRoots) {
-    return FCollection.map(sourceRoots, stringToFile());
-  }
-
-  private Function<String, File> stringToFile() {
-    return a -> new File(a);
+    return FCollection.map(sourceRoots, File::new);
   }
 
   private Collection<String> determineOutputFormats() {

@@ -5,28 +5,23 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
-import org.pitest.junit.JUnitTestPlugin;
 import org.pitest.testapi.TestGroupConfig;
 
 public class TestPluginArguments implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private final String testPlugin;
   private final TestGroupConfig groupConfig;
   private final Collection<String> includedTestMethods;
   private final Collection<String> excludedRunners;
   private final boolean skipFailingTests;
 
-  public TestPluginArguments(String testPlugin,
-      TestGroupConfig groupConfig,
+  public TestPluginArguments(TestGroupConfig groupConfig,
       Collection<String> excludedRunners,
       Collection<String> includedTestMethods,
       boolean skipFailingTests) {
-    Objects.requireNonNull(testPlugin);
     Objects.requireNonNull(groupConfig);
     Objects.requireNonNull(excludedRunners);
-    this.testPlugin = testPlugin;
     this.groupConfig = groupConfig;
     this.excludedRunners = excludedRunners;
     this.includedTestMethods = includedTestMethods;
@@ -34,12 +29,12 @@ public class TestPluginArguments implements Serializable {
   }
 
   public static TestPluginArguments defaults() {
-    return new TestPluginArguments(JUnitTestPlugin.NAME, new TestGroupConfig(), Collections.<String>emptyList(),
-            Collections.<String>emptyList(), false);
+    return new TestPluginArguments(new TestGroupConfig(), Collections.emptyList(),
+            Collections.emptyList(), false);
   }
 
   public TestPluginArguments withTestPlugin(String plugin) {
-    return new TestPluginArguments(plugin, this.groupConfig, this.excludedRunners, this.includedTestMethods, this.skipFailingTests);
+    return new TestPluginArguments(this.groupConfig, this.excludedRunners, this.includedTestMethods, this.skipFailingTests);
   }
 
   public TestGroupConfig getGroupConfig() {
@@ -52,10 +47,6 @@ public class TestPluginArguments implements Serializable {
 
   public Collection<String> getIncludedTestMethods() {
     return this.includedTestMethods;
-  }
-
-  public String getTestPlugin() {
-    return this.testPlugin;
   }
 
   public boolean skipFailingTests() {

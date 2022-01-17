@@ -1,11 +1,5 @@
 package org.pitest.mutationtest.build.intercept.annotations;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import org.objectweb.asm.tree.AnnotationNode;
 import org.pitest.bytecode.analysis.AnalysisFunctions;
 import org.pitest.bytecode.analysis.ClassTree;
@@ -16,6 +10,12 @@ import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class ExcludedAnnotationInterceptor implements MutationInterceptor {
 
@@ -37,8 +37,7 @@ public class ExcludedAnnotationInterceptor implements MutationInterceptor {
   @Override
   public void begin(ClassTree clazz) {
     this.skipClass = clazz.annotations().stream()
-        .filter(avoidedAnnotation())
-        .findFirst().isPresent();
+        .anyMatch(avoidedAnnotation());
     if (!this.skipClass) {
       final List<Predicate<MutationDetails>> methods = clazz.methods().stream()
           .filter(hasAvoidedAnnotation())
@@ -50,8 +49,7 @@ public class ExcludedAnnotationInterceptor implements MutationInterceptor {
 
   private Predicate<MethodTree> hasAvoidedAnnotation() {
     return a -> a.annotations().stream()
-        .filter(avoidedAnnotation())
-        .findFirst().isPresent();
+        .anyMatch(avoidedAnnotation());
   }
 
   private Predicate<AnnotationNode> avoidedAnnotation() {

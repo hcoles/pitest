@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>pitest-parent</artifactId>
 		<groupId>org.pitest</groupId>
-		<version>1.5.3-SNAPSHOT</version>
+		<version>${revision}</version>
 	</parent>
 	<artifactId>pitest-maven-verification</artifactId>
 	<packaging>jar</packaging>
@@ -14,13 +14,6 @@
 
 	<build>
 		<plugins>
-			<!-- Don't deploy to Maven Central -->
-			<plugin>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
@@ -95,15 +88,15 @@
 
 		<!-- test dependencies -->
 		<dependency>
-			<groupId>org.apache.maven.shared</groupId>
+			<groupId>org.apache.maven.plugin-testing</groupId>
 			<artifactId>maven-plugin-testing-harness</artifactId>
-			<version>1.1</version>
+			<version>3.3.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.shared</groupId>
 			<artifactId>maven-verifier</artifactId>
-			<version>${maven-verifier}</version>
+			<version>1.7.2</version>
 			<scope>test</scope>
 		</dependency>
 

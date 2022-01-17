@@ -34,7 +34,7 @@ public final class GregorEngineFactory implements MutationEngineFactory {
            createMutatorListFromArrayOrUseDefaults(args.mutators()));
   }
 
-  public MutationEngine createEngineWithMutators(
+  MutationEngine createEngineWithMutators(
       final Collection<String> excludedMethods,
       final Collection<? extends MethodMutatorFactory> mutators) {
 

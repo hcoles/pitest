@@ -95,7 +95,7 @@ public class MemberVariableMutator implements MethodMutatorFactory {
 
   @Override
   public String toString() {
-    return "EXPERIMENTAL_MEMBER_VARIABLE_MUTATOR";
+    return "EXPERIMENTAL_MEMBER_VARIABLE";
   }
 
   @Override

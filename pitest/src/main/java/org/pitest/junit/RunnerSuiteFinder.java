@@ -43,7 +43,7 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
       flattenChildren(allChildren, runner.getDescription());
 
       final List<Description> suites = FCollection.filter(allChildren,
-          Prelude.or(isSuiteMethodRunner(runner), isSuite()));
+          Prelude.or(isSuiteMethodRunner(runner), Description::isSuite));
       final Set<Class<?>> classes = suites.stream().flatMap(descriptionToTestClass()).collect(Collectors.toSet());
 
       classes.remove(a);
@@ -77,10 +77,6 @@ public class RunnerSuiteFinder implements TestSuiteFinder {
         return Stream.empty();
       }
     };
-  }
-
-  private static Predicate<Description> isSuite() {
-    return a -> a.isSuite();
   }
 
 }

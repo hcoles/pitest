@@ -14,19 +14,6 @@
  */
 package org.pitest.coverage.execute;
 
-import static org.pitest.util.Unchecked.translateCheckedException;
-
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassPathByteArraySource;
@@ -44,11 +31,22 @@ import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.execute.FindTestUnits;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Glob;
-import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
 import org.pitest.util.SafeDataInputStream;
-
 import sun.pitest.CodeCoverageStore;
+
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import static org.pitest.util.Unchecked.translateCheckedException;
 
 public class CoverageMinion {
 
@@ -71,7 +69,7 @@ public class CoverageMinion {
 
       final CoverageOptions paramsFromParent = dis.read(CoverageOptions.class);
 
-      Log.setVerbose(paramsFromParent.isVerbose());
+      configureVerbosity(paramsFromParent);
 
       invokeQueue = new CoveragePipe(new BufferedOutputStream(
           s.getOutputStream()));
@@ -83,7 +81,7 @@ public class CoverageMinion {
 
       final List<TestUnit> tus = getTestsFromParent(dis, paramsFromParent);
 
-      LOG.info(tus.size() + " tests received");
+      LOG.info(() -> tus.size() + " tests received");
 
       final CoverageWorker worker = new CoverageWorker(invokeQueue, tus);
 
@@ -127,8 +125,7 @@ public class CoverageMinion {
   }
 
   private static List<TestUnit> getTestsFromParent(
-      final SafeDataInputStream dis, final CoverageOptions paramsFromParent)
-      throws IOException {
+      final SafeDataInputStream dis, final CoverageOptions paramsFromParent) {
     final List<ClassName> classes = receiveTestClassesFromParent(dis);
     Collections.sort(classes); // ensure classes loaded in a consistent order
 
@@ -137,6 +134,11 @@ public class CoverageMinion {
 
     final List<TestUnit> tus = discoverTests(testPlugin, classes);
 
+    if (tus.isEmpty()) {
+      LOG.warning("No executable tests were found after examining the " + classes.size()
+              + " test classes supplied. This may indicate an issue with the classpath or a missing test plugin (e.g for JUnit 5).");
+    }
+
     final DependencyFilter filter = new DependencyFilter(
         new DependencyExtractor(new ClassPathByteArraySource(),
             paramsFromParent.getDependencyAnalysisMaxDistance()),
@@ -144,7 +146,7 @@ public class CoverageMinion {
     final List<TestUnit> filteredTus = filter
         .filterTestsByDependencyAnalysis(tus);
 
-    LOG.info("Dependency analysis reduced number of potential tests by "
+    LOG.info(() -> "Dependency analysis reduced number of potential tests by "
         + (tus.size() - filteredTus.size()));
     return filteredTus;
 
@@ -155,20 +157,19 @@ public class CoverageMinion {
     final FindTestUnits finder = new FindTestUnits(testPlugin);
     final List<TestUnit> tus = finder
         .findTestUnitsForAllSuppliedClasses(classes.stream().flatMap(ClassName.nameToClass()).collect(Collectors.toList()));
-    LOG.info("Found  " + tus.size() + " tests");
+    LOG.info(() -> "Found  " + tus.size() + " tests");
     return tus;
   }
 
   private static Configuration createTestPlugin(
       final CoverageOptions paramsFromParent) {
-    final ClientPluginServices plugins = new ClientPluginServices(IsolationUtils.getContextClassLoader());
+    final ClientPluginServices plugins = ClientPluginServices.makeForContextLoader();
     final MinionSettings factory = new MinionSettings(plugins);
-    final Configuration testPlugin = factory.getTestFrameworkPlugin(paramsFromParent.getPitConfig(), ClassloaderByteArraySource.fromContext());
-    return testPlugin;
+    return factory.getTestFrameworkPlugin(paramsFromParent.getPitConfig(), ClassloaderByteArraySource.fromContext());
   }
 
   private static void verifyEnvironment(Configuration config) {
-    LOG.info("Checking environment");
+    LOG.info(() -> "Checking environment");
     if (config.verifyEnvironment().isPresent()) {
       throw config.verifyEnvironment().get();
     }
@@ -177,14 +178,21 @@ public class CoverageMinion {
   private static List<ClassName> receiveTestClassesFromParent(
       final SafeDataInputStream dis) {
     final int count = dis.readInt();
-    LOG.fine("Expecting " + count + " tests classes from parent");
+    LOG.fine(() -> "Expecting " + count + " tests classes from parent");
     final List<ClassName> classes = new ArrayList<>(count);
     for (int i = 0; i != count; i++) {
       classes.add(ClassName.fromString(dis.readString()));
     }
-    LOG.fine("Tests classes received");
+    LOG.fine(() -> "Tests classes received");
 
     return classes;
+  }
+
+  private static void configureVerbosity(CoverageOptions paramsFromParent) {
+    Log.setVerbose(paramsFromParent.verbosity());
+    if (!paramsFromParent.verbosity().showMinionOutput()) {
+      Log.disable();
+    }
   }
 
 }

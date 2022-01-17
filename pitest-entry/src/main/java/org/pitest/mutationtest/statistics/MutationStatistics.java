@@ -81,6 +81,8 @@ public final class MutationStatistics {
     out.println(">> Ran " + this.numberOfTestsRun + " tests ("
         + getTestsPerMutation() + " tests per mutation)");
 
+    out.println("\nPitest development is currently supported by GroupCDG.");
+    out.println("Enhanced functionality available at https://pitest.groupcdg.com/");
   }
 
   private String getTestsPerMutation() {

@@ -22,7 +22,7 @@ public class KnownStatusMutationTestUnitTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
 
   }
 

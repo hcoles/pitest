@@ -10,7 +10,9 @@ public class FeatureTest {
 
   @Test
   public void shouldObeyHashcodeEqualsContract() {
-    EqualsVerifier.forClass(Feature.class).verify();
+    EqualsVerifier.forClass(Feature.class)
+            .withOnlyTheseFields("name")
+            .verify();
   }
 
   @Test

@@ -1,10 +1,5 @@
 package org.pitest.mutationtest.tooling;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.Map;
-
 import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.classpath.CodeSource;
@@ -12,14 +7,13 @@ import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
-import java.util.Optional;
-import java.util.function.Consumer;
-
 import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
+import org.pitest.mutationtest.incremental.NullHistoryStore;
+import org.pitest.mutationtest.incremental.NullWriterFactory;
 import org.pitest.mutationtest.incremental.ObjectOutputStreamHistoryStore;
 import org.pitest.mutationtest.incremental.WriterFactory;
 import org.pitest.plugin.Feature;
@@ -30,6 +24,15 @@ import org.pitest.util.Log;
 import org.pitest.util.PitError;
 import org.pitest.util.ResultOutputStrategy;
 import org.pitest.util.Timings;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
+
+import static org.pitest.util.Verbosity.VERBOSE;
 
 public class EntryPoint {
 
@@ -65,22 +68,18 @@ public class EntryPoint {
   public AnalysisResult execute(File baseDir, ReportOptions data,
       SettingsFactory settings, Map<String, String> environmentVariables) {
 
-    if (data.isVerbose()) {
+    if (data.getVerbosity() == VERBOSE) {
       Log.getLogger().info("---------------------------------------------------------------------------");
       Log.getLogger().info("Enabled (+) and disabled (-) features.");
       Log.getLogger().info("-----------------------------------------");
       settings.describeFeatures(asInfo("+"), asInfo("-"));
       Log.getLogger().info("---------------------------------------------------------------------------");
     }
+    settings.checkRequestedFeatures();
 
     checkMatrixMode(data);
-    
-    selectTestPlugin(data);
 
     final ClassPath cp = data.getClassPath();
-
-    final Optional<Reader> reader = data.createHistoryReader();
-    final WriterFactory historyWriter = data.createHistoryWriter();
 
     // workaround for apparent java 1.5 JVM bug . . . might not play nicely
     // with distributed testing
@@ -106,9 +105,12 @@ public class EntryPoint {
     final Timings timings = new Timings();
     final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
         baseDir, coverageOptions, launchOptions, code,
-        settings.createCoverageExporter(), timings, !data.isVerbose());
+        settings.createCoverageExporter(), timings, data.getVerbosity());
 
-    final HistoryStore history = new ObjectOutputStreamHistoryStore(historyWriter, reader);
+
+    final Optional<WriterFactory> maybeWriter = data.createHistoryWriter();
+    WriterFactory historyWriter = maybeWriter.orElse(new NullWriterFactory());
+    final HistoryStore history = makeHistoryStore(data, maybeWriter);
 
     final MutationStrategies strategies = new MutationStrategies(
         settings.createEngine(), history, coverageDatabase, reportFactory,
@@ -129,28 +131,17 @@ public class EntryPoint {
 
   }
 
+  private HistoryStore makeHistoryStore(ReportOptions data,  Optional<WriterFactory> historyWriter) {
+    final Optional<Reader> reader = data.createHistoryReader();
+    if (!reader.isPresent() && !historyWriter.isPresent()) {
+      return new NullHistoryStore();
+    }
+    return new ObjectOutputStreamHistoryStore(historyWriter.orElse(new NullWriterFactory()), reader);
+  }
+
   private void checkMatrixMode(ReportOptions data) {
     if (data.isFullMutationMatrix() && !data.getOutputFormats().contains("XML")) {
       throw new PitError("Full mutation matrix is only supported in the output format XML.");
-    }
-  }
-
-  private void selectTestPlugin(ReportOptions data) {
-    if ((data.getTestPlugin() == null) || data.getTestPlugin().equals("")) {
-      if (junit5PluginIsOnClasspath()) {
-        data.setTestPlugin("junit5");
-      } else {
-        data.setTestPlugin("junit");
-      }
-    }
-  }
-
-  private boolean junit5PluginIsOnClasspath() {
-    try {
-      Class.forName("org.pitest.junit5.JUnit5TestPluginFactory");
-      return true;
-    } catch (final ClassNotFoundException e) {
-      return false;
     }
   }
 

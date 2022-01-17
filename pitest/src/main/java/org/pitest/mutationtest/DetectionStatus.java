@@ -108,4 +108,4 @@ public enum DetectionStatus {
   public boolean hasCoverage() {
     return this != NO_COVERAGE;
   }
-};
+}

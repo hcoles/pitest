@@ -8,35 +8,40 @@ import java.util.Objects;
 public final class Feature {
 
   private final boolean onByDefault;
+  private final boolean isInternal;
   private final String  name;
   private final String  description;
   private final List<FeatureParameter> params;
 
-  private Feature(boolean onByDefault, String name, String description, List<FeatureParameter> params) {
+  private Feature(boolean onByDefault, boolean isInternal, String name, String description, List<FeatureParameter> params) {
     this.onByDefault = onByDefault;
     this.name = name;
     this.description = description;
     this.params = params;
+    this.isInternal = isInternal;
   }
 
   public static Feature named(String name) {
-    return new Feature(false, name, "", Collections.<FeatureParameter>emptyList());
+    return new Feature(false, false, name, "", Collections.emptyList());
   }
 
   public Feature withOnByDefault(boolean onByDefault) {
-    return new Feature(onByDefault, this.name, this.description, this.params);
+    return new Feature(onByDefault, this.isInternal, this.name, this.description, this.params);
+  }
+
+  public Feature asInternalFeature() {
+    return new Feature(this.onByDefault, true, this.name, this.description, this.params);
   }
 
   public Feature withDescription(String description) {
-    return new Feature(this.onByDefault, this.name, description, this.params);
+    return new Feature(this.onByDefault, this.isInternal, this.name, description, this.params);
   }
 
 
   public Feature withParameter(FeatureParameter param) {
-    final List<FeatureParameter> params = new ArrayList<>();
-    params.addAll(this.params);
+    final List<FeatureParameter> params = new ArrayList<>(this.params);
     params.add(param);
-    return new Feature(this.onByDefault, this.name, this.description, params);
+    return new Feature(this.onByDefault, this.isInternal, this.name, this.description, params);
   }
 
   public String name() {
@@ -49,6 +54,10 @@ public final class Feature {
 
   public boolean isOnByDefault() {
     return this.onByDefault;
+  }
+
+  public boolean isInternal() {
+    return this.isInternal;
   }
 
   public List<FeatureParameter> params() {
@@ -71,4 +80,6 @@ public final class Feature {
     final Feature other = (Feature) obj;
     return Objects.equals(name, other.name);
   }
+
+
 }

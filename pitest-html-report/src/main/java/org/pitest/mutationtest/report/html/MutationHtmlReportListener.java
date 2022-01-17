@@ -14,6 +14,19 @@
  */
 package org.pitest.mutationtest.report.html;
 
+import org.antlr.stringtemplate.StringTemplate;
+import org.antlr.stringtemplate.StringTemplateGroup;
+import org.pitest.classinfo.ClassInfo;
+import org.pitest.coverage.ReportCoverage;
+import org.pitest.functional.FCollection;
+import org.pitest.mutationtest.ClassMutationResults;
+import org.pitest.mutationtest.MutationResultListener;
+import org.pitest.mutationtest.SourceLocator;
+import org.pitest.util.FileUtil;
+import org.pitest.util.IsolationUtils;
+import org.pitest.util.Log;
+import org.pitest.util.ResultOutputStrategy;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
@@ -24,23 +37,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
-
-import org.antlr.stringtemplate.StringTemplate;
-import org.antlr.stringtemplate.StringTemplateGroup;
-import org.pitest.classinfo.ClassInfo;
-import org.pitest.coverage.CoverageDatabase;
-import org.pitest.functional.FCollection;
-import java.util.Optional;
-import org.pitest.mutationtest.ClassMutationResults;
-import org.pitest.mutationtest.MutationResultListener;
-import org.pitest.mutationtest.SourceLocator;
-import org.pitest.util.FileUtil;
-import org.pitest.util.IsolationUtils;
-import org.pitest.util.Log;
-import org.pitest.util.ResultOutputStrategy;
 
 public class MutationHtmlReportListener implements MutationResultListener {
 
@@ -49,12 +49,12 @@ public class MutationHtmlReportListener implements MutationResultListener {
   private final Collection<SourceLocator> sourceRoots;
 
   private final PackageSummaryMap         packageSummaryData = new PackageSummaryMap();
-  private final CoverageDatabase          coverage;
+  private final ReportCoverage            coverage;
   private final Set<String>               mutatorNames;
 
   private final String                    css;
 
-  public MutationHtmlReportListener(final CoverageDatabase coverage,
+  public MutationHtmlReportListener(final ReportCoverage coverage,
       final ResultOutputStrategy outputStrategy,
       Collection<String> mutatorNames, final SourceLocator... locators) {
     this.coverage = coverage;
@@ -114,7 +114,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
   }
 
   public MutationTestSummaryData createSummaryData(
-      final CoverageDatabase coverage, final ClassMutationResults data) {
+      final ReportCoverage coverage, final ClassMutationResults data) {
     return new MutationTestSummaryData(data.getFileName(), data.getMutations(),
         this.mutatorNames, coverage.getClassInfo(Collections.singleton(data
             .getMutatedClass())), coverage.getNumberOfCoveredLines(Collections

@@ -1,6 +1,6 @@
 package org.pitest.mutationtest.execute;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.pitest.mutationtest.LocationMother.aMutationId;
@@ -28,6 +28,7 @@ import org.pitest.testapi.Configuration;
 import org.pitest.util.ExitCode;
 import org.pitest.util.PitError;
 import org.pitest.util.SafeDataInputStream;
+import org.pitest.util.Verbosity;
 
 public class MutationTestMinionTest {
 
@@ -62,12 +63,12 @@ public class MutationTestMinionTest {
 
   @Before
   public void setup() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.mutations = new ArrayList<>();
     this.tests = new ArrayList<>();
 
     this.args = new MinionArguments(this.mutations, this.tests,  "anEgine", EngineArguments.arguments(),
-        this.timeoutStrategy, false, false, TestPluginArguments.defaults());
+        this.timeoutStrategy, Verbosity.DEFAULT, false, TestPluginArguments.defaults());
 
     when(this.is.read(MinionArguments.class)).thenReturn(this.args);
     when(this.engine.createMutator(any(ClassByteArraySource.class)))

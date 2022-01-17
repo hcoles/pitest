@@ -17,13 +17,13 @@ public class LocationTest {
   @Test
   public void shouldSortInConsistantOrder() {
     final Location a = location(ClassName.fromString("A"),
-        MethodName.fromString("A"), "A");
+       "A", "A");
     final Location b = location(ClassName.fromString("AA"),
-        MethodName.fromString("A"), "A");
+        "A", "A");
     final Location c = location(ClassName.fromString("A"),
-        MethodName.fromString("AA"), "A");
+        "AA", "A");
     final Location d = location(ClassName.fromString("A"),
-        MethodName.fromString("AA"), "AA");
+        "AA", "AA");
     final List<Location> ls = Arrays.asList(a, b, c, d);
     Collections.sort(ls);
     assertEquals(Arrays.asList(a, c, d, b), ls);

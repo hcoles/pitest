@@ -30,7 +30,7 @@
 				<version>${pit.version}</version>
 				<configuration>
 				    <exportLineCoverage>true</exportLineCoverage>
-				    <maxMutationsPerClass>1</maxMutationsPerClass>
+					<features>+CLASSLIMIT(limit[1])</features>
 				    <timestampedReports>false</timestampedReports>
 					<targetClasses><param>com.example*</param></targetClasses>
 					<verbose>true</verbose>
@@ -41,7 +41,7 @@
 
 	
 	<properties>
-		<junit.version>4.8.1</junit.version>	
+		<junit.version>4.13.1</junit.version>	
 	</properties>
 
 </project>

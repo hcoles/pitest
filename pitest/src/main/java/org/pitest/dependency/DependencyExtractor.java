@@ -14,7 +14,12 @@
  */
 package org.pitest.dependency;
 
-import static org.pitest.functional.prelude.Prelude.and;
+import org.objectweb.asm.ClassReader;
+import org.pitest.bytecode.NullVisitor;
+import org.pitest.classinfo.ClassByteArraySource;
+import org.pitest.functional.FCollection;
+import org.pitest.util.Functions;
+import org.pitest.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,6 +30,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.BiFunction;
@@ -32,13 +38,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
-import org.objectweb.asm.ClassReader;
-import org.pitest.bytecode.NullVisitor;
-import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.functional.FCollection;
-import java.util.Optional;
-import org.pitest.util.Functions;
-import org.pitest.util.Log;
+import static org.pitest.functional.prelude.Prelude.and;
 
 public class DependencyExtractor {
   private static final Logger        LOG = Log.getLogger();
@@ -81,7 +81,7 @@ public class DependencyExtractor {
       final Predicate<DependencyAccess> filter) throws IOException {
 
     return this
-        .extractCallDependencies(clazz, new TreeSet<String>(), filter, 0);
+        .extractCallDependencies(clazz, new TreeSet<>(), filter, 0);
   }
 
   public int getMaxDistance() {
@@ -138,7 +138,7 @@ public class DependencyExtractor {
   }
 
   private List<DependencyAccess> extract(final String clazz,
-      final Predicate<DependencyAccess> filter) throws IOException {
+      final Predicate<DependencyAccess> filter) {
     final Optional<byte[]> bytes = this.classToBytes.getBytes(clazz);
     if (!bytes.isPresent()) {
       LOG.warning("No bytes found for " + clazz);
@@ -158,7 +158,7 @@ public class DependencyExtractor {
   private Map<String, List<DependencyAccess>> groupDependenciesByClass(
       final Set<DependencyAccess> relevantDependencies) {
     return FCollection.fold(addDependenciesToMap(),
-        new HashMap<String, List<DependencyAccess>>(), relevantDependencies);
+            new HashMap<>(), relevantDependencies);
 
   }
 
@@ -183,12 +183,11 @@ public class DependencyExtractor {
   private static Consumer<DependencyAccess> constructCollectingSideEffectForVisitor(
       final List<DependencyAccess> dependencies,
       final Predicate<DependencyAccess> predicate) {
-    final Consumer<DependencyAccess> se = a -> {
+    return a -> {
       if (predicate.test(a)) {
         dependencies.add(a);
       }
     };
-    return se;
   }
 
 }

@@ -41,7 +41,6 @@ public class DefaultTestPrioritiser implements TestPrioritiser {
   }
 
   private Collection<TestInfo> pickTests(MutationDetails mutation) {
-    if (!mutation.isInStaticInitializer()) {
       if (mutation.getId().getIndexes().size() > 1) {
         HashSet<TestInfo> ret = new HashSet<>();
         for (int each : mutation.getId().getIndexes()) {
@@ -59,10 +58,6 @@ public class DefaultTestPrioritiser implements TestPrioritiser {
             .getTestsForInstructionLocation(new InstructionLocation(new BlockLocation(mutation.getId().getLocation(), mutation.getBlock(), -1, -1),
                 mutation.getId().getFirstIndex() - 1));
       }
-    } else {
-      LOG.warning("Using untargetted tests");
-      return this.coverage.getTestsForClass(mutation.getClassName());
-    }
   }
 
   private List<TestInfo> prioritizeTests(ClassName clazz,

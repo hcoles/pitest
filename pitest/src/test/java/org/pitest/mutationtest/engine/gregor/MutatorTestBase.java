@@ -14,22 +14,6 @@
  */
 package org.pitest.mutationtest.engine.gregor;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.CheckClassAdapter;
@@ -45,6 +29,22 @@ import org.pitest.simpletest.Transformation;
 import org.pitest.simpletest.TransformingClassLoader;
 import org.pitest.util.Unchecked;
 import org.pitest.util.XStreamCloning;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public abstract class MutatorTestBase {
 
@@ -114,10 +114,8 @@ public abstract class MutatorTestBase {
   }
 
   private ClassLoader createClassLoader(final Mutant mutant) throws Exception {
-    final TransformingClassLoader loader = new TransformingClassLoader(
+    return new TransformingClassLoader(
         createTransformation(mutant), new ExcludedPrefixIsolationStrategy());
-
-    return loader;
   }
 
   private Transformation createTransformation(final Mutant mutant) {

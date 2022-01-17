@@ -16,7 +16,7 @@
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
 import static java.util.Collections.singletonList;
-import static org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator.NAKED_RECEIVER;
+import static org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator.EXPERIMENTAL_NAKED_RECEIVER;
 
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -30,7 +30,7 @@ public class NakedReceiverMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToUseReplaceMethodWithArgumentOfSameTypeAsReturnValueMutator() {
-    createTesteeWith(mutateOnlyCallMethod(), NAKED_RECEIVER);
+    createTesteeWith(mutateOnlyCallMethod(), EXPERIMENTAL_NAKED_RECEIVER);
   }
 
   @Test

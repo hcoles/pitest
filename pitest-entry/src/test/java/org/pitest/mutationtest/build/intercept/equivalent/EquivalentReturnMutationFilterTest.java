@@ -1,32 +1,34 @@
 package org.pitest.mutationtest.build.intercept.equivalent;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN;
-import static org.pitest.mutationtest.engine.gregor.mutators.BooleanTrueReturnValsMutator.BOOLEAN_TRUE_RETURN;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 import org.junit.Test;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.intercept.javafeatures.FilterTester;
-import org.pitest.mutationtest.engine.gregor.mutators.EmptyObjectReturnValsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.NullReturnValsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.PrimitiveReturnsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.EmptyObjectReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.PrimitiveReturnsMutator;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanFalseReturnValsMutator.FALSE_RETURNS;
+import static org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanTrueReturnValsMutator.TRUE_RETURNS;
 
 public class EquivalentReturnMutationFilterTest {
 
   MutationInterceptor testee = new EquivalentReturnMutationFilter().createInterceptor(null);
 
-  FilterTester verifier = new FilterTester("", this.testee, PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR
-                                                     , EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES
-                                                     , NullReturnValsMutator.NULL_RETURN_VALUES
-                                                     , BOOLEAN_FALSE_RETURN
-                                                     , BOOLEAN_TRUE_RETURN);
+  FilterTester verifier = new FilterTester("", this.testee, PrimitiveReturnsMutator.PRIMITIVE_RETURNS
+                                                     , EmptyObjectReturnValsMutator.EMPTY_RETURNS
+                                                     , NullReturnValsMutator.NULL_RETURNS
+                                                     , FALSE_RETURNS
+                                                     , TRUE_RETURNS);
 
   @Test
   public void shouldDeclareTypeAsFilter() {
@@ -55,19 +57,19 @@ public class EquivalentReturnMutationFilterTest {
   
   @Test
   public void filtersEquivalentPrimitiveBooleanMutants() {
-    this.verifier.assertFiltersMutationsFromMutator(BOOLEAN_FALSE_RETURN.getGloballyUniqueId()
+    this.verifier.assertFiltersMutationsFromMutator(FALSE_RETURNS.getGloballyUniqueId()
         , AlreadyReturnsFalse.class);
   }
 
   @Test
   public void filtersEquivalentPrimitiveBooleanTrueMutants() {
-    this.verifier.assertFiltersMutationsFromMutator(BOOLEAN_TRUE_RETURN.getGloballyUniqueId()
+    this.verifier.assertFiltersMutationsFromMutator(TRUE_RETURNS.getGloballyUniqueId()
         , ReturnsTrue.class);
   }
   
   @Test
   public void filtersEquivalentPrimitiveBooleanTrueMutantsInTryCatch() {
-    this.verifier.assertFiltersMutationsFromMutator(BOOLEAN_TRUE_RETURN.getGloballyUniqueId()
+    this.verifier.assertFiltersMutationsFromMutator(TRUE_RETURNS.getGloballyUniqueId()
         , ReturnsTrueInTryCatch.class);
   }
 
@@ -88,13 +90,26 @@ public class EquivalentReturnMutationFilterTest {
 
   @Test
   public void filtersEquivalentBoxedBooleanMutants() {
-    this.verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsBoxedFalse.class);
+    this.verifier.assertFiltersMutationsFromMutator(FALSE_RETURNS.getGloballyUniqueId()
+            , AlreadyReturnsBoxedFalse.class);
   }
 
   @Test
   public void filtersEquivalentBoxedBooleanTrueMutants() {
-    this.verifier.assertFiltersMutationsFromMutator(BOOLEAN_TRUE_RETURN.getGloballyUniqueId()
+    this.verifier.assertFiltersMutationsFromMutator(TRUE_RETURNS.getGloballyUniqueId()
         , AlreadyReturnsBoxedTrue.class);
+  }
+
+  @Test
+  public void filtersEquivalentConstantTrueMutants() {
+    this.verifier.assertFiltersMutationsFromMutator(TRUE_RETURNS.getGloballyUniqueId()
+            , ReturnsConstantTrue.class);
+  }
+
+  @Test
+  public void filtersEquivalentConstantFalseMutants() {
+    this.verifier.assertFiltersMutationsFromMutator(FALSE_RETURNS.getGloballyUniqueId()
+            , ReturnsConstantFalse.class);
   }
 
   @Test
@@ -143,6 +158,11 @@ public class EquivalentReturnMutationFilterTest {
   }
 
   @Test
+  public void filtersEquivalentMapMutants() {
+    this.verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyMap.class);
+  }
+
+  @Test
   public void filtersEquivalentListMutantsInTryCatch() {
     this.verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyListInTryCatch.class);
   }
@@ -156,6 +176,11 @@ public class EquivalentReturnMutationFilterTest {
   @Test
   public void filtersEquivalentOptionalMutants() {
     verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyOptional.class);
+  }
+
+  @Test
+  public void filtersEquivalentStreamMutants() {
+    verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyStream.class);
   }
 }
 
@@ -238,6 +263,19 @@ class AlreadyReturnsBoxedZeroInteger {
   }
 }
 
+class ReturnsConstantTrue {
+  public Boolean a() {
+    return Boolean.TRUE;
+  }
+}
+
+class ReturnsConstantFalse {
+  public Boolean a() {
+    return Boolean.FALSE;
+  }
+}
+
+
 class CallsAnIntegerReturningStaticWith0 {
 
   static Integer foo(int a) {
@@ -263,7 +301,7 @@ class AlreadyReturnsLong0 {
 
 class AlreadyReturnsBoxedZeroLong {
   public Long a() {
-    return 0l;
+    return 0L;
   }
 }
 
@@ -311,6 +349,11 @@ class AlreadyReturnsEmptyList {
   }
 }
 
+class AlreadyReturnsEmptyMap {
+  public Map<Integer, Integer> a() {
+    return Collections.emptyMap();
+  }
+}
 
 class AlreadyReturnsEmptyListInTryCatch {
   public List<Integer> a(String s) {
@@ -332,5 +375,11 @@ class AlreadyReturnsEmptySet {
 class AlreadyReturnsEmptyOptional {
   public Optional<String> a() {
     return Optional.empty();
+  }
+}
+
+class AlreadyReturnsEmptyStream {
+  public Stream<String> a() {
+    return Stream.empty();
   }
 }

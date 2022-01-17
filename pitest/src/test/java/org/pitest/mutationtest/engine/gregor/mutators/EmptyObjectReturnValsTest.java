@@ -1,23 +1,28 @@
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.Callable;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.EmptyObjectReturnValsMutator;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class EmptyObjectReturnValsTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyReturnVals() {
-    createTesteeWith(EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES);
+    createTesteeWith(EmptyObjectReturnValsMutator.EMPTY_RETURNS);
   }
 
   @Test
@@ -71,7 +76,7 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
   @Test
   public void mutatesBoxedLongsToZero() throws Exception {
     assertMutantCallableReturns(new BoxedLong(),
-        createFirstMutant(BoxedLong.class), 0l);
+        createFirstMutant(BoxedLong.class), 0L);
   }
 
   @Test
@@ -129,6 +134,12 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
   }
 
   @Test
+  public void mutatesMapToEmptyMap() throws Exception {
+    assertMutantCallableReturns(new AMap(),
+            createFirstMutant(AMap.class), Collections.emptyMap());
+  }
+
+  @Test
   public void mutatesSetToEmptySet() throws Exception {
     assertMutantCallableReturns(new ASet(),
         createFirstMutant(ASet.class), Collections.<String>emptySet());
@@ -140,12 +151,19 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
         createFirstMutant(ACollection.class), Collections.<String>emptyList());
   }
 
-// must build on java 7
-//  @Test
-//  public void mutatesToOptionalEmpty() throws Exception {
-//    assertMutantCallableReturns(new AnOptional(),
-//        createFirstMutant(AnOptional.class), Optional.<String>empty());
-//  }
+
+  @Test
+  public void mutatesToOptionalEmpty() throws Exception {
+    assertMutantCallableReturns(new AnOptional(),
+        createFirstMutant(AnOptional.class), Optional.<String>empty());
+  }
+
+  @Test
+  public void mutatesToEmptyStream() {
+    Stream<String> actual = mutateAndCall(new AStream(),
+            createFirstMutant(AStream.class));
+    assertThat(actual).isEmpty();
+  }
 
   private static class ObjectReturn implements Callable<Object> {
     @Override
@@ -193,7 +211,7 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
   private static class BoxedLong implements Callable<Long> {
     @Override
     public Long call() throws Exception {
-      return 1l;
+      return 1L;
     }
   }
 
@@ -225,6 +243,13 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
     }
   }
 
+  private static class AMap implements Callable<Map<String, String>> {
+    @Override
+    public Map<String, String> call() throws Exception {
+      return new HashMap<>();
+    }
+  }
+
   private static class ASet implements Callable<Set<String>> {
     @Override
     public Set<String> call() throws Exception {
@@ -239,12 +264,18 @@ public class EmptyObjectReturnValsTest extends MutatorTestBase {
     }
   }
 
-//  private static class AnOptional implements Callable<Optional<String>> {
-//    @Override
-//    public Optional<String> call() throws Exception {
-//      return Optional.of("hello");
-//    }
-//  }
+  private static class AnOptional implements Callable<Optional<String>> {
+    @Override
+    public Optional<String> call() throws Exception {
+      return Optional.of("hello");
+    }
+  }
 
+  private static class AStream implements Callable<Stream<String>> {
+    @Override
+    public Stream<String> call() throws Exception {
+      return Stream.of("hello");
+    }
+  }
 
 }

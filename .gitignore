@@ -11,4 +11,7 @@ target/
 *.iml
 .checkstyle
 dependency-reduced-pom.xml
+.flattened-pom.xml
 */bin
+.DS_Store
+

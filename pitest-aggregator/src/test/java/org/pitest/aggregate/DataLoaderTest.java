@@ -27,7 +27,7 @@ public class DataLoaderTest {
     assertEquals(1, result.getNumberOfTestsRun());
     assertEquals("OrderedWeightedValueSampler.java", result.getDetails().getFilename());
     assertEquals("com.mycompany.OrderedWeightedValueSampler", result.getDetails().getClassName().asJavaName());
-    assertEquals("<init>", result.getDetails().getId().getLocation().getMethodName().name());
+    assertEquals("<init>", result.getDetails().getId().getLocation().getMethodName());
     assertEquals("(JLjava/util/function/Consumer;Ljava/util/function/BiFunction;I)V", result.getDetails().getId().getLocation().getMethodDesc());
     assertEquals(77, result.getDetails().getLineNumber());
     assertEquals("org.pitest.mutationtest.engine.gregor.mutators.MathMutator", result.getDetails().getMutator());
@@ -48,7 +48,7 @@ public class DataLoaderTest {
     assertEquals(1, results.size());
     BlockCoverage result = results.iterator().next();
     assertEquals("com.example.DividerTest", result.getBlock().getLocation().getClassName().asJavaName());
-    assertEquals("testDivide", result.getBlock().getLocation().getMethodName().name());
+    assertEquals("testDivide", result.getBlock().getLocation().getMethodName());
     assertEquals("()V", result.getBlock().getLocation().getMethodDesc());
     assertEquals(1, result.getBlock().getBlock());
     assertEquals(Arrays.asList("com.example.DividerTest.testDivide(com.example.DividerTest)"), result.getTests());

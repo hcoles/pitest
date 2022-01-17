@@ -20,13 +20,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.ABSMutator;
 
 public class ABSMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyMathFunctions() {
-    createTesteeWith(mutateOnlyCallMethod(), ABSMutator.ABS_MUTATOR);
+    createTesteeWith(mutateOnlyCallMethod(), ABSMutator.ABS);
   }
 
   private static class HasILoad implements Callable<String> {

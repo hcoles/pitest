@@ -37,8 +37,8 @@ public class GregorMutationEngineTest {
         i -> true, mutators);
     this.testee = new GregorMutationEngine(config);
     assertEquals(Arrays.asList(
-        ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY_MUTATOR.getName(),
-        MathMutator.MATH_MUTATOR.getName()), this.testee.getMutatorNames());
+        ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY.getName(),
+        MathMutator.MATH.getName()), this.testee.getMutatorNames());
 
   }
 

@@ -30,7 +30,7 @@ public class RemoveIncrementsMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyIncrements() {
-    createTesteeWith(RemoveIncrementsMutator.REMOVE_INCREMENTS_MUTATOR);
+    createTesteeWith(RemoveIncrementsMutator.REMOVE_INCREMENTS);
   }
 
   private static class HasIncrement implements Callable<String> {
@@ -47,8 +47,8 @@ public class RemoveIncrementsMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldProvideAMeaningfulName() {
-    assertEquals("REMOVE_INCREMENTS_MUTATOR",
-        RemoveIncrementsMutator.REMOVE_INCREMENTS_MUTATOR.getName());
+    assertEquals("REMOVE_INCREMENTS",
+        RemoveIncrementsMutator.REMOVE_INCREMENTS.getName());
   }
 
   @Test

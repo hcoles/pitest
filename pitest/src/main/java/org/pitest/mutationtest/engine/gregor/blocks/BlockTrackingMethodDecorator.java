@@ -14,18 +14,6 @@
  */
 package org.pitest.mutationtest.engine.gregor.blocks;
 
-import static org.objectweb.asm.Opcodes.ARETURN;
-import static org.objectweb.asm.Opcodes.ATHROW;
-import static org.objectweb.asm.Opcodes.DRETURN;
-import static org.objectweb.asm.Opcodes.FRETURN;
-import static org.objectweb.asm.Opcodes.IRETURN;
-import static org.objectweb.asm.Opcodes.LRETURN;
-import static org.objectweb.asm.Opcodes.RETURN;
-
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
-
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -33,6 +21,9 @@ import org.objectweb.asm.tree.MethodNode;
 import org.pitest.bytecode.ASMVersion;
 import org.pitest.coverage.analysis.Block;
 import org.pitest.coverage.analysis.ControlFlowAnalyser;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 public class BlockTrackingMethodDecorator extends MethodNode {
 
@@ -51,38 +42,13 @@ public class BlockTrackingMethodDecorator extends MethodNode {
   public void visitEnd() {
     super.visitEnd();
 
-    final LinkedList<Block> blocks = new LinkedList<>(
+    final Deque<Block> blocks = new ArrayDeque<>(
         ControlFlowAnalyser.analyze(this));
 
     blockCounter.registerNewMethodStart();
     this.accept(new MethodVisitor(ASMVersion.ASM_VERSION, cmv) {
       Block curBlock = blocks.pop();
       int i;
-      private Set<Label> handlers = new HashSet<>();
-
-      @Override
-      public void visitTryCatchBlock(Label start, Label end, Label handler,
-          String type) {
-        super.visitTryCatchBlock(start, end, handler, type);
-        if (type == null) {
-          handlers.add(handler);
-        }
-      }
-
-      private boolean endsBlock(final int opcode) {
-        switch (opcode) {
-        case RETURN:
-        case ARETURN:
-        case DRETURN:
-        case FRETURN:
-        case IRETURN:
-        case LRETURN:
-        case ATHROW: // dubious if this is needed
-          return true;
-        default:
-          return false;
-        }
-      }
 
       private void visitAnything() {
         if ((i == curBlock.getFirstInstruction())) {
@@ -112,9 +78,6 @@ public class BlockTrackingMethodDecorator extends MethodNode {
       public void visitInsn(int opcode) {
         visitAnything();
         super.visitInsn(opcode);
-        if (endsBlock(opcode)) {
-          blockCounter.registerFinallyBlockEnd();
-        }
       }
 
       @Override
@@ -166,9 +129,6 @@ public class BlockTrackingMethodDecorator extends MethodNode {
       @Override
       public void visitLabel(Label label) {
         visitAnything();
-        if (handlers.contains(label)) {
-          blockCounter.registerFinallyBlockStart();
-        }
         super.visitLabel(label);
       }
 

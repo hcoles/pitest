@@ -14,15 +14,6 @@
  */
 package org.pitest.mutationtest.config;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.Properties;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -30,6 +21,16 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.MutationResultListenerFactory;
+
+import java.util.Properties;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class CompoundListenerFactoryTest {
 
@@ -43,8 +44,12 @@ public class CompoundListenerFactoryTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
-    this.testee = new CompoundListenerFactory(Arrays.asList(this.firstChild,
+    MockitoAnnotations.openMocks(this);
+
+    when(firstChild.provides()).thenReturn(MutationResultListenerFactory.LEGACY_MODE);
+    when(secondChild.provides()).thenReturn(MutationResultListenerFactory.LEGACY_MODE);
+
+    this.testee = new CompoundListenerFactory(emptyList(),asList(this.firstChild,
         this.secondChild));
   }
 
@@ -58,9 +63,14 @@ public class CompoundListenerFactoryTest {
     when(
         this.secondChild.getListener(any(Properties.class),
             any(ListenerArguments.class))).thenReturn(listenerTwo);
-    this.testee.getListener(null, null).runStart();
+    this.testee.getListener(new Properties(), someArgs()).runStart();
     verify(listenerOne, times(1)).runStart();
     verify(listenerTwo, times(1)).runStart();
+  }
+
+  private ListenerArguments someArgs() {
+    return new ListenerArguments(null, null, null, null,
+            0, false, null);
   }
 
 }

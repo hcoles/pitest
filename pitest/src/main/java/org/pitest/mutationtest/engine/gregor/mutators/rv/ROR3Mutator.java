@@ -26,7 +26,7 @@ import java.util.Map;
 
 public enum ROR3Mutator implements MethodMutatorFactory {
 
-  ROR_3_MUTATOR;
+  ROR3;
 
   @Override
   public MethodVisitor create(final MutationContext context,

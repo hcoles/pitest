@@ -8,19 +8,18 @@ import java.util.Set;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
-import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.LineMap;
 import java.util.Optional;
 import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MethodName;
 
 public class LineMapper implements LineMap {
 
-  private final CodeSource source;
+  private final ClassByteArraySource source;
 
-  public LineMapper(final CodeSource source) {
+  public LineMapper(final ClassByteArraySource source) {
     this.source = source;
   }
 
@@ -29,7 +28,7 @@ public class LineMapper implements LineMap {
 
     final Map<BlockLocation, Set<Integer>> map = new HashMap<>();
 
-    final Optional<byte[]> maybeBytes = this.source.fetchClassBytes(clazz);
+    final Optional<byte[]> maybeBytes = this.source.getBytes(clazz.asInternalName());
     // classes generated at runtime eg by mocking frameworks
     // will be instrumented but not available on the classpath
     if (maybeBytes.isPresent()) {
@@ -40,7 +39,7 @@ public class LineMapper implements LineMap {
       for (final Object m : classNode.methods) {
         final MethodNode mn = (MethodNode) m;
         final Location l = Location.location(clazz,
-            MethodName.fromString(mn.name), mn.desc);
+            mn.name, mn.desc);
         final List<Block> blocks = ControlFlowAnalyser.analyze(mn);
         for (int i = 0; i != blocks.size(); i++) {
           final Block each = blocks.get(i);

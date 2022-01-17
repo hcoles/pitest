@@ -1,9 +1,38 @@
 package org.pitest.coverage.execute;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.example.coverage.execute.samples.exceptions.CoveredBeforeExceptionTestee;
+import com.example.coverage.execute.samples.exceptions.TestThrowsExceptionFromLargeMethodTestee;
+import com.example.coverage.execute.samples.exceptions.TestThrowsExceptionInFinallyBlock;
+import com.example.coverage.execute.samples.exceptions.TestsClassWithException;
+import com.example.coverage.execute.samples.exceptions.ThrowsExceptionFromLargeMethodTestee;
+import com.example.coverage.execute.samples.exceptions.ThrowsExceptionInFinallyBlockTestee;
+import com.example.coverage.execute.samples.exceptions.ThrowsExceptionTestee;
+import com.example.coverage.execute.samples.simple.ParentChildInitializationTest;
+import com.example.coverage.execute.samples.simple.Testee;
+import com.example.coverage.execute.samples.simple.Testee2;
+import com.example.coverage.execute.samples.simple.TesteeWithComplexConstructorsTest;
+import com.example.coverage.execute.samples.simple.TesteeWithMultipleLines;
+import com.example.coverage.execute.samples.simple.Tests;
+import com.example.coverage.execute.samples.simple.TestsForMultiBlockCoverage;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.pitest.SystemTest;
+import org.pitest.classinfo.ClassName;
+import org.pitest.classpath.ClassPath;
+import org.pitest.coverage.BlockLocation;
+import org.pitest.coverage.CoverageResult;
+import org.pitest.functional.FCollection;
+import org.pitest.mutationtest.config.TestPluginArguments;
+import org.pitest.mutationtest.engine.Location;
+import org.pitest.mutationtest.execute.DefaultPITClassloader;
+import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
+import org.pitest.process.LaunchOptions;
+import org.pitest.process.ProcessArgs;
+import org.pitest.util.ExitCode;
+import org.pitest.util.SocketFinder;
+import org.pitest.util.Verbosity;
+import org.pitest.util.XStreamCloning;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,47 +48,17 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.pitest.SystemTest;
-import org.pitest.classinfo.ClassName;
-import org.pitest.classpath.ClassPath;
-import org.pitest.coverage.BlockLocation;
-import org.pitest.coverage.CoverageResult;
-import org.pitest.functional.FCollection;
-import org.pitest.mutationtest.config.TestPluginArguments;
-import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MethodName;
-import org.pitest.mutationtest.execute.DefaultPITClassloader;
-import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
-import org.pitest.process.LaunchOptions;
-import org.pitest.process.ProcessArgs;
-import org.pitest.util.ExitCode;
-import org.pitest.util.SocketFinder;
-import org.pitest.util.XStreamCloning;
-
-import com.example.coverage.execute.samples.exceptions.CoveredBeforeExceptionTestee;
-import com.example.coverage.execute.samples.exceptions.TestThrowsExceptionFromLargeMethodTestee;
-import com.example.coverage.execute.samples.exceptions.TestThrowsExceptionInFinallyBlock;
-import com.example.coverage.execute.samples.exceptions.TestsClassWithException;
-import com.example.coverage.execute.samples.exceptions.ThrowsExceptionFromLargeMethodTestee;
-import com.example.coverage.execute.samples.exceptions.ThrowsExceptionInFinallyBlockTestee;
-import com.example.coverage.execute.samples.exceptions.ThrowsExceptionTestee;
-import com.example.coverage.execute.samples.simple.Testee;
-import com.example.coverage.execute.samples.simple.Testee2;
-import com.example.coverage.execute.samples.simple.TesteeWithComplexConstructorsTest;
-import com.example.coverage.execute.samples.simple.TesteeWithMultipleLines;
-import com.example.coverage.execute.samples.simple.Tests;
-import com.example.coverage.execute.samples.simple.TestsForMultiBlockCoverage;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.pitest.util.Verbosity.VERBOSE;
 
 @Category(SystemTest.class)
 public class CoverageProcessSystemTest {
 
-  private final MethodName foo = MethodName.fromString("foo");
-
   @Test
-  public void shouldRecordSomeCoverage() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldRecordSomeCoverage() throws Exception {
     final List<CoverageResult> coverage = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertFalse(coverage.iterator().next().getCoverage().isEmpty());
   }
@@ -81,8 +80,7 @@ public class CoverageProcessSystemTest {
   // }
 
   @Test
-  public void shouldCalculateCoverageFor3BlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageFor3BlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test3", 2);
   }
@@ -123,22 +121,19 @@ public class CoverageProcessSystemTest {
   }
 
   @Test
-  public void shouldCalculateCoverageFor7BlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageFor7BlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test7", 2);
   }
 
   @Test
-  public void shouldCalculateCoverageFor8BlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageFor8BlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test8", 2);
   }
 
   @Test
-  public void shouldCalculateCoverageFor9BlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageFor9BlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test9", 2);
   }
@@ -151,50 +146,44 @@ public class CoverageProcessSystemTest {
   }
 
   @Test
-  public void shouldCalculateCoverageFor11BlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageFor11BlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test11", 2);
   }
 
   @Test
-  public void shouldCalculateCoverageFor12BlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageFor12BlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test12", 2);
   }
 
   @Test
-  public void shouldCalculateCoverageFor13BlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageFor13BlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test13", 2);
   }
 
   @Test
-  public void shouldCalculateCoverageFor14BlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageFor14BlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test14", 2);
   }
 
   @Test
-  public void shouldCalculateCoverageFor15BlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageFor15BlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test15", 2);
   }
 
   @Test
-  public void shouldCalculateCoverageForLargeBlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageForLargeBlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "testMany", 2);
   }
 
   @Test
   public void shouldCalculateCoverageForAllRelevantClasses()
-      throws IOException, InterruptedException, ExecutionException {
+      throws Exception{
 
     final List<CoverageResult> coveredClasses = runCoverageForTest(Tests.class);
 
@@ -205,7 +194,7 @@ public class CoverageProcessSystemTest {
 
   @Test
   public void shouldCalculateCoverageForSmallMethodThatThrowsException()
-      throws IOException, InterruptedException, ExecutionException {
+      throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsClassWithException.class);
     assertThat(coveredClasses).anyMatch(coverageFor(CoveredBeforeExceptionTestee.class));
 
@@ -213,39 +202,39 @@ public class CoverageProcessSystemTest {
         .fromClass(ThrowsExceptionTestee.class);
 
     assertThat(coveredClasses).anyMatch(coverageFor(BlockLocation.blockLocation(
-        Location.location(throwsException, this.foo, "()V"), 0)));
+        Location.location(throwsException, "foo", "()V"), 0)));
 
         assertThat(coveredClasses).anyMatch(coverageFor(BlockLocation.blockLocation(
         Location.location(throwsException,
-            MethodName.fromString("throwsException"), "()V"), 0)));
+            "throwsException", "()V"), 0)));
 
   }
 
   @Test
   public void shouldCalculateCoverageForMethodThatThrowsExceptionWithFinallyBlock()
-      throws IOException, InterruptedException, ExecutionException {
+      throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestThrowsExceptionInFinallyBlock.class);
 
     final ClassName clazz = ClassName
         .fromClass(ThrowsExceptionInFinallyBlockTestee.class);
 
     assertThat(coveredClasses).anyMatch(coverageFor(BlockLocation.blockLocation(
-        Location.location(clazz, this.foo, "()V"), 0)));
+        Location.location(clazz, "foo", "()V"), 0)));
 
         assertThat(coveredClasses).anyMatch(coverageFor(BlockLocation.blockLocation(
-        Location.location(clazz, this.foo, "()V"), 4)));
+        Location.location(clazz, "foo", "()V"), 4)));
   }
 
   @Test
   public void shouldCalculateCoverageForLargeMethodThatThrowsException()
-      throws IOException, InterruptedException, ExecutionException {
+      throws IOException, InterruptedException {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestThrowsExceptionFromLargeMethodTestee.class);
 
     final ClassName clazz = ClassName
         .fromClass(ThrowsExceptionFromLargeMethodTestee.class);
 
     assertThat(coveredClasses).anyMatch(coverageFor(BlockLocation.blockLocation(
-        Location.location(clazz, this.foo, "()I"), 0)));
+        Location.location(clazz, "foo", "()I"), 0)));
 
   }
 
@@ -263,7 +252,7 @@ public class CoverageProcessSystemTest {
 
   @Test
   public void shouldCalculateCoverageOfClassesRunInDifferentClassLoader()
-      throws IOException, InterruptedException, ExecutionException {
+      throws IOException, InterruptedException {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestInDifferentClassLoader.class);
     assertThat(coveredClasses).anyMatch(coverageFor(Testee2.class));
     assertThat(coveredClasses).anyMatch(coverageFor(Testee.class));
@@ -296,11 +285,12 @@ public class CoverageProcessSystemTest {
   }
 
   @Test
+  @Ignore("we have testng on the classpath")
   public void shouldFailWithExitCode() throws Exception {
     final Consumer<CoverageResult> noOpHandler = a -> {
     };
 
-    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), excludeTests(), TestPluginArguments.defaults(), true, -1);
+    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), excludeTests(), TestPluginArguments.defaults(), VERBOSE, -1);
 
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     final LaunchOptions lo = new LaunchOptions(agent);
@@ -313,6 +303,13 @@ public class CoverageProcessSystemTest {
 
     final ExitCode exitCode = process.waitToDie();
     assertEquals(ExitCode.JUNIT_ISSUE, exitCode);
+  }
+
+  @Test
+  public void handlesParentChildInitializationOrderIssues() throws Exception {
+    final List<CoverageResult> coveredClasses = runCoverageForTest(ParentChildInitializationTest.class);
+    assertThat(coveredClasses)
+            .anyMatch(coverageFor(ClassName.fromString("com.example.coverage.execute.samples.simple.TesteeChild")));
   }
 
   private ClassPath classPathWithoutJUnit() {
@@ -329,7 +326,7 @@ public class CoverageProcessSystemTest {
   }
 
   private List<CoverageResult> runCoverageForTest(final Class<?> test)
-      throws IOException, InterruptedException, ExecutionException {
+      throws IOException, InterruptedException {
 
     final List<CoverageResult> coveredClasses = new ArrayList<>();
 
@@ -342,7 +339,7 @@ public class CoverageProcessSystemTest {
       InterruptedException {
     final Consumer<CoverageResult> handler = a -> coveredClasses.add(a);
 
-    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), excludeTests(), TestPluginArguments.defaults(), true, -1);
+    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), excludeTests(), TestPluginArguments.defaults(), VERBOSE, -1);
 
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     try {
@@ -361,16 +358,20 @@ public class CoverageProcessSystemTest {
     }
   }
 
-  private Predicate<CoverageResult> coverageFor(final Class<?> class1) {
+  private Predicate<CoverageResult> coverageFor(final Class<?> clazz) {
+    return coverageFor(ClassName.fromClass(clazz));
+  }
+
+  private Predicate<CoverageResult> coverageFor(ClassName clazz) {
     return new Predicate<CoverageResult>() {
 
       @Override
       public boolean test(final CoverageResult a) {
-        return FCollection.contains(a.getCoverage(), resultFor(class1));
+        return FCollection.contains(a.getCoverage(), resultFor(clazz));
       }
 
-      private Predicate<BlockLocation> resultFor(final Class<?> class1) {
-        return a -> a.isFor(ClassName.fromClass(class1));
+      private Predicate<BlockLocation> resultFor(ClassName clazz) {
+        return a -> a.isFor(clazz);
       }
     };
   }
@@ -402,7 +403,7 @@ public class CoverageProcessSystemTest {
   private boolean coversBlock(
       final List<CoverageResult> coveredClasses,
       final String testName, final int block) {
-    return coveredClasses.stream().filter(hitsBlock(testName, block)).findFirst().isPresent();
+    return coveredClasses.stream().anyMatch(hitsBlock(testName, block));
   }
 
   private Predicate<CoverageResult> hitsBlock(final String testName,

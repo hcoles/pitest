@@ -39,7 +39,7 @@ public class CoverageDecorator extends TestUnitDecorator {
 
   @Override
   public void execute(final ResultCollector rc) {
-    LOG.fine("Gathering coverage for test " + child().getDescription());
+    LOG.fine(() -> "Gathering coverage for test " + child().getDescription());
 
     final int threadsBeforeTest = this.threads.getThreadCount();
 

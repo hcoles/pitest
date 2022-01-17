@@ -14,7 +14,25 @@
  */
 package org.pitest.mutationtest.execute;
 
-import static org.pitest.util.Unchecked.translateCheckedException;
+import org.pitest.classinfo.ClassName;
+import org.pitest.functional.F3;
+import org.pitest.mutationtest.DetectionStatus;
+import org.pitest.mutationtest.MutationStatusTestPair;
+import org.pitest.mutationtest.engine.Mutant;
+import org.pitest.mutationtest.engine.Mutater;
+import org.pitest.mutationtest.engine.MutationDetails;
+import org.pitest.mutationtest.engine.MutationIdentifier;
+import org.pitest.mutationtest.mocksupport.JavassistInterceptor;
+import org.pitest.testapi.Description;
+import org.pitest.testapi.TestResult;
+import org.pitest.testapi.TestUnit;
+import org.pitest.testapi.execute.Container;
+import org.pitest.testapi.execute.ExitingResultCollector;
+import org.pitest.testapi.execute.MultipleTestGroup;
+import org.pitest.testapi.execute.Pitest;
+import org.pitest.testapi.execute.containers.ConcreteResultCollector;
+import org.pitest.testapi.execute.containers.UnContainer;
+import org.pitest.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,24 +43,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import org.pitest.classinfo.ClassName;
-import org.pitest.functional.F3;
-import org.pitest.mutationtest.DetectionStatus;
-import org.pitest.mutationtest.MutationStatusTestPair;
-import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.mutationtest.engine.Mutater;
-import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.mocksupport.JavassistInterceptor;
-import org.pitest.testapi.TestResult;
-import org.pitest.testapi.TestUnit;
-import org.pitest.testapi.execute.Container;
-import org.pitest.testapi.execute.ExitingResultCollector;
-import org.pitest.testapi.execute.MultipleTestGroup;
-import org.pitest.testapi.execute.Pitest;
-import org.pitest.testapi.execute.containers.ConcreteResultCollector;
-import org.pitest.testapi.execute.containers.UnContainer;
-import org.pitest.util.Log;
+import static org.pitest.util.Unchecked.translateCheckedException;
 
 public class MutationTestWorker {
 
@@ -118,7 +119,7 @@ public class MutationTestWorker {
       final List<TestUnit> relevantTests) {
     final MutationStatusTestPair mutationDetected;
     if ((relevantTests == null) || relevantTests.isEmpty()) {
-      LOG.info("No test coverage for mutation  " + mutationId + " in "
+      LOG.info(() -> "No test coverage for mutation  " + mutationId + " in "
           + mutatedClass.getDetails().getMethod());
       mutationDetected =  MutationStatusTestPair.notAnalysed(0, DetectionStatus.RUN_ERROR);
     } else {
@@ -156,7 +157,7 @@ public class MutationTestWorker {
   }
 
   private static Container createNewContainer() {
-    final Container c = new UnContainer() {
+    return new UnContainer() {
       @Override
       public List<TestResult> execute(final TestUnit group) {
         final List<TestResult> results = new ArrayList<>();
@@ -166,7 +167,6 @@ public class MutationTestWorker {
         return results;
       }
     };
-    return c;
   }
 
 
@@ -200,16 +200,16 @@ public class MutationTestWorker {
   private MutationStatusTestPair createStatusTestPair(
       final CheckTestHasFailedResultListener listener) {
     List<String> failingTests = listener.getFailingTests().stream()
-        .map(description -> description.getQualifiedName()).collect(Collectors.toList());
+        .map(Description::getQualifiedName).collect(Collectors.toList());
     List<String> succeedingTests = listener.getSucceedingTests().stream()
-        .map(description -> description.getQualifiedName()).collect(Collectors.toList());
+        .map(Description::getQualifiedName).collect(Collectors.toList());
 
     return new MutationStatusTestPair(listener.getNumberOfTestsRun(),
         listener.status(), failingTests, succeedingTests);
   }
 
   private List<TestUnit> createEarlyExitTestGroup(final List<TestUnit> tests) {
-    return Collections.<TestUnit> singletonList(new MultipleTestGroup(tests));
+    return Collections.singletonList(new MultipleTestGroup(tests));
   }
 
 }

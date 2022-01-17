@@ -14,43 +14,43 @@
  */
 package org.pitest.mutationtest.config;
 
-import static org.pitest.functional.prelude.Prelude.not;
-import static org.pitest.functional.prelude.Prelude.or;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 import org.pitest.classpath.ClassFilter;
 import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassPathRoot;
 import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.functional.FCollection;
-import java.util.Optional;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.incremental.FileWriterFactory;
-import org.pitest.mutationtest.incremental.NullWriterFactory;
 import org.pitest.mutationtest.incremental.WriterFactory;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.execute.Pitest;
 import org.pitest.util.Glob;
 import org.pitest.util.ResultOutputStrategy;
 import org.pitest.util.Unchecked;
+import org.pitest.util.Verbosity;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.function.Predicate;
+
+import static org.pitest.functional.prelude.Prelude.not;
+import static org.pitest.functional.prelude.Prelude.or;
 
 // FIXME move all logic to SettingsFactory and turn into simple bean
 
@@ -104,9 +104,7 @@ public class ReportOptions {
 
   private Collection<String>             loggingClasses                 = new ArrayList<>();
 
-  private int                            maxMutationsPerClass;
-
-  private boolean                        verbose                        = false;
+  private Verbosity                      verbosity                      = Verbosity.DEFAULT;
   private boolean                        failWhenNoMutations            = false;
   private boolean                        skipFailingTests               = false;
 
@@ -142,8 +140,8 @@ public class ReportOptions {
   private boolean                        useClasspathJar;
 
 
-  public boolean isVerbose() {
-    return this.verbose;
+  public Verbosity getVerbosity() {
+    return this.verbosity;
   }
 
   /**
@@ -242,11 +240,7 @@ public class ReportOptions {
 
   private ClassPath createClassPathFromElements() {
     return new ClassPath(
-        FCollection.map(this.classPathElements, stringToFile()));
-  }
-
-  private static Function<String, File> stringToFile() {
-    return a -> new File(a);
+        FCollection.map(this.classPathElements, File::new));
   }
 
   public Collection<String> getTargetClasses() {
@@ -342,8 +336,8 @@ public class ReportOptions {
     this.excludedMethods = excludedMethods;
   }
 
-  public void setVerbose(final boolean verbose) {
-    this.verbose = verbose;
+  public void setVerbosity(Verbosity verbose) {
+    this.verbosity = verbose;
   }
 
   public void setExcludedClasses(
@@ -475,12 +469,12 @@ public class ReportOptions {
     this.detectInlinedCode = b;
   }
 
-  public WriterFactory createHistoryWriter() {
+  public Optional<WriterFactory> createHistoryWriter() {
     if (this.historyOutputLocation == null) {
-      return new NullWriterFactory();
+      return Optional.empty();
     }
 
-    return new FileWriterFactory(this.historyOutputLocation);
+    return Optional.of(new FileWriterFactory(this.historyOutputLocation));
   }
 
   public Optional<Reader> createHistoryReader() {
@@ -491,8 +485,8 @@ public class ReportOptions {
     try {
       if (this.historyInputLocation.exists()
           && (this.historyInputLocation.length() > 0)) {
-        return Optional.<Reader> ofNullable(new InputStreamReader(new FileInputStream(
-            this.historyInputLocation), "UTF-8"));
+        return Optional.ofNullable(new InputStreamReader(new FileInputStream(
+            this.historyInputLocation), StandardCharsets.UTF_8));
       }
       return Optional.empty();
     } catch (final IOException ex) {
@@ -609,16 +603,8 @@ public class ReportOptions {
    * Creates a serializable subset of data for use in child processes
    */
   public TestPluginArguments createMinionSettings() {
-    return new TestPluginArguments(getTestPlugin(), this.getGroupConfig(), this.getExcludedRunners(),
+    return new TestPluginArguments(this.getGroupConfig(), this.getExcludedRunners(),
             this.getIncludedTestMethods(), this.skipFailingTests());
-  }
-
-  public String getTestPlugin() {
-    return this.testPlugin;
-  }
-
-  public void setTestPlugin(String testPlugin) {
-    this.testPlugin = testPlugin;
   }
 
   public boolean useClasspathJar() {
@@ -643,8 +629,7 @@ public class ReportOptions {
         + ", jvmArgs=" + jvmArgs + ", numberOfThreads=" + numberOfThreads
         + ", timeoutFactor=" + timeoutFactor + ", timeoutConstant="
         + timeoutConstant + ", targetTests=" + targetTests + ", loggingClasses="
-        + loggingClasses + ", maxMutationsPerClass=" + maxMutationsPerClass
-        + ", verbose=" + verbose + ", failWhenNoMutations="
+        + loggingClasses + ", verbosity=" + verbosity + ", failWhenNoMutations="
         + failWhenNoMutations + ", outputs=" + outputs + ", groupConfig="
         + groupConfig + ", fullMutationMatrix=" + fullMutationMatrix + ", mutationUnitSize=" + mutationUnitSize
         + ", shouldCreateTimestampedReports=" + shouldCreateTimestampedReports

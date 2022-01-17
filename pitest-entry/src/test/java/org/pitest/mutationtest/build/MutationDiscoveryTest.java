@@ -1,12 +1,5 @@
 package org.pitest.mutationtest.build;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.logging.Logger;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.classinfo.ClassByteArraySource;
@@ -26,6 +19,13 @@ import org.pitest.mutationtest.engine.gregor.DoNotMutate;
 import org.pitest.mutationtest.engine.gregor.Generated;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.util.ResourceFolderByteArraySource;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.logging.Logger;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests discovery of mutants - including the full default interceptor chain
@@ -211,6 +211,19 @@ public class MutationDiscoveryTest {
     assertThat(actual).isEmpty();
   }
 
+  @Test
+  public void filterMutantsInJavaRecords() {
+    this.data.setDetectInlinedCode(true);
+
+    final ClassName clazz = ClassName.fromString("records/PureRecord_javac");
+    final Collection<MutationDetails> actual = findMutants(clazz);
+    assertThat(actual).isEmpty();
+
+    this.data.setFeatures(Collections.singletonList("-FRECORD"));
+    final Collection<MutationDetails> actualWithoutFilter = findMutants(clazz);
+    assertThat(actualWithoutFilter).isNotEmpty();
+  }
+
   public static class AnnotatedToAvoidMethod {
     public int a() {
       return 1;
@@ -261,7 +274,7 @@ public class MutationDiscoveryTest {
     final SettingsFactory settings = new SettingsFactory(this.data,
         PluginServices.makeForContextLoader());
     final MutationInterceptor interceptor = settings.getInterceptor()
-        .createInterceptor(this.data, source);
+        .createInterceptor(this.data, null, source);
 
     final MutationEngine engine = new GregorEngineFactory().createEngine(
         EngineArguments.arguments().withExcludedMethods(this.data.getExcludedMethods())

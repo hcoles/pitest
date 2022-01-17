@@ -37,11 +37,7 @@ public class CSVReportListener implements MutationResultListener {
   }
 
   private String createKillingTestDesc(final Optional<String> killingTest) {
-    if (killingTest.isPresent()) {
-      return killingTest.get();
-    } else {
-      return "none";
-    }
+    return killingTest.orElse("none");
   }
 
   private String makeCsv(final Object... os) {

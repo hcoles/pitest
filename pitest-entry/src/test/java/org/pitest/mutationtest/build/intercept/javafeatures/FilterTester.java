@@ -1,21 +1,8 @@
 package org.pitest.mutationtest.build.intercept.javafeatures;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.assertj.core.api.Condition;
 import org.assertj.core.api.SoftAssertions;
+import org.objectweb.asm.util.Textifier;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassByteArraySource;
@@ -29,24 +16,47 @@ import org.pitest.mutationtest.engine.gregor.GregorMutater;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.util.ResourceFolderByteArraySource;
 
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class FilterTester {
 
-  private static final Collection<String> COMPILERS = Arrays.asList("javac",
-      "ecj", "aspectj");
+  private static final Collection<String> COMPILERS = Arrays.asList("javac", "javac11", "ecj", "aspectj");
 
   private final String path;
   private final ClassByteArraySource source = new ResourceFolderByteArraySource();
   private final MutationInterceptor testee;
   private final Collection<MethodMutatorFactory> mutators;
+  private final Collection<String> compilers;
 
-  public FilterTester(String path, MutationInterceptor testee, MethodMutatorFactory ... mutators) {
-    this(path, testee, Arrays.asList(mutators));
+  public FilterTester(String path, MutationInterceptor testee, Collection<String> compilers, MethodMutatorFactory ... mutators) {
+    this(path, testee, compilers, Arrays.asList(mutators));
   }
 
   public FilterTester(String path, MutationInterceptor testee, Collection<MethodMutatorFactory> mutators) {
+    this(path, testee, COMPILERS, mutators);
+  }
+
+  public FilterTester(String path, MutationInterceptor testee, MethodMutatorFactory ... mutators) {
+    this(path, testee, COMPILERS, Arrays.asList(mutators));
+  }
+
+  public FilterTester(String path, MutationInterceptor testee, Collection<String> compilers, Collection<MethodMutatorFactory> mutators) {
     this.mutators = mutators;
     this.testee = testee;
     this.path = path;
+    this.compilers = compilers;
   }
 
 
@@ -81,6 +91,15 @@ public class FilterTester {
     };
   }
 
+  public void assertCombinedMutantExists(Predicate<MutationDetails> match, Class<?> clazz) {
+    Sample s = makeSampleForCurrentCompiler(clazz);
+    GregorMutater mutator = mutateFromClassLoader();
+    List<MutationDetails> mutations = mutator.findMutations(s.className);
+    Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
+
+    assertThat(actual).anyMatch(match.and( m -> m.getId().getIndexes().size() > 1));
+  }
+
   public void assertLeavesNMutants(int n, String sample) {
     final GregorMutater mutator = mutateFromResourceDir();
     atLeastOneSampleExists(sample);
@@ -92,8 +111,9 @@ public class FilterTester {
       final Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
 
       softly.assertThat(actual)
-      .describedAs("Wrong number of mutants  with " + s.compiler)
+      .describedAs("Wrong number of mutants  with " + s.compiler + " for class \n" + s.clazz)
       .hasSize(n);
+
     }
 
     softly.assertAll();
@@ -122,6 +142,7 @@ public class FilterTester {
     softly.assertAll();
   }
 
+
   public void assertFiltersNoMutationsMatching(Predicate<MutationDetails> match, Class<?> clazz) {
     final Sample s = makeSampleForCurrentCompiler(clazz);
 
@@ -129,6 +150,17 @@ public class FilterTester {
     GregorMutater mutator = mutateFromClassLoader();
 
     assertFiltersNoMatchingMutants(match, mutator, s, softly);
+
+    softly.assertAll();
+  }
+
+  public void assertFiltersNoMutationsMatching(Predicate<MutationDetails> match, String sample) {
+    final GregorMutater mutator = mutateFromResourceDir();
+    final SoftAssertions softly = new SoftAssertions();
+
+    for (final Sample s : samples(sample)) {
+      assertFiltersNoMatchingMutants(match, mutator, s, softly);
+    }
 
     softly.assertAll();
   }
@@ -199,7 +231,7 @@ public class FilterTester {
 
     final List<MutationDetails> filteredOut = FCollection.filter(mutations, notIn(actual));
 
-    softly.assertThat(filteredOut).describedAs("No mutants filtered").isNotEmpty();
+    softly.assertThat(filteredOut).describedAs("No mutants filtered " + s).isNotEmpty();
     softly.assertThat(filteredOut).have(mutatedBy(id));
     softly.assertAll();
 
@@ -235,8 +267,14 @@ public class FilterTester {
     softly.assertThat(actual)
     .describedAs("Expected to filter out " + n + " mutants but filtered "
                   + (mutations.size() - actual.size()) + " for compiler " + s.compiler
-                  + " " + s.clazz)
+                  + " " + s.clazz + " [original mutants " + describe(mutations) + "]")
     .hasSize(mutations.size() - n);
+  }
+
+  private String describe(List<MutationDetails> mutations) {
+    return mutations.stream()
+            .map(m -> m.getMutator())
+            .collect(Collectors.joining(","));
   }
 
   private void checkHasNMutants(int n, Sample s, SoftAssertions softly,
@@ -262,8 +300,7 @@ public class FilterTester {
 
 
   private String makeClassName(String sample, String compiler) {
-    final String clazz = MessageFormat.format(this.path, sample, compiler);
-    return clazz;
+    return MessageFormat.format(this.path, sample, compiler);
   }
 
 
@@ -281,11 +318,11 @@ public class FilterTester {
       return Stream.empty();
 
     };
-    return COMPILERS.stream().flatMap(toPair).collect(Collectors.toList());
+    return compilers.stream().flatMap(toPair).collect(Collectors.toList());
   }
 
   private boolean atLeastOneSampleExists(String sample) {
-    for (final String compiler : COMPILERS) {
+    for (final String compiler : compilers) {
       final String clazz = makeClassName(sample, compiler);
       if (this.source.getBytes(clazz).isPresent()) {
         return true;
@@ -317,4 +354,9 @@ class Sample {
   ClassName className;
   String compiler;
   ClassTree clazz;
+
+  @Override
+  public String toString() {
+    return "Compiled by " + compiler + "\n" + clazz.toString();
+  }
 }

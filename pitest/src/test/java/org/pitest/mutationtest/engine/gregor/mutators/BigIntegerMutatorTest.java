@@ -32,7 +32,7 @@ public class BigIntegerMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToMutateOnlyReturnVals() {
-    createTesteeWith(BigIntegerMutator.INSTANCE);
+    createTesteeWith(BigIntegerMutator.EXPERIMENTAL_BIG_INTEGER);
   }
 
   @Test

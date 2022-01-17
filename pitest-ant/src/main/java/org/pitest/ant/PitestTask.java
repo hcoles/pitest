@@ -95,7 +95,7 @@ public class PitestTask extends Task { // NO_UCD (test only)
   }
 
   private boolean optionMissing(final String option) {
-    return !this.options.keySet().contains(option);
+    return !this.options.containsKey(option);
   }
 
   private String generateAnalysisClasspath() {

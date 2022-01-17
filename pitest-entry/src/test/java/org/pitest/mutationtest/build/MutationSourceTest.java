@@ -1,33 +1,33 @@
 package org.pitest.mutationtest.build;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
-import static org.pitest.mutationtest.LocationMother.aLocation;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Function;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
-import java.util.Optional;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.process.LaunchOptions;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.pitest.mutationtest.LocationMother.aLocation;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MutationSourceTest {
@@ -86,8 +86,7 @@ public class MutationSourceTest {
   }
 
   private List<MutationDetails> makeMutations(final String method) {
-    final List<MutationDetails> mutations = Arrays.asList(makeMutation(method));
-    return mutations;
+    return Arrays.asList(makeMutation(method));
   }
 
   private MutationDetails makeMutation(final String method) {

@@ -14,14 +14,13 @@
  */
 package org.pitest.mutationtest.execute;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Id;
 import org.pitest.util.SafeDataOutputStream;
+
+import java.io.OutputStream;
 
 public class DefaultReporter implements Reporter {
 
@@ -32,8 +31,7 @@ public class DefaultReporter implements Reporter {
   }
 
   @Override
-  public synchronized void describe(final MutationIdentifier i)
-      throws IOException {
+  public synchronized void describe(final MutationIdentifier i) {
     this.w.writeByte(Id.DESCRIBE);
     this.w.write(i);
     this.w.flush();
@@ -41,7 +39,7 @@ public class DefaultReporter implements Reporter {
 
   @Override
   public synchronized void report(final MutationIdentifier i,
-      final MutationStatusTestPair mutationDetected) throws IOException {
+      final MutationStatusTestPair mutationDetected) {
     this.w.writeByte(Id.REPORT);
     this.w.write(i);
     this.w.write(mutationDetected);

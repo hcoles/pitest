@@ -17,7 +17,7 @@ public class EngineArguments implements Serializable {
   }
 
   public static EngineArguments arguments() {
-    return new EngineArguments(Collections.<String>emptyList(), Collections.<String>emptyList());
+    return new EngineArguments(Collections.emptyList(), Collections.emptyList());
   }
 
   public EngineArguments withMutators(Collection<String> mutators) {

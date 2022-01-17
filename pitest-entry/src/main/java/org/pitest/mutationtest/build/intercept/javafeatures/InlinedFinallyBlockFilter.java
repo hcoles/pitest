@@ -1,10 +1,21 @@
 package org.pitest.mutationtest.build.intercept.javafeatures;
 
-import static java.util.function.Predicate.isEqual;
-import static org.pitest.functional.FCollection.bucket;
-import static org.pitest.functional.FCollection.map;
-import static org.pitest.functional.FCollection.mapTo;
-import static org.pitest.functional.prelude.Prelude.not;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.LabelNode;
+import org.pitest.bytecode.analysis.ClassTree;
+import org.pitest.bytecode.analysis.MethodTree;
+import org.pitest.mutationtest.build.InterceptorType;
+import org.pitest.mutationtest.build.MutationInterceptor;
+import org.pitest.mutationtest.engine.Mutater;
+import org.pitest.mutationtest.engine.MutationDetails;
+import org.pitest.mutationtest.engine.MutationIdentifier;
+import org.pitest.sequence.Context;
+import org.pitest.sequence.Match;
+import org.pitest.sequence.QueryParams;
+import org.pitest.sequence.QueryStart;
+import org.pitest.sequence.SequenceMatcher;
+import org.pitest.sequence.Slot;
+import org.pitest.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,17 +26,25 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
-import org.pitest.bytecode.analysis.ClassTree;
-import org.pitest.functional.FCollection;
-import org.pitest.mutationtest.build.InterceptorType;
-import org.pitest.mutationtest.build.MutationInterceptor;
-import org.pitest.mutationtest.engine.Mutater;
-import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.util.Log;
+import static java.util.function.Predicate.isEqual;
+import static org.objectweb.asm.Opcodes.ARETURN;
+import static org.objectweb.asm.Opcodes.ATHROW;
+import static org.objectweb.asm.Opcodes.DRETURN;
+import static org.objectweb.asm.Opcodes.FRETURN;
+import static org.objectweb.asm.Opcodes.IRETURN;
+import static org.objectweb.asm.Opcodes.LRETURN;
+import static org.objectweb.asm.Opcodes.RETURN;
+import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
+import static org.pitest.bytecode.analysis.InstructionMatchers.isInstruction;
+import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
+import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
+import static org.pitest.functional.FCollection.bucket;
+import static org.pitest.functional.FCollection.map;
+import static org.pitest.functional.FCollection.mapTo;
+import static org.pitest.functional.prelude.Prelude.not;
 
 /**
  * Detects mutations on same line, but within different code blocks. This
@@ -38,6 +57,49 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
 
   private static final Logger LOG = Log.getLogger();
 
+  private static final boolean DEBUG = false;
+
+  private static final Slot<AbstractInsnNode> MUTATED_INSTRUCTION = Slot.create(AbstractInsnNode.class);
+  private static final Slot<List> HANDLERS = Slot.create(List.class);
+
+  static final SequenceMatcher<AbstractInsnNode> IS_IN_HANDLER = QueryStart
+          .any(AbstractInsnNode.class)
+          .then(handlerLabel(HANDLERS))
+          .zeroOrMore(QueryStart.match(doesNotEndBlock()))
+          .then(isInstruction(MUTATED_INSTRUCTION.read()))
+          .zeroOrMore(QueryStart.match(anyInstruction()))
+          .compile(QueryParams.params(AbstractInsnNode.class)
+                  .withIgnores(notAnInstruction())
+                  .withDebug(DEBUG)
+          );
+
+  private static Match<AbstractInsnNode> doesNotEndBlock() {
+     return endsBlock().negate();
+  }
+
+  private static Match<AbstractInsnNode> endsBlock() {
+    return opCode(RETURN)
+            .or(opCode(ARETURN))
+            .or(opCode(DRETURN))
+            .or(opCode(FRETURN))
+            .or(opCode(IRETURN))
+            .or(opCode(LRETURN))
+            .or(opCode(ATHROW)); // dubious if this is needed
+  }
+
+  private static Match<AbstractInsnNode> handlerLabel(Slot<List> handlers) {
+    return (c,t) -> {
+      if (t instanceof LabelNode) {
+        LabelNode label = (LabelNode) t;
+        List<LabelNode> labels = c.retrieve(handlers.read()).get();
+        return labels.contains(label);
+      }
+      return false;
+    };
+  }
+
+  private ClassTree currentClass;
+
   @Override
   public InterceptorType type() {
     return InterceptorType.FILTER;
@@ -45,47 +107,49 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
 
   @Override
   public void begin(ClassTree clazz) {
-    // no-opp
+    currentClass = clazz;
   }
 
   @Override
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
-    final List<MutationDetails> combined = new ArrayList<>(
+
+    List<MutationDetails> combined = new ArrayList<>(
         mutations.size());
-    final Map<LineMutatorPair, Collection<MutationDetails>> mutatorLinebuckets = bucket(
+    Map<LineMutatorPair, Collection<MutationDetails>> mutatorLineBuckets = bucket(
         mutations, toLineMutatorPair());
 
-    for (final Entry<LineMutatorPair, Collection<MutationDetails>> each : mutatorLinebuckets
+    for (final Entry<LineMutatorPair, Collection<MutationDetails>> each : mutatorLineBuckets
         .entrySet()) {
       if (each.getValue().size() > 1) {
-        checkForInlinedCode(combined, each);
+        checkForInlinedCode(combined, each.getValue());
       } else {
         combined.addAll(each.getValue());
       }
     }
 
-    /* FIXME tests rely on order of returned mutants */
     combined.sort(compareLineNumbers());
     return combined;
   }
 
   @Override
   public void end() {
-    // no-opp
+    currentClass = null;
   }
 
   private static Comparator<MutationDetails> compareLineNumbers() {
     return Comparator.comparingInt(MutationDetails::getLineNumber);
   }
 
-  private void checkForInlinedCode(final Collection<MutationDetails> combined,
-      final Entry<LineMutatorPair, Collection<MutationDetails>> each) {
+  private void checkForInlinedCode(Collection<MutationDetails> mutantsToReturn,
+                                  Collection<MutationDetails> similarMutantsOnSameLine) {
 
-    final List<MutationDetails> mutationsInHandlerBlock = FCollection
-        .filter(each.getValue(), isInFinallyHandler());
+    final List<MutationDetails> mutationsInHandlerBlock = similarMutantsOnSameLine.stream()
+            .filter(this::isInFinallyBlock)
+            .collect(Collectors.toList());
+
     if (!isPossibleToCorrectInlining(mutationsInHandlerBlock)) {
-      combined.addAll(each.getValue());
+      mutantsToReturn.addAll(similarMutantsOnSameLine);
       return;
     }
 
@@ -95,16 +159,34 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
     // check that we have at least on mutation in a different block
     // to the base one (is this not implied by there being only 1 mutation in
     // the handler ????)
-    final List<Integer> ids = map(each.getValue(), mutationToBlock());
+    final List<Integer> ids = map(similarMutantsOnSameLine, MutationDetails::getBlock);
     if (ids.stream().anyMatch(not(isEqual(firstBlock)))) {
-      combined.add(makeCombinedMutant(each.getValue()));
+      mutantsToReturn.add(makeCombinedMutant(similarMutantsOnSameLine));
     } else {
-      combined.addAll(each.getValue());
+      mutantsToReturn.addAll(similarMutantsOnSameLine);
     }
   }
 
-  private boolean isPossibleToCorrectInlining(
-      final List<MutationDetails> mutationsInHandlerBlock) {
+  private boolean isInFinallyBlock(MutationDetails m) {
+    MethodTree method = currentClass.method(m.getId().getLocation()).get();
+    List<LabelNode> handlers = method.rawNode().tryCatchBlocks.stream()
+            .filter(t -> t.type == null)
+            .map(t -> t.handler)
+            .collect(Collectors.toList());
+
+    if (handlers.isEmpty()) {
+      return false;
+    }
+
+    AbstractInsnNode mutatedInstruction = method.instruction(m.getInstructionIndex());
+
+    Context<AbstractInsnNode> context = Context.start(method.instructions(), DEBUG);
+    context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
+    context.store(HANDLERS.write(), handlers);
+    return IS_IN_HANDLER.matches(method.instructions(), context);
+  }
+
+  private boolean isPossibleToCorrectInlining(List<MutationDetails> mutationsInHandlerBlock) {
     if (mutationsInHandlerBlock.size() > 1) {
       LOG.warning("Found more than one mutation similar on same line in a finally block. Can't correct for inlining.");
       return false;
@@ -113,15 +195,10 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
     return !mutationsInHandlerBlock.isEmpty();
   }
 
-  private static Predicate<MutationDetails> isInFinallyHandler() {
-    return a -> a.isInFinallyBlock();
-  }
-
-  private static MutationDetails makeCombinedMutant(
-      final Collection<MutationDetails> value) {
-    final MutationDetails first = value.iterator().next();
-    final Set<Integer> indexes = new HashSet<>();
-    mapTo(value, mutationToIndex(), indexes);
+  private static MutationDetails makeCombinedMutant(Collection<MutationDetails> value) {
+    MutationDetails first = value.iterator().next();
+    Set<Integer> indexes = new HashSet<>();
+    mapTo(value, MutationDetails::getFirstIndex, indexes);
 
     final MutationIdentifier id = new MutationIdentifier(first.getId()
         .getLocation(), indexes, first.getId().getMutator());
@@ -130,16 +207,9 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
         first.getLineNumber(), first.getBlock());
   }
 
-  private static Function<MutationDetails, Integer> mutationToIndex() {
-    return a -> a.getFirstIndex();
-  }
-
-  private static Function<MutationDetails, Integer> mutationToBlock() {
-    return a -> a.getBlock();
-  }
-
   private static Function<MutationDetails, LineMutatorPair> toLineMutatorPair() {
-    return a -> new LineMutatorPair(a.getLineNumber(), a.getMutator());
+    // bucket by combination of mutator and description
+    return a -> new LineMutatorPair(a.getLineNumber(), a.getMutator() + a.getDescription());
   }
 
 }

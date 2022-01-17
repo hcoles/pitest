@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 
 public class SafeDataInputStream {
 
@@ -39,11 +40,7 @@ public class SafeDataInputStream {
   }
 
   public String readString() {
-    try {
-      return new String(readBytes(), "UTF-8");
-    } catch (final IOException e) {
-      throw Unchecked.translateCheckedException(e);
-    }
+    return new String(readBytes(), StandardCharsets.UTF_8);
   }
 
   public byte[] readBytes() {

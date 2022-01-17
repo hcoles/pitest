@@ -2,7 +2,7 @@ package org.pitest.mutationtest.build;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.pitest.mutationtest.LocationMother.aLocation;
 import static org.pitest.mutationtest.LocationMother.aMutationId;
@@ -31,7 +31,7 @@ public class MutationTestBuilderTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     makeTesteeWithUnitSizeOf(0);
   }
 

@@ -15,7 +15,7 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
  */
 public enum OBBN3Mutator implements MethodMutatorFactory  {
 
-    OBBN_3_MUTATOR;
+    OBBN3;
 
     public MethodVisitor create(final MutationContext context,
                                 final MethodInfo methodInfo, final MethodVisitor methodVisitor)  {

@@ -37,7 +37,7 @@ public class ExitingResultCollectorTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new ExitingResultCollector(this.rc);
     this.description = new Description("foo", ExitingResultCollectorTest.class);
   }

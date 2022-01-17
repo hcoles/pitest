@@ -42,7 +42,7 @@ import org.pitest.util.StringUtil;
 import org.pitest.util.Unchecked;
 
 enum Tag {
-  mutation, sourceFile, mutatedClass, mutatedMethod, methodDescription, lineNumber, mutator, index, killingTest, killingTests, succeedingTests, description, block;
+  mutation, sourceFile, mutatedClass, mutatedMethod, methodDescription, lineNumber, mutator, index, killingTest, killingTests, succeedingTests, description, block
 }
 
 public class XMLReportListener implements MutationResultListener {
@@ -82,7 +82,7 @@ public class XMLReportListener implements MutationResultListener {
     final MutationDetails details = mutation.getDetails();
     return makeNode(clean(details.getFilename()), sourceFile)
         + makeNode(clean(details.getClassName().asJavaName()), mutatedClass)
-        + makeNode(clean(details.getMethod().name()), mutatedMethod)
+        + makeNode(clean(details.getMethod()), mutatedMethod)
         + makeNode(clean(details.getId().getLocation().getMethodDesc()),
             methodDescription)
         + makeNode("" + details.getLineNumber(), lineNumber)
@@ -130,11 +130,8 @@ public class XMLReportListener implements MutationResultListener {
   }
 
   private String createKillingTestDesc(final Optional<String> killingTest) {
-    if (killingTest.isPresent()) {
-      return createTestDesc(Arrays.asList(killingTest.get()));
-    } else {
-      return null;
-    }
+    return killingTest.map(s -> createTestDesc(Arrays.asList(s)))
+            .orElse(null);
   }
   
   private String createTestDesc(final List<String> tests) {

@@ -1,5 +1,5 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.pitest/pitest/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.pitest/pitest)
-[![Build Status](https://travis-ci.org/hcoles/pitest.png?branch=master)](https://travis-ci.org/hcoles/pitest)
+![Build Statis](https://github.com/hcoles/pitest/workflows/CI/badge.svg?branch=master)
 [![Build Status](https://dev.azure.com/henrycoles/pitest/_apis/build/status/hcoles.pitest?branchName=master)](https://dev.azure.com/henrycoles/pitest/_build/latest?definitionId=3&branchName=master)
 
 Pitest (aka PIT) is a state of the art mutation testing system for Java and the JVM.
@@ -7,6 +7,97 @@ Pitest (aka PIT) is a state of the art mutation testing system for Java and the 
 Read all about it at http://pitest.org
 
 ## Releases
+
+### 1.7.3
+
+* #952 Mutate map return to `emptyMap` instead of null
+* #954 Allow mutators to be excluded
+* #957 Filter equivalent mutations to Boolean.TRUE and Boolean.FALSE
+
+### 1.7.2 
+
+* #943 Change default mutators - replace negate conditional with remove conditional
+* #946 Mutate stream returns to empty stream instead of null
+
+### 1.7.1
+
+* #932 Improve switch mutation descriptions
+* #934 Configure console output verbosity
+* #940 Hide internal features
+* #942 Fix for 3rd party mutation operators not added to client classpath
+* #939 Improve caching of bytecode retrieval
+
+### 1.7.0
+
+* #923 Internal interface changes
+* #930 Pluggable mutators
+
+Due to internal changes some third party plugins maybe incompatible with this release.
+
+All history files should be deleted before upgrading.
+
+The names of the remove conditionals mutators have changed slightly as a result of #930 and
+may need to be updated in build scripts if explicitly activated.
+
+### 1.6.9
+
+* #922 Filter equivalent stream.empty mutants in flatMap calls
+* #921 Guarantee order of mutation operators
+* #919 Filter junk mutations in java records
+
+### 1.6.8
+
+* #917 - Add method to retrieve all mutator ids for pitclipse and other tooling
+* #913 - Bump ASM to 9.2
+
+### 1.6.7
+
+* #897 Fix description when replacing value with empty set
+* #900 Support multiple test engines
+* #822 Fix regression of NPE when reading classpath manifest
+* #798 Fix regression of jvmArgs parameter support via maven
+* #797 Fix regression of line coverage on console
+
+As a result of #900 the `testPlugin` parameter is now defunct, but pitest will continue to accept it without error for this release. Pitest will use any test-engines supplied on the classpath, falling back to the built in JUnit4 support when other test engines cannot handle the class.
+
+### 1.6.6
+
+* #891 - Fix history performance
+* #889 - Do not scan classpath for history when option not supplied
+* #887 - Fix css for timeouts and memory errors
+* #888 - Remove defunct max mutants per class perameter
+* #890 - Remove defunct mutate static initalizers parameter
+
+### 1.6.5
+
+* #882 Avoid running tests when no mutants possible
+
+### 1.6.4
+
+* #862 Update ASM for Java 16
+
+### 1.6.3
+
+* #853 Fix case insensitive feature check
+* #855 Make coverage data available to interceptors
+* #857 Pass stderr/out data by line (thanks @kgeilmann)
+* #858 Fix test not failing when maxSurviving is 0 (thanks @alexkoltz)
+* #860 Fix junk mutations in try with resources in java 11+
+
+### 1.6.2
+
+* #770 and #746 Fix NPE during coverage stage (thanks @LaurentTho3)
+* #849 Make feature names case insensitive
+* #844 Extend feature system to work with listeners
+* #842 Make report options available to listeners
+
+### 1.6.1
+
+* Automate release to maven central
+* #774 Test strength statistic (thanks @alex859)
+* #798 Enable jvm args to be passed from command line (thanks @yfrolov)
+* #797 Add line coverage to console (thanks @qxo)
+* #822 Mitigate NPE on accidental dependency (thanks @szpak)
 
 ### 1.5.2
 
@@ -27,6 +118,9 @@ Read all about it at http://pitest.org
 * #556 - Do not mutate enum constructors
 * #726 - Ensure static initializer coverage is recorded 
 * #734/#735/#736 - Replace legacy interfaces with Java API (thanks @AlexElin)
+
+<details>
+    <summary>Older versions</summary>
 
 ### 1.4.11
 
@@ -70,9 +164,6 @@ Read all about it at http://pitest.org
 ### 1.4.5
 
 * #557 - Issues running on Java 8
-
-<details>
-    <summary>Older versions</summary>
 
 ### 1.4.4
  

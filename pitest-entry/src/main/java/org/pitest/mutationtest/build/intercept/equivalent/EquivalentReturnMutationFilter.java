@@ -1,6 +1,7 @@
 package org.pitest.mutationtest.build.intercept.equivalent;
 
 import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
+import static org.pitest.bytecode.analysis.InstructionMatchers.getStatic;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallNamed;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
@@ -29,17 +30,18 @@ import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.gregor.mutators.BooleanFalseReturnValsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.BooleanTrueReturnValsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.EmptyObjectReturnValsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.NullReturnValsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.PrimitiveReturnsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanFalseReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanTrueReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.EmptyObjectReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.PrimitiveReturnsMutator;
 import org.pitest.plugin.Feature;
 import org.pitest.sequence.Context;
 import org.pitest.sequence.Match;
 import org.pitest.sequence.QueryParams;
 import org.pitest.sequence.QueryStart;
 import org.pitest.sequence.SequenceMatcher;
+import org.pitest.sequence.SequenceQuery;
 import org.pitest.sequence.Slot;
 
 /**
@@ -80,22 +82,28 @@ public class EquivalentReturnMutationFilter implements MutationInterceptorFactor
 
 class HardCodedTrueEquivalentFilter implements MutationInterceptor {   
   private static final Slot<AbstractInsnNode> MUTATED_INSTRUCTION = Slot.create(AbstractInsnNode.class);
-  
-  static final SequenceMatcher<AbstractInsnNode> BOXED_TRUE = QueryStart
-      .any(AbstractInsnNode.class)
-      .zeroOrMore(QueryStart.match(anyInstruction()))
-      .then(opCode(Opcodes.ICONST_1))
-      .then(methodCallNamed("valueOf"))
-      .then(isInstruction(MUTATED_INSTRUCTION.read()))
-      .zeroOrMore(QueryStart.match(anyInstruction()))
-      .compile(QueryParams.params(AbstractInsnNode.class)
-          .withIgnores(notAnInstruction())
+
+  static final SequenceQuery<AbstractInsnNode> BOXED_TRUE = QueryStart
+      .match(opCode(Opcodes.ICONST_1))
+      .then(methodCallNamed("valueOf"));
+
+  static final SequenceQuery<AbstractInsnNode> CONSTANT_TRUE = QueryStart
+          .match(getStatic("java/lang/Boolean","TRUE"));
+
+  static final SequenceMatcher<AbstractInsnNode> EQUIVALENT_TRUE = QueryStart
+          .any(AbstractInsnNode.class)
+          .zeroOrMore(QueryStart.match(anyInstruction()))
+          .then(BOXED_TRUE.or(CONSTANT_TRUE))
+          .then(isInstruction(MUTATED_INSTRUCTION.read()))
+          .zeroOrMore(QueryStart.match(anyInstruction()))
+          .compile(QueryParams.params(AbstractInsnNode.class)
+                  .withIgnores(notAnInstruction())
           );
 
   private static final Set<String> MUTATOR_IDS = new HashSet<>();
 
   static {
-     MUTATOR_IDS.add(BooleanTrueReturnValsMutator.BOOLEAN_TRUE_RETURN.getGloballyUniqueId());
+     MUTATOR_IDS.add(BooleanTrueReturnValsMutator.TRUE_RETURNS.getGloballyUniqueId());
   }
 
   private ClassTree currentClass;
@@ -137,7 +145,7 @@ class HardCodedTrueEquivalentFilter implements MutationInterceptor {
       private boolean boxedTrue(int instruction, MethodTree method) {
           final Context<AbstractInsnNode> context = Context.start(method.instructions(), false);
           context.store(MUTATED_INSTRUCTION.write(), method.instruction(instruction));
-          return BOXED_TRUE.matches(method.instructions(), context);         
+          return EQUIVALENT_TRUE.matches(method.instructions(), context);
       }
     };
   }
@@ -146,6 +154,7 @@ class HardCodedTrueEquivalentFilter implements MutationInterceptor {
   public void end() {
     this.currentClass = null;
   }
+
 }
 
 
@@ -159,8 +168,8 @@ class PrimitiveEquivalentFilter implements MutationInterceptor {
     ZERO_CONSTANTS.add(Opcodes.FCONST_0);
     ZERO_CONSTANTS.add(Opcodes.DCONST_0);
 
-    MUTATOR_IDS.add(PrimitiveReturnsMutator.PRIMITIVE_RETURN_VALS_MUTATOR.getGloballyUniqueId());
-    MUTATOR_IDS.add(BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN.getGloballyUniqueId());
+    MUTATOR_IDS.add(PrimitiveReturnsMutator.PRIMITIVE_RETURNS.getGloballyUniqueId());
+    MUTATOR_IDS.add(BooleanFalseReturnValsMutator.FALSE_RETURNS.getGloballyUniqueId());
   }
 
   private ClassTree currentClass;
@@ -201,21 +210,32 @@ class PrimitiveEquivalentFilter implements MutationInterceptor {
 
 }
 
+/**
+ * Handles methods already returning a 0 value, and also
+ * those returning Boolean.FALSE
+ */
 class EmptyReturnsFilter implements MutationInterceptor {
 
     private static final Slot<AbstractInsnNode> MUTATED_INSTRUCTION = Slot.create(AbstractInsnNode.class);
-    
-    private static final SequenceMatcher<AbstractInsnNode> CONSTANT_ZERO = QueryStart
-        .any(AbstractInsnNode.class)
-        .zeroOrMore(QueryStart.match(anyInstruction()))
-        .then(isZeroConstant())
-        .then(methodCallNamed("valueOf"))
-        .then(isInstruction(MUTATED_INSTRUCTION.read()))
-        .zeroOrMore(QueryStart.match(anyInstruction()))
-        .compile(QueryParams.params(AbstractInsnNode.class)
-            .withIgnores(notAnInstruction())
-            );
-    
+
+  static final SequenceQuery<AbstractInsnNode> CONSTANT_ZERO = QueryStart
+          .match(isZeroConstant())
+          .then(methodCallNamed("valueOf"));
+
+  static final SequenceQuery<AbstractInsnNode> CONSTANT_FALSE = QueryStart
+          .match(getStatic("java/lang/Boolean","FALSE"));
+
+  static final SequenceMatcher<AbstractInsnNode> ZERO_VALUES = QueryStart
+          .any(AbstractInsnNode.class)
+          .zeroOrMore(QueryStart.match(anyInstruction()))
+          .then(CONSTANT_ZERO.or(CONSTANT_FALSE))
+          .then(isInstruction(MUTATED_INSTRUCTION.read()))
+          .zeroOrMore(QueryStart.match(anyInstruction()))
+          .compile(QueryParams.params(AbstractInsnNode.class)
+                  .withIgnores(notAnInstruction())
+          );
+
+
   private static final Set<String> MUTATOR_IDS = new HashSet<>();
   private static final Set<Integer> ZERO_CONSTANTS = new HashSet<>();
   static {
@@ -224,8 +244,8 @@ class EmptyReturnsFilter implements MutationInterceptor {
     ZERO_CONSTANTS.add(Opcodes.FCONST_0);
     ZERO_CONSTANTS.add(Opcodes.DCONST_0);
 
-    MUTATOR_IDS.add(EmptyObjectReturnValsMutator.EMPTY_RETURN_VALUES.getGloballyUniqueId());
-    MUTATOR_IDS.add(BooleanFalseReturnValsMutator.BOOLEAN_FALSE_RETURN.getGloballyUniqueId());
+    MUTATOR_IDS.add(EmptyObjectReturnValsMutator.EMPTY_RETURNS.getGloballyUniqueId());
+    MUTATOR_IDS.add(BooleanFalseReturnValsMutator.FALSE_RETURNS.getGloballyUniqueId());
   }
 
   private ClassTree currentClass;
@@ -266,7 +286,9 @@ class EmptyReturnsFilter implements MutationInterceptor {
         return returnsZeroValue(method, mutatedInstruction)
             || returnsEmptyString(method, mutatedInstruction)
             || returns(method, mutatedInstruction, "java/util/Optional","empty")
+            || returns(method, mutatedInstruction, "java/util/stream/Stream","empty")
             || returns(method, mutatedInstruction, "java/util/Collections","emptyList")
+            || returns(method, mutatedInstruction, "java/util/Collections","emptyMap")
             || returns(method, mutatedInstruction, "java/util/Collections","emptySet")
             || returns(method, mutatedInstruction, "java/util/List","of")
             || returns(method, mutatedInstruction, "java/util/Set","of");
@@ -276,7 +298,7 @@ class EmptyReturnsFilter implements MutationInterceptor {
           int mutatedInstruction) {
           final Context<AbstractInsnNode> context = Context.start(method.instructions(), false);
           context.store(MUTATED_INSTRUCTION.write(), method.instruction(mutatedInstruction));
-          return CONSTANT_ZERO.matches(method.instructions(), context);              
+          return ZERO_VALUES.matches(method.instructions(), context);
       }
           
       private boolean returns(MethodTree method, int mutatedInstruction, String owner, String name) {
@@ -314,7 +336,7 @@ class EmptyReturnsFilter implements MutationInterceptor {
 
 class NullReturnsFilter implements MutationInterceptor {
 
-  private static final String MUTATOR_ID = NullReturnValsMutator.NULL_RETURN_VALUES.getGloballyUniqueId();
+  private static final String MUTATOR_ID = NullReturnValsMutator.NULL_RETURNS.getGloballyUniqueId();
 
   private ClassTree currentClass;
 

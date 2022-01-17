@@ -26,7 +26,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.junit.AfterClass;
@@ -79,8 +78,8 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
       final List<TestUnit> filteredUnits = splitIntoFilteredUnits(runner.getDescription());
       return filterUnitsByMethod(filteredUnits);
     } else {
-      return Collections.<TestUnit> singletonList(new AdaptedJUnitTestUnit(
-          clazz, Optional.<Filter> empty()));
+      return Collections.singletonList(new AdaptedJUnitTestUnit(
+          clazz, Optional.empty()));
     }
   }
 
@@ -127,12 +126,8 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
       if (a == null) {
         return Collections.emptyList();
       }
-      return FCollection.map(Arrays.asList(a.value()),toName());
+      return FCollection.map(Arrays.asList(a.value()), Class::getName);
     };
-  }
-
-  private Function<Class<?>,String> toName() {
-    return a -> a.getName();
   }
 
   private boolean isNotARunnableTest(final Runner runner,
@@ -166,12 +161,8 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   private boolean hasClassRuleAnnotations(final Class<?> clazz,
       final Set<Method> methods) {
-    if (!CLASS_RULE.isPresent()) {
-      return false;
-    }
-
-    return hasAnnotation(methods, CLASS_RULE.get())
-        || hasAnnotation(Reflection.publicFields(clazz), CLASS_RULE.get());
+    return CLASS_RULE.filter(aClass -> hasAnnotation(methods, aClass)
+            || hasAnnotation(Reflection.publicFields(clazz), aClass)).isPresent();
   }
 
   private boolean hasAnnotation(final Set<? extends AccessibleObject> methods,
@@ -202,17 +193,9 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   private List<TestUnit> splitIntoFilteredUnits(final Description description) {
     return description.getChildren().stream()
-        .filter(isTest())
-        .map(descriptionToTestUnit())
+        .filter(Description::isTest)
+        .map(this::descriptionToTest)
         .collect(Collectors.toList());
-  }
-
-  private Function<Description, TestUnit> descriptionToTestUnit() {
-    return a -> descriptionToTest(a);
-  }
-
-  private Predicate<Description> isTest() {
-    return a -> a.isTest();
   }
 
   private TestUnit descriptionToTest(final Description description) {
@@ -233,7 +216,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   @SuppressWarnings("rawtypes")
   private static Optional<Class> findClassRuleClass() {
     try {
-      return Optional.<Class> ofNullable(Class.forName("org.junit.ClassRule"));
+      return Optional.ofNullable(Class.forName("org.junit.ClassRule"));
     } catch (final ClassNotFoundException ex) {
       return Optional.empty();
     }

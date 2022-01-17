@@ -25,7 +25,7 @@ public class SendDataTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testClasses = new ArrayList<>();
     this.testee = new SendData(this.arguments, this.testClasses);
   }

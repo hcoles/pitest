@@ -17,7 +17,7 @@ package org.pitest.mutationtest.engine.gregor.mutators;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.pitest.mutationtest.engine.gregor.mutators.ArgumentPropagationMutator.ARGUMENT_PROPAGATION_MUTATOR;
+import static org.pitest.mutationtest.engine.gregor.mutators.experimental.ArgumentPropagationMutator.EXPERIMENTAL_ARGUMENT_PROPAGATION;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,7 +33,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToUseReplaceMethodWithArgumentOfSameTypeAsReturnValueMutator() {
-    createTesteeWith(mutateOnlyCallMethod(), ARGUMENT_PROPAGATION_MUTATOR);
+    createTesteeWith(mutateOnlyCallMethod(), EXPERIMENTAL_ARGUMENT_PROPAGATION);
   }
 
   @Test

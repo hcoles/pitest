@@ -1,8 +1,5 @@
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -12,6 +9,9 @@ import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RemoveConditionalMutator implements MethodMutatorFactory {
 
   // REMOVE_CONDITIONALS_MUTATOR;
@@ -20,7 +20,7 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
   // ORDER : Mutate only Ordering operators
   public enum Choice {
     EQUAL("equality"), ORDER("comparison");
-    private String desc;
+    private final String desc;
 
     Choice(String desc) {
       this.desc = desc;
@@ -39,7 +39,7 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
     this.replaceWith = rc;
   }
 
-  public static Iterable<MethodMutatorFactory> makeMutators() {
+  public static Iterable<MethodMutatorFactory> factory() {
     final List<MethodMutatorFactory> variations = new ArrayList<>();
     final Choice[] allChoices = { Choice.EQUAL, Choice.ORDER };
     final boolean[] arrWith = { true, false };
@@ -68,7 +68,11 @@ public class RemoveConditionalMutator implements MethodMutatorFactory {
   @Override
   public String getName() {
     return "REMOVE_CONDITIONALS_" + this.kind + "_"
-        + (this.replaceWith ? "IF" : "ELSE") + "_MUTATOR";
+        + (this.replaceWith ? "IF" : "ELSE");
+  }
+
+  public String toString() {
+    return getName();
   }
 
   private final class RemoveConditionalMethodVisitor extends MethodVisitor {

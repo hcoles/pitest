@@ -77,6 +77,7 @@ import org.pitest.util.Timings;
 
 import com.example.MutationsInNestedClasses;
 import com.example.MutationsInNestedClassesTest;
+import org.pitest.util.Verbosity;
 
 @Category(SystemTest.class)
 public class TestMutationTesting {
@@ -88,7 +89,7 @@ public class TestMutationTesting {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.config = TestPluginArguments.defaults().withTestPlugin(SimpleTestPlugin.NAME);
     this.metaDataExtractor = new MetaDataExtractor();
     this.mae = new MutationAnalysisExecutor(1,
@@ -353,7 +354,7 @@ public class TestMutationTesting {
 
     final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(
         null, coverageOptions, launchOptions, code, new NullCoverageExporter(),
-        timings, false);
+        timings, Verbosity.DEFAULT);
 
     final CoverageDatabase coverageData = coverageGenerator.calculateCoverage();
 
@@ -380,7 +381,7 @@ public class TestMutationTesting {
     final WorkerFactory wf = new WorkerFactory(null,
         coverageOptions.getPitConfig(), mutationConfig, arguments,
         new PercentAndConstantTimeoutStrategy(data.getTimeoutFactor(),
-            data.getTimeoutConstant()), data.isVerbose(), false, data.getClassPath()
+            data.getTimeoutConstant()), data.getVerbosity(), false, data.getClassPath()
             .getLocalClassPath());
 
 
@@ -397,7 +398,7 @@ public class TestMutationTesting {
 
   private CoverageOptions createCoverageOptions(ReportOptions data) {
     return new CoverageOptions(data.getTargetClasses(),data.getExcludedClasses(), this.config,
-        data.isVerbose(), data.getDependencyAnalysisMaxDistance());
+        data.getVerbosity(), data.getDependencyAnalysisMaxDistance());
   }
 
   protected void verifyResults(final DetectionStatus... detectionStatus) {

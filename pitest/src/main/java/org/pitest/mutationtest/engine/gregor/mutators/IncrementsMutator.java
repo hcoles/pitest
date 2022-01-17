@@ -23,7 +23,7 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
 
 public enum IncrementsMutator implements MethodMutatorFactory {
 
-  INCREMENTS_MUTATOR;
+  INCREMENTS;
 
   @Override
   public MethodVisitor create(final MutationContext context,

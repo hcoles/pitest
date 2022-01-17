@@ -21,7 +21,6 @@ import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.sequence.QueryParams;
@@ -110,7 +109,7 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
     return a -> {
       final Location loc = a.getId().getLocation();
       return loc.getMethodDesc().equals("(Ljava/lang/Object;)Z")
-          && loc.getMethodName().equals(MethodName.fromString("equals"));
+          && loc.getMethodName().equals("equals");
     };
   }
 

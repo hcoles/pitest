@@ -36,6 +36,7 @@ import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
 import org.pitest.util.Timings;
 import org.pitest.util.Unchecked;
+import org.pitest.util.Verbosity;
 
 public abstract class ReportTestBase {
 
@@ -51,7 +52,6 @@ public abstract class ReportTestBase {
     this.data = new ReportOptions();
     this.data.setSourceDirs(Collections.<File> emptyList());
     this.data.setGroupConfig(new TestGroupConfig());
-    this.data.setTestPlugin("junit");
   }
 
   protected MutationResultListenerFactory listenerFactory() {
@@ -117,7 +117,7 @@ public abstract class ReportTestBase {
 
       final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
           null, coverageOptions, launchOptions, code,
-          new NullCoverageExporter(), timings, false);
+          new NullCoverageExporter(), timings, Verbosity.DEFAULT);
 
       final HistoryStore history = new NullHistoryStore();
 
@@ -139,7 +139,7 @@ public abstract class ReportTestBase {
 
   private CoverageOptions createCoverageOptions(TestPluginArguments configuration) {
     return new CoverageOptions(this.data.getTargetClasses(),this.data.getExcludedClasses(),
-        configuration, this.data.isVerbose(),
+        configuration, this.data.getVerbosity(),
         this.data.getDependencyAnalysisMaxDistance());
   }
 

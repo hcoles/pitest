@@ -28,10 +28,10 @@ public final class Location implements Comparable<Location>, Serializable  {
   private static final long serialVersionUID = 1L;
 
   private final ClassName  clazz;
-  private final MethodName method;
+  private final String     method;
   private final String     methodDesc;
 
-  public Location(final ClassName clazz, final MethodName method,
+  public Location(final ClassName clazz, final String method,
       final String methodDesc) {
     this.clazz = clazz;
     this.method = method;
@@ -39,7 +39,7 @@ public final class Location implements Comparable<Location>, Serializable  {
   }
 
   public static Location location(final ClassName clazz,
-      final MethodName method, final String methodDesc) {
+      final String method, final String methodDesc) {
     return new Location(clazz, method, methodDesc);
   }
 
@@ -47,7 +47,7 @@ public final class Location implements Comparable<Location>, Serializable  {
     return this.clazz;
   }
 
-  public MethodName getMethodName() {
+  public String getMethodName() {
     return this.method;
   }
 
@@ -81,7 +81,7 @@ public final class Location implements Comparable<Location>, Serializable  {
   }
 
   public String describe() {
-    return this.method.name();
+    return this.method;
   }
 
   @Override
@@ -91,7 +91,7 @@ public final class Location implements Comparable<Location>, Serializable  {
       return comp;
     }
 
-    comp = this.method.name().compareTo(o.getMethodName().name());
+    comp = this.method.compareTo(o.getMethodName());
     if (comp != 0) {
       return comp;
     }

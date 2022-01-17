@@ -28,8 +28,7 @@ public abstract class Functions {
   }
 
   public static Function<Class<?>, String> classToName() {
-    return clazz -> clazz.getName();
-
+    return Class::getName;
   }
 
   public static Predicate<String> startsWith(final String filter) {

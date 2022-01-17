@@ -1,7 +1,7 @@
 package org.pitest.mutationtest.build;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.pitest.mutationtest.LocationMother.aLocation;
 
@@ -23,7 +23,6 @@ import org.pitest.functional.FCollection;
 import java.util.Optional;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.engine.PoisonStatus;
 
 public class DefaultTestPrioritiserTest {
 
@@ -39,7 +38,7 @@ public class DefaultTestPrioritiserTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new DefaultTestPrioritiser(this.coverage);
   }
 
@@ -49,16 +48,6 @@ public class DefaultTestPrioritiserTest {
     when(this.coverage.getTestsForInstructionLocation(any(InstructionLocation.class))).thenReturn(
         expected);
     final List<TestInfo> actual = this.testee.assignTests(makeMutation("foo"));
-    assertEquals(expected, actual);
-  }
-
-  @Test
-  public void shouldAssignAllTestsForClassWhenMutationInStaticInitialiser() {
-    final List<TestInfo> expected = makeTestInfos(0);
-    when(this.coverage.getTestsForClass(this.foo)).thenReturn(expected);
-    final List<TestInfo> actual = this.testee
-        .assignTests(makeMutation("<clinit>")
-            .withPoisonStatus(PoisonStatus.IS_STATIC_INITIALIZER_CODE));
     assertEquals(expected, actual);
   }
 

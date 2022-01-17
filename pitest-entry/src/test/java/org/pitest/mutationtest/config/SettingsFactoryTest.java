@@ -1,17 +1,5 @@
 package org.pitest.mutationtest.config;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.function.Consumer;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -21,6 +9,19 @@ import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.plugin.Feature;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.PitError;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.function.Consumer;
+
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class SettingsFactoryTest {
 
@@ -108,11 +109,11 @@ public class SettingsFactoryTest {
     final Consumer<Feature> disabled = Mockito.mock(Consumer.class);
     final Consumer<Feature> enabled = Mockito.mock(Consumer.class);
 
-    this.options.setFeatures(Arrays.asList("+FSTATINIT"));
+    this.options.setFeatures(Arrays.asList("+FSTATI"));
 
     this.testee.describeFeatures(enabled, disabled);
-    verify(enabled).accept(Feature.named("FSTATINIT"));
-    verify(disabled, never()).accept(Feature.named("FSTATINIT"));
+    verify(enabled).accept(Feature.named("FSTATI"));
+    verify(disabled, never()).accept(Feature.named("FSTATI"));
   }
 
   @Test
@@ -120,11 +121,29 @@ public class SettingsFactoryTest {
     final Consumer<Feature> disabled = Mockito.mock(Consumer.class);
     final Consumer<Feature> enabled = Mockito.mock(Consumer.class);
 
-    this.options.setFeatures(Arrays.asList("-FSTATINIT"));
+    this.options.setFeatures(Arrays.asList("-FSTATI"));
 
     this.testee.describeFeatures(enabled, disabled);
-    verify(enabled, never()).accept(Feature.named("FSTATINIT"));
-    verify(disabled).accept(Feature.named("FSTATINIT"));
+    verify(enabled, never()).accept(Feature.named("FSTATI"));
+    verify(disabled).accept(Feature.named("FSTATI"));
+  }
+
+  @Test
+  public void shouldErrorWhenUnkownFeatureRequested() {
+    this.options.setFeatures(Arrays.asList("+UNKOWN"));
+
+    assertThatCode( () ->this.testee.checkRequestedFeatures())
+            .hasMessageContaining(("UNKOWN"));
+
+  }
+
+  @Test
+  public void shouldTreatFeaturesAsCaseInsensitive() {
+    this.options.setFeatures(Arrays.asList("+feNUm"));
+
+    assertThatCode( () ->this.testee.checkRequestedFeatures())
+            .doesNotThrowAnyException();
+
   }
 
 }

@@ -1,23 +1,21 @@
 package org.pitest.coverage.execute;
 
+import org.pitest.classinfo.ClassName;
+import org.pitest.coverage.BlockLocation;
+import org.pitest.coverage.CoverageResult;
+import org.pitest.mutationtest.engine.Location;
+import org.pitest.testapi.Description;
+import org.pitest.util.Id;
+import org.pitest.util.ReceiveStrategy;
+import org.pitest.util.SafeDataInputStream;
+import sun.pitest.CodeCoverageStore;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
-
-import org.pitest.classinfo.ClassName;
-import org.pitest.coverage.BlockLocation;
-import org.pitest.coverage.CoverageResult;
-import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MethodName;
-import org.pitest.testapi.Description;
-import org.pitest.util.Id;
-import org.pitest.util.ReceiveStrategy;
-import org.pitest.util.SafeDataInputStream;
-
-import sun.pitest.CodeCoverageStore;
 
 final class Receive implements ReceiveStrategy {
 
@@ -56,7 +54,7 @@ final class Receive implements ReceiveStrategy {
     final int first = is.readInt();
     final int last = is.readInt();
     final Location loc = Location.location(this.classIdToName.get(classId),
-        MethodName.fromString(methodName), methodSig);
+        methodName, methodSig);
     for (int i = first; i != (last + 1); i++) {
       // nb, convert from classwide id to method scoped index within
       // BlockLocation
@@ -93,9 +91,8 @@ final class Receive implements ReceiveStrategy {
       final Description d, Collection<BlockLocation> visitedBlocks) {
     final boolean isGreen = is.readBoolean();
     final int executionTime = is.readInt();
-    final CoverageResult cr = new CoverageResult(d, executionTime, isGreen,
+    return new CoverageResult(d, executionTime, isGreen,
         visitedBlocks);
-    return cr;
   }
 
 }

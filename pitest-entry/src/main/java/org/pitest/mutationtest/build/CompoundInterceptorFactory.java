@@ -1,14 +1,15 @@
 package org.pitest.mutationtest.build;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Function;
-
 import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.functional.FCollection;
+import org.pitest.coverage.CoverageDatabase;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.plugin.FeatureSelector;
 import org.pitest.plugin.FeatureSetting;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class CompoundInterceptorFactory {
 
@@ -19,19 +20,24 @@ public class CompoundInterceptorFactory {
     this.features = new FeatureSelector<>(features, filters);
   }
 
-  public MutationInterceptor createInterceptor(
+  public CompoundMutationInterceptor createInterceptor(
       ReportOptions data,
+      CoverageDatabase coverage,
       ClassByteArraySource source) {
-    final List<MutationInterceptor> interceptors = FCollection.map(this.features.getActiveFeatures(),
-        toInterceptor(this.features, data, source));
+    final List<MutationInterceptor> interceptors = this.features.getActiveFeatures().stream()
+            .map(toInterceptor(this.features, data, coverage, source))
+            .collect(Collectors.toList());
     return new CompoundMutationInterceptor(interceptors);
   }
 
 
   private static Function<MutationInterceptorFactory, MutationInterceptor> toInterceptor(
-      final FeatureSelector<MutationInterceptorFactory> features, final ReportOptions data, final ClassByteArraySource source) {
+          FeatureSelector<MutationInterceptorFactory> features,
+          ReportOptions data,
+          CoverageDatabase coverage,
+          ClassByteArraySource source) {
 
-    return a -> a.createInterceptor(new InterceptorParameters(features.getSettingForFeature(a.provides().name()), data, source));
+    return a -> a.createInterceptor(new InterceptorParameters(features.getSettingForFeature(a.provides().name()), data, coverage, source));
 
   }
  }

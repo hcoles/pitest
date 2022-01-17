@@ -14,17 +14,7 @@
  */
 package org.pitest.mutationtest.engine.gregor;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Predicate;
-
 import org.junit.Test;
-import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
@@ -32,6 +22,13 @@ import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.util.ResourceFolderByteArraySource;
+
+import java.util.Collection;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TestGregorMutater extends MutatorTestBase {
 
@@ -50,21 +47,21 @@ public class TestGregorMutater extends MutatorTestBase {
   @Test
   public void shouldFindMutationsFromAllSuppliedMutators() throws Exception {
 
-    createTesteeWith(MathMutator.MATH_MUTATOR,
-        ReturnValsMutator.RETURN_VALS_MUTATOR,
-        InvertNegsMutator.INVERT_NEGS_MUTATOR,
-        IncrementsMutator.INCREMENTS_MUTATOR);
+    createTesteeWith(MathMutator.MATH,
+        ReturnValsMutator.RETURN_VALS,
+        InvertNegsMutator.INVERT_NEGS,
+        IncrementsMutator.INCREMENTS);
 
     final List<MutationDetails> actualDetails = findMutationsFor(HasMultipleMutations.class);
 
     assertTrue(actualDetails.stream()
-        .filter(descriptionContaining("Replaced Shift Left with Shift Right")).findFirst().isPresent());
+        .anyMatch(descriptionContaining("Replaced Shift Left with Shift Right")));
     assertTrue(actualDetails.stream()
-        .filter(descriptionContaining("replaced return of integer")).findFirst().isPresent());    
+        .anyMatch(descriptionContaining("replaced return of integer")));
     assertTrue(actualDetails.stream()
-        .filter(descriptionContaining("Changed increment")).findFirst().isPresent());  
+        .anyMatch(descriptionContaining("Changed increment")));
     assertTrue(actualDetails.stream()
-        .filter(descriptionContaining("removed negation")).findFirst().isPresent());  
+        .anyMatch(descriptionContaining("removed negation")));
   }
 
   @Test
@@ -270,52 +267,6 @@ public class TestGregorMutater extends MutatorTestBase {
     assertTwoMutationsInDifferentBlocks(actualDetails);
   }
 
-  @Test
-  public void shouldNotRecordMutationsAsInFinallyBlockWhenTheyAreNot() {
-    createTesteeWith(Mutator.byName("INCREMENTS"));
-    final List<MutationDetails> actualDetails = findMutationsFor(HasExceptionBlock.class);
-    assertFalse(actualDetails.get(0).isInFinallyBlock());
-    assertFalse(actualDetails.get(1).isInFinallyBlock());
-  }
-
-  public static class HasFinallyBlock {
-    public void foo(int i) {
-      try {
-        System.out.println("foo");
-      } finally {
-        i++;
-      }
-    }
-  }
-
-  @Test
-  public void shouldMarkMutationsWithinFinallyBlocks() {
-    createTesteeWith(Mutator.byName("INCREMENTS"));
-    final List<MutationDetails> actualDetails = findMutationsFor(HasFinallyBlock.class);
-    assertEquals(1, FCollection.filter(actualDetails, isInFinallyBlock())
-        .size());
-  }
-
-  public static class HasFinallyBlockAndExceptionHandler {
-    public void foo(int i) {
-      try {
-        System.out.println("foo");
-      } catch (final Exception x) {
-        System.out.println("bar");
-      } finally {
-        i++;
-      }
-    }
-  }
-
-  @Test
-  public void shouldMarkMutationsWithinFinallyBlocksWhenExceptionHandlerAlsoPresent() {
-    createTesteeWith(Mutator.byName("INCREMENTS"));
-    final List<MutationDetails> actualDetails = findMutationsFor(HasFinallyBlockAndExceptionHandler.class);
-    assertEquals(1, FCollection.filter(actualDetails, isInFinallyBlock())
-        .size());
-  }
-
   public static class HasTwoMutableMethods {
     public int a() {
       return 1;
@@ -348,10 +299,6 @@ public class TestGregorMutater extends MutatorTestBase {
     assertThat(actualDetails).isEmpty();
   }
 
-
-  private static Predicate<MutationDetails> isInFinallyBlock() {
-    return a -> a.isInFinallyBlock();
-  }
 
   private void assertTwoMutationsInDifferentBlocks(
       final List<MutationDetails> actualDetails) {

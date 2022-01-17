@@ -14,12 +14,16 @@
  */
 package org.pitest.maven;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.model.Build;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Plugin;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.mockito.Mockito;
+import org.pitest.mutationtest.config.ConfigOption;
+import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.util.Unchecked;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,16 +35,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.Plugin;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.mockito.Mockito;
-import org.pitest.mutationtest.config.ConfigOption;
-import org.pitest.mutationtest.config.ReportOptions;
-import org.pitest.util.Unchecked;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.pitest.util.Verbosity.DEFAULT;
+import static org.pitest.util.Verbosity.QUIET;
+import static org.pitest.util.Verbosity.VERBOSE;
 
 public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
 
@@ -216,8 +221,18 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
   }
 
   public void testParsesVerboseFlag() {
-    assertTrue(parseConfig("<verbose>true</verbose>").isVerbose());
-    assertFalse(parseConfig("<verbose>false</verbose>").isVerbose());
+    assertThat(parseConfig("<verbose>true</verbose>").getVerbosity()).isEqualTo(VERBOSE);
+    assertThat(parseConfig("<verbose>false</verbose>").getVerbosity()).isEqualTo(DEFAULT);
+  }
+
+  public void testParsesVerbosity() {
+    assertThat(parseConfig("<verbosity>quiet</verbosity>").getVerbosity())
+            .isEqualTo(QUIET);
+  }
+
+  public void testVerboseFlagOverridesVerbosity() {
+    assertThat(parseConfig("<verbose>true</verbose><verbosity>DEFAULT</verbosity>").getVerbosity())
+            .isEqualTo(VERBOSE);
   }
 
   public void testParsesDetectInlineCodeFlag() {
@@ -376,7 +391,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
   public void testParsesSurefireConfigWhenFlagSet() {
     parseConfig("<parseSurefireConfig>true</parseSurefireConfig>");
     verify(this.surefireConverter).update(any(ReportOptions.class),
-        any(Xpp3Dom.class));
+        isNull());
   }
 
   public void testIgnoreSurefireConfigWhenFlagNotSet() {
@@ -391,9 +406,8 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertEquals("bar", actual.getFreeFormProperties().get("bar"));
   }
   
-  public void testParsesTestPlugin() {
-    final ReportOptions actual = parseConfig("<testPlugin>testng</testPlugin>");
-    assertEquals("testng", actual.getTestPlugin());
+  public void testDoesNotErrorIfDefunctTestPluginArgumentSupplied() {
+    parseConfig("<testPlugin>testng</testPlugin>");
   }  
   
   public void testDoesNotUseClasspathJarByDefault() {
@@ -404,8 +418,12 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
   public void testParsesUseClasspathJar() {
     final ReportOptions actual = parseConfig("<useClasspathJar>true</useClasspathJar>");
     assertTrue(actual.useClasspathJar());
-  }  
+  }
 
+  public void testFailsIfObsoleteMaxMutationsParameterUsed() {
+    assertThatCode( () -> parseConfig("<maxMutationsPerClass>1</maxMutationsPerClass>"))
+            .hasMessageContaining("+CLASSLIMIT(limit[1])");
+  }
 
   private ReportOptions parseConfig(final String xml) {
     try {
@@ -417,8 +435,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
               any(Xpp3Dom.class))).then(returnsFirstArg());
       this.testee = new MojoToReportOptionsConverter(mojo,
           this.surefireConverter, filter);
-      final ReportOptions actual = this.testee.convert();
-      return actual;
+      return this.testee.convert();
     } catch (final Exception ex) {
       throw Unchecked.translateCheckedException(ex);
     }

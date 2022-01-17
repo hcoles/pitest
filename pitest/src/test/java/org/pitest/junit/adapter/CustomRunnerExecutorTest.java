@@ -15,7 +15,7 @@
 
 package org.pitest.junit.adapter;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
 import org.junit.Before;
@@ -39,7 +39,7 @@ public class CustomRunnerExecutorTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.testee = new CustomRunnerExecutor(
         DescriptionMother.createEmptyDescription("foo"), this.runner, this.rc);
   }

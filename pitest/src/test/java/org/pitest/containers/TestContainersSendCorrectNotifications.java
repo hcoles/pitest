@@ -14,7 +14,7 @@
  */
 package org.pitest.containers;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
@@ -69,7 +69,7 @@ public class TestContainersSendCorrectNotifications {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     this.config = new ConfigurationForTesting();
     this.pit = new Pitest(this.listener);
   }

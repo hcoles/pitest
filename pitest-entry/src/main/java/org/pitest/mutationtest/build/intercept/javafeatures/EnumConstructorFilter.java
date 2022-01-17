@@ -37,7 +37,7 @@ public class EnumConstructorFilter implements MutationInterceptor {
     }
 
     private Predicate<MutationDetails> isInEnumConstructor() {
-        return m -> isEnum && m.getMethod().name().equals("<init>");
+        return m -> isEnum && m.getMethod().equals("<init>");
     }
 
 

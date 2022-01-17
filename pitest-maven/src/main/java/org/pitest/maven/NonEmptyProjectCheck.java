@@ -16,12 +16,7 @@ public class NonEmptyProjectCheck implements Predicate<MavenProject> {
   }
   
   private Predicate<String> exists() {
-    return new Predicate<String>() {
-      @Override
-      public boolean test(String root) {
-        return new File(root).exists();
-      }
-    };
+    return root -> new File(root).exists();
   }
 
 }

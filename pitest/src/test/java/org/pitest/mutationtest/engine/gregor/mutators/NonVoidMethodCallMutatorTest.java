@@ -15,14 +15,6 @@
 
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.logging.Logger;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -31,12 +23,20 @@ import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutatorTest.HasConstructorCall;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
 
   @Before
   public void setupEngineToRemoveVoidMethods() {
     createTesteeWith(mutateOnlyCallMethod(),
-        NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+        NonVoidMethodCallMutator.NON_VOID_METHOD_CALLS);
   }
 
   @Test
@@ -69,7 +69,7 @@ public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
   @Test
   public void shouldNotRemoveConstructorCalls() throws Exception {
     final List<MutationDetails> actual = findMutationsFor(HasConstructorCall.class);
-    assertFalse(actual.stream().filter(descriptionContaining("Integer")).findFirst().isPresent());
+    assertFalse(actual.stream().anyMatch(descriptionContaining("Integer")));
   }
 
   private static class HasObjectMethodCall implements Callable<String> {
@@ -246,7 +246,7 @@ public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
   @Ignore("functionality moving to filter")
   public void shouldNotGenerateRunErrorsWhenMutatingLoggers() throws Exception {
     createTesteeWith(i -> true,
-        NonVoidMethodCallMutator.NON_VOID_METHOD_CALL_MUTATOR);
+        NonVoidMethodCallMutator.NON_VOID_METHOD_CALLS);
     assertTrue(this.findMutationsFor(HasLogger.class).isEmpty());
 
   }

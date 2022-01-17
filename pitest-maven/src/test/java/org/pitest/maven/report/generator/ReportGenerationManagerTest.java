@@ -17,7 +17,7 @@ package org.pitest.maven.report.generator;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
@@ -31,7 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.pitest.maven.report.ReportSourceLocator;
 import org.pitest.util.PitError;
 
@@ -85,7 +85,7 @@ public class ReportGenerationManagerTest {
     this.fixture.generateSiteReport(this.generationContext);
 
     verify(this.xmlGenerator).generate(this.generationContext);
-    verifyZeroInteractions(this.htmlGenerator);
+    verifyNoInteractions(this.htmlGenerator);
     this.assertLocatedReportsDirectory();
   }
 

@@ -15,14 +15,11 @@ import org.pitest.bytecode.analysis.AnalysisFunctions;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
-import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.PoisonStatus;
 
 /**
  * Identifies and marks mutations in code that is active during class
@@ -40,8 +37,6 @@ import org.pitest.mutationtest.engine.PoisonStatus;
  */
 class StaticInitializerInterceptor implements MutationInterceptor {
 
-  private static final MethodName CLINIT = MethodName.fromString("<clinit>");
-
   private Predicate<MutationDetails> isStaticInitCode;
 
   @Override
@@ -53,17 +48,9 @@ class StaticInitializerInterceptor implements MutationInterceptor {
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
     if (this.isStaticInitCode != null) {
-      final List<MutationDetails> altered =
-          mutations.stream()
-          .filter(this.isStaticInitCode)
-          .map(setStaticInitializerFlag())
-          .collect(Collectors.toList());
-
-      final List<MutationDetails> notAltered =
-          FCollection.filter(mutations, Prelude.not(this.isStaticInitCode));
-
-      notAltered.addAll(altered);
-      return notAltered;
+      return mutations.stream()
+              .filter(this.isStaticInitCode.negate())
+              .collect(Collectors.toList());
     }
     return mutations;
   }
@@ -74,14 +61,14 @@ class StaticInitializerInterceptor implements MutationInterceptor {
   }
 
   private void analyseClass(ClassTree tree) {
-    final Optional<MethodTree> clinit = tree.methods().stream().filter(nameEquals(CLINIT.name())).findFirst();
+    final Optional<MethodTree> clinit = tree.methods().stream().filter(nameEquals("<clinit>")).findFirst();
 
     if (clinit.isPresent()) {
       final List<Predicate<MethodTree>> selfCalls =
           clinit.get().instructions().stream()
         .flatMap(is(MethodInsnNode.class))
         .filter(calls(tree.name()))
-        .map(toPredicate())
+        .map(StaticInitializerInterceptor::matchesCall)
         .collect(Collectors.toList());
 
       final Predicate<MethodTree> matchingCalls = Prelude.or(selfCalls);
@@ -99,20 +86,13 @@ class StaticInitializerInterceptor implements MutationInterceptor {
 
 
   private static Predicate<MutationDetails> isInStaticInitializer() {
-    return a -> a.getId().getLocation().getMethodName().equals(CLINIT);
+    return a -> a.getId().getLocation().getMethodName().equals("<clinit>");
   }
 
   private static Predicate<MethodTree> isPrivateStatic() {
     return a -> ((a.rawNode().access & Opcodes.ACC_STATIC) != 0)
         && ((a.rawNode().access & Opcodes.ACC_PRIVATE) != 0);
   }
-
-
-
-  private static Function<MethodInsnNode, Predicate<MethodTree>> toPredicate() {
-    return a -> matchesCall(a);
-  }
-
 
   private static Predicate<MethodTree> matchesCall(final MethodInsnNode call) {
     return a -> a.rawNode().name.equals(call.name)
@@ -124,15 +104,11 @@ class StaticInitializerInterceptor implements MutationInterceptor {
   }
 
   private <T extends AbstractInsnNode> Function<AbstractInsnNode,Stream<T>> is(final Class<T> clazz) {
-    return new  Function<AbstractInsnNode,Stream<T>>() {
-      @SuppressWarnings("unchecked")
-      @Override
-      public Stream<T> apply(AbstractInsnNode a) {
-        if (a.getClass().isAssignableFrom(clazz)) {
-          return Stream.of((T)a);
-        }
-        return Stream.empty();
+    return a -> {
+      if (a.getClass().isAssignableFrom(clazz)) {
+        return Stream.of((T)a);
       }
+      return Stream.empty();
     };
   }
 
@@ -140,14 +116,9 @@ class StaticInitializerInterceptor implements MutationInterceptor {
     return a -> a.rawNode().name.equals(name);
   }
 
-
-  private Function<MutationDetails, MutationDetails> setStaticInitializerFlag() {
-    return a -> a.withPoisonStatus(PoisonStatus.IS_STATIC_INITIALIZER_CODE);
-  }
-
   @Override
   public InterceptorType type() {
-    return InterceptorType.MODIFY;
+    return InterceptorType.FILTER;
   }
 
 }

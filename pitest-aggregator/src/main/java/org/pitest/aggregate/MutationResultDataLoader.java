@@ -19,7 +19,6 @@ import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
@@ -68,7 +67,7 @@ class MutationResultDataLoader extends DataLoader<MutationResult> {
         String nodeName = next.asEndElement().getName().getLocalPart();
         if (nodeName.equals(MUTATION)) {
           Location location = new Location(ClassName.fromString(xmlData.getMutatedClass()), 
-            MethodName.fromString(xmlData.getMutatedMethod()), xmlData.getMethodDescription());
+            xmlData.getMutatedMethod(), xmlData.getMethodDescription());
           MutationIdentifier id = new MutationIdentifier(location, asList(xmlData.getIndex()), xmlData.getMutator());
           data.add(new MutationResult(new MutationDetails(id, 
             xmlData.getSourceFile(), xmlData.getDescription(), 
@@ -169,6 +168,5 @@ class MutationResultDataLoader extends DataLoader<MutationResult> {
     public int getBlock() {
       return Integer.parseInt(block.toString().trim());
     }
-    
   }
 }

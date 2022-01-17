@@ -24,7 +24,7 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
 
 public enum RemoveIncrementsMutator implements MethodMutatorFactory {
 
-  REMOVE_INCREMENTS_MUTATOR;
+  REMOVE_INCREMENTS;
 
   @Override
   public MethodVisitor create(final MutationContext context,

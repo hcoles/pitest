@@ -15,6 +15,7 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.assertEquals;
 
 import java.util.concurrent.Callable;
@@ -33,7 +34,7 @@ public class SwitchMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldProvideAMeaningfulName() {
-    assertEquals("EXPERIMENTAL_SWITCH_MUTATOR", new SwitchMutator().getName());
+    assertEquals("EXPERIMENTAL_SWITCH", new SwitchMutator().getName());
   }
 
   private static class HasIntSwitchWithDefault implements Callable<Integer> {
@@ -54,6 +55,13 @@ public class SwitchMutatorTest extends MutatorTestBase {
       }
     }
   }
+
+  @Test
+  public void createsMeaningfulDescription() {
+    final Mutant mutant = getFirstMutant(HasIntSwitchWithDefault.class);
+    assertThat(mutant.getDetails().getDescription()).isEqualTo("Changed switch default to be first case");
+  }
+
 
   @Test
   public void shouldSwapFirstCaseWithDefaultForInt() throws Exception {

@@ -17,13 +17,14 @@ import org.pitest.mutationtest.engine.gregor.MutationContext;
  */
 public enum ABSMutator implements MethodMutatorFactory {
 
-    ABS_MUTATOR;
+    ABS;
 
     public MethodVisitor create(final MutationContext context, final MethodInfo methodInfo,
                                 final MethodVisitor methodVisitor) {
         return new ABSMethodVisitor(this, context, methodVisitor);
     }
 
+    @Override
     public String getGloballyUniqueId() {
         return this.getClass().getName();
     }

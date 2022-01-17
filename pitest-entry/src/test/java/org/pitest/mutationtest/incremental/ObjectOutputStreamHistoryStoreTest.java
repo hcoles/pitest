@@ -3,7 +3,7 @@ package org.pitest.mutationtest.incremental;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -62,7 +62,7 @@ public class ObjectOutputStreamHistoryStoreTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         when(this.coverage.getCoverageIdForClass(any(ClassName.class))).thenReturn(
             BigInteger.TEN);
     }

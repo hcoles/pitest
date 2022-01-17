@@ -1,6 +1,6 @@
 package org.pitest.mutationtest.engine.gregor;
 
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
