@@ -19,11 +19,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.ResourceExtractor;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestName;
 import org.pitest.support.DirectoriesOnlyWalker;
@@ -32,15 +28,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.junit.Assume.assumeFalse;
 
 /**
@@ -356,14 +350,23 @@ public class PitMojoIT {
   @Test
   public void shouldReadExclusionsFromSurefireConfig() throws Exception {
     File testDir = prepare("/pit-surefire-excludes");
-    verifier.addCliOption("-DskipTests");
     verifier.executeGoal("test");
     verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
 
     String actual = readResults(testDir);
     assertThat(actual)
-        .contains(
-            "<mutation detected='false' status='NO_COVERAGE' numberOfTestsRun='0'><sourceFile>NotCovered.java</sourceFile>");
+            .contains(
+                    "<mutation detected='false' status='NO_COVERAGE' numberOfTestsRun='0'><sourceFile>NotCovered.java</sourceFile>");
+  }
+
+  @Test(expected = FileNotFoundException.class)
+  public void shouldNotExecuteWhenSkipTestsFlagActive() throws Exception {
+    File testDir = prepare("/pit-skipTests-active");
+    verifier.addCliOption("-DskipTests");
+    verifier.executeGoal("test");
+    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+
+    readResults(testDir);
   }
 
   @Test
