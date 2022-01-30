@@ -312,7 +312,7 @@ public class AbstractPitMojo extends AbstractMojo {
   /**
    * honours common skipTests flag in a maven run
    */
-  @Parameter(defaultValue = "false")
+  @Parameter(property = "skipTests", defaultValue = "false")
   private boolean                     skipTests;
 
   /**

@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -353,17 +354,14 @@ public class PitMojoIT {
         buildFilePath(testDir, "target", "site", "pit-reports").exists());
   }
 
-  @Test
+  @Test(expected = FileNotFoundException.class)
   public void shouldReadExclusionsFromSurefireConfig() throws Exception {
     File testDir = prepare("/pit-surefire-excludes");
     verifier.addCliOption("-DskipTests");
     verifier.executeGoal("test");
     verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
 
-    String actual = readResults(testDir);
-    assertThat(actual)
-        .contains(
-            "<mutation detected='false' status='NO_COVERAGE' numberOfTestsRun='0'><sourceFile>NotCovered.java</sourceFile>");
+    readResults(testDir);
   }
 
   @Test
