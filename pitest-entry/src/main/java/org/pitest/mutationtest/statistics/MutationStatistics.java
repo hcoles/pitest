@@ -80,9 +80,8 @@ public final class MutationStatistics {
             + ". Test strength " + this.getTestStrength() + "%");
     out.println(">> Ran " + this.numberOfTestsRun + " tests ("
         + getTestsPerMutation() + " tests per mutation)");
-
-    out.println("\nPitest development is currently supported by GroupCDG.");
-    out.println("Enhanced functionality available at https://pitest.groupcdg.com/");
+    
+    out.println("Enhanced functionality available at https://www.arcmutate.com/");
   }
 
   private String getTestsPerMutation() {
