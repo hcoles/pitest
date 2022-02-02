@@ -8,6 +8,11 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.7.4
+
+* #965 - BigDecimal Mutator (thanks @MarcinNowak-codes)
+* #750 - Support -DskipTests from command line (thanks @marwin1991)
+
 ### 1.7.3
 
 * #952 Mutate map return to `emptyMap` instead of null
