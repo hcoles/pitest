@@ -45,6 +45,11 @@ abstract class AbstractPitAggregationReportMojo extends PitReportMojo {
   @Override
   protected void executeReport(final Locale locale)
       throws MavenReportException {
+    if (!canGenerateReport()) {
+      getLog().info("Skipping");
+      return;
+    }
+
     try {
       final Collection<MavenProject> allProjects = findDependencies();
 
@@ -125,7 +130,7 @@ abstract class AbstractPitAggregationReportMojo extends PitReportMojo {
       final Artifact artifact = (Artifact) artifactObj;
       sourceRoots.add(artifact.getFile().getAbsolutePath());
     }
-    return convertToRootDirs(project.getTestClasspathElements(),
+    return convertToRootDirs(project.getTestCompileSourceRoots(),
         Arrays.asList(project.getBuild().getOutputDirectory(),
             project.getBuild().getTestOutputDirectory()),
         sourceRoots);

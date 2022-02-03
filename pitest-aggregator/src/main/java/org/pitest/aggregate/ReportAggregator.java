@@ -75,7 +75,7 @@ public final class ReportAggregator {
   private static Function<MutationResult, List<String>> resultToMutatorName() {
     return a -> {
       try {
-        final String mutatorName = MutatorUtil.loadMutator(a.getDetails().getMutator()).getName();
+        final String mutatorName = a.getDetails().getId().getMutator();//MutatorUtil.loadMutator(a.getDetails().getMutator()).getName();
         return Collections.singletonList(mutatorName);
       } catch (final Exception e) {
         throw new RuntimeException("Cannot convert to mutator: " + a.getDetails().getMutator(), e);

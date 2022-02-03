@@ -14,18 +14,21 @@
  */
 package org.pitest.mutationtest.report.html;
 
-import org.pitest.classinfo.ClassInfo;
-import org.pitest.coverage.TestInfo;
-import org.pitest.functional.FCollection;
-import org.pitest.mutationtest.MutationResult;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.logging.Level;
+
+import org.pitest.classinfo.ClassInfo;
+import org.pitest.coverage.TestInfo;
+import org.pitest.functional.FCollection;
+import org.pitest.mutationtest.MutationResult;
+import org.pitest.util.Log;
 
 public class MutationTestSummaryData {
 
@@ -65,8 +68,16 @@ public class MutationTestSummaryData {
   }
 
   public String getPackageName() {
-    final String packageName = getMutatedClasses().iterator().next().getName()
-        .asJavaName();
+    Iterator<ClassInfo> iterator = getMutatedClasses().iterator();
+    if (!iterator.hasNext()) {
+      Log.getLogger().log(Level.WARNING, "Can't get package name for " + fileName + "."
+        + "There is no mutated classes. It may happen if you are using report-aggregate "
+        + "goal to merge reports using a dedicated maven project "
+        + "and the dependency that contains the mutated code is missing");
+      return "default";
+    }
+    final String packageName = iterator.next().getName()
+      .asJavaName();
     final int lastDot = packageName.lastIndexOf('.');
     return lastDot > 0 ? packageName.substring(0, lastDot) : "default";
   }

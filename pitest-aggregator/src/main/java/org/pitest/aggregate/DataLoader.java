@@ -3,26 +3,17 @@ package org.pitest.aggregate;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 
 abstract class DataLoader<T> {
 
@@ -47,100 +38,34 @@ abstract class DataLoader<T> {
     return data;
   }
 
-  protected abstract T mapToData(Map<String, Object> map);
+  protected abstract Set<T> mapToData(XMLEventReader doc) throws XMLStreamException;
 
   Set<T> loadData(final File dataLocation) throws ReportAggregationException {
     if (!dataLocation.exists() || !dataLocation.isFile()) {
       throw new ReportAggregationException(dataLocation.getAbsolutePath() + " does not exist or is not a file");
     }
-    final Set<T> data = new HashSet<>();
     try {
-      final InputStream inputStream = new BufferedInputStream(new FileInputStream(dataLocation));
-
-      final Document doc = readDocument(inputStream);
-
-      final Node docNode = doc.getFirstChild();
-      final NodeList nodeList = docNode.getChildNodes();
-      for (int i = 0; i < nodeList.getLength(); i++) {
-        final Node itemNode = nodeList.item(i);
-        if (itemNode.getNodeType() == Node.ELEMENT_NODE) {
-          data.add(mapToData(nodeMap(itemNode)));
-        }
-      }
-      return data;
-    } catch (final IOException e) {
+      return loadData(new BufferedInputStream(new FileInputStream(dataLocation)), dataLocation);
+    } catch (FileNotFoundException e) {
       throw new ReportAggregationException("Could not read file: " + dataLocation.getAbsolutePath(), e);
     }
   }
-
-  /**
-   * Reads the input stream into a document and closes the input stream when
-   * finished.
-   */
-  static Document readDocument(final InputStream inputStream) throws ReportAggregationException {
-    DocumentBuilder docBuilder;
+  
+  Set<T> loadData(final InputStream inputStream, final File dataLocation) throws ReportAggregationException {
     try {
-      docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-      return docBuilder.parse(inputStream);
-    } catch (final IOException | SAXException | ParserConfigurationException e) {
-      throw new ReportAggregationException(e.getMessage(), e);
+      final XMLEventReader doc = XMLInputFactory.newInstance().createXMLEventReader(inputStream);
+      return mapToData(doc);
+    } catch (final XMLStreamException e) {
+      throw new ReportAggregationException("Could not parse file: " + dataLocation.getAbsolutePath(), e);
     } finally {
-      try {
-        inputStream.close();
-      } catch (final IOException e) {
-        throw new ReportAggregationException(CANNOT_CLOSE_ERR, e);
-      }
-    }
-  }
-
-  // converts the contents of a node into a map
-  static Map<String, Object> nodeMap(final Node node) {
-    final HashMap<String, Object> map = new HashMap<>();
-
-    final NamedNodeMap attrs = node.getAttributes();
-    for (int i = 0; i < attrs.getLength(); i++) {
-      final Node attr = attrs.item(i);
-      final String tc = attr.getTextContent().trim();
-
-      if (!tc.isEmpty()) {
-        map.put(attr.getNodeName(), tc);
-      }
-    }
-
-    final NodeList children = node.getChildNodes();
-
-    for (int i = 0; i < children.getLength(); i++) {
-      final Node child = children.item(i);
-
-      if (child.getNodeType() == Node.ELEMENT_NODE) {
-        final String tc = child.getTextContent().trim();
-        if (!tc.isEmpty()) {
-          map.put(child.getNodeName(), tc);
-        } else {
-          // may have test nodes
-          final List<String> tests = new ArrayList<>();
-          final NodeList testNodeList = child.getChildNodes();
-          for (int j = 0; j < testNodeList.getLength(); j++) {
-            final Node testNode = testNodeList.item(j);
-            if (testNode.getNodeType() == Node.ELEMENT_NODE) {
-              final NamedNodeMap testAttrs = testNode.getAttributes();
-              for (int k = 0; k < testAttrs.getLength(); k++) {
-                final Node attr = testAttrs.item(k);
-                final String tn = attr.getTextContent().trim();
-
-                if (!tn.isEmpty()) {
-                  tests.add(tn);
-                }
-              }
-            }
-          }
-          if (!tests.isEmpty()) {
-            map.put(child.getNodeName(), tests);
-          }
+      if (inputStream != null) {
+        try {
+          inputStream.close();
+        } catch (IOException e) {
+          throw new ReportAggregationException(CANNOT_CLOSE_ERR, e);
         }
       }
     }
-
-    return map;
   }
+
 }
