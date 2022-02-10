@@ -36,6 +36,15 @@ public class SurefireConfigConverterTest {
   }
 
   @Test
+  public void handlesEmptyExcludeElements() throws Exception {
+    this.surefireConfig = makeConfig("<excludes><exclude/></excludes>");
+
+    ReportOptions actual = this.testee
+            .update(this.options, this.surefireConfig);
+    assertThat(actual.getExcludedTestClasses()).isEmpty();
+  }
+
+  @Test
   public void shouldConvertSurefireExclusionsToPackagePredicates()
       throws Exception {
     this.surefireConfig = makeConfig("<excludes><exclude>**/FailingTest.java</exclude></excludes>");
