@@ -1,14 +1,17 @@
 package org.pitest.maven;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-import java.util.function.Function;
-import org.pitest.functional.FCollection;
+
+import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
@@ -51,14 +54,19 @@ public class SurefireConfigConverter {
   }
 
   private void convertExcludes(ReportOptions option, Xpp3Dom configuration) {
-    List<Predicate<String>> excludes = FCollection.map(
-        extract("excludes", configuration), filenameToClassFilter());
+    List<Predicate<String>> excludes = new ArrayList<>();
+    List<Predicate<String>> surefireExcludes =
+            extract("excludes", configuration).stream()
+                            .filter(Objects::nonNull)
+                            .map(this::filenameToClassFilter)
+                            .collect(Collectors.toList());
+    excludes.addAll(surefireExcludes);
     excludes.addAll(option.getExcludedTestClasses());
     option.setExcludedTestClasses(excludes);
   }
 
-  private Function<String, Predicate<String>> filenameToClassFilter() {
-    return a -> new Glob(a.replace(".java", "").replace("/", "."));
+  private Predicate<String> filenameToClassFilter(String filename) {
+    return new Glob(filename.replace(".java", "").replace("/", "."));
   }
 
   private List<String> extract(String childname, Xpp3Dom config) {
