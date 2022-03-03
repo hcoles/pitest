@@ -21,11 +21,6 @@ import java.io.Serializable;
 public enum ConfigOption {
 
   /**
-   * The test plugin to use
-   */
-  TEST_PLUGIN("testPlugin"),
-
-  /**
    * The directory to write report sot
    */
   REPORT_DIR("reportDir"),

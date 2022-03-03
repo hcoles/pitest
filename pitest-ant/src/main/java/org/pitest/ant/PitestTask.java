@@ -208,10 +208,6 @@ public class PitestTask extends Task { // NO_UCD (test only)
     setOption(ConfigOption.CODE_PATHS, glob);
   }
 
-  public void setTestPlugin(final String value) {
-    this.setOption(ConfigOption.TEST_PLUGIN, value);
-  }
-
   public void setIncludedGroups(final String value) {
     this.setOption(ConfigOption.INCLUDED_GROUPS, value);
   }

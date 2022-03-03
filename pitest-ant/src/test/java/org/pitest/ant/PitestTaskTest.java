@@ -252,14 +252,7 @@ public class PitestTaskTest {
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--mutableCodePaths=foo");
   }
-
-  @Test
-  public void shouldPassTestPluginToJavaTask() {
-    this.pitestTask.setTestPlugin("junit");
-    this.pitestTask.execute(this.java);
-    verify(this.arg).setValue("--testPlugin=junit");
-  }
-
+  
   @Test
   public void shouldOnlyPassTheSpecifiedOptions() throws Exception {
     this.pitestTask.setVerbose("true");

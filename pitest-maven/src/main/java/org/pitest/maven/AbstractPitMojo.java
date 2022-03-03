@@ -37,14 +37,7 @@ public class AbstractPitMojo extends AbstractMojo {
   private final PluginServices        plugins;
 
   // Concrete List types declared for all fields to work around maven 2 bug
-
-  /**
-   * Test plugin to use
-   */
-  // No longer used, retained here temporarily for backwards compatibility in buildscripts
-  @Parameter(property = "testPlugin", defaultValue = "")
-  private String testPlugin;
-
+  
   /**
    * Classes to include in mutation test
    */
