@@ -7,7 +7,7 @@ import org.junit.Test;
 public class RunDecisionTest {
 
   @Test
-  public void shouldRunIfThereAreNoReasonsWhyNot() throws Exception {
+  public void shouldRunIfThereAreNoReasonsWhyNot() {
     AbstractPitMojo.RunDecision rd = new AbstractPitMojo.RunDecision();
 
     assertThat(rd.getReasons()).isEmpty();
@@ -15,7 +15,7 @@ public class RunDecisionTest {
   }
 
   @Test
-  public void shouldNotRunIfThereIsAReasonsWhyNot() throws Exception {
+  public void shouldNotRunIfThereIsAReasonsWhyNot() {
     AbstractPitMojo.RunDecision rd = new AbstractPitMojo.RunDecision();
 
     rd.addReason("Today is Sunday");
@@ -25,7 +25,7 @@ public class RunDecisionTest {
   }
 
   @Test
-  public void addReasonAddsReason() throws Exception {
+  public void addReasonAddsReason() {
     AbstractPitMojo.RunDecision rd = new AbstractPitMojo.RunDecision();
 
     rd.addReason("Today is Sunday");
@@ -34,7 +34,7 @@ public class RunDecisionTest {
   }
 
   @Test
-  public void getReasonsReturnsAllReasons() throws Exception {
+  public void getReasonsReturnsAllReasons() {
     AbstractPitMojo.RunDecision rd = new AbstractPitMojo.RunDecision();
 
     rd.addReason("Today is Monday");
