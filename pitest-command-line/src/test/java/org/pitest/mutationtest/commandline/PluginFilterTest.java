@@ -15,8 +15,7 @@ import org.pitest.util.IsolationUtils;
 
 public class PluginFilterTest {
 
-  private final PluginFilter testee = new PluginFilter(new PluginServices(
-                                        IsolationUtils.getContextClassLoader()));
+  private final PluginFilter testee = new PluginFilter(PluginServices.makeForContextLoader());
 
   @Test
   public void shouldExcludeHtmlReportPlugin() throws Exception {

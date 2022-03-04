@@ -372,8 +372,8 @@ public class AbstractPitMojo extends AbstractMojo {
   private final GoalStrategy          goalStrategy;
 
   public AbstractPitMojo() {
-    this(new RunPitStrategy(), new DependencyFilter(new PluginServices(
-        AbstractPitMojo.class.getClassLoader())), new PluginServices(
+    this(new RunPitStrategy(), new DependencyFilter(PluginServices.makeForLoader(
+        AbstractPitMojo.class.getClassLoader())), PluginServices.makeForLoader(
         AbstractPitMojo.class.getClassLoader()), new NonEmptyProjectCheck());
   }
 

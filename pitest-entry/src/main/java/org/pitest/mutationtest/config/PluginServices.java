@@ -7,27 +7,33 @@ import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.mutationtest.build.TestPrioritiserFactory;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.plugin.ClientClasspathPlugin;
+import org.pitest.plugin.Feature;
 import org.pitest.plugin.ProvidesFeature;
 import org.pitest.plugin.ToolClasspathPlugin;
 import org.pitest.testapi.TestPluginFactory;
 import org.pitest.util.IsolationUtils;
-import org.pitest.util.ServiceLoader;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PluginServices {
 
-  private final ClassLoader loader;
+  private final Services loader;
 
-  public PluginServices(ClassLoader loader) {
+  public PluginServices(Services loader) {
     this.loader = loader;
   }
 
+  public static PluginServices makeForLoader(ClassLoader loader) {
+    return new PluginServices(new ServicesFromClassLoader(loader));
+  }
+
   public static PluginServices makeForContextLoader() {
-    return new PluginServices(IsolationUtils.getContextClassLoader());
+    return makeForLoader(IsolationUtils.getContextClassLoader());
   }
 
   /**
@@ -59,42 +65,68 @@ public class PluginServices {
   }
 
   public Collection<? extends MethodMutatorFactory> findMutationOperators() {
-    return ServiceLoader.load(MethodMutatorFactory.class, this.loader);
+    return load(MethodMutatorFactory.class);
   }
 
   Collection<? extends TestPluginFactory> findTestFrameworkPlugins() {
-    return ServiceLoader.load(TestPluginFactory.class, this.loader);
+    return load(TestPluginFactory.class);
   }
 
   Collection<? extends MutationGrouperFactory> findGroupers() {
-    return ServiceLoader.load(MutationGrouperFactory.class, this.loader);
+    return load(MutationGrouperFactory.class);
   }
 
   Collection<? extends MutationResultListenerFactory> findListeners() {
-    return ServiceLoader.load(MutationResultListenerFactory.class, this.loader);
+    return load(MutationResultListenerFactory.class);
   }
 
   Collection<? extends MutationEngineFactory> findMutationEngines() {
-    return ServiceLoader.load(MutationEngineFactory.class, this.loader);
+    return load(MutationEngineFactory.class);
   }
 
   Collection<? extends TestPrioritiserFactory> findTestPrioritisers() {
-    return ServiceLoader.load(TestPrioritiserFactory.class, this.loader);
+    return load(TestPrioritiserFactory.class);
   }
 
   private Collection<ClientClasspathPlugin> nullPlugins() {
-    return ServiceLoader.load(ClientClasspathPlugin.class, this.loader);
+    return load(ClientClasspathPlugin.class);
   }
 
   public Collection<? extends MutationInterceptorFactory> findInterceptors() {
-    return ServiceLoader.load(MutationInterceptorFactory.class, this.loader);
+    return load(MutationInterceptorFactory.class);
   }
 
-  public Collection<? extends ProvidesFeature> findFeatures() {
-    return findToolClasspathPlugins().stream()
+  public Collection<ProvidesFeature> findFeatures() {
+    List<ProvidesFeature> allFeatures = findToolClasspathPlugins().stream()
             .filter(p -> p instanceof ProvidesFeature)
             .map(ProvidesFeature.class::cast)
             .collect(Collectors.toList());
+
+    // Some features are 'missing', just placeholders to features that
+    // can be provided by an external plugin. We list them so it is
+    // clear that they are available. When the external plugin is present
+    // the missing feature it implements must be removed.
+
+    Map<Feature, List<ProvidesFeature>> missing = allFeatures.stream()
+            .filter(f -> f.provides().isMissing())
+            .collect(Collectors.groupingBy(f -> f.provides()));
+
+    Map<Feature, List<ProvidesFeature>> real = allFeatures.stream()
+            .filter(f -> !f.provides().isMissing())
+            .collect(Collectors.groupingBy(f -> f.provides()));
+
+    Stream<ProvidesFeature> notImplemented = missing.entrySet().stream()
+            .filter(e -> real.get(e.getKey()) == null)
+            .flatMap(e -> e.getValue().stream());
+
+    return Stream.concat(real.values().stream()
+            .flatMap(v -> v.stream()), notImplemented)
+            .collect(Collectors.toList());
+
+  }
+
+  private <S> Collection<S> load(final Class<S> ifc) {
+      return loader.load(ifc);
   }
 
 }

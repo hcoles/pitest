@@ -125,7 +125,7 @@ abstract class AbstractPitAggregationReportMojo extends PitReportMojo {
     final List<String> sourceRoots = new ArrayList<>();
     for (final Object artifactObj : FCollection
         .filter(project.getPluginArtifactMap().values(), new DependencyFilter(
-            new PluginServices(this.getClass().getClassLoader())))) {
+            PluginServices.makeForLoader(this.getClass().getClassLoader())))) {
 
       final Artifact artifact = (Artifact) artifactObj;
       sourceRoots.add(artifact.getFile().getAbsolutePath());
