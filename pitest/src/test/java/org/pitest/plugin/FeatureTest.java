@@ -21,4 +21,10 @@ public class FeatureTest {
     .isEqualTo(Feature.named("foo").withDescription("?").withOnByDefault(false));
   }
 
+  @Test
+  public void nameEqualityIsCaseInsensitive() {
+    assertThat(Feature.named("foo"))
+            .isEqualTo(Feature.named("FOO"));
+  }
+
 }

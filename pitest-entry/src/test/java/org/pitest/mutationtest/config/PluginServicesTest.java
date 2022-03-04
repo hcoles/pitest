@@ -65,10 +65,21 @@ public class PluginServicesTest {
     ExampleFeature presentAsWell = new ExampleFeature("moo");
     testee = createWithFeatures(missing, present, alsoMissing, presentAsWell);
 
-    assertThat(testee.findFeatures()).containsExactlyInAnyOrder(present, alsoMissing, presentAsWell );
+    assertThat(testee.findFeatures()).containsExactlyInAnyOrder(present, alsoMissing, presentAsWell);
   }
 
-  private PluginServices createWithFeatures(ExampleFeature ... features) {
+  @Test
+  public void missingInterceptorsRemovedWhenImplementationAvailable() {
+    MutationInterceptorFactory missing = new MissingFeature("foo");
+    MutationInterceptorFactory present = new ExampleFeature("foo");
+    MutationInterceptorFactory alsoMissing = new ExampleFeature("bar");
+    MutationInterceptorFactory presentAsWell = new ExampleFeature("moo");
+    testee = createWithFeatures(missing, present, alsoMissing, presentAsWell);
+
+    assertThat(testee.findInterceptors()).containsExactlyInAnyOrder(present, alsoMissing, presentAsWell);
+  }
+
+  private PluginServices createWithFeatures(MutationInterceptorFactory ... features) {
     Services loader = Mockito.mock(Services.class);
     when(loader.load(MutationInterceptorFactory.class)).thenReturn(asList(features));
     return new PluginServices(loader);

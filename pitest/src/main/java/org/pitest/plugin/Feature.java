@@ -3,6 +3,7 @@ package org.pitest.plugin;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public final class Feature {
@@ -25,7 +26,7 @@ public final class Feature {
   }
 
   public static Feature named(String name) {
-    return new Feature(false, false, false, name, "", Collections.emptyList());
+    return new Feature(false, false, false, name.toLowerCase(Locale.ROOT), "", Collections.emptyList());
   }
 
   public Feature withOnByDefault(boolean onByDefault) {

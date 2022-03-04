@@ -77,7 +77,7 @@ public class PluginServices {
   }
 
   Collection<? extends MutationResultListenerFactory> findListeners() {
-    return load(MutationResultListenerFactory.class);
+    return adjustMissingFeatures(load(MutationResultListenerFactory.class));
   }
 
   Collection<? extends MutationEngineFactory> findMutationEngines() {
@@ -92,37 +92,38 @@ public class PluginServices {
     return load(ClientClasspathPlugin.class);
   }
 
-  public Collection<? extends MutationInterceptorFactory> findInterceptors() {
-    return load(MutationInterceptorFactory.class);
+  public Collection<MutationInterceptorFactory> findInterceptors() {
+    return adjustMissingFeatures(load(MutationInterceptorFactory.class));
   }
 
   public Collection<ProvidesFeature> findFeatures() {
-    List<ProvidesFeature> allFeatures = findToolClasspathPlugins().stream()
+    return findToolClasspathPlugins().stream()
             .filter(p -> p instanceof ProvidesFeature)
             .map(ProvidesFeature.class::cast)
             .collect(Collectors.toList());
+  }
 
+  private <T extends ProvidesFeature> Collection<T> adjustMissingFeatures(Collection<T> allPlugins) {
     // Some features are 'missing', just placeholders to features that
     // can be provided by an external plugin. We list them so it is
     // clear that they are available. When the external plugin is present
     // the missing feature it implements must be removed.
 
-    Map<Feature, List<ProvidesFeature>> missing = allFeatures.stream()
+    Map<Feature, List<T>> missing = allPlugins.stream()
             .filter(f -> f.provides().isMissing())
             .collect(Collectors.groupingBy(f -> f.provides()));
 
-    Map<Feature, List<ProvidesFeature>> real = allFeatures.stream()
+    Map<Feature, List<T>> real = allPlugins.stream()
             .filter(f -> !f.provides().isMissing())
             .collect(Collectors.groupingBy(f -> f.provides()));
 
-    Stream<ProvidesFeature> notImplemented = missing.entrySet().stream()
+    Stream<T> notImplemented = missing.entrySet().stream()
             .filter(e -> real.get(e.getKey()) == null)
             .flatMap(e -> e.getValue().stream());
 
     return Stream.concat(real.values().stream()
-            .flatMap(v -> v.stream()), notImplemented)
+                    .flatMap(v -> v.stream()), notImplemented)
             .collect(Collectors.toList());
-
   }
 
   private <S> Collection<S> load(final Class<S> ifc) {
