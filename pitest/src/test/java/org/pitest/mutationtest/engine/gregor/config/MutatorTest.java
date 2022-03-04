@@ -22,36 +22,10 @@ import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
-import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.mutators.experimental.ArgumentPropagationMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.ABSMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.AOD1Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.AOD2Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.AOR1Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.AOR2Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.AOR3Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.AOR4Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.CRCR1Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.CRCR2Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.CRCR3Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.CRCR4Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.CRCR5Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.CRCR6Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.OBBN1Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.OBBN2Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.OBBN3Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.ROR1Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.ROR2Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.ROR3Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.ROR4Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.ROR5Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.UOI1Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.UOI2Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.UOI3Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.rv.UOI4Mutator;
 
 public class MutatorTest {
 
@@ -185,71 +159,6 @@ public class MutatorTest {
   }
 
   @Test
-  public void providesResearchMutators() {
-    assertProvides("AOR1");
-    assertProvides("AOR2");
-    assertProvides("AOR3");
-    assertProvides("AOR4");
-
-    assertProvides("ABS");
-
-    assertProvides("AOD1");
-    assertProvides("AOD2");
-
-    assertProvides("CRCR1");
-    assertProvides("CRCR2");
-    assertProvides("CRCR3");
-    assertProvides("CRCR4");
-    assertProvides("CRCR5");
-    assertProvides("CRCR6");
-
-    assertProvides("OBBN1");
-    assertProvides("OBBN2");
-    assertProvides("OBBN3");
-
-    assertProvides("ROR1");
-    assertProvides("ROR2");
-    assertProvides("ROR3");
-    assertProvides("ROR4");
-    assertProvides("ROR5");
-
-    assertProvides("UOI1");
-    assertProvides("UOI2");
-    assertProvides("UOI3");
-    assertProvides("UOI4");
-  }
-
-  @Test
-  public void providesAORGroup() {
-    assertGroupHasSize("AOR", 4);
-  }
-
-  @Test
-  public void providesAODGroup() {
-    assertGroupHasSize("AOD", 2);
-  }
-
-  @Test
-  public void providesCRCRGroup() {
-    assertGroupHasSize("CRCR", 6);
-  }
-
-  @Test
-  public void providesOBBNGroup() {
-    assertGroupHasSize("OBBN", 3);
-  }
-
-  @Test
-  public void providesRORGroup() {
-    assertGroupHasSize("ROR", 5);
-  }
-
-  @Test
-  public void providesUOIGroup() {
-    assertGroupHasSize("UOI", 4);
-  }
-
-  @Test
   public void shouldReturnRequestedMutators() {
     assertThat(parseStrings("MATH", "INVERT_NEGS")).containsAll(
         asList(MathMutator.MATH,
@@ -275,7 +184,7 @@ public class MutatorTest {
 
   @Test
   public void allMutatorIdsReturnsKeysForAllMutators() {
-    List<String> incompleteSample = asList("DEFAULTS", "INCREMENTS", "EMPTY_RETURNS", "AOR");
+    List<String> incompleteSample = asList("DEFAULTS", "INCREMENTS", "EMPTY_RETURNS");
 
     // method is used by pitclipse
     assertThat(Mutator.allMutatorIds()).containsAll(incompleteSample);
