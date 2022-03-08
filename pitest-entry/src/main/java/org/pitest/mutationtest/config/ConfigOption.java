@@ -21,6 +21,11 @@ import java.io.Serializable;
 public enum ConfigOption {
 
   /**
+   * Defunct parameter, to be removed once gradle plugin updated
+   */
+  TEST_PLUGIN("testPlugin"),
+
+  /**
    * The directory to write report sot
    */
   REPORT_DIR("reportDir"),

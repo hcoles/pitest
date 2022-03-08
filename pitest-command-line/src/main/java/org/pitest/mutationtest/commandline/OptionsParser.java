@@ -76,6 +76,7 @@ import static org.pitest.mutationtest.config.ConfigOption.SKIP_FAILING_TESTS;
 import static org.pitest.mutationtest.config.ConfigOption.SOURCE_DIR;
 import static org.pitest.mutationtest.config.ConfigOption.TARGET_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.TEST_FILTER;
+import static org.pitest.mutationtest.config.ConfigOption.TEST_PLUGIN;
 import static org.pitest.mutationtest.config.ConfigOption.TEST_STRENGTH_THRESHOLD;
 import static org.pitest.mutationtest.config.ConfigOption.THREADS;
 import static org.pitest.mutationtest.config.ConfigOption.TIMEOUT_CONST;
@@ -133,6 +134,7 @@ public class OptionsParser {
   private final ArgumentAcceptingOptionSpec<Boolean> exportLineCoverageSpec;
   private final OptionSpec<String>                   javaExecutable;
   private final OptionSpec<KeyValuePair>             pluginPropertiesSpec;
+  private final OptionSpec<String>                   testPluginSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> includeLaunchClasspathSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> useClasspathJarSpec;
   
@@ -142,6 +144,12 @@ public class OptionsParser {
 
     this.parser = new OptionParser();
     this.parser.acceptsAll(Arrays.asList("h", "?"), "show help");
+
+    this.testPluginSpec = parserAccepts(TEST_PLUGIN)
+        .withRequiredArg()
+        .ofType(String.class)
+        .defaultsTo("junit")
+        .describedAs("this parameter is ignored and will be removed in a future release");
 
     this.reportDirSpec = parserAccepts(REPORT_DIR).withRequiredArg()
         .describedAs("directory to create report folder in").required();
