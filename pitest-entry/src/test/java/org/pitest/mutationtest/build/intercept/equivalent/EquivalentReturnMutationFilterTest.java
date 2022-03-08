@@ -74,6 +74,18 @@ public class EquivalentReturnMutationFilterTest {
   }
 
   @Test
+  public void filtersEquivalentBoxedTrueMutantsInTryCatch() {
+    this.verifier.assertFiltersMutationsFromMutator(TRUE_RETURNS.getGloballyUniqueId()
+            , ReturnsBoxedTrueInTryCatch.class);
+  }
+
+  @Test
+  public void filtersEquivalentBoxedFalseMutantsInTryCatch() {
+    this.verifier.assertFiltersMutationsFromMutator(FALSE_RETURNS.getGloballyUniqueId()
+            , ReturnsBoxedFalseInTryCatch.class);
+  }
+
+  @Test
   public void filtersEquivalentPrimitiveLongMutants() {
     this.verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsLong0.class);
   }
@@ -209,6 +221,28 @@ class ReturnsTrueInTryCatch {
     try {
       Double.valueOf(s);
       return true;
+    } catch (NumberFormatException ex) {
+      return HideConstant.hide(false);
+    }
+  }
+}
+
+class ReturnsBoxedTrueInTryCatch {
+  public Boolean a(String s) {
+    try {
+      Double.valueOf(s);
+      return true;
+    } catch (NumberFormatException ex) {
+      return HideConstant.hide(false);
+    }
+  }
+}
+
+class ReturnsBoxedFalseInTryCatch {
+  public Boolean a(String s) {
+    try {
+      Double.valueOf(s);
+      return false;
     } catch (NumberFormatException ex) {
       return HideConstant.hide(false);
     }

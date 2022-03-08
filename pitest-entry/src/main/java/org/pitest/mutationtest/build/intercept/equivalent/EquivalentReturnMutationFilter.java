@@ -2,6 +2,7 @@ package org.pitest.mutationtest.build.intercept.equivalent;
 
 import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.getStatic;
+import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallNamed;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
@@ -16,6 +17,7 @@ import java.util.function.Predicate;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.pitest.bytecode.analysis.ClassTree;
@@ -97,7 +99,7 @@ class HardCodedTrueEquivalentFilter implements MutationInterceptor {
           .then(isInstruction(MUTATED_INSTRUCTION.read()))
           .zeroOrMore(QueryStart.match(anyInstruction()))
           .compile(QueryParams.params(AbstractInsnNode.class)
-                  .withIgnores(notAnInstruction())
+                  .withIgnores(notAnInstruction().or(isA(LabelNode.class)))
           );
 
   private static final Set<String> MUTATOR_IDS = new HashSet<>();
@@ -216,7 +218,7 @@ class PrimitiveEquivalentFilter implements MutationInterceptor {
  */
 class EmptyReturnsFilter implements MutationInterceptor {
 
-    private static final Slot<AbstractInsnNode> MUTATED_INSTRUCTION = Slot.create(AbstractInsnNode.class);
+  private static final Slot<AbstractInsnNode> MUTATED_INSTRUCTION = Slot.create(AbstractInsnNode.class);
 
   static final SequenceQuery<AbstractInsnNode> CONSTANT_ZERO = QueryStart
           .match(isZeroConstant())
@@ -232,7 +234,7 @@ class EmptyReturnsFilter implements MutationInterceptor {
           .then(isInstruction(MUTATED_INSTRUCTION.read()))
           .zeroOrMore(QueryStart.match(anyInstruction()))
           .compile(QueryParams.params(AbstractInsnNode.class)
-                  .withIgnores(notAnInstruction())
+                  .withIgnores(notAnInstruction().or(isA(LabelNode.class)))
           );
 
 
