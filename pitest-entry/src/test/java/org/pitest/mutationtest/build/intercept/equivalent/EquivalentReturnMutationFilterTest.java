@@ -1,5 +1,7 @@
 package org.pitest.mutationtest.build.intercept.equivalent;
 
+import com.example.emptyreturns.AlreadyReturnsEmptyOptionalInTryWithResourcesBlock;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
@@ -7,9 +9,8 @@ import org.pitest.mutationtest.build.intercept.javafeatures.FilterTester;
 import org.pitest.mutationtest.engine.gregor.mutators.returns.EmptyObjectReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.returns.PrimitiveReturnsMutator;
+import org.pitest.util.CurrentRuntime;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assume.assumeTrue;
 import static org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanFalseReturnValsMutator.FALSE_RETURNS;
 import static org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanTrueReturnValsMutator.TRUE_RETURNS;
 
@@ -26,7 +28,7 @@ public class EquivalentReturnMutationFilterTest {
 
   MutationInterceptor testee = new EquivalentReturnMutationFilter().createInterceptor(null);
 
-  FilterTester verifier = new FilterTester("", this.testee, PrimitiveReturnsMutator.PRIMITIVE_RETURNS
+  FilterTester verifier = new FilterTester("emptyReturns/{0}_{1}", this.testee, PrimitiveReturnsMutator.PRIMITIVE_RETURNS
                                                      , EmptyObjectReturnValsMutator.EMPTY_RETURNS
                                                      , NullReturnValsMutator.NULL_RETURNS
                                                      , FALSE_RETURNS
@@ -199,7 +201,17 @@ public class EquivalentReturnMutationFilterTest {
 
   @Test
   public void filtersEquivalentOptionalMutantsInTryWithResourcesBlocks() {
+    // skip test if we are running/compiling with java 8 as out analysis can't yet
+    // handle the bytecode
+    assumeTrue(CurrentRuntime.version() >= 9);
     verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyOptionalInTryWithResourcesBlock.class);
+  }
+
+  @Test
+  @Ignore("need more complex analysis")
+  public void filtersEquivalentOptionalMutantsInTryWithResourcesBlocksForOtherCompilers() {
+    // javac sample is for java 8
+    verifier.assertFiltersNMutationFromSample(1, "AlreadyReturnsEmptyOptionalInTryWithResourcesBlock");
   }
 
   @Test
@@ -433,19 +445,6 @@ class AlreadyReturnsEmptyOptionalInTryBlock {
       return Optional.of("foo");
     }
   }
-}
-
-class AlreadyReturnsEmptyOptionalInTryWithResourcesBlock {
-  public Optional<String> a() throws IOException {
-    try(ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-      Double.parseDouble("12");
-      if (os.size() > 42) {
-        return Optional.empty();
-      }
-      return Optional.of("foo");
-    }
-  }
-
 }
 
 class AlreadyReturnsEmptyStream {
