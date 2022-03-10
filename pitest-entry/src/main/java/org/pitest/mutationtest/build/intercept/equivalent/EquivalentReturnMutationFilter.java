@@ -5,6 +5,7 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.getStatic;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallNamed;
+import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
 
@@ -23,6 +24,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
+import org.pitest.classinfo.ClassName;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.CompoundMutationInterceptor;
@@ -230,13 +232,12 @@ class EmptyReturnsFilter implements MutationInterceptor {
   static final SequenceMatcher<AbstractInsnNode> ZERO_VALUES = QueryStart
           .any(AbstractInsnNode.class)
           .zeroOrMore(QueryStart.match(anyInstruction()))
-          .then(CONSTANT_ZERO.or(CONSTANT_FALSE))
+          .then(CONSTANT_ZERO.or(CONSTANT_FALSE).or(QueryStart.match(loadsEmptyReturnOntoStack())))
           .then(isInstruction(MUTATED_INSTRUCTION.read()))
           .zeroOrMore(QueryStart.match(anyInstruction()))
           .compile(QueryParams.params(AbstractInsnNode.class)
                   .withIgnores(notAnInstruction().or(isA(LabelNode.class)))
           );
-
 
   private static final Set<String> MUTATOR_IDS = new HashSet<>();
   private static final Set<Integer> ZERO_CONSTANTS = new HashSet<>();
@@ -286,14 +287,7 @@ class EmptyReturnsFilter implements MutationInterceptor {
             .get();
         final int mutatedInstruction = a.getInstructionIndex();
         return returnsZeroValue(method, mutatedInstruction)
-            || returnsEmptyString(method, mutatedInstruction)
-            || returns(method, mutatedInstruction, "java/util/Optional","empty")
-            || returns(method, mutatedInstruction, "java/util/stream/Stream","empty")
-            || returns(method, mutatedInstruction, "java/util/Collections","emptyList")
-            || returns(method, mutatedInstruction, "java/util/Collections","emptyMap")
-            || returns(method, mutatedInstruction, "java/util/Collections","emptySet")
-            || returns(method, mutatedInstruction, "java/util/List","of")
-            || returns(method, mutatedInstruction, "java/util/Set","of");
+            || returnsEmptyString(method, mutatedInstruction);
       }
 
       private Boolean returnsZeroValue(MethodTree method,
@@ -301,19 +295,6 @@ class EmptyReturnsFilter implements MutationInterceptor {
           final Context<AbstractInsnNode> context = Context.start(method.instructions(), false);
           context.store(MUTATED_INSTRUCTION.write(), method.instruction(mutatedInstruction));
           return ZERO_VALUES.matches(method.instructions(), context);
-      }
-          
-      private boolean returns(MethodTree method, int mutatedInstruction, String owner, String name) {
-        final AbstractInsnNode node = method.realInstructionBefore(mutatedInstruction);
-        if (node instanceof MethodInsnNode ) {
-          final MethodInsnNode call = (MethodInsnNode) node;
-          return call.owner.equals(owner) && call.name.equals(name) && takesNoArguments(call.desc);
-        }
-        return false;
-      }
-
-      private boolean takesNoArguments(String desc) {
-        return Type.getArgumentTypes(desc).length == 0;
       }
 
       private boolean returnsEmptyString(MethodTree method,
@@ -326,6 +307,30 @@ class EmptyReturnsFilter implements MutationInterceptor {
         return false;
       }
 
+    };
+  }
+
+  private static Match<AbstractInsnNode> loadsEmptyReturnOntoStack() {
+    return noArgsCall("java/util/Optional", "empty")
+            .or(noArgsCall("java/util/stream/Stream", "empty"))
+            .or(noArgsCall("java/util/Collections", "emptyList"))
+            .or(noArgsCall("java/util/Collections", "emptyMap"))
+            .or(noArgsCall("java/util/Collections", "emptySet"))
+            .or(noArgsCall("java/util/List", "of"))
+            .or(noArgsCall("java/util/Set", "of"));
+  }
+
+  private static Match<AbstractInsnNode> noArgsCall(String owner, String name) {
+    return methodCallTo(ClassName.fromString(owner), name).and(takesNoArgs());
+  }
+
+  private static Match<AbstractInsnNode> takesNoArgs() {
+    return (c,node) -> {
+      if (node instanceof MethodInsnNode ) {
+        final MethodInsnNode call = (MethodInsnNode) node;
+        return Type.getArgumentTypes(call.desc).length == 0;
+      }
+      return false;
     };
   }
 

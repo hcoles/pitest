@@ -8,6 +8,8 @@ import org.pitest.mutationtest.engine.gregor.mutators.returns.EmptyObjectReturnV
 import org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.returns.PrimitiveReturnsMutator;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -188,6 +190,16 @@ public class EquivalentReturnMutationFilterTest {
   @Test
   public void filtersEquivalentOptionalMutants() {
     verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyOptional.class);
+  }
+
+  @Test
+  public void filtersEquivalentOptionalMutantsInTryBlocks() {
+    verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyOptionalInTryBlock.class);
+  }
+
+  @Test
+  public void filtersEquivalentOptionalMutantsInTryWithResourcesBlocks() {
+    verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyOptionalInTryWithResourcesBlock.class);
   }
 
   @Test
@@ -410,6 +422,30 @@ class AlreadyReturnsEmptyOptional {
   public Optional<String> a() {
     return Optional.empty();
   }
+}
+
+class AlreadyReturnsEmptyOptionalInTryBlock {
+  public Optional<String> a() {
+    try {
+      Double.parseDouble("12");
+      return Optional.empty();
+    } catch (Exception ex) {
+      return Optional.of("foo");
+    }
+  }
+}
+
+class AlreadyReturnsEmptyOptionalInTryWithResourcesBlock {
+  public Optional<String> a() throws IOException {
+    try(ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+      Double.parseDouble("12");
+      if (os.size() > 42) {
+        return Optional.empty();
+      }
+      return Optional.of("foo");
+    }
+  }
+
 }
 
 class AlreadyReturnsEmptyStream {
