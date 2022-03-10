@@ -1,12 +1,17 @@
 package org.pitest.mutationtest.build.intercept.equivalent;
 
+import static org.objectweb.asm.Opcodes.ALOAD;
+import static org.objectweb.asm.Opcodes.ASTORE;
+import static org.pitest.bytecode.analysis.InstructionMatchers.aVariableAccess;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.getStatic;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallNamed;
+import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
+import static org.pitest.bytecode.analysis.InstructionMatchers.variableMatches;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,6 +28,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
+import org.pitest.classinfo.ClassName;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.CompoundMutationInterceptor;
@@ -219,6 +225,7 @@ class PrimitiveEquivalentFilter implements MutationInterceptor {
 class EmptyReturnsFilter implements MutationInterceptor {
 
   private static final Slot<AbstractInsnNode> MUTATED_INSTRUCTION = Slot.create(AbstractInsnNode.class);
+  private static final Slot<Integer> LOCAL_VAR = Slot.create(Integer.class);
 
   static final SequenceQuery<AbstractInsnNode> CONSTANT_ZERO = QueryStart
           .match(isZeroConstant())
@@ -230,13 +237,28 @@ class EmptyReturnsFilter implements MutationInterceptor {
   static final SequenceMatcher<AbstractInsnNode> ZERO_VALUES = QueryStart
           .any(AbstractInsnNode.class)
           .zeroOrMore(QueryStart.match(anyInstruction()))
-          .then(CONSTANT_ZERO.or(CONSTANT_FALSE))
+          .then(CONSTANT_ZERO.or(CONSTANT_FALSE).or(QueryStart.match(loadsEmptyReturnOntoStack())))
           .then(isInstruction(MUTATED_INSTRUCTION.read()))
           .zeroOrMore(QueryStart.match(anyInstruction()))
           .compile(QueryParams.params(AbstractInsnNode.class)
                   .withIgnores(notAnInstruction().or(isA(LabelNode.class)))
           );
 
+  static final SequenceMatcher<AbstractInsnNode> INDIRECT_ZERO_VALUES = QueryStart
+          .any(AbstractInsnNode.class)
+          .zeroOrMore(QueryStart.match(anyInstruction()))
+          .then(loadsEmptyReturnOntoStack())
+          .then(aStoreTo(LOCAL_VAR))
+          // match anything that doesn't overwrite the local var
+          // possible we will get issues here if there is a jump instruction
+          // to get to the point that the empty value is returned.
+          .zeroOrMore(QueryStart.match(aStoreTo(LOCAL_VAR).negate()))
+          .then(opCode(ALOAD).and(variableMatches(LOCAL_VAR.read())))
+          .then(isInstruction(MUTATED_INSTRUCTION.read()))
+          .zeroOrMore(QueryStart.match(anyInstruction()))
+          .compile(QueryParams.params(AbstractInsnNode.class)
+                  .withIgnores(notAnInstruction().or(isA(LabelNode.class)))
+          );
 
   private static final Set<String> MUTATOR_IDS = new HashSet<>();
   private static final Set<Integer> ZERO_CONSTANTS = new HashSet<>();
@@ -257,7 +279,7 @@ class EmptyReturnsFilter implements MutationInterceptor {
     return InterceptorType.FILTER;
   }
 
-@Override
+  @Override
   public void begin(ClassTree clazz) {
     this.currentClass = clazz;
   }
@@ -266,6 +288,10 @@ class EmptyReturnsFilter implements MutationInterceptor {
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
     return FCollection.filter(mutations, Prelude.not(isEquivalent(m)));
+  }
+
+  private static Match<AbstractInsnNode> aStoreTo(Slot<Integer> variable) {
+    return opCode(ASTORE).and(aVariableAccess(variable.write()));
   }
 
   private static Match<AbstractInsnNode> isZeroConstant() {
@@ -285,35 +311,16 @@ class EmptyReturnsFilter implements MutationInterceptor {
             .findFirst()
             .get();
         final int mutatedInstruction = a.getInstructionIndex();
-        return returnsZeroValue(method, mutatedInstruction)
-            || returnsEmptyString(method, mutatedInstruction)
-            || returns(method, mutatedInstruction, "java/util/Optional","empty")
-            || returns(method, mutatedInstruction, "java/util/stream/Stream","empty")
-            || returns(method, mutatedInstruction, "java/util/Collections","emptyList")
-            || returns(method, mutatedInstruction, "java/util/Collections","emptyMap")
-            || returns(method, mutatedInstruction, "java/util/Collections","emptySet")
-            || returns(method, mutatedInstruction, "java/util/List","of")
-            || returns(method, mutatedInstruction, "java/util/Set","of");
+        return returnsZeroValue(ZERO_VALUES, method, mutatedInstruction)
+            || returnsZeroValue(INDIRECT_ZERO_VALUES, method, mutatedInstruction)
+            || returnsEmptyString(method, mutatedInstruction);
       }
 
-      private Boolean returnsZeroValue(MethodTree method,
-          int mutatedInstruction) {
+      private Boolean returnsZeroValue(SequenceMatcher<AbstractInsnNode> sequence, MethodTree method,
+                                       int mutatedInstruction) {
           final Context<AbstractInsnNode> context = Context.start(method.instructions(), false);
           context.store(MUTATED_INSTRUCTION.write(), method.instruction(mutatedInstruction));
-          return ZERO_VALUES.matches(method.instructions(), context);
-      }
-          
-      private boolean returns(MethodTree method, int mutatedInstruction, String owner, String name) {
-        final AbstractInsnNode node = method.realInstructionBefore(mutatedInstruction);
-        if (node instanceof MethodInsnNode ) {
-          final MethodInsnNode call = (MethodInsnNode) node;
-          return call.owner.equals(owner) && call.name.equals(name) && takesNoArguments(call.desc);
-        }
-        return false;
-      }
-
-      private boolean takesNoArguments(String desc) {
-        return Type.getArgumentTypes(desc).length == 0;
+          return sequence.matches(method.instructions(), context);
       }
 
       private boolean returnsEmptyString(MethodTree method,
@@ -326,6 +333,30 @@ class EmptyReturnsFilter implements MutationInterceptor {
         return false;
       }
 
+    };
+  }
+
+  private static Match<AbstractInsnNode> loadsEmptyReturnOntoStack() {
+    return noArgsCall("java/util/Optional", "empty")
+            .or(noArgsCall("java/util/stream/Stream", "empty"))
+            .or(noArgsCall("java/util/Collections", "emptyList"))
+            .or(noArgsCall("java/util/Collections", "emptyMap"))
+            .or(noArgsCall("java/util/Collections", "emptySet"))
+            .or(noArgsCall("java/util/List", "of"))
+            .or(noArgsCall("java/util/Set", "of"));
+  }
+
+  private static Match<AbstractInsnNode> noArgsCall(String owner, String name) {
+    return methodCallTo(ClassName.fromString(owner), name).and(takesNoArgs());
+  }
+
+  private static Match<AbstractInsnNode> takesNoArgs() {
+    return (c,node) -> {
+      if (node instanceof MethodInsnNode ) {
+        final MethodInsnNode call = (MethodInsnNode) node;
+        return Type.getArgumentTypes(call.desc).length == 0;
+      }
+      return false;
     };
   }
 
