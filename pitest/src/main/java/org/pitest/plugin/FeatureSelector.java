@@ -20,7 +20,7 @@ public class FeatureSelector<T extends ProvidesFeature> {
     this.active = selectFeatures(features, filters);
   }
 
-  public  List<T> getActiveFeatures() {
+  public List<T> getActiveFeatures() {
     return this.active;
   }
 

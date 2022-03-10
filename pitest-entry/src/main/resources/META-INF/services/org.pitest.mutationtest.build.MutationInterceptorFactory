@@ -19,3 +19,6 @@ org.pitest.mutationtest.build.intercept.equivalent.EqualsPerformanceShortcutFilt
 org.pitest.mutationtest.build.intercept.equivalent.EquivalentReturnMutationFilter
 
 org.pitest.plugin.export.MutantExportFactory
+
+org.pitest.plugin.available.MissingKotlinFeature
+org.pitest.plugin.available.MissingGitFeature
