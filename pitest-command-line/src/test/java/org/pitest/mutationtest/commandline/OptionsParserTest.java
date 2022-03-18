@@ -556,7 +556,14 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("--fullMutationMatrix=true");
     assertTrue(actual.isFullMutationMatrix());
   }
-  
+
+  @Test
+  public void shouldParseProjectBase() {
+    final ReportOptions actual = parseAddingRequiredArgs(
+            "--projectBase", "foo");
+    assertEquals(new File("foo"), actual.getProjectBase());
+  }
+
   private String getNonCanonicalGregorEngineClassPath() {
     final String gregorEngineClassPath = GregorMutationEngine.class
         .getProtectionDomain().getCodeSource().getLocation().getFile();

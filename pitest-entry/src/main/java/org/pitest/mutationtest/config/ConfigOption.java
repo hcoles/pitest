@@ -230,7 +230,14 @@ public enum ConfigOption {
    * Allows very long classpaths that would otherwise exceed OS limits, but
    * may cause problems with some third party libraries.
    */
-  USE_CLASSPATH_JAR("useClasspathJar", false);
+  USE_CLASSPATH_JAR("useClasspathJar", false),
+
+  /**
+   * Base directory of a project. For a multi-module build this should
+   * be set to the directory that contains the top level build file. Usually
+   * this is the same directory as the source control root/
+   */
+  PROJECT_BASE("projectBase");
 
   private final String       text;
   private final Serializable defaultValue;
