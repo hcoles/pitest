@@ -95,7 +95,7 @@ public class AbstractPitMojo extends AbstractMojo {
    */
   @Parameter(property = "historyInputFile")
   private File                        historyInputFile;
-  
+
   /**
    * Convenience flag to read and write history to a local temp file.
    * 
@@ -331,6 +331,7 @@ public class AbstractPitMojo extends AbstractMojo {
    */
   @Parameter
   private Map<String, String>         pluginConfiguration;
+
 
   /**
    * environment configuration
