@@ -458,7 +458,10 @@ public class OptionsParser {
 
     data.setIncludedTestMethods(this.includedTestMethodsSpec.values(userArgs));
     data.setJavaExecutable(this.javaExecutable.value(userArgs));
-    data.setProjectBase(this.projectBaseSpec.value(userArgs));
+
+    if (userArgs.has(projectBaseSpec)) {
+      data.setProjectBase(this.projectBaseSpec.value(userArgs).toPath());
+    }
 
     if (userArgs.has("?")) {
       return new ParseResult(data, "See above for supported parameters.");

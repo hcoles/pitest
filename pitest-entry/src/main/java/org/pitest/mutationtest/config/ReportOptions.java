@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -139,7 +140,7 @@ public class ReportOptions {
   
   private boolean                        useClasspathJar;
 
-  private File                           projectBase;
+  private Path                           projectBase;
 
 
   public Verbosity getVerbosity() {
@@ -617,11 +618,11 @@ public class ReportOptions {
     this.useClasspathJar = useClasspathJar;
   }
 
-  public File getProjectBase() {
+  public Path getProjectBase() {
     return projectBase;
   }
 
-  public void setProjectBase(File projectBase) {
+  public void setProjectBase(Path projectBase) {
     this.projectBase = projectBase;
   }
 
