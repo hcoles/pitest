@@ -56,14 +56,6 @@ public class NakedReceiverMutatorTest extends MutatorTestBase {
     assertNoMutants(HasStaticMethodCallWithSameType.class);
   }
 
-  @Test
-  public void willReplaceCallToMethodWithDifferentGenericTypeDueToTypeErasure()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(CallsMethodsWithGenericTypes.class);
-    final Foo<String> receiver = new Foo<>("3");
-    assertMutantCallableReturns(new CallsMethodsWithGenericTypes(receiver),
-        mutant, receiver);
-  }
 
   @Test
   public void shouldRemoveDslMethods() throws Exception {
@@ -95,20 +87,6 @@ public class NakedReceiverMutatorTest extends MutatorTestBase {
     }
   }
 
-  private static class CallsMethodsWithGenericTypes
-      implements Callable<Foo<?>> {
-    private final Foo<String> myArg;
-
-    public CallsMethodsWithGenericTypes(Foo<String> myArg) {
-      this.myArg = myArg;
-    }
-
-    @Override
-    public Foo<?> call() {
-      return this.myArg.returnsFooInteger();
-    }
-  }
-
   static class HasStaticMethodCallWithSameType {
     public void call() {
       HasStaticMethodCallWithSameType.instance();
@@ -116,22 +94,6 @@ public class NakedReceiverMutatorTest extends MutatorTestBase {
 
     private static HasStaticMethodCallWithSameType instance() {
       return new HasStaticMethodCallWithSameType();
-    }
-  }
-
-  static class Foo<T> extends ArrayList<T> {
-
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
-
-    public Foo(T arg) {
-      super(singletonList(arg));
-    }
-
-    public Foo<Integer> returnsFooInteger() {
-      return new Foo<>(2);
     }
   }
 

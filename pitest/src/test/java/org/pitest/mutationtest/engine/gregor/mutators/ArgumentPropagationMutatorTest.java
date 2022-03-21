@@ -23,13 +23,19 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.LongFunction;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
+import org.pitest.verifier.mutants.MutatorVerifierStart;
 
 public class ArgumentPropagationMutatorTest extends MutatorTestBase {
+
+  MutatorVerifierStart v = MutatorVerifierStart.forMutator(EXPERIMENTAL_ARGUMENT_PROPAGATION);
 
   @Before
   public void setupEngineToUseReplaceMethodWithArgumentOfSameTypeAsReturnValueMutator() {
@@ -37,78 +43,62 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldReplaceMethodCallWithStringArgument() throws Exception {
-    final Mutant mutant = getFirstMutant(HasStringMethodCall.class);
-    assertMutantCallableReturns(new HasStringMethodCall("example"), mutant,
-        "example");
+  public void shouldReplaceMethodCallWithStringArgument() {
+    v.forFunctionClass(HasStringMethodCall.class)
+            .firstMutantShouldReturn(() -> "example", "example");
   }
 
-  private static class HasStringMethodCall implements Callable<String> {
-    private final String arg;
-
-    public HasStringMethodCall(String arg) {
-      this.arg = arg;
-    }
+  private static class HasStringMethodCall implements Function<String, String> {
 
     public String delegate(final String aString) {
       return "abc" + aString;
     }
 
-    @Override
-    public String call() throws Exception {
-      return delegate(this.arg);
+    public String apply(String arg) {
+      return delegate(arg);
     }
   }
 
   @Test
-  public void shouldReplaceMethodCallWithIntArgument() throws Exception {
-    final Mutant mutant = getFirstMutant(HasIntMethodCall.class);
-    assertMutantCallableReturns(new HasIntMethodCall(20), mutant, "20");
+  public void shouldReplaceMethodCallWithIntArgument() {
+    v.forIntFunctionClass(HasIntMethodCall.class)
+                    .firstMutantShouldReturn(() -> 20, "20");
   }
 
-  private static class HasIntMethodCall implements Callable<String> {
-    private final int arg;
-
-    public HasIntMethodCall(int arg) {
-      this.arg = arg;
-    }
+  private static class HasIntMethodCall implements IntFunction<String> {
 
     public int delegate(int aInt) {
       return 22 + aInt;
     }
 
     @Override
-    public String call() throws Exception {
-      return String.valueOf(delegate(this.arg));
+    public String apply(int arg) {
+      return String.valueOf(delegate(arg));
     }
   }
 
   @Test
-  public void shouldReplaceMethodCallWithLongArgument() throws Exception {
-    final Mutant mutant = getFirstMutant(HasLongMethodCall.class);
-    assertMutantCallableReturns(new HasLongMethodCall(20L), mutant, "20");
+  public void shouldReplaceMethodCallWithLongArgument() {
+    v.forLongFunctionClass(HasLongMethodCall.class)
+            .firstMutantShouldReturn(() -> 20L, "20");
   }
 
-  private static class HasLongMethodCall implements Callable<String> {
-    private final long arg;
-
-    public HasLongMethodCall(long arg) {
-      this.arg = arg;
-    }
+  private static class HasLongMethodCall implements LongFunction<String> {
 
     public long delegate(long argument) {
       return 22L + argument;
     }
 
     @Override
-    public String call() throws Exception {
-      return String.valueOf(delegate(this.arg));
+    public String apply(long arg) {
+      return String.valueOf(delegate(arg));
     }
   }
 
   @Test
-  public void shouldNotMutateMethodThatReturnsDifferentType() throws Exception {
-    assertNoMutants(ReturnsDifferentType.class);
+  public void shouldNotMutateMethodThatReturnsDifferentType() {
+    v.forClass(ReturnsDifferentType.class)
+                    .noMutantsCreated();
   }
 
   class ReturnsDifferentType implements Callable<String> {
@@ -129,7 +119,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
         new Object(), 3), mutant, "abc");
   }
 
-  private class OnlyFirstArgumentHasMatchingType implements Callable<String> {
+  private static class OnlyFirstArgumentHasMatchingType implements Callable<String> {
     private final String aString;
     private final Object anObject;
     private final long   aLong;
@@ -158,7 +148,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
         mutant, "22");
   }
 
-  private class HasSeveralArgumentWithMatchingType implements Callable<String> {
+  private static class HasSeveralArgumentWithMatchingType implements Callable<String> {
     private final int int1;
     private final int int2;
 
@@ -179,26 +169,22 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void alsoReplaceCallToMethodWhenReturnValueIsNotUsed()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(ReturnValueNotUsed.class);
-    assertMutantCallableReturns(new ReturnValueNotUsed(), mutant, false);
+  public void alsoReplaceCallToMethodWhenReturnValueIsNotUsed() {
+    v.forFunctionClass(ReturnValueNotUsed.class)
+                    .firstMutantShouldReturn(() -> asList("xyz"), false);
   }
 
-  private class ReturnValueNotUsed implements Callable<Boolean> {
-    private final List<String> aList = asList("xyz");
-
+  private static class ReturnValueNotUsed implements Function<List<String>, Boolean> {
     @Override
-    public Boolean call() throws Exception {
-      this.aList.set(0, "will not be present in list in mutated version");
-      return this.aList
+    public Boolean apply(List<String> aList) {
+      aList.set(0, "will not be present in list in mutated version");
+      return aList
           .contains("will not be present in list in mutated version");
     }
   }
 
   @Test
-  public void shouldReplaceMethodsReturningArraysMatchingArgumentType()
-      throws Exception {
+  public void shouldReplaceMethodsReturningArraysMatchingArgumentType() {
     final Mutant mutant = getFirstMutant(HasArrayMethod.class);
     final String[] expected = { "1", "2" };
     final String[] actual = mutateAndCall(new HasArrayMethod(), mutant);
@@ -219,9 +205,9 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldNotReplaceMethodsReturningArraysOfUnmatchedType()
-      throws Exception {
-    assertNoMutants(HasArrayMethodOfDifferentType.class);
+  public void shouldNotReplaceMethodsReturningArraysOfUnmatchedType() {
+    v.forClass(HasArrayMethodOfDifferentType.class)
+                    .noMutantsCreated();
   }
 
   private static class HasArrayMethodOfDifferentType implements
@@ -239,8 +225,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void willSubstituteCollectionsOfDifferentTypesDueToTypeErasure()
-      throws Exception {
+  public void willSubstituteCollectionsOfDifferentTypesDueToTypeErasure() {
     final Mutant mutant = getFirstMutant(HasListMethod.class);
     final List<String> expected = Collections.emptyList();
     final List<String> actual = mutateAndCall(new HasListMethod(), mutant);
@@ -269,7 +254,7 @@ public class ArgumentPropagationMutatorTest extends MutatorTestBase {
         "lowercase", listener), mutant, "lowercase");
   }
 
-  private class CallsOtherObjectWithResultOfInstanceMethod implements
+  private static class CallsOtherObjectWithResultOfInstanceMethod implements
       Callable<String> {
     private final String     arg;
     private final MyListener listener;
