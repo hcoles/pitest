@@ -139,6 +139,8 @@ public class ReportOptions {
   
   private boolean                        useClasspathJar;
 
+  private File                           projectBase;
+
 
   public Verbosity getVerbosity() {
     return this.verbosity;
@@ -615,6 +617,14 @@ public class ReportOptions {
     this.useClasspathJar = useClasspathJar;
   }
 
+  public File getProjectBase() {
+    return projectBase;
+  }
+
+  public void setProjectBase(File projectBase) {
+    this.projectBase = projectBase;
+  }
+
   @Override
   public String toString() {
     return "ReportOptions [targetClasses=" + targetClasses
@@ -643,6 +653,5 @@ public class ReportOptions {
         + ", testPlugin=" + testPlugin + ", useClasspathJar=" + useClasspathJar
         + ", skipFailingTests=" + skipFailingTests + "]";
   }
-
 
 }

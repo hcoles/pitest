@@ -71,6 +71,7 @@ import static org.pitest.mutationtest.config.ConfigOption.MUTATION_THRESHOLD;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATION_UNIT_SIZE;
 import static org.pitest.mutationtest.config.ConfigOption.OUTPUT_FORMATS;
 import static org.pitest.mutationtest.config.ConfigOption.PLUGIN_CONFIGURATION;
+import static org.pitest.mutationtest.config.ConfigOption.PROJECT_BASE;
 import static org.pitest.mutationtest.config.ConfigOption.REPORT_DIR;
 import static org.pitest.mutationtest.config.ConfigOption.SKIP_FAILING_TESTS;
 import static org.pitest.mutationtest.config.ConfigOption.SOURCE_DIR;
@@ -137,6 +138,7 @@ public class OptionsParser {
   private final OptionSpec<String>                   testPluginSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> includeLaunchClasspathSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> useClasspathJarSpec;
+  private final OptionSpec<File>                     projectBaseSpec;
   
   public OptionsParser(Predicate<String> dependencyFilter) {
 
@@ -365,6 +367,10 @@ public class OptionsParser {
     this.pluginPropertiesSpec = parserAccepts(PLUGIN_CONFIGURATION)
         .withRequiredArg().ofType(KeyValuePair.class)
         .describedAs("custom plugin properties");
+
+    this.projectBaseSpec = parserAccepts(PROJECT_BASE)
+            .withRequiredArg().ofType(File.class);
+
   }
 
   private OptionSpecBuilder parserAccepts(final ConfigOption option) {
@@ -452,6 +458,7 @@ public class OptionsParser {
 
     data.setIncludedTestMethods(this.includedTestMethodsSpec.values(userArgs));
     data.setJavaExecutable(this.javaExecutable.value(userArgs));
+    data.setProjectBase(this.projectBaseSpec.value(userArgs));
 
     if (userArgs.has("?")) {
       return new ParseResult(data, "See above for supported parameters.");
