@@ -35,11 +35,7 @@ public class MutatorVerifier {
     }
 
     public StringAssert firstMutantIsDescription() {
-        List<MutationDetails> mutants = findMutations();
-        assertThat(mutants)
-                .describedAs("No mutations created")
-                .isNotEmpty();
-        return new StringAssert(findMutations().get(0).getDescription());
+        return new StringAssert(firstMutant().getDescription());
     }
 
     List<MutationDetails> findMutations() {
@@ -49,4 +45,11 @@ public class MutatorVerifier {
     }
 
 
+    public MutationDetails firstMutant() {
+        List<MutationDetails> mutants = findMutations();
+        assertThat(mutants)
+                .describedAs("No mutations created")
+                .isNotEmpty();
+        return mutants.get(0);
+    }
 }
