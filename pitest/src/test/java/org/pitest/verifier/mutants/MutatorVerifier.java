@@ -1,5 +1,6 @@
 package org.pitest.verifier.mutants;
 
+import org.assertj.core.api.StringAssert;
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
@@ -33,12 +34,12 @@ public class MutatorVerifier {
         assertThat(findMutations()).isEmpty();
     }
 
-    public void firstMutantIsDescribedAs(String expected) {
+    public StringAssert firstMutantIsDescription() {
         List<MutationDetails> mutants = findMutations();
         assertThat(mutants)
                 .describedAs("No mutations created")
                 .isNotEmpty();
-        assertThat(findMutations().get(0).getDescription()).isEqualTo(expected);
+        return new StringAssert(findMutations().get(0).getDescription());
     }
 
     List<MutationDetails> findMutations() {

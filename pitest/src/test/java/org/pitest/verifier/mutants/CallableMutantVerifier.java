@@ -20,9 +20,7 @@ import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,6 +39,12 @@ public class CallableMutantVerifier<B> extends MutatorVerifier {
         super(engine, target, filter);
         this.engine = engine;
         this.target = target;
+    }
+
+
+    public B firstMutantReturnValue() {
+        List<MutationDetails> mutations = findMutations();
+        return mutateAndCall(getFirstMutant(mutations));
     }
 
     /**
