@@ -7,6 +7,7 @@ import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
 import java.util.Arrays;
+import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.LongFunction;
@@ -39,6 +40,11 @@ public class MutatorVerifierStart {
     public MutatorVerifier forClass(Class<?> clazz) {
         GregorMutater engine = makeEngine();
         return new MutatorVerifier(engine, clazz, mutantFilter);
+    }
+
+    public <B> CallableMutantVerifier<B> forCallableClass(Class<? extends Callable<B>> clazz) {
+        GregorMutater engine = makeEngine();
+        return new CallableMutantVerifier<B>(engine, clazz, mutantFilter);
     }
 
     public <A,B> MutantVerifier<A,B> forFunctionClass(Class<? extends Function<A,B>> clazz) {
