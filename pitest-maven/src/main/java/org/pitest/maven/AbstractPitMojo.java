@@ -324,6 +324,13 @@ public class AbstractPitMojo extends AbstractMojo {
   private boolean                     useSlf4j;
 
   /**
+   * The base directory of a multi-module project. Defaults to the execution
+   * directory
+   */
+  @Parameter(defaultValue = "${session.executionRootDirectory}", property = "projectBase")
+  private String                       projectBase;
+
+  /**
    * Configuration properties.
    *
    * Value pairs may be used by pitest plugins.
@@ -395,6 +402,7 @@ public class AbstractPitMojo extends AbstractMojo {
     RunDecision shouldRun = shouldRun();
 
     if (shouldRun.shouldRun()) {
+      this.getLog().info("Root dir is : " + projectBase);
       for (ToolClasspathPlugin each : this.plugins
           .findToolClasspathPlugins()) {
         if (each instanceof MissingPlugin) {
@@ -712,6 +720,10 @@ public class AbstractPitMojo extends AbstractMojo {
 
   public String getVerbosity() {
     return verbosity;
+  }
+
+  public String getProjectBase() {
+    return projectBase;
   }
 
   static class RunDecision {

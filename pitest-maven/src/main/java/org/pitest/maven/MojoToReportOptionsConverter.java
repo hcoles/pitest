@@ -29,6 +29,7 @@ import org.pitest.util.Glob;
 import org.pitest.util.Verbosity;
 
 import java.io.File;
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -149,6 +150,10 @@ public class MojoToReportOptionsConverter {
     data.setIncludedTestMethods(this.mojo.getIncludedTestMethods());
 
     data.setSkipFailingTests(this.mojo.skipFailingTests());
+
+    if (this.mojo.getProjectBase() != null) {
+      data.setProjectBase(FileSystems.getDefault().getPath(this.mojo.getProjectBase()));
+    }
 
     checkForObsoleteOptions(this.mojo);
 

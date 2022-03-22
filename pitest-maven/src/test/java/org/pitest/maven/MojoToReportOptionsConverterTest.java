@@ -421,6 +421,11 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
             .hasMessageContaining("+CLASSLIMIT(limit[1])");
   }
 
+  public void testParsesProjectBase() {
+    final ReportOptions actual = parseConfig("<projectBase>user</projectBase>");
+    assertThat(actual.getProjectBase().toString()).isEqualTo("user");
+  }
+
   private ReportOptions parseConfig(final String xml) {
     try {
       final String pom = createPomWithConfiguration(xml);
