@@ -69,6 +69,7 @@ public class EntryPoint {
       SettingsFactory settings, Map<String, String> environmentVariables) {
 
     if (data.getVerbosity() == VERBOSE) {
+      Log.getLogger().info("Project base directory is " + data.getProjectBase());
       Log.getLogger().info("---------------------------------------------------------------------------");
       Log.getLogger().info("Enabled (+) and disabled (-) features.");
       Log.getLogger().info("-----------------------------------------");
