@@ -1,820 +1,805 @@
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
+import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator.Choice;
+import org.pitest.verifier.mutants.MutatorVerifierStart;
+
+import java.util.function.Function;
+import java.util.function.IntFunction;
+
 import static org.junit.Assert.assertEquals;
 
-import java.util.concurrent.Callable;
+public class RemoveConditionalMutatorTest {
 
-import org.junit.Test;
-import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
-import org.pitest.mutationtest.engine.gregor.mutators.RemoveConditionalMutator.Choice;
+    MutatorVerifierStart v;
 
-public class RemoveConditionalMutatorTest extends MutatorTestBase {
-
-  @Test
-  public void shouldProvideAMeaningfulName() {
-    assertEquals("REMOVE_CONDITIONALS_EQUAL_IF",
-        new RemoveConditionalMutator(Choice.EQUAL, true).getName());
-    assertEquals("REMOVE_CONDITIONALS_EQUAL_ELSE",
-        new RemoveConditionalMutator(Choice.EQUAL, false).getName());
-    assertEquals("REMOVE_CONDITIONALS_ORDER_IF",
-        new RemoveConditionalMutator(Choice.ORDER, true).getName());
-    assertEquals("REMOVE_CONDITIONALS_ORDER_ELSE",
-        new RemoveConditionalMutator(Choice.ORDER, false).getName());
-  }
-
-  private static int getZeroButPreventInlining() {
-    return 0;
-  }
-
-  private static class HasIFEQ implements Callable<String> {
-    private final int i;
-
-    HasIFEQ(final int i) {
-      this.i = i;
+    private static int getZeroButPreventInlining() {
+        return 0;
     }
 
-    @Override
-    public String call() {
-      if (this.i != 0) {
-        return "was not zero";
-      } else {
-        return "was zero";
-      }
-    }
-  }
-
-  @Test
-  public void shouldReplaceIFEQ_EQUAL_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, true));
-    final Mutant mutant = getFirstMutant(HasIFEQ.class);
-    final String expected = "was not zero";
-    assertMutantCallableReturns(new HasIFEQ(1), mutant, expected);
-    assertMutantCallableReturns(new HasIFEQ(0), mutant, expected);
-  }
-
-  @Test
-  public void shouldDescribeReplacementOfEqualityChecksWithTrue() {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, true));
-    final Mutant mutant = getFirstMutant(HasIFEQ.class);
-    assertThat(mutant.getDetails().getDescription()).contains(
-        "equality check with true");
-  }
-
-  @Test
-  public void shouldDescribeReplacementOfEqualityChecksWithFalse() {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
-    final Mutant mutant = getFirstMutant(HasIFEQ.class);
-    assertThat(mutant.getDetails().getDescription()).contains(
-        "equality check with false");
-  }
-
-  @Test
-  public void shouldReplaceIFEQ_EQUAL_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
-    final Mutant mutant = getFirstMutant(HasIFEQ.class);
-    final String expected = "was zero";
-    assertMutantCallableReturns(new HasIFEQ(1), mutant, expected);
-    assertMutantCallableReturns(new HasIFEQ(0), mutant, expected);
-  }
-
-  @Test
-  public void shouldNotReplaceIFEQ_ORDER_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, true));
-    assertNoMutants(HasIFEQ.class);
-  }
-
-  @Test
-  public void shouldNotReplaceIFEQ_ORDER_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, false));
-    assertNoMutants(HasIFEQ.class);
-  }
-
-  private static class HasIFNE implements Callable<String> {
-    private final int i;
-
-    HasIFNE(final int i) {
-      this.i = i;
+    @Test
+    public void shouldProvideAMeaningfulName() {
+        assertEquals("REMOVE_CONDITIONALS_EQUAL_IF",
+                new RemoveConditionalMutator(Choice.EQUAL, true).getName());
+        assertEquals("REMOVE_CONDITIONALS_EQUAL_ELSE",
+                new RemoveConditionalMutator(Choice.EQUAL, false).getName());
+        assertEquals("REMOVE_CONDITIONALS_ORDER_IF",
+                new RemoveConditionalMutator(Choice.ORDER, true).getName());
+        assertEquals("REMOVE_CONDITIONALS_ORDER_ELSE",
+                new RemoveConditionalMutator(Choice.ORDER, false).getName());
     }
 
-    @Override
-    public String call() {
-      if (this.i == 0) {
-        return "was zero";
-      } else {
-        return "was not zero";
-      }
-    }
-  }
+    @Test
+    public void shouldReplaceIFEQ_EQUAL_T() {
 
-  @Test
-  public void shouldReplaceIFNE_EQUAL_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, true));
-    final Mutant mutant = getFirstMutant(HasIFNE.class);
-    final String expected = "was zero";
-    assertMutantCallableReturns(new HasIFNE(1), mutant, expected);
-    assertMutantCallableReturns(new HasIFNE(0), mutant, expected);
-  }
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, true));
+        v.forIntFunctionClass(HasIFEQ.class)
+                .firstMutantShouldReturn(1, "was not zero");
+        v.forIntFunctionClass(HasIFEQ.class)
+                .firstMutantShouldReturn(0, "was not zero");
 
-  @Test
-  public void shouldReplaceIFNE_EQUAL_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
-    final Mutant mutant = getFirstMutant(HasIFNE.class);
-    final String expected = "was not zero";
-    assertMutantCallableReturns(new HasIFNE(1), mutant, expected);
-    assertMutantCallableReturns(new HasIFNE(0), mutant, expected);
-  }
-
-  @Test
-  public void shouldReplaceIFNE_ORDER_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, true));
-    assertNoMutants(HasIFNE.class);
-  }
-
-  @Test
-  public void shouldReplaceIFNE_ORDER_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, false));
-    assertNoMutants(HasIFNE.class);
-  }
-
-  private static class HasIFNULL implements Callable<String> {
-    private final Object i;
-
-    HasIFNULL(final Object i) {
-      this.i = i;
     }
 
-    @Override
-    public String call() {
-      if (this.i != null) {
-        return "was not null";
-      } else {
-        return "was null";
-      }
-    }
-  }
-
-  @Test
-  public void shouldReplaceIFNULL_EQUAL_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, true));
-    final Mutant mutant = getFirstMutant(HasIFNULL.class);
-    final String expected = "was not null";
-    assertMutantCallableReturns(new HasIFNULL(null), mutant, expected);
-    assertMutantCallableReturns(new HasIFNULL("foo"), mutant, expected);
-  }
-
-  @Test
-  public void shouldReplaceIFNULL_EQUAL_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
-    final Mutant mutant = getFirstMutant(HasIFNULL.class);
-    final String expected = "was null";
-    assertMutantCallableReturns(new HasIFNULL(null), mutant, expected);
-    assertMutantCallableReturns(new HasIFNULL("foo"), mutant, expected);
-  }
-
-  @Test
-  public void shouldReplaceIFNULL_ORDER_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, true));
-    assertNoMutants(HasIFNULL.class);
-  }
-
-  @Test
-  public void shouldReplaceIFNULL_ORDER_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, false));
-    assertNoMutants(HasIFNULL.class);
-  }
-
-  private static class HasIFNONNULL implements Callable<String> {
-    private final Object i;
-
-    HasIFNONNULL(final Object i) {
-      this.i = i;
+    @Test
+    public void shouldDescribeReplacementOfEqualityChecksWithTrue() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, true));
+        v.forClass(HasIFEQ.class)
+                .firstMutantDescription()
+                .contains("equality check with true");
     }
 
-    @Override
-    public String call() {
-      if (this.i == null) {
-        return "was null";
-      } else {
-        return "was not null";
-      }
-    }
-  }
-
-  @Test
-  public void shouldReplaceIFNONNULL_EQUAL_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, true));
-    final Mutant mutant = getFirstMutant(HasIFNONNULL.class);
-    final String expected = "was null";
-    assertMutantCallableReturns(new HasIFNONNULL(null), mutant, expected);
-    assertMutantCallableReturns(new HasIFNONNULL("foo"), mutant, expected);
-  }
-
-  @Test
-  public void shouldReplaceIFNONNULL_EQUAL_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
-    final Mutant mutant = getFirstMutant(HasIFNONNULL.class);
-    final String expected = "was not null";
-    assertMutantCallableReturns(new HasIFNONNULL(null), mutant, expected);
-    assertMutantCallableReturns(new HasIFNONNULL("foo"), mutant, expected);
-  }
-
-  @Test
-  public void shouldReplaceIFNONNULL_ORDER_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, true));
-    assertNoMutants(HasIFNONNULL.class);
-  }
-
-  @Test
-  public void shouldReplaceIFNONNULL_ORDER_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, false));
-    assertNoMutants(HasIFNONNULL.class);
-  }
-
-  private static class HasIF_ICMPNE implements Callable<String> {
-    private final int i;
-
-    HasIF_ICMPNE(final int i) {
-      this.i = i;
+    @Test
+    public void shouldDescribeReplacementOfEqualityChecksWithFalse() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, false));
+        v.forClass(HasIFEQ.class)
+                .firstMutantDescription().contains(
+                        "equality check with false");
     }
 
-    @Override
-    public String call() {
-      final int j = getZeroButPreventInlining();
-      if (this.i == j) {
-        return "was zero";
-      } else {
-        return "was not zero";
-      }
-    }
-  }
-
-  @Test
-  public void shouldReplaceIF_ICMPNE_EQUAL_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, true));
-    final Mutant mutant = getFirstMutant(HasIF_ICMPNE.class);
-    final String expected = "was zero";
-    assertMutantCallableReturns(new HasIF_ICMPNE(1), mutant, expected);
-    assertMutantCallableReturns(new HasIF_ICMPNE(0), mutant, expected);
-  }
-
-  @Test
-  public void shouldReplaceIF_ICMPNE_EQUAL_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
-    final Mutant mutant = getFirstMutant(HasIF_ICMPNE.class);
-    final String expected = "was not zero";
-    assertMutantCallableReturns(new HasIF_ICMPNE(1), mutant, expected);
-    assertMutantCallableReturns(new HasIF_ICMPNE(0), mutant, expected);
-  }
-
-  @Test
-  public void shouldReplaceIF_ICMPNE_ORDER_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, true));
-    assertNoMutants(HasIF_ICMPNE.class);
-  }
-
-  @Test
-  public void shouldReplaceIF_ICMPNE_ORDER_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, false));
-    assertNoMutants(HasIF_ICMPNE.class);
-  }
-
-  private static class HasIF_ICMPEQ implements Callable<String> {
-    private final int i;
-
-    HasIF_ICMPEQ(final int i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceIFEQ_EQUAL_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, false));
+        v.forIntFunctionClass(HasIFEQ.class)
+                .firstMutantShouldReturn(1, "was zero");
+        v.forIntFunctionClass(HasIFEQ.class)
+                .firstMutantShouldReturn(0, "was zero");
     }
 
-    @Override
-    public String call() {
-      final int j = getZeroButPreventInlining();
-      if (this.i != j) {
-        return "was not zero";
-      } else {
-        return "was zero";
-      }
-    }
-  }
-
-  @Test
-  public void shouldReplaceIF_ICMPEQ_EQUAL_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, true));
-    final Mutant mutant = getFirstMutant(HasIF_ICMPEQ.class);
-    final String expected = "was not zero";
-    assertMutantCallableReturns(new HasIF_ICMPEQ(1), mutant, expected);
-    assertMutantCallableReturns(new HasIF_ICMPEQ(0), mutant, expected);
-  }
-
-  @Test
-  public void shouldReplaceIF_ICMPEQ_EQUAL_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
-    final Mutant mutant = getFirstMutant(HasIF_ICMPEQ.class);
-    final String expected = "was zero";
-    assertMutantCallableReturns(new HasIF_ICMPEQ(1), mutant, expected);
-    assertMutantCallableReturns(new HasIF_ICMPEQ(0), mutant, expected);
-  }
-
-  @Test
-  public void shouldReplaceIF_ICMPEQ_ORDER_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, true));
-    assertNoMutants(HasIF_ICMPEQ.class);
-  }
-
-  @Test
-  public void shouldReplaceIF_ICMPEQ_ORDER_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, false));
-    assertNoMutants(HasIF_ICMPEQ.class);
-  }
-
-  static class HasIF_ACMPEQ implements Callable<String> {
-    private final Object i;
-
-    HasIF_ACMPEQ(final Object i) {
-      this.i = i;
+    @Test
+    public void shouldNotReplaceIFEQ_ORDER_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, true));
+        v.forClass(HasIFEQ.class)
+                .noMutantsCreated();
     }
 
-    @Override
-    public String call() {
-      if (this.i != this) {
-        return "was not zero";
-      } else {
-        return "was zero";
-      }
-    }
-  }
-
-  @Test
-  public void shouldReplaceIF_ACMPEQ_EQUAL_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, true));
-    final Mutant mutant = getFirstMutant(HasIF_ACMPEQ.class);
-    final String expected = "was not zero";
-    assertMutantCallableReturns(new HasIF_ACMPEQ(1), mutant, expected);
-    assertMutantCallableReturns(new HasIF_ACMPEQ(0), mutant, expected);
-  }
-
-  @Test
-  public void shouldReplaceIF_ACMPEQ_EQUAL_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
-    final Mutant mutant = getFirstMutant(HasIF_ACMPEQ.class);
-    final String expected = "was zero";
-    assertMutantCallableReturns(new HasIF_ACMPEQ(1), mutant, expected);
-    assertMutantCallableReturns(new HasIF_ACMPEQ(0), mutant, expected);
-  }
-
-  @Test
-  public void shouldReplaceIF_ACMPEQ_ORDER_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, true));
-    assertNoMutants(HasIF_ACMPEQ.class);
-  }
-
-  @Test
-  public void shouldReplaceIF_ACMPEQ_ORDER_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, false));
-    assertNoMutants(HasIF_ACMPEQ.class);
-  }
-
-  static class HasIF_ACMPNE implements Callable<String> {
-    private final Object i;
-
-    HasIF_ACMPNE(final Object i) {
-      this.i = i;
+    @Test
+    public void shouldNotReplaceIFEQ_ORDER_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, false));
+        v.forClass(HasIFEQ.class)
+                .noMutantsCreated();
     }
 
-    @Override
-    public String call() {
-      if (this.i == this) {
-        return "was not zero";
-      } else {
-        return "was zero";
-      }
-    }
-  }
-
-  @Test
-  public void shouldReplaceIF_ACMPNE_EQUAL_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, true));
-    final Mutant mutant = getFirstMutant(HasIF_ACMPNE.class);
-    final String expected = "was not zero";
-    assertMutantCallableReturns(new HasIF_ACMPNE(1), mutant, expected);
-    assertMutantCallableReturns(new HasIF_ACMPNE(0), mutant, expected);
-  }
-
-  @Test
-  public void shouldReplaceIF_ACMPNE_EQUAL_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
-    final Mutant mutant = getFirstMutant(HasIF_ACMPNE.class);
-    final String expected = "was zero";
-    assertMutantCallableReturns(new HasIF_ACMPNE(1), mutant, expected);
-    assertMutantCallableReturns(new HasIF_ACMPNE(0), mutant, expected);
-  }
-
-  @Test
-  public void shouldReplaceIF_ACMPNE_ORDER_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, true));
-    assertNoMutants(HasIF_ACMPNE.class);
-  }
-
-  @Test
-  public void shouldReplaceIF_ACMPNE_ORDER_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, false));
-    assertNoMutants(HasIF_ACMPNE.class);
-  }
-
-  static class HasIFLE implements Callable<String> {
-    private final int i;
-
-    HasIFLE(final int i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceIFNE_EQUAL_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, true));
+        v.forIntFunctionClass(HasIFNE.class)
+                .firstMutantShouldReturn(1, "was zero");
+        v.forIntFunctionClass(HasIFNE.class)
+                .firstMutantShouldReturn(0, "was zero");
     }
 
-    @Override
-    public String call() {
-      if (this.i > 0) {
-        return "was > zero";
-      } else {
-        return "was <= zero";
-      }
-    }
-  }
-
-  @Test
-  public void shouldNotReplaceIFLE_EQUAL_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, true));
-    assertNoMutants(HasIFLE.class);
-  }
-
-  @Test
-  public void shouldNotReplaceIFLE_EQUAL_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
-    assertNoMutants(HasIFLE.class);
-  }
-
-  @Test
-  public void shouldReplaceIFLE_ORDER_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, true));
-    final Mutant mutant = getFirstMutant(HasIFLE.class);
-    final String expected = "was > zero";
-    assertMutantCallableReturns(new HasIFLE(1), mutant, expected);
-    assertMutantCallableReturns(new HasIFLE(0), mutant, expected);
-  }
-
-  @Test
-  public void shouldReplaceIFLE_ORDER_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, false));
-    final Mutant mutant = getFirstMutant(HasIFLE.class);
-    final String expected = "was <= zero";
-    assertMutantCallableReturns(new HasIFLE(1), mutant, expected);
-    assertMutantCallableReturns(new HasIFLE(0), mutant, expected);
-  }
-
-  @Test
-  public void shouldDescribeReplacementOfOrderCheckWithTrue() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, true));
-    final Mutant mutant = getFirstMutant(HasIFLE.class);
-    assertThat(mutant.getDetails().getDescription()).contains(
-        " comparison check with true");
-  }
-
-  @Test
-  public void shouldDescribeReplacementOfOrderCheckWithFalse() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, false));
-    final Mutant mutant = getFirstMutant(HasIFLE.class);
-    assertThat(mutant.getDetails().getDescription()).contains(
-        " comparison check with false");
-  }
-
-  static class HasIFGE implements Callable<String> {
-    private final int i;
-
-    HasIFGE(final int i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceIFNE_EQUAL_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, false));
+        v.forIntFunctionClass(HasIFNE.class)
+                .firstMutantShouldReturn(1, "was not zero");
+        v.forIntFunctionClass(HasIFNE.class)
+                .firstMutantShouldReturn(0, "was not zero");
     }
 
-    @Override
-    public String call() {
-      if (this.i < 0) {
-        return "was < zero";
-      } else {
-        return "was >= zero";
-      }
-    }
-  }
-
-  @Test
-  public void shouldNotReplaceIFGE_EQUAL_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, true));
-    assertNoMutants(HasIFGE.class);
-  }
-
-  @Test
-  public void shouldNotReplaceIFGE_EQUAL_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
-    assertNoMutants(HasIFGE.class);
-  }
-
-  @Test
-  public void shouldReplaceIFGE_ORDER_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, true));
-    final Mutant mutant = getFirstMutant(HasIFGE.class);
-    final String expected = "was < zero";
-    assertMutantCallableReturns(new HasIFGE(1), mutant, expected);
-    assertMutantCallableReturns(new HasIFGE(0), mutant, expected);
-  }
-
-  @Test
-  public void shouldReplaceIFGE_ORDER_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, false));
-    final Mutant mutant = getFirstMutant(HasIFGE.class);
-    final String expected = "was >= zero";
-    assertMutantCallableReturns(new HasIFGE(1), mutant, expected);
-    assertMutantCallableReturns(new HasIFGE(0), mutant, expected);
-  }
-
-  static class HasIFGT implements Callable<String> {
-    private final int i;
-
-    HasIFGT(final int i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceIFNE_ORDER_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, true));
+        v.forClass(HasIFNE.class)
+                .noMutantsCreated();
     }
 
-    @Override
-    public String call() {
-      if (this.i <= 0) {
-        return "was <= zero";
-      } else {
-        return "was > zero";
-      }
-    }
-  }
-
-  @Test
-  public void shouldNotReplaceIFGT_EQUAL_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, true));
-    assertNoMutants(HasIFGT.class);
-  }
-
-  @Test
-  public void shouldNotReplaceIFGT_EQUAL_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
-    assertNoMutants(HasIFGT.class);
-  }
-
-  @Test
-  public void shouldReplaceIFGT_ORDER_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, true));
-    final Mutant mutant = getFirstMutant(HasIFGT.class);
-    final String expected = "was <= zero";
-    assertMutantCallableReturns(new HasIFGT(1), mutant, expected);
-    assertMutantCallableReturns(new HasIFGT(0), mutant, expected);
-  }
-
-  @Test
-  public void shouldReplaceIFGT_ORDER_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, false));
-    final Mutant mutant = getFirstMutant(HasIFGT.class);
-    final String expected = "was > zero";
-    assertMutantCallableReturns(new HasIFGT(1), mutant, expected);
-    assertMutantCallableReturns(new HasIFGT(0), mutant, expected);
-  }
-
-  static class HasIFLT implements Callable<String> {
-    private final int i;
-
-    HasIFLT(final int i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceIFNE_ORDER_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, false));
+        v.forClass(HasIFNE.class)
+                .noMutantsCreated();
     }
 
-    @Override
-    public String call() {
-      if (this.i >= 0) {
-        return "was >= zero";
-      } else {
-        return "was < zero";
-      }
-    }
-  }
-
-  @Test
-  public void shouldNotReplaceIFLT_EQUAL_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, true));
-    assertNoMutants(HasIFLT.class);
-  }
-
-  @Test
-  public void shouldNotReplaceIFLT_EQUAL_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
-    assertNoMutants(HasIFLT.class);
-  }
-
-  @Test
-  public void shouldReplaceIFLT_ORDER_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, true));
-    final Mutant mutant = getFirstMutant(HasIFLT.class);
-    final String expected = "was >= zero";
-    assertMutantCallableReturns(new HasIFLT(1), mutant, expected);
-    assertMutantCallableReturns(new HasIFLT(0), mutant, expected);
-  }
-
-  @Test
-  public void shouldReplaceIFLT_ORDER_T_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, false));
-    final Mutant mutant = getFirstMutant(HasIFLT.class);
-    final String expected = "was < zero";
-    assertMutantCallableReturns(new HasIFLT(1), mutant, expected);
-    assertMutantCallableReturns(new HasIFLT(0), mutant, expected);
-  }
-
-  static class HasIF_ICMPLE implements Callable<String> {
-    private final int i;
-
-    HasIF_ICMPLE(final int i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceIFNULL_EQUAL_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, true));
+        v.forFunctionClass(HasIFNULL.class)
+                .firstMutantShouldReturn(() -> null, "was not null");
+        v.forFunctionClass(HasIFNULL.class)
+                .firstMutantShouldReturn(() -> "foo", "was not null");
     }
 
-    @Override
-    public String call() {
-      final int j = getZeroButPreventInlining();
-      if (this.i > j) {
-        return "was > zero";
-      } else {
-        return "was <= zero";
-      }
-    }
-  }
-
-  @Test
-  public void shouldNotReplaceIF_ICMPLE_EQUAL_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, true));
-    assertNoMutants(HasIF_ICMPLE.class);
-  }
-
-  @Test
-  public void shouldNotReplaceIF_ICMPLE_EQUAL_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
-    assertNoMutants(HasIF_ICMPLE.class);
-  }
-
-  @Test
-  public void shouldReplaceIF_ICMPLE_ORDER_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, true));
-    final Mutant mutant = getFirstMutant(HasIF_ICMPLE.class);
-    final String expected = "was > zero";
-    assertMutantCallableReturns(new HasIF_ICMPLE(1), mutant, expected);
-    assertMutantCallableReturns(new HasIF_ICMPLE(0), mutant, expected);
-  }
-
-  @Test
-  public void shouldReplaceIF_ICMPLE_ORDER_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, false));
-    final Mutant mutant = getFirstMutant(HasIF_ICMPLE.class);
-    final String expected = "was <= zero";
-    assertMutantCallableReturns(new HasIF_ICMPLE(1), mutant, expected);
-    assertMutantCallableReturns(new HasIF_ICMPLE(0), mutant, expected);
-  }
-
-  static class HasIF_ICMPGE implements Callable<String> {
-    private final int i;
-
-    HasIF_ICMPGE(final int i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceIFNULL_EQUAL_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, false));
+        v.forFunctionClass(HasIFNULL.class);
+        v.forFunctionClass(HasIFNULL.class)
+                .firstMutantShouldReturn(() -> null, "was null");
+        v.forFunctionClass(HasIFNULL.class)
+                .firstMutantShouldReturn(() -> "foo", "was null");
     }
 
-    @Override
-    public String call() {
-      final int j = getZeroButPreventInlining();
-      if (this.i < j) {
-        return "was < zero";
-      } else {
-        return "was >= zero";
-      }
-    }
-  }
-
-  @Test
-  public void shouldNotReplaceIF_ICMPGE_EQUAL_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, true));
-    assertNoMutants(HasIF_ICMPGE.class);
-  }
-
-  @Test
-  public void shouldNotReplaceIF_ICMPGE_EQUAL_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
-    assertNoMutants(HasIF_ICMPGE.class);
-  }
-
-  @Test
-  public void shouldReplaceIF_ICMPGE_ORDER_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, true));
-    final Mutant mutant = getFirstMutant(HasIF_ICMPGE.class);
-    final String expected = "was < zero";
-    assertMutantCallableReturns(new HasIF_ICMPGE(1), mutant, expected);
-    assertMutantCallableReturns(new HasIF_ICMPGE(0), mutant, expected);
-  }
-
-  @Test
-  public void shouldReplaceIF_ICMPGE_ORDER_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, false));
-    final Mutant mutant = getFirstMutant(HasIF_ICMPGE.class);
-    final String expected = "was >= zero";
-    assertMutantCallableReturns(new HasIF_ICMPGE(1), mutant, expected);
-    assertMutantCallableReturns(new HasIF_ICMPGE(0), mutant, expected);
-  }
-
-  static class HasIF_ICMPGT implements Callable<String> {
-    private final int i;
-
-    HasIF_ICMPGT(final int i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceIFNULL_ORDER_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, true));
+        v.forClass(HasIFNULL.class)
+                .noMutantsCreated();
     }
 
-    @Override
-    public String call() {
-      final int j = getZeroButPreventInlining();
-      if (this.i <= j) {
-        return "was <= zero";
-      } else {
-        return "was > zero";
-      }
-    }
-  }
-
-  @Test
-  public void shouldNotReplaceIF_ICMPGT_EQUAL_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, true));
-    assertNoMutants(HasIF_ICMPGT.class);
-  }
-
-  @Test
-  public void shouldNotReplaceIF_ICMPGT_EQUAL_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
-    assertNoMutants(HasIF_ICMPGT.class);
-  }
-
-  @Test
-  public void shouldReplaceIF_ICMPGT_ORDER_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, true));
-    final Mutant mutant = getFirstMutant(HasIF_ICMPGT.class);
-    final String expected = "was <= zero";
-    assertMutantCallableReturns(new HasIF_ICMPGT(1), mutant, expected);
-    assertMutantCallableReturns(new HasIF_ICMPGT(0), mutant, expected);
-  }
-
-  @Test
-  public void shouldReplaceIF_ICMPGT_ORDER_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, false));
-    final Mutant mutant = getFirstMutant(HasIF_ICMPGT.class);
-    final String expected = "was > zero";
-    assertMutantCallableReturns(new HasIF_ICMPGT(1), mutant, expected);
-    assertMutantCallableReturns(new HasIF_ICMPGT(0), mutant, expected);
-  }
-
-  static class HasIF_ICMPLT implements Callable<String> {
-    private final int i;
-
-    HasIF_ICMPLT(final int i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceIFNULL_ORDER_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, false));
+        v.forClass(HasIFNULL.class)
+                .noMutantsCreated();
     }
 
-    @Override
-    public String call() {
-      final int j = getZeroButPreventInlining();
-      if (this.i >= j) {
-        return "was >= zero";
-      } else {
-        return "was < zero";
-      }
+    @Test
+    public void shouldReplaceIFNONNULL_EQUAL_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, true));
+        v.forFunctionClass(HasIFNONNULL.class)
+                .firstMutantShouldReturn(() -> null, "was null");
+        v.forFunctionClass(HasIFNONNULL.class)
+                .firstMutantShouldReturn("foo", "was null");
     }
-  }
 
-  @Test
-  public void shouldNotReplaceIF_ICMPLT_EQUAL_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, true));
-    assertNoMutants(HasIF_ICMPLT.class);
-  }
+    @Test
+    public void shouldReplaceIFNONNULL_EQUAL_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, false));
+        v.forFunctionClass(HasIFNONNULL.class);
+        v.forFunctionClass(HasIFNONNULL.class)
+                .firstMutantShouldReturn(() -> null, "was not null");
+        v.forFunctionClass(HasIFNONNULL.class)
+                .firstMutantShouldReturn("foo", "was not null");
+    }
 
-  @Test
-  public void shouldNotReplaceIF_ICMPLT_EQUAL_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.EQUAL, false));
-    assertNoMutants(HasIF_ICMPLT.class);
-  }
+    @Test
+    public void shouldReplaceIFNONNULL_ORDER_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, true));
+        v.forClass(HasIFNONNULL.class)
+                .noMutantsCreated();
+    }
 
-  @Test
-  public void shouldReplaceIF_ICMPLT_ORDER_T() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, true));
-    final Mutant mutant = getFirstMutant(HasIF_ICMPLT.class);
-    final String expected = "was >= zero";
-    assertMutantCallableReturns(new HasIF_ICMPLT(1), mutant, expected);
-    assertMutantCallableReturns(new HasIF_ICMPLT(0), mutant, expected);
-  }
+    @Test
+    public void shouldReplaceIFNONNULL_ORDER_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, false));
+        v.forClass(HasIFNONNULL.class)
+                .noMutantsCreated();
+    }
 
-  @Test
-  public void shouldReplaceIF_ICMPLT_ORDER_F() throws Exception {
-    createTesteeWith(new RemoveConditionalMutator(Choice.ORDER, false));
-    final Mutant mutant = getFirstMutant(HasIF_ICMPLT.class);
-    final String expected = "was < zero";
-    assertMutantCallableReturns(new HasIF_ICMPLT(1), mutant, expected);
-    assertMutantCallableReturns(new HasIF_ICMPLT(0), mutant, expected);
-  }
+    @Test
+    public void shouldReplaceIF_ICMPNE_EQUAL_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, true));
+        v.forIntFunctionClass(HasIF_ICMPNE.class)
+                .firstMutantShouldReturn(1, "was zero");
+        v.forIntFunctionClass(HasIF_ICMPNE.class)
+                .firstMutantShouldReturn(0, "was zero");
+
+    }
+
+    @Test
+    public void shouldReplaceIF_ICMPNE_EQUAL_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, false));
+        v.forIntFunctionClass(HasIF_ICMPNE.class);
+        v.forIntFunctionClass(HasIF_ICMPNE.class)
+                .firstMutantShouldReturn(1, "was not zero");
+        v.forIntFunctionClass(HasIF_ICMPNE.class)
+                .firstMutantShouldReturn(0, "was not zero");
+    }
+
+    @Test
+    public void shouldReplaceIF_ICMPNE_ORDER_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, true));
+        v.forClass(HasIF_ICMPNE.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldReplaceIF_ICMPNE_ORDER_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, false));
+        v.forClass(HasIF_ICMPNE.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldReplaceIF_ICMPEQ_EQUAL_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, true));
+        v.forIntFunctionClass(HasIF_ICMPEQ.class)
+                .firstMutantShouldReturn(1, "was not zero");
+        v.forIntFunctionClass(HasIF_ICMPEQ.class)
+                .firstMutantShouldReturn(0, "was not zero");
+    }
+
+    @Test
+    public void shouldReplaceIF_ICMPEQ_EQUAL_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, false));
+        v.forIntFunctionClass(HasIF_ICMPEQ.class);
+        v.forIntFunctionClass(HasIF_ICMPEQ.class)
+                .firstMutantShouldReturn(1, "was zero");
+        v.forIntFunctionClass(HasIF_ICMPEQ.class)
+                .firstMutantShouldReturn(0, "was zero");
+    }
+
+    @Test
+    public void shouldReplaceIF_ICMPEQ_ORDER_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, true));
+        v.forClass(HasIF_ICMPEQ.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldReplaceIF_ICMPEQ_ORDER_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, false));
+        v.forClass(HasIF_ICMPEQ.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldReplaceIF_ACMPEQ_EQUAL_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, true));
+        v.forFunctionClass(HasIF_ACMPEQ.class)
+                .firstMutantShouldReturn(1, "was not zero");
+        v.forFunctionClass(HasIF_ACMPEQ.class)
+                .firstMutantShouldReturn(0, "was not zero");
+    }
+
+    @Test
+    public void shouldReplaceIF_ACMPEQ_EQUAL_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, false));
+
+        v.forFunctionClass(HasIF_ACMPEQ.class)
+                .firstMutantShouldReturn(1, "was zero");
+        v.forFunctionClass(HasIF_ACMPEQ.class)
+                .firstMutantShouldReturn(0, "was zero");
+    }
+
+    @Test
+    public void shouldReplaceIF_ACMPEQ_ORDER_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, true));
+
+        v.forClass(HasIF_ACMPEQ.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldReplaceIF_ACMPEQ_ORDER_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, false));
+        v.forClass(HasIF_ACMPEQ.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldReplaceIF_ACMPNE_EQUAL_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, true));
+        v.forFunctionClass(HasIF_ACMPNE.class)
+                .firstMutantShouldReturn(1, "was not zero");
+        v.forFunctionClass(HasIF_ACMPNE.class)
+                .firstMutantShouldReturn(0, "was not zero");
+    }
+
+    @Test
+    public void shouldReplaceIF_ACMPNE_EQUAL_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, false));
+        v.forFunctionClass(HasIF_ACMPNE.class)
+                .firstMutantShouldReturn(1, "was zero");
+        v.forFunctionClass(HasIF_ACMPNE.class)
+                .firstMutantShouldReturn(0, "was zero");
+    }
+
+    @Test
+    public void shouldReplaceIF_ACMPNE_ORDER_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, true));
+
+        v.forClass(HasIF_ACMPNE.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldReplaceIF_ACMPNE_ORDER_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, false));
+        v.forClass(HasIF_ACMPNE.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldNotReplaceIFLE_EQUAL_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, true));
+
+        v.forClass(HasIFLE.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldNotReplaceIFLE_EQUAL_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, false));
+        v.forClass(HasIFLE.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldReplaceIFLE_ORDER_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, true));
+        v.forIntFunctionClass(HasIFLE.class)
+                .firstMutantShouldReturn(1, "was > zero");
+        v.forIntFunctionClass(HasIFLE.class)
+                .firstMutantShouldReturn(0, "was > zero");
+    }
+
+    @Test
+    public void shouldReplaceIFLE_ORDER_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, false));
+        v.forIntFunctionClass(HasIFLE.class)
+                .firstMutantShouldReturn(1, "was <= zero");
+        v.forIntFunctionClass(HasIFLE.class)
+                .firstMutantShouldReturn(0, "was <= zero");
+    }
+
+    @Test
+    public void shouldDescribeReplacementOfOrderCheckWithTrue() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, true));
+        v.forIntFunctionClass(HasIFLE.class)
+                .firstMutantDescription()
+                .contains(
+                        " comparison check with true");
+    }
+
+    @Test
+    public void shouldDescribeReplacementOfOrderCheckWithFalse() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, false));
+        v.forIntFunctionClass(HasIFLE.class)
+                .firstMutantDescription()
+                .contains(
+                        " comparison check with false");
+    }
+
+    @Test
+    public void shouldNotReplaceIFGE_EQUAL_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, true));
+
+        v.forClass(HasIFGE.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldNotReplaceIFGE_EQUAL_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, false));
+        v.forClass(HasIFGE.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldReplaceIFGE_ORDER_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, true));
+        v.forIntFunctionClass(HasIFGE.class)
+                .firstMutantShouldReturn(1, "was < zero");
+        v.forIntFunctionClass(HasIFGE.class)
+                .firstMutantShouldReturn(0, "was < zero");
+    }
+
+    @Test
+    public void shouldReplaceIFGE_ORDER_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, false));
+        v.forIntFunctionClass(HasIFGE.class);
+        final String expected = "was >= zero";
+        v.forIntFunctionClass(HasIFGE.class)
+                .firstMutantShouldReturn(1, expected);
+        v.forIntFunctionClass(HasIFGE.class)
+                .firstMutantShouldReturn(0, expected);
+    }
+
+    @Test
+    public void shouldNotReplaceIFGT_EQUAL_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, true));
+
+        v.forClass(HasIFGT.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldNotReplaceIFGT_EQUAL_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, false));
+        v.forClass(HasIFGT.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldReplaceIFGT_ORDER_T() {
+        final String expected = "was <= zero";
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, true));
+        v.forIntFunctionClass(HasIFGT.class)
+                .firstMutantShouldReturn(1, expected);
+        v.forIntFunctionClass(HasIFGT.class)
+                .firstMutantShouldReturn(0, expected);
+    }
+
+    @Test
+    public void shouldReplaceIFGT_ORDER_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, false));
+
+        final String expected = "was > zero";
+        v.forIntFunctionClass(HasIFGT.class)
+                .firstMutantShouldReturn(1, expected);
+        v.forIntFunctionClass(HasIFGT.class)
+                .firstMutantShouldReturn(0, expected);
+    }
+
+    @Test
+    public void shouldNotReplaceIFLT_EQUAL_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, true));
+
+        v.forClass(HasIFLT.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldNotReplaceIFLT_EQUAL_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, false));
+        v.forClass(HasIFLT.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldReplaceIFLT_ORDER_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, true));
+        final String expected = "was >= zero";
+        v.forIntFunctionClass(HasIFLT.class)
+                .firstMutantShouldReturn(1, expected);
+        v.forIntFunctionClass(HasIFLT.class)
+                .firstMutantShouldReturn(0, expected);
+    }
+
+    @Test
+    public void shouldReplaceIFLT_ORDER_T_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, false));
+
+        final String expected = "was < zero";
+        v.forIntFunctionClass(HasIFLT.class)
+                .firstMutantShouldReturn(1, expected);
+        v.forIntFunctionClass(HasIFLT.class)
+                .firstMutantShouldReturn(0, expected);
+    }
+
+    @Test
+    public void shouldNotReplaceIF_ICMPLE_EQUAL_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, true));
+
+        v.forClass(HasIF_ICMPLE.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldNotReplaceIF_ICMPLE_EQUAL_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, false));
+        v.forClass(HasIF_ICMPLE.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldReplaceIF_ICMPLE_ORDER_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, true));
+        final String expected = "was > zero";
+        v.forIntFunctionClass(HasIF_ICMPLE.class)
+                .firstMutantShouldReturn(1, expected);
+        v.forIntFunctionClass(HasIF_ICMPLE.class)
+                .firstMutantShouldReturn(0, expected);
+
+    }
+
+    @Test
+    public void shouldReplaceIF_ICMPLE_ORDER_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, false));
+
+        final String expected = "was <= zero";
+        v.forIntFunctionClass(HasIF_ICMPLE.class)
+                .firstMutantShouldReturn(1, expected);
+        v.forIntFunctionClass(HasIF_ICMPLE.class)
+                .firstMutantShouldReturn(0, expected);
+    }
+
+    @Test
+    public void shouldNotReplaceIF_ICMPGE_EQUAL_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, true));
+
+        v.forClass(HasIF_ICMPGE.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldNotReplaceIF_ICMPGE_EQUAL_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, false));
+        v.forClass(HasIF_ICMPGE.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldReplaceIF_ICMPGE_ORDER_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, true));
+        final String expected = "was < zero";
+        v.forIntFunctionClass(HasIF_ICMPGE.class)
+                .firstMutantShouldReturn(1, expected);
+        v.forIntFunctionClass(HasIF_ICMPGE.class)
+                .firstMutantShouldReturn(0, expected);
+
+    }
+
+    @Test
+    public void shouldReplaceIF_ICMPGE_ORDER_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, false));
+
+        final String expected = "was >= zero";
+        v.forIntFunctionClass(HasIF_ICMPGE.class)
+                .firstMutantShouldReturn(1, expected);
+        v.forIntFunctionClass(HasIF_ICMPGE.class)
+                .firstMutantShouldReturn(0, expected);
+    }
+
+    @Test
+    public void shouldNotReplaceIF_ICMPGT_EQUAL_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, true));
+
+        v.forClass(HasIF_ICMPGT.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldNotReplaceIF_ICMPGT_EQUAL_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, false));
+        v.forClass(HasIF_ICMPGT.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldReplaceIF_ICMPGT_ORDER_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, true));
+        final String expected = "was <= zero";
+        v.forIntFunctionClass(HasIF_ICMPGT.class)
+                .firstMutantShouldReturn(1, expected);
+        v.forIntFunctionClass(HasIF_ICMPGT.class)
+                .firstMutantShouldReturn(2, expected);
+
+    }
+
+    @Test
+    public void shouldReplaceIF_ICMPGT_ORDER_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, false));
+
+        final String expected = "was > zero";
+        v.forIntFunctionClass(HasIF_ICMPGT.class)
+                .firstMutantShouldReturn(1, expected);
+        v.forIntFunctionClass(HasIF_ICMPGT.class)
+                .firstMutantShouldReturn(2, expected);
+    }
+
+    @Test
+    public void shouldNotReplaceIF_ICMPLT_EQUAL_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, true));
+
+        v.forClass(HasIF_ICMPLT.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldNotReplaceIF_ICMPLT_EQUAL_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.EQUAL, false));
+        v.forClass(HasIF_ICMPLT.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldReplaceIF_ICMPLT_ORDER_T() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, true));
+        v.forIntFunctionClass(HasIF_ICMPLT.class)
+                .firstMutantShouldReturn(1, "was >= zero");
+        v.forIntFunctionClass(HasIF_ICMPLT.class)
+                .firstMutantShouldReturn(0, "was >= zero");
+    }
+
+    @Test
+    public void shouldReplaceIF_ICMPLT_ORDER_F() {
+        v = forMutator(new RemoveConditionalMutator(Choice.ORDER, false));
+        v.forIntFunctionClass(HasIF_ICMPLT.class);
+        v.forIntFunctionClass(HasIF_ICMPLT.class)
+                .firstMutantShouldReturn(1, "was < zero");
+        v.forIntFunctionClass(HasIF_ICMPLT.class)
+                .firstMutantShouldReturn(0, "was < zero");
+    }
+
+    private static class HasIFEQ implements IntFunction<String> {
+        @Override
+        public String apply(int i) {
+            if (i != 0) {
+                return "was not zero";
+            } else {
+                return "was zero";
+            }
+        }
+    }
+
+    private static class HasIFNE implements IntFunction<String> {
+
+        @Override
+        public String apply(int i) {
+            if (i == 0) {
+                return "was zero";
+            } else {
+                return "was not zero";
+            }
+        }
+    }
+
+    private static class HasIFNULL implements Function<Object, String> {
+        @Override
+        public String apply(Object i) {
+            if (i != null) {
+                return "was not null";
+            } else {
+                return "was null";
+            }
+        }
+    }
+
+    private static class HasIFNONNULL implements Function<Object, String> {
+        @Override
+        public String apply(Object i) {
+            if (i == null) {
+                return "was null";
+            } else {
+                return "was not null";
+            }
+        }
+    }
+
+    private static class HasIF_ICMPNE implements IntFunction<String> {
+        @Override
+        public String apply(int i) {
+            final int j = getZeroButPreventInlining();
+            if (i == j) {
+                return "was zero";
+            } else {
+                return "was not zero";
+            }
+        }
+    }
+
+    private static class HasIF_ICMPEQ implements IntFunction<String> {
+        @Override
+        public String apply(int i) {
+            final int j = getZeroButPreventInlining();
+            if (i != j) {
+                return "was not zero";
+            } else {
+                return "was zero";
+            }
+        }
+    }
+
+    static class HasIF_ACMPEQ implements Function<Object, String> {
+        @Override
+        public String apply(Object i) {
+            if (i != this) {
+                return "was not zero";
+            } else {
+                return "was zero";
+            }
+        }
+    }
+
+    static class HasIF_ACMPNE implements Function<Object, String> {
+        @Override
+        public String apply(Object i) {
+            if (i == this) {
+                return "was not zero";
+            } else {
+                return "was zero";
+            }
+        }
+    }
+
+    static class HasIFLE implements IntFunction<String> {
+        @Override
+        public String apply(int i) {
+            if (i > 0) {
+                return "was > zero";
+            } else {
+                return "was <= zero";
+            }
+        }
+    }
+
+    static class HasIFGE implements IntFunction<String> {
+        @Override
+        public String apply(int i) {
+            if (i < 0) {
+                return "was < zero";
+            } else {
+                return "was >= zero";
+            }
+        }
+    }
+
+    static class HasIFGT implements IntFunction<String> {
+        @Override
+        public String apply(int i) {
+            if (i <= 0) {
+                return "was <= zero";
+            } else {
+                return "was > zero";
+            }
+        }
+    }
+
+    static class HasIFLT implements IntFunction<String> {
+        @Override
+        public String apply(int i) {
+            if (i >= 0) {
+                return "was >= zero";
+            } else {
+                return "was < zero";
+            }
+        }
+    }
+
+    static class HasIF_ICMPLE implements IntFunction<String> {
+        @Override
+        public String apply(int i) {
+            final int j = getZeroButPreventInlining();
+            if (i > j) {
+                return "was > zero";
+            } else {
+                return "was <= zero";
+            }
+        }
+    }
+
+    static class HasIF_ICMPGE implements IntFunction<String> {
+        @Override
+        public String apply(int i) {
+            final int j = getZeroButPreventInlining();
+            if (i < j) {
+                return "was < zero";
+            } else {
+                return "was >= zero";
+            }
+        }
+    }
+
+    static class HasIF_ICMPGT implements IntFunction<String> {
+        @Override
+        public String apply(int i) {
+            final int j = getZeroButPreventInlining();
+            if (i <= j) {
+                return "was <= zero";
+            } else {
+                return "was > zero";
+            }
+        }
+    }
+
+    static class HasIF_ICMPLT implements IntFunction<String> {
+        @Override
+        public String apply(int i) {
+            final int j = getZeroButPreventInlining();
+            if (i >= j) {
+                return "was >= zero";
+            } else {
+                return "was < zero";
+            }
+        }
+    }
+
+    MutatorVerifierStart forMutator(MethodMutatorFactory m) {
+      return MutatorVerifierStart.forMutator(m)
+              .notCheckingUnMutatedValues();
+    }
 }
