@@ -31,9 +31,10 @@ public class DoubleMutantVerifier<B> extends MutatorVerifier {
         this.target = target;
     }
 
-    /**
-     * Suppliers allow consumable inputs (eg streams) can be reused
-     */
+    public void firstMutantShouldReturn(double ds, B expected) {
+        firstMutantShouldReturn(() -> ds, expected);
+    }
+
     public void firstMutantShouldReturn(DoubleSupplier ds, B expected) {
         double input = ds.getAsDouble();
         if (checkUnmutated()) {

@@ -14,698 +14,548 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import java.util.concurrent.Callable;
-
-import org.junit.Before;
 import org.junit.Test;
-import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
+import org.pitest.verifier.mutants.MutatorVerifierStart;
 
-public class MathMutatorTest extends MutatorTestBase {
+import java.util.function.DoubleFunction;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.LongFunction;
 
-  @Before
-  public void setupEngineToMutateOnlyMathFunctions() {
-    createTesteeWith(MathMutator.MATH);
-  }
+import static org.pitest.mutationtest.engine.gregor.mutators.MathMutator.MATH;
 
-  private static class HasIAdd implements Callable<String> {
-    private int i;
+public class MathMutatorTest {
 
-    HasIAdd(final int i) {
-      this.i = i;
-    }
+    MutatorVerifierStart v = MutatorVerifierStart.forMutator(MATH)
+            .notCheckingUnMutatedValues();
 
-    @Override
-    public String call() {
-      this.i++;
-      return "" + this.i;
+    @Test
+    public void shouldReplaceIntegerAdditionWithSubtraction() {
+        v.forIntFunctionClass(HasIAdd.class)
+                .firstMutantShouldReturn(2, "1");
+        v.forIntFunctionClass(HasIAdd.class)
+                .firstMutantShouldReturn(20, "19");
     }
-  }
-
-  @Test
-  public void shouldReplaceIntegerAdditionWithSubtraction() throws Exception {
-    final Mutant mutant = getFirstMutant(HasIAdd.class);
-    assertMutantCallableReturns(new HasIAdd(2), mutant, "1");
-    assertMutantCallableReturns(new HasIAdd(20), mutant, "19");
-  }
-
-  private static class HasISub implements Callable<String> {
-    private int i;
 
-    HasISub(final int i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceIntegerSubtractionWithAddition() {
+        v.forIntFunctionClass(HasISub.class)
+                .firstMutantShouldReturn(2, "3");
+        v.forIntFunctionClass(HasISub.class)
+                .firstMutantShouldReturn(20, "21");
     }
 
-    @Override
-    public String call() {
-      this.i--;
-      return "" + this.i;
+    @Test
+    public void shouldReplaceIntegerMultiplicationWithDivision() {
+        v.forIntFunctionClass(HasIMul.class)
+                .firstMutantShouldReturn(2, "1");
+        v.forIntFunctionClass(HasIMul.class)
+                .firstMutantShouldReturn(20, "10");
     }
-  }
 
-  @Test
-  public void shouldReplaceIntegerSubtractionWithAddition() throws Exception {
-    final Mutant mutant = getFirstMutant(HasISub.class);
-    assertMutantCallableReturns(new HasISub(2), mutant, "3");
-    assertMutantCallableReturns(new HasISub(20), mutant, "21");
-  }
-
-  private static class HasIMul implements Callable<String> {
-    private int i;
-
-    HasIMul(final int i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceIntegerDivisionWithMultiplication() {
+        v.forIntFunctionClass(HasIDiv.class)
+                .firstMutantShouldReturn(2, "4");
+        v.forIntFunctionClass(HasIDiv.class)
+                .firstMutantShouldReturn(20, "40");
     }
 
-    @Override
-    public String call() {
-      this.i = this.i * 2;
-      return "" + this.i;
+    @Test
+    public void shouldReplaceIntegerBitwiseOrsWithAnds() {
+        v.forIntFunctionClass(HasIOr.class)
+                .firstMutantShouldReturn(2, "1");
+        v.forIntFunctionClass(HasIOr.class)
+                .firstMutantShouldReturn(4, "0");
     }
-  }
-
-  @Test
-  public void shouldReplaceIntegerMultiplicationWithDivision() throws Exception {
-    final Mutant mutant = getFirstMutant(HasIMul.class);
-    assertMutantCallableReturns(new HasIMul(2), mutant, "1");
-    assertMutantCallableReturns(new HasIMul(20), mutant, "10");
-  }
-
-  private static class HasIDiv implements Callable<String> {
-    private int i;
 
-    HasIDiv(final int i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceIntegerBitwiseAndsWithOrs() {
+        v.forIntFunctionClass(HasIAnd.class)
+                .firstMutantShouldReturn(2, "2");
+        v.forIntFunctionClass(HasIAnd.class)
+                .firstMutantShouldReturn(4, "6");
     }
 
-    @Override
-    public String call() {
-      this.i = this.i / 2;
-      return "" + this.i;
+    @Test
+    public void shouldReplaceIntegerModulusWithMultiplication() {
+        v.forIntFunctionClass(HasIRem.class)
+                .firstMutantShouldReturn(2, "4");
+        v.forIntFunctionClass(HasIRem.class)
+                .firstMutantShouldReturn(3, "6");
     }
-  }
 
-  @Test
-  public void shouldReplaceIntegerDivisionWithMultiplication() throws Exception {
-    final Mutant mutant = getFirstMutant(HasIDiv.class);
-    assertMutantCallableReturns(new HasIDiv(2), mutant, "4");
-    assertMutantCallableReturns(new HasIDiv(20), mutant, "40");
-  }
-
-  private static class HasIOr implements Callable<String> {
-    private int i;
-
-    HasIOr(final int i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceIntegerXORWithAND() {
+        v.forIntFunctionClass(HasIXor.class)
+                .firstMutantShouldReturn(2, "2");
+        v.forIntFunctionClass(HasIXor.class)
+                .firstMutantShouldReturn(1, "0");
     }
 
-    @Override
-    public String call() {
-      this.i = this.i | 2;
-      return "" + this.i;
+    @Test
+    public void shouldReplaceIntegerShiftLeftWithShiftRight() {
+        v.forIntFunctionClass(HasISHL.class)
+                .firstMutantShouldReturn(100, "25");
+        v.forIntFunctionClass(HasISHL.class)
+                .firstMutantShouldReturn(20, "5");
     }
-  }
-
-  @Test
-  public void shouldReplaceIntegerBitwiseOrsWithAnds() throws Exception {
-    final Mutant mutant = getFirstMutant(HasIOr.class);
-    assertMutantCallableReturns(new HasIDiv(2), mutant, "1");
-    assertMutantCallableReturns(new HasIOr(4), mutant, "0");
-  }
-
-  private static class HasIAnd implements Callable<String> {
-    private int i;
 
-    HasIAnd(final int i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceIntegerShiftRightWithShiftLeft() {
+        v.forIntFunctionClass(HasISHR.class)
+                .firstMutantShouldReturn(100, "400");
+        v.forIntFunctionClass(HasISHR.class)
+                .firstMutantShouldReturn(20, "80");
     }
 
-    @Override
-    public String call() {
-      this.i = this.i & 2;
-      return "" + this.i;
+    @Test
+    public void shouldReplaceIntegerUnsignedShiftRightWithShiftLeft() {
+        v.forIntFunctionClass(HasIUSHR.class)
+                .firstMutantShouldReturn(100, "400");
+        v.forIntFunctionClass(HasIUSHR.class)
+                .firstMutantShouldReturn(20, "80");
     }
-  }
 
-  @Test
-  public void shouldReplaceIntegerBitwiseAndsWithOrs() throws Exception {
-    final Mutant mutant = getFirstMutant(HasIAnd.class);
-    assertMutantCallableReturns(new HasIAnd(2), mutant, "2");
-    assertMutantCallableReturns(new HasIAnd(4), mutant, "6");
-  }
-
-  private static class HasIRem implements Callable<String> {
-    private int i;
-
-    HasIRem(final int i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceLongAdditionWithSubtraction() {
+        v.forLongFunctionClass(HasLAdd.class)
+                .firstMutantShouldReturn(2L, "1");
+        v.forLongFunctionClass(HasLAdd.class)
+                .firstMutantShouldReturn(20L, "19");
     }
 
-    @Override
-    public String call() {
-      this.i = this.i % 2;
-      return "" + this.i;
+    @Test
+    public void shouldReplaceLongSubtractionWithAddition() {
+        v.forLongFunctionClass(HasLSub.class)
+                .firstMutantShouldReturn(2, "3");
+        v.forLongFunctionClass(HasLSub.class)
+                .firstMutantShouldReturn(20, "21");
     }
-  }
-
-  @Test
-  public void shouldReplaceIntegerModulusWithMultiplication() throws Exception {
-    final Mutant mutant = getFirstMutant(HasIRem.class);
-    assertMutantCallableReturns(new HasIRem(2), mutant, "4");
-    assertMutantCallableReturns(new HasIRem(3), mutant, "6");
-  }
-
-  private static class HasIXor implements Callable<String> {
-    private int i;
 
-    HasIXor(final int i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceLongMultiplicationWithDivision() {
+        v.forLongFunctionClass(HasLMul.class)
+                .firstMutantShouldReturn(2, "1");
+        v.forLongFunctionClass(HasLMul.class)
+                .firstMutantShouldReturn(20, "10");
     }
 
-    @Override
-    public String call() {
-      this.i = this.i ^ 2;
-      return "" + this.i;
+    @Test
+    public void shouldReplaceLongDivisionWithMultiplication() {
+        v.forLongFunctionClass(HasLDiv.class)
+                .firstMutantShouldReturn(2, "4");
+        v.forLongFunctionClass(HasLDiv.class)
+                .firstMutantShouldReturn(20, "40");
     }
-  }
 
-  @Test
-  public void shouldReplaceIntegerXORWithAND() throws Exception {
-    final Mutant mutant = getFirstMutant(HasIXor.class);
-    assertMutantCallableReturns(new HasIXor(2), mutant, "2");
-    assertMutantCallableReturns(new HasIXor(1), mutant, "0");
-  }
-
-  private static class HasISHL implements Callable<String> {
-    private int i;
-
-    HasISHL(final int i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceLongBitwiseOrsWithAnds() {
+        v.forLongFunctionClass(HasLOr.class)
+                .firstMutantShouldReturn(2L, "1");
+        v.forLongFunctionClass(HasLOr.class)
+                .firstMutantShouldReturn(4L, "0");
     }
 
-    @Override
-    public String call() {
-      this.i = this.i << 2;
-      return "" + this.i;
+    @Test
+    public void shouldReplaceLongBitwiseAndsWithOrs() {
+        v.forLongFunctionClass(HasLAnd.class)
+                .firstMutantShouldReturn(2, "2");
+        v.forLongFunctionClass(HasLAnd.class)
+                .firstMutantShouldReturn(4, "6");
     }
-  }
-
-  @Test
-  public void shouldReplaceIntegerShiftLeftWithShiftRight() throws Exception {
-    final Mutant mutant = getFirstMutant(HasISHL.class);
-    assertMutantCallableReturns(new HasISHL(100), mutant, "25");
-    assertMutantCallableReturns(new HasISHL(20), mutant, "5");
-  }
 
-  private static class HasISHR implements Callable<String> {
-    private int i;
-
-    HasISHR(final int i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceLongModulusWithMultiplication() {
+        v.forLongFunctionClass(HasLRem.class)
+                .firstMutantShouldReturn(2, "4");
+        v.forLongFunctionClass(HasLRem.class)
+                .firstMutantShouldReturn(3, "6");
     }
 
-    @Override
-    public String call() {
-      this.i = this.i >> 2;
-      return "" + this.i;
+    @Test
+    public void shouldReplaceLongXORWithAND() {
+        v.forLongFunctionClass(HasLXor.class)
+                .firstMutantShouldReturn(2, "2");
+        v.forLongFunctionClass(HasLXor.class)
+                .firstMutantShouldReturn(1, "0");
     }
-  }
-
-  @Test
-  public void shouldReplaceIntegerShiftRightWithShiftLeft() throws Exception {
-    final Mutant mutant = getFirstMutant(HasISHR.class);
-    assertMutantCallableReturns(new HasISHR(100), mutant, "400");
-    assertMutantCallableReturns(new HasISHR(20), mutant, "80");
-  }
 
-  private static class HasIUSHR implements Callable<String> {
-    private int i;
-
-    HasIUSHR(final int i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceLongShiftLeftWithShiftRight() {
+        v.forLongFunctionClass(HasLSHL.class)
+                .firstMutantShouldReturn(100, "25");
+        v.forLongFunctionClass(HasLSHL.class)
+                .firstMutantShouldReturn(20, "5");
     }
 
-    @Override
-    public String call() {
-      this.i = this.i >>> 2;
-      return "" + this.i;
+    @Test
+    public void shouldReplaceLongShiftRightWithShiftLeft() {
+        v.forLongFunctionClass(HasLSHR.class)
+                .firstMutantShouldReturn(100, "400");
+        v.forLongFunctionClass(HasLSHR.class)
+                .firstMutantShouldReturn(20, "80");
     }
-  }
-
-  @Test
-  public void shouldReplaceIntegerUnsignedShiftRightWithShiftLeft()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(HasIUSHR.class);
-    assertMutantCallableReturns(new HasIUSHR(100), mutant, "400");
-    assertMutantCallableReturns(new HasIUSHR(20), mutant, "80");
-  }
 
-  // LONGS
+    @Test
+    public void shouldReplaceLongUnsignedShiftRightWithShiftLeft() {
+        v.forLongFunctionClass(HasLUSHR.class)
+                .firstMutantShouldReturn(100, "400");
+        v.forLongFunctionClass(HasLUSHR.class)
+                .firstMutantShouldReturn(20, "80");
+    }
 
-  private static class HasLAdd implements Callable<String> {
-    private long i;
+    // LONGS
 
-    HasLAdd(final long i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceFloatAdditionWithSubtraction() {
+        v.forFunctionClass(HasFADD.class)
+                .firstMutantShouldReturn(2f, "1.0");
+        v.forFunctionClass(HasFADD.class)
+                .firstMutantShouldReturn(20f, "19.0");
     }
 
-    @Override
-    public String call() {
-      this.i++;
-      return "" + this.i;
+    @Test
+    public void shouldReplaceFloatSubtractionWithAddition() {
+        v.forFunctionClass(HasFSUB.class)
+                .firstMutantShouldReturn(2f, "3.0");
+        v.forFunctionClass(HasFSUB.class)
+                .firstMutantShouldReturn(20f, "21.0");
     }
-  }
-
-  @Test
-  public void shouldReplaceLongAdditionWithSubtraction() throws Exception {
-    final Mutant mutant = getFirstMutant(HasLAdd.class);
-    assertMutantCallableReturns(new HasLAdd(2), mutant, "1");
-    assertMutantCallableReturns(new HasLAdd(20), mutant, "19");
-  }
 
-  private static class HasLSub implements Callable<String> {
-    private long i;
-
-    HasLSub(final long i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceFloatMultiplicationWithDivision() {
+        v.forFunctionClass(HasFMUL.class)
+                .firstMutantShouldReturn(2f, "1.0");
+        v.forFunctionClass(HasFMUL.class)
+                .firstMutantShouldReturn(20f, "10.0");
     }
 
-    @Override
-    public String call() {
-      this.i--;
-      return "" + this.i;
+    @Test
+    public void shouldReplaceFloatDivisionWithMultiplication() {
+        v.forFunctionClass(HasFDIV.class)
+                .firstMutantShouldReturn(2f, "4.0");
+        v.forFunctionClass(HasFDIV.class)
+                .firstMutantShouldReturn(20f, "40.0");
     }
-  }
-
-  @Test
-  public void shouldReplaceLongSubtractionWithAddition() throws Exception {
-    final Mutant mutant = getFirstMutant(HasLSub.class);
-    assertMutantCallableReturns(new HasLSub(2), mutant, "3");
-    assertMutantCallableReturns(new HasLSub(20), mutant, "21");
-  }
 
-  private static class HasLMul implements Callable<String> {
-    private long i;
-
-    HasLMul(final long i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceFloatModulusWithMultiplication() {
+        v.forFunctionClass(HasFREM.class)
+                .firstMutantShouldReturn(2f, "4.0");
+        v.forFunctionClass(HasFREM.class)
+                .firstMutantShouldReturn(3f, "6.0");
     }
 
-    @Override
-    public String call() {
-      this.i = this.i * 2;
-      return "" + this.i;
+    @Test
+    public void shouldReplaceDoubleAdditionWithSubtraction() {
+        v.forDoubleFunctionClass(HasDADD.class)
+                .firstMutantShouldReturn(2D, "1.0");
+        v.forDoubleFunctionClass(HasDADD.class)
+                .firstMutantShouldReturn(20D, "19.0");
     }
-  }
-
-  @Test
-  public void shouldReplaceLongMultiplicationWithDivision() throws Exception {
-    final Mutant mutant = getFirstMutant(HasLMul.class);
-    assertMutantCallableReturns(new HasLMul(2), mutant, "1");
-    assertMutantCallableReturns(new HasLMul(20), mutant, "10");
-  }
 
-  private static class HasLDiv implements Callable<String> {
-    private long i;
-
-    HasLDiv(final long i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceDoubleSubtractionWithAddition() {
+        v.forDoubleFunctionClass(HasDSUB.class)
+                .firstMutantShouldReturn(2, "3.0");
+        v.forDoubleFunctionClass(HasDSUB.class)
+                .firstMutantShouldReturn(20, "21.0");
     }
 
-    @Override
-    public String call() {
-      this.i = this.i / 2;
-      return "" + this.i;
+    @Test
+    public void shouldReplaceDoubleMultiplicationWithDivision() {
+        v.forDoubleFunctionClass(HasDMUL.class)
+                .firstMutantShouldReturn(2, "1.0");
+        v.forDoubleFunctionClass(HasDMUL.class)
+                .firstMutantShouldReturn(20, "10.0");
     }
-  }
-
-  @Test
-  public void shouldReplaceLongDivisionWithMultiplication() throws Exception {
-    final Mutant mutant = getFirstMutant(HasLDiv.class);
-    assertMutantCallableReturns(new HasLDiv(2), mutant, "4");
-    assertMutantCallableReturns(new HasLDiv(20), mutant, "40");
-  }
 
-  private static class HasLOr implements Callable<String> {
-    private long i;
-
-    HasLOr(final long i) {
-      this.i = i;
+    @Test
+    public void shouldReplaceDoubleDivisionWithMultiplication() {
+        v.forDoubleFunctionClass(HasDDIV.class)
+                .firstMutantShouldReturn(2, "4.0");
+        v.forDoubleFunctionClass(HasDDIV.class)
+                .firstMutantShouldReturn(20, "40.0");
     }
 
-    @Override
-    public String call() {
-      this.i = this.i | 2;
-      return "" + this.i;
+    @Test
+    public void shouldReplaceDoublerModulusWithMultiplication() {
+        v.forDoubleFunctionClass(HasDREM.class)
+                .firstMutantShouldReturn(2, "4.0");
+        v.forDoubleFunctionClass(HasDREM.class)
+                .firstMutantShouldReturn(3, "6.0");
     }
-  }
-
-  @Test
-  public void shouldReplaceLongBitwiseOrsWithAnds() throws Exception {
-    final Mutant mutant = getFirstMutant(HasLOr.class);
-    assertMutantCallableReturns(new HasLDiv(2), mutant, "1");
-    assertMutantCallableReturns(new HasLOr(4), mutant, "0");
-  }
-
-  private static class HasLAnd implements Callable<String> {
-    private long i;
 
-    HasLAnd(final long i) {
-      this.i = i;
-    }
+    private static class HasIAdd implements IntFunction<String> {
 
-    @Override
-    public String call() {
-      this.i = this.i & 2;
-      return "" + this.i;
+        @Override
+        public String apply(int i) {
+            i++;
+            return "" + i;
+        }
     }
-  }
-
-  @Test
-  public void shouldReplaceLongBitwiseAndsWithOrs() throws Exception {
-    final Mutant mutant = getFirstMutant(HasLAnd.class);
-    assertMutantCallableReturns(new HasLAnd(2), mutant, "2");
-    assertMutantCallableReturns(new HasLAnd(4), mutant, "6");
-  }
 
-  private static class HasLRem implements Callable<String> {
-    private long i;
+    private static class HasISub implements IntFunction<String> {
 
-    HasLRem(final long i) {
-      this.i = i;
+        @Override
+        public String apply(int i) {
+            i--;
+            return "" + i;
+        }
     }
 
-    @Override
-    public String call() {
-      this.i = this.i % 2;
-      return "" + this.i;
+    private static class HasIMul implements IntFunction<String> {
+        @Override
+        public String apply(int i) {
+            i = i * 2;
+            return "" + i;
+        }
     }
-  }
 
-  @Test
-  public void shouldReplaceLongModulusWithMultiplication() throws Exception {
-    final Mutant mutant = getFirstMutant(HasLRem.class);
-    assertMutantCallableReturns(new HasLRem(2), mutant, "4");
-    assertMutantCallableReturns(new HasLRem(3), mutant, "6");
-  }
+    private static class HasIDiv implements IntFunction<String> {
+        @Override
+        public String apply(int i) {
+            i = i / 2;
+            return "" + i;
+        }
+    }
 
-  private static class HasLXor implements Callable<String> {
-    private long i;
+    private static class HasIOr implements IntFunction<String> {
 
-    HasLXor(final long i) {
-      this.i = i;
+        @Override
+        public String apply(int i) {
+            i = i | 2;
+            return "" + i;
+        }
     }
 
-    @Override
-    public String call() {
-      this.i = this.i ^ 2;
-      return "" + this.i;
+    private static class HasIAnd implements IntFunction<String> {
+        @Override
+        public String apply(int i) {
+            i = i & 2;
+            return "" + i;
+        }
     }
-  }
-
-  @Test
-  public void shouldReplaceLongXORWithAND() throws Exception {
-    final Mutant mutant = getFirstMutant(HasLXor.class);
-    assertMutantCallableReturns(new HasLXor(2), mutant, "2");
-    assertMutantCallableReturns(new HasLXor(1), mutant, "0");
-  }
 
-  private static class HasLSHL implements Callable<String> {
-    private long i;
-
-    HasLSHL(final long i) {
-      this.i = i;
+    private static class HasIRem implements IntFunction<String> {
+        @Override
+        public String apply(int i) {
+            i = i % 2;
+            return "" + i;
+        }
     }
 
-    @Override
-    public String call() {
-      this.i = this.i << 2;
-      return "" + this.i;
+    private static class HasIXor implements IntFunction<String> {
+        @Override
+        public String apply(int i) {
+            i = i ^ 2;
+            return "" + i;
+        }
     }
-  }
-
-  @Test
-  public void shouldReplaceLongShiftLeftWithShiftRight() throws Exception {
-    final Mutant mutant = getFirstMutant(HasLSHL.class);
-    assertMutantCallableReturns(new HasLSHL(100), mutant, "25");
-    assertMutantCallableReturns(new HasLSHL(20), mutant, "5");
-  }
 
-  private static class HasLSHR implements Callable<String> {
-    private long i;
-
-    HasLSHR(final long i) {
-      this.i = i;
+    private static class HasISHL implements IntFunction<String> {
+        @Override
+        public String apply(int i) {
+            i = i << 2;
+            return "" + i;
+        }
     }
 
-    @Override
-    public String call() {
-      this.i = this.i >> 2;
-      return "" + this.i;
+    private static class HasISHR implements IntFunction<String> {
+        @Override
+        public String apply(int i) {
+            i = i >> 2;
+            return "" + i;
+        }
     }
-  }
-
-  @Test
-  public void shouldReplaceLongShiftRightWithShiftLeft() throws Exception {
-    final Mutant mutant = getFirstMutant(HasLSHR.class);
-    assertMutantCallableReturns(new HasLSHR(100), mutant, "400");
-    assertMutantCallableReturns(new HasLSHR(20), mutant, "80");
-  }
 
-  private static class HasLUSHR implements Callable<String> {
-    private long i;
-
-    HasLUSHR(final long i) {
-      this.i = i;
+    private static class HasIUSHR implements IntFunction<String> {
+        @Override
+        public String apply(int i) {
+            i = i >>> 2;
+            return "" + i;
+        }
     }
 
-    @Override
-    public String call() {
-      this.i = this.i >>> 2;
-      return "" + this.i;
+    private static class HasLAdd implements LongFunction<String> {
+        @Override
+        public String apply(long i) {
+            i++;
+            return "" + i;
+        }
     }
-  }
-
-  @Test
-  public void shouldReplaceLongUnsignedShiftRightWithShiftLeft()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(HasLUSHR.class);
-    assertMutantCallableReturns(new HasLUSHR(100), mutant, "400");
-    assertMutantCallableReturns(new HasLUSHR(20), mutant, "80");
-  }
 
-  // FLOATS
+    // FLOATS
 
-  private static class HasFADD implements Callable<String> {
-    private float i;
+    private static class HasLSub implements LongFunction<String> {
 
-    HasFADD(final float i) {
-      this.i = i;
+        @Override
+        public String apply(long i) {
+            i--;
+            return "" + i;
+        }
     }
 
-    @Override
-    public String call() {
-      this.i++;
-      return "" + this.i;
+    private static class HasLMul implements LongFunction<String> {
+        @Override
+        public String apply(long i) {
+            i = i * 2;
+            return "" + i;
+        }
     }
-  }
 
-  @Test
-  public void shouldReplaceFloatAdditionWithSubtraction() throws Exception {
-    final Mutant mutant = getFirstMutant(HasFADD.class);
-    assertMutantCallableReturns(new HasFADD(2), mutant, "1.0");
-    assertMutantCallableReturns(new HasFADD(20), mutant, "19.0");
-  }
+    private static class HasLDiv implements LongFunction<String> {
 
-  private static class HasFSUB implements Callable<String> {
-    private float i;
-
-    HasFSUB(final float i) {
-      this.i = i;
+        @Override
+        public String apply(long i) {
+            i = i / 2;
+            return "" + i;
+        }
     }
 
-    @Override
-    public String call() {
-      this.i--;
-      return "" + this.i;
+    private static class HasLOr implements LongFunction<String> {
+        @Override
+        public String apply(long i) {
+            i = i | 2;
+            return "" + i;
+        }
     }
-  }
-
-  @Test
-  public void shouldReplaceFloatSubtractionWithAddition() throws Exception {
-    final Mutant mutant = getFirstMutant(HasFSUB.class);
-    assertMutantCallableReturns(new HasFSUB(2), mutant, "3.0");
-    assertMutantCallableReturns(new HasFSUB(20), mutant, "21.0");
-  }
 
-  private static class HasFMUL implements Callable<String> {
-    private float i;
-
-    HasFMUL(final float i) {
-      this.i = i;
+    private static class HasLAnd implements LongFunction<String> {
+        @Override
+        public String apply(long i) {
+            i = i & 2;
+            return "" + i;
+        }
     }
 
-    @Override
-    public String call() {
-      this.i = this.i * 2;
-      return "" + this.i;
+    private static class HasLRem implements LongFunction<String> {
+        @Override
+        public String apply(long i) {
+            i = i % 2;
+            return "" + i;
+        }
     }
-  }
-
-  @Test
-  public void shouldReplaceFloatMultiplicationWithDivision() throws Exception {
-    final Mutant mutant = getFirstMutant(HasFMUL.class);
-    assertMutantCallableReturns(new HasFMUL(2), mutant, "1.0");
-    assertMutantCallableReturns(new HasFMUL(20), mutant, "10.0");
-  }
-
-  private static class HasFDIV implements Callable<String> {
-    private float i;
 
-    HasFDIV(final float i) {
-      this.i = i;
+    private static class HasLXor implements LongFunction<String> {
+        @Override
+        public String apply(long i) {
+            i = i ^ 2;
+            return "" + i;
+        }
     }
 
-    @Override
-    public String call() {
-      this.i = this.i / 2;
-      return "" + this.i;
+    private static class HasLSHL implements LongFunction<String> {
+        @Override
+        public String apply(long i) {
+            i = i << 2;
+            return "" + i;
+        }
     }
-  }
 
-  @Test
-  public void shouldReplaceFloatDivisionWithMultiplication() throws Exception {
-    final Mutant mutant = getFirstMutant(HasFDIV.class);
-    assertMutantCallableReturns(new HasFDIV(2), mutant, "4.0");
-    assertMutantCallableReturns(new HasFDIV(20), mutant, "40.0");
-  }
-
-  private static class HasFREM implements Callable<String> {
-    private float i;
-
-    HasFREM(final float i) {
-      this.i = i;
+    private static class HasLSHR implements LongFunction<String> {
+        @Override
+        public String apply(long i) {
+            i = i >> 2;
+            return "" + i;
+        }
     }
 
-    @Override
-    public String call() {
-      this.i = this.i % 2;
-      return "" + this.i;
+    private static class HasLUSHR implements LongFunction<String> {
+        @Override
+        public String apply(long i) {
+            i = i >>> 2;
+            return "" + i;
+        }
     }
-  }
-
-  @Test
-  public void shouldReplaceFloatModulusWithMultiplication() throws Exception {
-    final Mutant mutant = getFirstMutant(HasFREM.class);
-    assertMutantCallableReturns(new HasFREM(2), mutant, "4.0");
-    assertMutantCallableReturns(new HasFREM(3), mutant, "6.0");
-  }
-
-  // double
 
-  private static class HasDADD implements Callable<String> {
-    private double i;
+    // double
 
-    HasDADD(final double i) {
-      this.i = i;
+    private static class HasFADD implements Function<Float, String> {
+        @Override
+        public String apply(Float f) {
+            float i = f.floatValue();
+            i++;
+            return "" + i;
+        }
     }
 
-    @Override
-    public String call() {
-      this.i++;
-      return "" + this.i;
+    private static class HasFSUB implements Function<Float, String> {
+        @Override
+        public String apply(Float f) {
+            float i = f.floatValue();
+            i--;
+            return "" + i;
+        }
     }
-  }
 
-  @Test
-  public void shouldReplaceDoubleAdditionWithSubtraction() throws Exception {
-    final Mutant mutant = getFirstMutant(HasDADD.class);
-    assertMutantCallableReturns(new HasDADD(2), mutant, "1.0");
-    assertMutantCallableReturns(new HasDADD(20), mutant, "19.0");
-  }
-
-  private static class HasDSUB implements Callable<String> {
-    private double i;
-
-    HasDSUB(final double i) {
-      this.i = i;
+    private static class HasFMUL implements Function<Float, String> {
+        @Override
+        public String apply(Float f) {
+            float i = f.floatValue();
+            i = i * 2;
+            return "" + i;
+        }
     }
 
-    @Override
-    public String call() {
-      this.i--;
-      return "" + this.i;
+    private static class HasFDIV implements Function<Float, String> {
+        @Override
+        public String apply(Float f) {
+            float i = f.floatValue();
+            i = i / 2;
+            return "" + i;
+        }
     }
-  }
-
-  @Test
-  public void shouldReplaceDoubleSubtractionWithAddition() throws Exception {
-    final Mutant mutant = getFirstMutant(HasDSUB.class);
-    assertMutantCallableReturns(new HasDSUB(2), mutant, "3.0");
-    assertMutantCallableReturns(new HasDSUB(20), mutant, "21.0");
-  }
-
-  private static class HasDMUL implements Callable<String> {
-    private double i;
 
-    HasDMUL(final double i) {
-      this.i = i;
+    private static class HasFREM implements Function<Float, String> {
+        @Override
+        public String apply(Float f) {
+            float i = f.floatValue();
+            i = i % 2;
+            return "" + i;
+        }
     }
 
-    @Override
-    public String call() {
-      this.i = this.i * 2;
-      return "" + this.i;
+    private static class HasDADD implements DoubleFunction<String> {
+        @Override
+        public String apply(double i) {
+            i++;
+            return "" + i;
+        }
     }
-  }
 
-  @Test
-  public void shouldReplaceDoubleMultiplicationWithDivision() throws Exception {
-    final Mutant mutant = getFirstMutant(HasDMUL.class);
-    assertMutantCallableReturns(new HasDMUL(2), mutant, "1.0");
-    assertMutantCallableReturns(new HasDMUL(20), mutant, "10.0");
-  }
+    private static class HasDSUB implements DoubleFunction<String> {
 
-  private static class HasDDIV implements Callable<String> {
-    private double i;
-
-    HasDDIV(final double i) {
-      this.i = i;
+        @Override
+        public String apply(double i) {
+            i--;
+            return "" + i;
+        }
     }
 
-    @Override
-    public String call() {
-      this.i = this.i / 2;
-      return "" + this.i;
+    private static class HasDMUL implements DoubleFunction<String> {
+        @Override
+        public String apply(double i) {
+            i = i * 2;
+            return "" + i;
+        }
     }
-  }
-
-  @Test
-  public void shouldReplaceDoubleDivisionWithMultiplication() throws Exception {
-    final Mutant mutant = getFirstMutant(HasDDIV.class);
-    assertMutantCallableReturns(new HasDDIV(2), mutant, "4.0");
-    assertMutantCallableReturns(new HasDDIV(20), mutant, "40.0");
-  }
 
-  private static class HasDREM implements Callable<String> {
-    private double i;
-
-    HasDREM(final double i) {
-      this.i = i;
+    private static class HasDDIV implements DoubleFunction<String> {
+        @Override
+        public String apply(double i) {
+            i = i / 2;
+            return "" + i;
+        }
     }
 
-    @Override
-    public String call() {
-      this.i = this.i % 2;
-      return "" + this.i;
+    private static class HasDREM implements DoubleFunction<String> {
+        @Override
+        public String apply(double i) {
+            i = i % 2;
+            return "" + i;
+        }
     }
-  }
-
-  @Test
-  public void shouldReplaceDoublerModulusWithMultiplication() throws Exception {
-    final Mutant mutant = getFirstMutant(HasDREM.class);
-    assertMutantCallableReturns(new HasDREM(2), mutant, "4.0");
-    assertMutantCallableReturns(new HasDREM(3), mutant, "6.0");
-  }
 
 }

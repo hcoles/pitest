@@ -31,9 +31,10 @@ public class LongMutantVerifier<B> extends MutatorVerifier {
         this.target = target;
     }
 
-    /**
-     * Suppliers allow consumable inputs (eg streams) can be reused
-     */
+    public void firstMutantShouldReturn(long l, B expected) {
+        firstMutantShouldReturn(() -> l, expected);
+    }
+
     public void firstMutantShouldReturn(LongSupplier ls, B expected) {
 
         long input = ls.getAsLong();

@@ -31,9 +31,10 @@ public class MutantVerifier<A, B> extends MutatorVerifier {
         this.target = target;
     }
 
-    /**
-     * Suppliers allow consumable inputs (eg streams) can be reused
-     */
+    public void firstMutantShouldReturn(A a, B expected) {
+        firstMutantShouldReturn(() -> a, expected);
+    }
+
     public void firstMutantShouldReturn(Supplier<A> as, B expected) {
         A input = as.get();
         if (checkUnmutated()) {
