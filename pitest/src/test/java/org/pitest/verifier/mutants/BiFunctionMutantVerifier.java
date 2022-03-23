@@ -8,59 +8,54 @@ import org.pitest.util.Unchecked;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.LongFunction;
-import java.util.function.LongSupplier;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Verification based on instantiating mutated versions of a class.
- * <p>
- * Classes must implement java.util.IntFunction and provide a default
- * constructor.
- */
-public class LongMutantVerifier<B> extends MutatorVerifier {
+public class BiFunctionMutantVerifier<A, B, C> extends MutatorVerifier {
 
     private final GregorMutater engine;
-    private final Class<? extends LongFunction<B>> target;
+    private final Class<? extends BiFunction<A, B, C>> target;
 
-    public LongMutantVerifier(GregorMutater engine, Class<? extends LongFunction<B>> target, Predicate<MutationDetails> filter) {
+    public BiFunctionMutantVerifier(GregorMutater engine, Class<? extends BiFunction<A, B, C>> target, Predicate<MutationDetails> filter) {
         super(engine, target, filter);
         this.engine = engine;
         this.target = target;
     }
 
+    public void firstMutantShouldReturn(A a, B b, C expected) {
+        firstMutantShouldReturn( () -> a, () -> b, expected);
+    }
+
     /**
      * Suppliers allow consumable inputs (eg streams) can be reused
      */
-    public void firstMutantShouldReturn(LongSupplier input, B expected) {
-        assertThat(runWithoutMutation(input.getAsLong()))
-                .describedAs("Expected unmutated code to return different value to mutated code")
-                .isNotEqualTo(expected);
-
+    public void firstMutantShouldReturn(Supplier<A> a, Supplier<B> b, C expected) {
         List<MutationDetails> mutations = findMutations();
-        assertThat(mutateAndCall(input.getAsLong(), getFirstMutant(mutations)))
+        assertThat(mutateAndCall(a.get(), b.get(), getFirstMutant(mutations)))
                 .isEqualTo(expected);
     }
 
-    private B runWithoutMutation(long input) {
-        return this.runInClassLoader(target.getClassLoader(), input);
+
+    private C runWithoutMutation(A a, B b) {
+        return this.runInClassLoader(target.getClassLoader(), a, b);
     }
 
-    private B mutateAndCall(long input, Mutant mutant) {
+    private C mutateAndCall(A a, B b, Mutant mutant) {
         ClassLoader loader = this.createClassLoader(mutant);
-        return this.runInClassLoader(loader, input);
+        return this.runInClassLoader(loader, a, b);
     }
 
-    private B runInClassLoader(ClassLoader loader, long input) {
+    private C runInClassLoader(ClassLoader loader, A a, B b) {
         try {
             Class<?> forLoader = loader.loadClass(target.getName());
 
             Constructor c = forLoader.getDeclaredConstructor();
             c.setAccessible(true);
-            LongFunction<B> instance = (LongFunction<B>) c.newInstance();
-            return instance.apply(input);
+            BiFunction<A, B, C> instance = (BiFunction<A, B, C>) c.newInstance();
+            return instance.apply(a, b);
         } catch (ReflectiveOperationException ex) {
             throw Unchecked.translateCheckedException(ex);
         }

@@ -1,25 +1,15 @@
 package org.pitest.verifier.mutants;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.util.CheckClassAdapter;
-import org.pitest.classpath.ClassPath;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
-import org.pitest.simpletest.ExcludedPrefixIsolationStrategy;
-import org.pitest.simpletest.Transformation;
-import org.pitest.simpletest.TransformingClassLoader;
 import org.pitest.util.Unchecked;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
-import java.util.function.LongFunction;
-import java.util.function.LongSupplier;
 import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,17 +53,6 @@ public class DoubleMutantVerifier<B> extends MutatorVerifier {
         return this.runInClassLoader(loader, input);
     }
 
-    private ClassLoader createClassLoader(Mutant mutant) {
-        return new TransformingClassLoader(new ClassPath(),
-                this.createTransformation(mutant),
-                new ExcludedPrefixIsolationStrategy(new String[0]),
-                Object.class.getClassLoader());
-    }
-
-    private Transformation createTransformation(Mutant mutant) {
-        return (name, bytes) -> name.equals(mutant.getDetails().getClassName().asJavaName()) ? mutant.getBytes() : bytes;
-    }
-
     private B runInClassLoader(ClassLoader loader, double input) {
         try {
             Class<?> forLoader = loader.loadClass(target.getName());
@@ -95,15 +74,6 @@ public class DoubleMutantVerifier<B> extends MutatorVerifier {
                 .getId());
         verifyMutant(mutant);
         return mutant;
-    }
-
-    private void verifyMutant(Mutant mutant) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        CheckClassAdapter.verify(new ClassReader(mutant.getBytes()), false, pw);
-        assertThat(sw.toString())
-                .describedAs("Mutant is not a valid class")
-                .isEmpty();
     }
 
 }

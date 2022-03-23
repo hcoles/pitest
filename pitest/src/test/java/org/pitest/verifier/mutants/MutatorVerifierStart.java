@@ -5,10 +5,10 @@ import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
-import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutatorTest;
 
 import java.util.Arrays;
 import java.util.concurrent.Callable;
+import java.util.function.BiFunction;
 import java.util.function.DoubleFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -69,9 +69,14 @@ public class MutatorVerifierStart {
         return new DoubleMutantVerifier<>(engine, clazz, mutantFilter);
     }
 
+
+    public <A,B,C> BiFunctionMutantVerifier forBiFunctionClass(Class<? extends BiFunction<A,B,C>> clazz) {
+        GregorMutater engine = makeEngine();
+        return new BiFunctionMutantVerifier<>(engine, clazz, mutantFilter);
+    }
+
     private GregorMutater makeEngine() {
         return new GregorMutater(ClassloaderByteArraySource.fromContext(), filter, Arrays.asList(new NullMutator(), mmf, new NullMutator()));
     }
-
 
 }

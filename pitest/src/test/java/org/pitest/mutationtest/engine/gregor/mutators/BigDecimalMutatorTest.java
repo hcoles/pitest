@@ -14,402 +14,304 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
-import org.pitest.mutationtest.engine.gregor.mutators.experimental.BigDecimalMutator;
+import org.pitest.verifier.mutants.MutatorVerifierStart;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.concurrent.Callable;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static org.pitest.mutationtest.engine.gregor.mutators.experimental.BigDecimalMutator.EXPERIMENTAL_BIG_DECIMAL;
+
 public class BigDecimalMutatorTest extends MutatorTestBase {
 
-  @Before
-  public void setupEngineToMutateOnlyReturnVals() {
-    createTesteeWith(BigDecimalMutator.INSTANCE);
-  }
+    MutatorVerifierStart v = MutatorVerifierStart.forMutator(EXPERIMENTAL_BIG_DECIMAL);
 
-  @Test
-  public void add() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(Add.class);
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new Add(0, 2), mutant, "-2");
-  }
-
-  @Test
-  public void subtract() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(Subtract.class);
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new Subtract(0, 3), mutant, "3");
-  }
-
-  @Test
-  public void mutliply() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(Multiply.class);
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new Multiply(2, 2), mutant, "1");
-  }
-
-  @Test
-  public void divide() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(Divide.class);
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new Divide(2, 2), mutant, "4");
-  }
-
-  @Test
-  public void abs() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(Abs.class);
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new Abs(-25, 6), mutant, "25");
-    assertMutantCallableReturns(new Abs(25, 6), mutant, "-25");
-  }
-
-  @Test
-  public void negate() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(Negate.class);
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new Negate(0xFFFFFF00), mutant, String.valueOf(0xFFFFFF00));
-    assertMutantCallableReturns(new Negate(0), mutant, String.valueOf(0));
-    assertMutantCallableReturns(new Negate(0xFF00FF00), mutant, String.valueOf(0xFF00FF00));
-  }
-
-  @Test
-  public void plus() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(Plus.class);
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new Plus(0xFFFFFF00), mutant, String.valueOf(0x00000100));
-    assertMutantCallableReturns(new Plus(0), mutant, String.valueOf(0));
-    assertMutantCallableReturns(new Plus(0xFF00FF00), mutant, String.valueOf(0x00FF0100));
-  }
-
-  @Test
-  public void min() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(Min.class);
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new Min(-25, 6), mutant, "6");
-    assertMutantCallableReturns(new Min(25, 6), mutant, "25");
-  }
-
-  @Test
-  public void max() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(Max.class);
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new Max(-25, 6), mutant, "-25");
-    assertMutantCallableReturns(new Max(25, 6), mutant, "6");
-  }
-
-  @Test
-  public void addLambda() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(AddLambda.class);
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new AddLambda(0, 2), mutant, "-2");
-  }
-
-  @Test
-  public void subtractLambda() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(SubtractLambda.class);
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new SubtractLambda(0, 3), mutant, "3");
-  }
-
-  @Test
-  public void mutliplyLambda() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(MultiplyLambda.class);
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new MultiplyLambda(2, 2), mutant, "1");
-  }
-
-  @Test
-  public void divideLambda() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(DivideLambda.class);
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new DivideLambda(2, 2), mutant, "4");
-  }
-
-  @Test
-  public void absLambda() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(AbsLambda.class);
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new AbsLambda(-25, 6), mutant, "25");
-    assertMutantCallableReturns(new AbsLambda(25, 6), mutant, "-25");
-  }
-
-  @Test
-  public void negateLambda() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(NegateLambda.class);
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new NegateLambda(0xFFFFFF00), mutant, String.valueOf(0xFFFFFF00));
-    assertMutantCallableReturns(new NegateLambda(0), mutant, String.valueOf(0));
-    assertMutantCallableReturns(new NegateLambda(0xFF00FF00), mutant, String.valueOf(0xFF00FF00));
-  }
-
-  @Test
-  public void plusLambda() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(PlusLambda.class);
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new PlusLambda(0xFFFFFF00), mutant, String.valueOf(0x00000100));
-    assertMutantCallableReturns(new PlusLambda(0), mutant, String.valueOf(0));
-    assertMutantCallableReturns(new PlusLambda(0xFF00FF00), mutant, String.valueOf(0x00FF0100));
-  }
-
-  @Test
-  public void minLambda() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(MinLambda.class);
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new MinLambda(-25, 6), mutant, "6");
-    assertMutantCallableReturns(new MinLambda(25, 6), mutant, "25");
-  }
-
-  @Test
-  public void maxLambda() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(MaxLambda.class);
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new MaxLambda(-25, 6), mutant, "-25");
-    assertMutantCallableReturns(new MaxLambda(25, 6), mutant, "6");
-  }
-
-  private static abstract class AbstractMath implements Callable<String> {
-
-    private final BigDecimal value1;
-    private final BigDecimal value2;
-
-    AbstractMath(long v1, long v2) {
-      this.value1 = BigDecimal.valueOf(v1);
-      this.value2 = BigDecimal.valueOf(v2);
+    @Test
+    public void add() {
+        v.forBiFunctionClass(Add.class)
+                .firstMutantShouldReturn(0L, 2L, "-2");
     }
 
-    abstract BigDecimal apply(BigDecimal left, BigDecimal right);
-
-    @Override
-    public String call() throws Exception {
-      return String.valueOf(apply(value1, value2));
-    }
-  }
-
-  private static class Add extends AbstractMath {
-
-    Add(long v1, long v2) {
-      super(v1, v2);
+    @Test
+    public void subtract() {
+        v.forBiFunctionClass(Subtract.class)
+                .firstMutantShouldReturn(0L, 3L, "3");
     }
 
-    @Override
-    BigDecimal apply(BigDecimal left, BigDecimal right) {
-      return left.add(right);
-    }
-  }
-
-  private static class Subtract extends AbstractMath {
-
-    Subtract(long v1, long v2) {
-      super(v1, v2);
+    @Test
+    public void multiply() {
+        v.forBiFunctionClass(Multiply.class)
+                .firstMutantShouldReturn(2L, 2L, "1");
     }
 
-    @Override
-    BigDecimal apply(BigDecimal left, BigDecimal right) {
-      return left.subtract(right);
-    }
-  }
-
-  private static class Divide extends AbstractMath {
-
-    Divide(long v1, long v2) {
-      super(v1, v2);
+    @Test
+    public void divide() {
+        v.forBiFunctionClass(Divide.class)
+                .firstMutantShouldReturn(2L, 2L, "4");
     }
 
-    @Override
-    BigDecimal apply(BigDecimal left, BigDecimal right) {
-      return left.divide(right);
-    }
-  }
+    @Test
+    public void abs() {
+        v.forBiFunctionClass(Abs.class)
+                .firstMutantShouldReturn(-25L, 6L, "25");
 
-  private static class Multiply extends AbstractMath {
-
-    Multiply(long v1, long v2) {
-      super(v1, v2);
+        v.forBiFunctionClass(Abs.class)
+                .firstMutantShouldReturn(25L, 6L, "-25");
     }
 
-    @Override
-    BigDecimal apply(BigDecimal left, BigDecimal right) {
-      return left.multiply(right);
-    }
-  }
+    @Test
+    public void negate() {
+        v.forBiFunctionClass(Negate.class)
+                .firstMutantShouldReturn(0xFFFFFF00L, 0l, String.valueOf(0xFFFFFF00L));
+        v.forBiFunctionClass(Negate.class)
+                .firstMutantShouldReturn(0L, 0L, String.valueOf(0L));
+        v.forBiFunctionClass(Negate.class)
+                .firstMutantShouldReturn(0xFF00FF00L, 0l, String.valueOf(0xFF00FF00L));
 
-  private static class Max extends AbstractMath {
-
-    Max(long v1, long v2) {
-      super(v1, v2);
-    }
-
-    @Override
-    BigDecimal apply(BigDecimal left, BigDecimal right) {
-      return left.max(right);
-    }
-  }
-
-  private static class Min extends AbstractMath {
-
-    Min(long v1, long v2) {
-      super(v1, v2);
     }
 
-    @Override
-    BigDecimal apply(BigDecimal left, BigDecimal right) {
-      return left.min(right);
-    }
-  }
-
-  private static class Negate extends AbstractMath {
-
-    Negate(long v1) {
-      super(v1, 0L);
+    @Test
+    public void plus() {
+        v.forBiFunctionClass(Plus.class)
+                .firstMutantShouldReturn(BigDecimal.valueOf(0xFFFFFF00), null, BigDecimal.valueOf(0x00000100));
+        v.forBiFunctionClass(Plus.class)
+                .firstMutantShouldReturn(BigDecimal.ZERO, null, BigDecimal.ZERO);
+        v.forBiFunctionClass(Plus.class)
+                .firstMutantShouldReturn(BigDecimal.valueOf(0xFF00FF00), null, BigDecimal.valueOf(0x00FF0100));
     }
 
-    @Override
-    BigDecimal apply(BigDecimal left, BigDecimal right) {
-      return left.negate();
-    }
-  }
+    @Test
+    public void min() {
+        v.forBiFunctionClass(Min.class)
+                .firstMutantShouldReturn(-25L, 6L, "6");
+        v.forBiFunctionClass(Min.class)
+                .firstMutantShouldReturn(25L, 6L, "25");
 
-  private static class Plus extends AbstractMath {
-
-    Plus(long v1) {
-      super(v1, 0L);
     }
 
-    @Override
-    BigDecimal apply(BigDecimal left, BigDecimal right) {
-      return left.plus();
-    }
-  }
+    @Test
+    public void max() {
+        v.forBiFunctionClass(Max.class)
+                .firstMutantShouldReturn(-25L, 6L, "-25");
 
-  private static class Abs extends AbstractMath {
-
-    Abs(long v1, long v2) {
-      super(v1, v2);
+        v.forBiFunctionClass(Max.class)
+                .firstMutantShouldReturn(25L, 6L, "6");
     }
 
-    @Override
-    BigDecimal apply(BigDecimal left, BigDecimal right) {
-      return left.abs();
-    }
-  }
-
-  private static class AddLambda extends AbstractMath {
-
-    AddLambda(long v1, long v2) {
-      super(v1, v2);
+    @Test
+    public void addLambda() {
+        v.forBiFunctionClass(AddLambda.class)
+                .firstMutantShouldReturn(0L, 2L, "-2");
     }
 
-    @Override
-    BigDecimal apply(BigDecimal left, BigDecimal right) {
-      BiFunction<BigDecimal, BigDecimal, BigDecimal> function = BigDecimal::add;
-      return function.apply(left, right);    }
-  }
-
-  private static class SubtractLambda extends AbstractMath {
-
-    SubtractLambda(long v1, long v2) {
-      super(v1, v2);
+    @Test
+    public void subtractLambda() {
+        v.forBiFunctionClass(SubtractLambda.class)
+                .firstMutantShouldReturn(0L, 3L, "3");
     }
 
-    @Override
-    BigDecimal apply(BigDecimal left, BigDecimal right) {
-      BiFunction<BigDecimal, BigDecimal, BigDecimal> function = BigDecimal::subtract;
-      return function.apply(left, right);    }
-  }
-
-  private static class DivideLambda extends AbstractMath {
-
-    DivideLambda(long v1, long v2) {
-      super(v1, v2);
+    @Test
+    public void mutliplyLambda() {
+        v.forBiFunctionClass(MultiplyLambda.class)
+                .firstMutantShouldReturn(2L, 2L, "1");
     }
 
-    @Override
-    BigDecimal apply(BigDecimal left, BigDecimal right) {
-      BiFunction<BigDecimal, BigDecimal, BigDecimal> function = BigDecimal::divide;
-      return function.apply(left, right);
-    }
-  }
-
-  private static class MultiplyLambda extends AbstractMath {
-
-    MultiplyLambda(long v1, long v2) {
-      super(v1, v2);
+    @Test
+    public void divideLambda() {
+        v.forBiFunctionClass(DivideLambda.class)
+                .firstMutantShouldReturn(2L, 2L, "4");
     }
 
-    @Override
-    BigDecimal apply(BigDecimal left, BigDecimal right) {
-      BiFunction<BigDecimal, BigDecimal, BigDecimal> function = BigDecimal::multiply;
-      return function.apply(left, right);
-    }
-  }
+    @Test
+    public void absLambda() {
+        v.forBiFunctionClass(AbsLambda.class)
+                .firstMutantShouldReturn(-25L, 6L, "25");
 
-  private static class MaxLambda extends AbstractMath {
-
-    MaxLambda(long v1, long v2) {
-      super(v1, v2);
+        v.forBiFunctionClass(AbsLambda.class)
+                .firstMutantShouldReturn(25L, 6L, "-25");
     }
 
-    @Override
-    BigDecimal apply(BigDecimal left, BigDecimal right) {
-      BiFunction<BigDecimal, BigDecimal, BigDecimal> function = BigDecimal::max;
-      return function.apply(left, right);    }
-  }
-
-  private static class MinLambda extends AbstractMath {
-
-    MinLambda(long v1, long v2) {
-      super(v1, v2);
+    @Test
+    public void negateLambda() {
+        v.forBiFunctionClass(NegateLambda.class)
+                .firstMutantShouldReturn(0xFFFFFF00L, 0L, String.valueOf(0xFFFFFF00L));
+        v.forBiFunctionClass(NegateLambda.class)
+                .firstMutantShouldReturn(0L, 0l, String.valueOf(0L));
+        v.forBiFunctionClass(NegateLambda.class)
+                .firstMutantShouldReturn(0xFF00FF00L, 0L, String.valueOf(0xFF00FF00L));
     }
 
-    @Override
-    BigDecimal apply(BigDecimal left, BigDecimal right) {
-      BiFunction<BigDecimal, BigDecimal, BigDecimal> function = BigDecimal::min;
-      return function.apply(left, right);    }
-  }
-
-  private static class NegateLambda extends AbstractMath {
-
-    NegateLambda(long v1) {
-      super(v1, 0L);
+    @Test
+    public void plusLambda() {
+        v.forBiFunctionClass(PlusLambda.class)
+                .firstMutantShouldReturn(BigDecimal.valueOf(0xFFFFFF00), null, BigDecimal.valueOf(0x00000100));
+        v.forBiFunctionClass(PlusLambda.class)
+                .firstMutantShouldReturn(BigDecimal.ZERO, null, BigDecimal.valueOf(0L));
+        v.forBiFunctionClass(PlusLambda.class)
+                .firstMutantShouldReturn(BigDecimal.valueOf(0xFF00FF00), null, BigDecimal.valueOf(0x00FF0100));
     }
 
-    @Override
-    BigDecimal apply(BigDecimal left, BigDecimal right) {
-      Function<BigDecimal, BigDecimal> function = BigDecimal::negate;
-      return function.apply(left);
-    }
-  }
+    @Test
+    public void minLambda() {
+        v.forBiFunctionClass(MinLambda.class)
+                .firstMutantShouldReturn(-25L, 6L, "6");
 
-  private static class PlusLambda extends AbstractMath {
-
-    PlusLambda(long v1) {
-      super(v1, 0L);
+        v.forBiFunctionClass(MinLambda.class)
+                .firstMutantShouldReturn(25L, 6L, "25");
     }
 
-    @Override
-    BigDecimal apply(BigDecimal left, BigDecimal right) {
-      Function<BigDecimal, BigDecimal> function = BigDecimal::plus;
-      return function.apply(left);
-    }
-  }
+    @Test
+    public void maxLambda() {
+        v.forBiFunctionClass(MaxLambda.class)
+                .firstMutantShouldReturn(-25L, 6L, "-25");
 
-  private static class AbsLambda extends AbstractMath {
-
-    AbsLambda(long v1, long v2) {
-      super(v1, v2);
+        v.forBiFunctionClass(MaxLambda.class)
+                .firstMutantShouldReturn(25L, 6L, "6");
     }
 
-    @Override
-    BigDecimal apply(BigDecimal left, BigDecimal right) {
-      Function<BigDecimal, BigDecimal> function = BigDecimal::abs;
-      return function.apply(left);    }
-  }
+    private static abstract class AbstractMath implements BiFunction<Long, Long, String> {
+        public String apply(Long left, Long right) {
+            return String.valueOf(apply(BigDecimal.valueOf(left), BigDecimal.valueOf(right)));
+        }
+
+        abstract BigDecimal apply(BigDecimal left, BigDecimal right);
+    }
+
+    private static class Add extends AbstractMath {
+        @Override
+        BigDecimal apply(BigDecimal left, BigDecimal right) {
+            return left.add(right);
+        }
+    }
+
+    private static class Subtract extends AbstractMath {
+        @Override
+        BigDecimal apply(BigDecimal left, BigDecimal right) {
+            return left.subtract(right);
+        }
+    }
+
+    private static class Divide extends AbstractMath {
+        @Override
+        BigDecimal apply(BigDecimal left, BigDecimal right) {
+            return left.divide(right);
+        }
+    }
+
+    private static class Multiply extends AbstractMath {
+        @Override
+        BigDecimal apply(BigDecimal left, BigDecimal right) {
+            return left.multiply(right);
+        }
+    }
+
+    private static class Max extends AbstractMath {
+        @Override
+        BigDecimal apply(BigDecimal left, BigDecimal right) {
+            return left.max(right);
+        }
+    }
+
+    private static class Min extends AbstractMath {
+        @Override
+        BigDecimal apply(BigDecimal left, BigDecimal right) {
+            return left.min(right);
+        }
+    }
+
+    private static class Negate extends AbstractMath {
+        @Override
+        BigDecimal apply(BigDecimal left, BigDecimal right) {
+            return left.negate();
+        }
+    }
+
+    private static class Plus implements BiFunction<BigDecimal, BigDecimal, BigDecimal> {
+        @Override
+        public BigDecimal apply(BigDecimal left, BigDecimal right) {
+            return left.plus();
+        }
+    }
+
+    private static class Abs extends AbstractMath {
+        @Override
+        BigDecimal apply(BigDecimal left, BigDecimal right) {
+            return left.abs();
+        }
+    }
+
+    private static class AddLambda extends AbstractMath {
+        @Override
+        BigDecimal apply(BigDecimal left, BigDecimal right) {
+            BiFunction<BigDecimal, BigDecimal, BigDecimal> function = BigDecimal::add;
+            return function.apply(left, right);
+        }
+    }
+
+    private static class SubtractLambda extends AbstractMath {
+        @Override
+        BigDecimal apply(BigDecimal left, BigDecimal right) {
+            BiFunction<BigDecimal, BigDecimal, BigDecimal> function = BigDecimal::subtract;
+            return function.apply(left, right);
+        }
+    }
+
+    private static class DivideLambda extends AbstractMath {
+        @Override
+        BigDecimal apply(BigDecimal left, BigDecimal right) {
+            BiFunction<BigDecimal, BigDecimal, BigDecimal> function = BigDecimal::divide;
+            return function.apply(left, right);
+        }
+    }
+
+    private static class MultiplyLambda extends AbstractMath {
+        @Override
+        BigDecimal apply(BigDecimal left, BigDecimal right) {
+            BiFunction<BigDecimal, BigDecimal, BigDecimal> function = BigDecimal::multiply;
+            return function.apply(left, right);
+        }
+    }
+
+    private static class MaxLambda extends AbstractMath {
+        @Override
+        BigDecimal apply(BigDecimal left, BigDecimal right) {
+            BiFunction<BigDecimal, BigDecimal, BigDecimal> function = BigDecimal::max;
+            return function.apply(left, right);
+        }
+    }
+
+    private static class MinLambda extends AbstractMath {
+        @Override
+        BigDecimal apply(BigDecimal left, BigDecimal right) {
+            BiFunction<BigDecimal, BigDecimal, BigDecimal> function = BigDecimal::min;
+            return function.apply(left, right);
+        }
+    }
+
+    private static class NegateLambda extends AbstractMath {
+        @Override
+        BigDecimal apply(BigDecimal left, BigDecimal right) {
+            Function<BigDecimal, BigDecimal> function = BigDecimal::negate;
+            return function.apply(left);
+        }
+    }
+
+    private static class PlusLambda implements BiFunction<BigDecimal, BigDecimal, BigDecimal> {
+        @Override
+        public BigDecimal apply(BigDecimal left, BigDecimal right) {
+            Function<BigDecimal, BigDecimal> function = BigDecimal::plus;
+            return function.apply(left);
+        }
+    }
+
+    private static class AbsLambda extends AbstractMath {
+        @Override
+        BigDecimal apply(BigDecimal left, BigDecimal right) {
+            Function<BigDecimal, BigDecimal> function = BigDecimal::abs;
+            return function.apply(left);
+        }
+    }
 
 }
