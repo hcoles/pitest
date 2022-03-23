@@ -15,113 +15,102 @@
 
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutatorTest.HasIntMethodCall;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutatorTest.HasVoidMethodCall;
+import org.pitest.verifier.mutants.MutatorVerifierStart;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.function.Predicate;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutator.CONSTRUCTOR_CALLS;
 
-public class ConstructorCallMutatorTest extends MutatorTestBase {
+public class ConstructorCallMutatorTest {
 
-  static class HasConstructorCall implements Callable<String> {
-    @Override
-    public String call() throws Exception {
-      final Integer i = new Integer(12);
-      return "" + (i == null);
-    }
-  }
+    MutatorVerifierStart v = MutatorVerifierStart.forMutator(CONSTRUCTOR_CALLS)
+            .notCheckingUnMutatedValues();
 
-  @Before
-  public void setupEngineToRemoveVoidMethods() {
-    createTesteeWith(mutateOnlyCallMethod(),
-        ConstructorCallMutator.CONSTRUCTOR_CALLS);
-  }
-
-  @Test
-  public void shouldReplaceConstructorCallsWithNullValue() throws Exception {
-    final Mutant mutant = getFirstMutant(HasConstructorCall.class);
-    assertMutantCallableReturns(new HasConstructorCall(), mutant, "true");
-  }
-
-  @Test
-  public void shouldNotRemoveVoidMethodCalls() throws Exception {
-    assertDoesNotContain(findMutationsFor(HasVoidMethodCall.class), descriptionContaining("set"));
-  }
-
-  @Test
-  public void shouldNotRemoveNonVoidMethods() throws Exception {
-    assertDoesNotContain(findMutationsFor(HasIntMethodCall.class),
-        descriptionContaining("set"));
-  }
-
-  @Test
-  public void shouldNotRemoveCallsToSuper() throws Exception {
-    createTesteeWith(i -> true,
-        ConstructorCallMutator.CONSTRUCTOR_CALLS);
-    assertDoesNotContain(findMutationsFor(HasConstructorCall.class),
-        descriptionContaining("java/lang/Object::<init>"));
-  }
-
-  private static class HasDelegateConstructorCall implements Callable<String> {
-
-    private final int i;
-
-    @SuppressWarnings("unused")
-    HasDelegateConstructorCall() {
-      this(1);
+    @Test
+    public void shouldReplaceConstructorCallsWithNullValue() {
+        v.forCallableClass(HasConstructorCall.class)
+                .firstMutantShouldReturn("true");
     }
 
-    HasDelegateConstructorCall(final int i) {
-      this.i = i;
+    @Test
+    public void shouldNotRemoveVoidMethodCalls() {
+        v.consideringOnlyMutantsMatching(m -> m.getMethod().startsWith("set"))
+                .forCallableClass(HasVoidMethodCall.class)
+                .noMutantsCreated();
     }
 
-    @Override
-    public String call() throws Exception {
-      return "" + this.i;
+    @Test
+    public void shouldNotRemoveNonVoidMethods() {
+        v.consideringOnlyMutantsMatching(m -> m.getMethod().startsWith("set"))
+                .forCallableClass(HasIntMethodCall.class)
+                .noMutantsCreated();
     }
 
-  }
-
-  @Test
-  public void shouldNotRemoveCallsToDelegateContructor() throws Exception {
-    createTesteeWith(i -> true,
-        ConstructorCallMutator.CONSTRUCTOR_CALLS);
-    assertDoesNotContain(findMutationsFor(HasDelegateConstructorCall.class),
-        descriptionContaining("HasDelegateConstructorCall::<init>"));
-  }
-
-  private static class HasArrayListConstructor implements Callable<String> {
-
-    private List<String> list;
-
-    @Override
-    public String call() throws Exception {
-
-      this.list = new ArrayList<>();
-
-      return "" + this.list;
+    @Test
+    public void shouldNotRemoveCallsToSuper() {
+        v.consideringOnlyMutantsMatching(m -> m.getDescription().contains("java/lang/Object::<init>"))
+                .forCallableClass(HasConstructorCall.class)
+                .noMutantsCreated();
     }
-  }
 
-  @Test
-  public void shouldCreateViableClassWhenMutatingArrayListConstructor()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(HasArrayListConstructor.class);
-    assertMutantCallableReturns(new HasArrayListConstructor(), mutant, "null");
-  }
+    @Test
+    public void shouldNotRemoveCallsToDelegateContructor() {
+        v.consideringOnlyMutantsMatching(m -> m.getDescription().contains("HasDelegateConstructorCall::<init>"))
+                .forCallableClass(HasDelegateConstructorCall.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void shouldCreateViableClassWhenMutatingArrayListConstructor() {
+        v.forCallableClass(HasArrayListConstructor.class)
+                .firstMutantShouldReturn("null");
+    }
+
+    static class HasConstructorCall implements Callable<String> {
+        @Override
+        public String call() throws Exception {
+            final Integer i = new Integer(12);
+            return "" + (i == null);
+        }
+    }
+
+    private static class HasDelegateConstructorCall implements Callable<String> {
+
+        private final int i;
+
+        @SuppressWarnings("unused")
+        HasDelegateConstructorCall() {
+            this(1);
+        }
+
+        HasDelegateConstructorCall(final int i) {
+            this.i = i;
+        }
+
+        @Override
+        public String call() throws Exception {
+            return "" + this.i;
+        }
+
+    }
+
+    private static class HasArrayListConstructor implements Callable<String> {
+
+        private List<String> list;
+
+        @Override
+        public String call() throws Exception {
+
+            this.list = new ArrayList<>();
+
+            return "" + this.list;
+        }
+    }
 
 
-  private static void assertDoesNotContain(Collection<MutationDetails> c, Predicate<MutationDetails> p) {
-    assertThat(c.stream().anyMatch(p)).isFalse();
-  }
 }
