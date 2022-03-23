@@ -24,8 +24,8 @@ public class CallableMutantVerifier<B> extends MutatorVerifier {
     private final GregorMutater engine;
     private final Class<? extends Callable<B>> target;
 
-    public CallableMutantVerifier(GregorMutater engine, Class<? extends Callable<B>> target, Predicate<MutationDetails> filter) {
-        super(engine, target, filter);
+    public CallableMutantVerifier(GregorMutater engine, Class<? extends Callable<B>> target, Predicate<MutationDetails> filter, boolean checkUnmutatedValues) {
+        super(engine, target, filter, checkUnmutatedValues);
         this.engine = engine;
         this.target = target;
     }
@@ -40,9 +40,11 @@ public class CallableMutantVerifier<B> extends MutatorVerifier {
      * Suppliers allow consumable inputs (eg streams) can be reused
      */
     public void firstMutantShouldReturn(B expected) {
-        assertThat(runWithoutMutation())
-                .describedAs("Expected unmutated code to return different value to mutated code")
-                .isNotEqualTo(expected);
+        if (checkUnmutated()) {
+            assertThat(runWithoutMutation())
+                    .describedAs("Expected unmutated code to return different value to mutated code")
+                    .isNotEqualTo(expected);
+        }
 
         List<MutationDetails> mutations = findMutations();
         assertThat(mutateAndCall(getFirstMutant(mutations)))

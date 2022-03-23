@@ -35,7 +35,8 @@ import org.pitest.verifier.mutants.MutatorVerifierStart;
 
 public class ArgumentPropagationMutatorTest extends MutatorTestBase {
 
-  MutatorVerifierStart v = MutatorVerifierStart.forMutator(EXPERIMENTAL_ARGUMENT_PROPAGATION);
+  MutatorVerifierStart v = MutatorVerifierStart.forMutator(EXPERIMENTAL_ARGUMENT_PROPAGATION)
+          .notCheckingUnMutatedValues();
 
   @Before
   public void setupEngineToUseReplaceMethodWithArgumentOfSameTypeAsReturnValueMutator() {

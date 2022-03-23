@@ -30,12 +30,14 @@ public class MutatorVerifier {
 
     private final GregorMutater engine;
     private final Class<?> clazz;
-    private Predicate<MutationDetails> filter;
+    private final Predicate<MutationDetails> filter;
+    private final boolean checkUnmutatedValues;
 
-    public MutatorVerifier(GregorMutater engine, Class<?> clazz, Predicate<MutationDetails> filter) {
+    public MutatorVerifier(GregorMutater engine, Class<?> clazz, Predicate<MutationDetails> filter, boolean checkUnmutatedValues) {
         this.engine = engine;
         this.clazz = clazz;
         this.filter = filter;
+        this.checkUnmutatedValues = checkUnmutatedValues;
     }
 
     public void createsNMutants(int n) {
@@ -90,5 +92,9 @@ public class MutatorVerifier {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         reader.accept(new TraceClassVisitor(null, new ASMifier(), new PrintWriter(bos)), 8);
         return bos.toString();
+    }
+
+    protected boolean checkUnmutated() {
+        return this.checkUnmutatedValues;
     }
 }

@@ -25,22 +25,27 @@ public class IntMutantVerifier<B> extends MutatorVerifier {
     private final GregorMutater engine;
     private final Class<? extends IntFunction<B>> target;
 
-    public IntMutantVerifier(GregorMutater engine, Class<? extends IntFunction<B>> target, Predicate<MutationDetails> filter) {
-        super(engine, target, filter);
+    public IntMutantVerifier(GregorMutater engine, Class<? extends IntFunction<B>> target, Predicate<MutationDetails> filter, boolean checkUnmutatedValues) {
+        super(engine, target, filter, checkUnmutatedValues);
         this.engine = engine;
         this.target = target;
     }
 
-    /**
-     * Suppliers allow consumable inputs (eg streams) can be reused
-     */
-    public void firstMutantShouldReturn(IntSupplier input, B expected) {
-        assertThat(runWithoutMutation(input.getAsInt()))
-                .describedAs("Expected unmutated code to return different value to mutated code")
-                .isNotEqualTo(expected);
+    public void firstMutantShouldReturn(int input, B expected) {
+        firstMutantShouldReturn(() -> input, expected);
+    }
+
+    public void firstMutantShouldReturn(IntSupplier is, B expected) {
+        int input = is.getAsInt();
+
+        if (checkUnmutated()) {
+            assertThat(runWithoutMutation(input))
+                    .describedAs("Expected unmutated code to return different value to mutated code")
+                    .isNotEqualTo(expected);
+        }
 
         List<MutationDetails> mutations = findMutations();
-        assertThat(mutateAndCall(input.getAsInt(), getFirstMutant(mutations)))
+        assertThat(mutateAndCall(input, getFirstMutant(mutations)))
                 .isEqualTo(expected);
     }
 

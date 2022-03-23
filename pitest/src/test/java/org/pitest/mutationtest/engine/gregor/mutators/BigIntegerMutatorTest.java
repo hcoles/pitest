@@ -28,7 +28,8 @@ import static org.pitest.mutationtest.engine.gregor.mutators.experimental.BigInt
 
 public class BigIntegerMutatorTest {
 
-    MutatorVerifierStart v = MutatorVerifierStart.forMutator(EXPERIMENTAL_BIG_INTEGER);
+    MutatorVerifierStart v = MutatorVerifierStart.forMutator(EXPERIMENTAL_BIG_INTEGER)
+            .notCheckingUnMutatedValues();
 
     @Test
     public void add() {

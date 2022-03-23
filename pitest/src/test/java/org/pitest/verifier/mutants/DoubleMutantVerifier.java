@@ -25,8 +25,8 @@ public class DoubleMutantVerifier<B> extends MutatorVerifier {
     private final GregorMutater engine;
     private final Class<? extends DoubleFunction<B>> target;
 
-    public DoubleMutantVerifier(GregorMutater engine, Class<? extends DoubleFunction<B>> target, Predicate<MutationDetails> filter) {
-        super(engine, target, filter);
+    public DoubleMutantVerifier(GregorMutater engine, Class<? extends DoubleFunction<B>> target, Predicate<MutationDetails> filter, boolean checkUnmutatedValues) {
+        super(engine, target, filter, checkUnmutatedValues);
         this.engine = engine;
         this.target = target;
     }
@@ -34,13 +34,16 @@ public class DoubleMutantVerifier<B> extends MutatorVerifier {
     /**
      * Suppliers allow consumable inputs (eg streams) can be reused
      */
-    public void firstMutantShouldReturn(DoubleSupplier input, B expected) {
-        assertThat(runWithoutMutation(input.getAsDouble()))
-                .describedAs("Expected unmutated code to return different value to mutated code")
-                .isNotEqualTo(expected);
+    public void firstMutantShouldReturn(DoubleSupplier ds, B expected) {
+        double input = ds.getAsDouble();
+        if (checkUnmutated()) {
+            assertThat(runWithoutMutation(input))
+                    .describedAs("Expected unmutated code to return different value to mutated code")
+                    .isNotEqualTo(expected);
+        }
 
         List<MutationDetails> mutations = findMutations();
-        assertThat(mutateAndCall(input.getAsDouble(), getFirstMutant(mutations)))
+        assertThat(mutateAndCall(input, getFirstMutant(mutations)))
                 .isEqualTo(expected);
     }
 

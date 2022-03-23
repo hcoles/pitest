@@ -25,8 +25,8 @@ public class LongMutantVerifier<B> extends MutatorVerifier {
     private final GregorMutater engine;
     private final Class<? extends LongFunction<B>> target;
 
-    public LongMutantVerifier(GregorMutater engine, Class<? extends LongFunction<B>> target, Predicate<MutationDetails> filter) {
-        super(engine, target, filter);
+    public LongMutantVerifier(GregorMutater engine, Class<? extends LongFunction<B>> target, Predicate<MutationDetails> filter, boolean checkUnmutatedValues) {
+        super(engine, target, filter, checkUnmutatedValues);
         this.engine = engine;
         this.target = target;
     }
@@ -34,13 +34,18 @@ public class LongMutantVerifier<B> extends MutatorVerifier {
     /**
      * Suppliers allow consumable inputs (eg streams) can be reused
      */
-    public void firstMutantShouldReturn(LongSupplier input, B expected) {
-        assertThat(runWithoutMutation(input.getAsLong()))
-                .describedAs("Expected unmutated code to return different value to mutated code")
-                .isNotEqualTo(expected);
+    public void firstMutantShouldReturn(LongSupplier ls, B expected) {
+
+        long input = ls.getAsLong();
+
+        if (checkUnmutated()) {
+            assertThat(runWithoutMutation(input))
+                    .describedAs("Expected unmutated code to return different value to mutated code")
+                    .isNotEqualTo(expected);
+        }
 
         List<MutationDetails> mutations = findMutations();
-        assertThat(mutateAndCall(input.getAsLong(), getFirstMutant(mutations)))
+        assertThat(mutateAndCall(input, getFirstMutant(mutations)))
                 .isEqualTo(expected);
     }
 

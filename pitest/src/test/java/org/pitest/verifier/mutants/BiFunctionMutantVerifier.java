@@ -19,8 +19,11 @@ public class BiFunctionMutantVerifier<A, B, C> extends MutatorVerifier {
     private final GregorMutater engine;
     private final Class<? extends BiFunction<A, B, C>> target;
 
-    public BiFunctionMutantVerifier(GregorMutater engine, Class<? extends BiFunction<A, B, C>> target, Predicate<MutationDetails> filter) {
-        super(engine, target, filter);
+    public BiFunctionMutantVerifier(GregorMutater engine,
+                                    Class<? extends BiFunction<A, B, C>> target,
+                                    Predicate<MutationDetails> filter,
+                                    boolean checkUnmutatedValues) {
+        super(engine, target, filter, checkUnmutatedValues);
         this.engine = engine;
         this.target = target;
     }
@@ -32,9 +35,17 @@ public class BiFunctionMutantVerifier<A, B, C> extends MutatorVerifier {
     /**
      * Suppliers allow consumable inputs (eg streams) can be reused
      */
-    public void firstMutantShouldReturn(Supplier<A> a, Supplier<B> b, C expected) {
+    public void firstMutantShouldReturn(Supplier<A> as, Supplier<B> bs, C expected) {
+        A a = as.get();
+        B b = bs.get();
+        if (checkUnmutated()) {
+            assertThat(runWithoutMutation(a,b))
+                    .describedAs("Expected unmutated code to return different value to mutated code")
+                    .isNotEqualTo(expected);
+        }
+
         List<MutationDetails> mutations = findMutations();
-        assertThat(mutateAndCall(a.get(), b.get(), getFirstMutant(mutations)))
+        assertThat(mutateAndCall(a, b, getFirstMutant(mutations)))
                 .isEqualTo(expected);
     }
 
