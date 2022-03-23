@@ -8,6 +8,17 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.7.5
+
+* #625 / #983 Fixed report aggregation (thanks @therealryan and @aurelien-baudet)
+* #985 Handle empty surefire excludes
+* #993 Move rv mutators to external plugin
+* #994 / #995 Filter equivalent boxed return true mutants in try blocks
+* #968 / 997 Improve filtering of equivalent empty return mutants
+* #999 / 1003 New parameter to locate root of multi module projects
+
+As a result of #993, anyone wishing to use the research orientated RV operators must configure the [pitest-rv plugin](https://github.com/pitest/pitest-rv-plugin), however these mutators are not recommended for general use. 
+
 ### 1.7.4
 
 * #965 - BigDecimal Mutator (thanks @MarcinNowak-codes)
