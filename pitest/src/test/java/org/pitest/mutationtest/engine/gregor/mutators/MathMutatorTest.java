@@ -32,17 +32,17 @@ public class MathMutatorTest {
     @Test
     public void shouldReplaceIntegerAdditionWithSubtraction() {
         v.forIntFunctionClass(HasIAdd.class)
-                .firstMutantShouldReturn(2, "1");
+                .firstMutantShouldReturn(2, "-40");
         v.forIntFunctionClass(HasIAdd.class)
-                .firstMutantShouldReturn(20, "19");
+                .firstMutantShouldReturn(20, "-22");
     }
 
     @Test
     public void shouldReplaceIntegerSubtractionWithAddition() {
         v.forIntFunctionClass(HasISub.class)
-                .firstMutantShouldReturn(2, "3");
+                .firstMutantShouldReturn(2, "44");
         v.forIntFunctionClass(HasISub.class)
-                .firstMutantShouldReturn(20, "21");
+                .firstMutantShouldReturn(20, "62");
     }
 
     @Test
@@ -64,9 +64,9 @@ public class MathMutatorTest {
     @Test
     public void shouldReplaceIntegerBitwiseOrsWithAnds() {
         v.forIntFunctionClass(HasIOr.class)
-                .firstMutantShouldReturn(2, "1");
+                .firstMutantShouldReturn(2, "" + (2L & 2));
         v.forIntFunctionClass(HasIOr.class)
-                .firstMutantShouldReturn(4, "0");
+                .firstMutantShouldReturn(4, "" + (4L & 2));
     }
 
     @Test
@@ -151,8 +151,8 @@ public class MathMutatorTest {
 
     @Test
     public void shouldReplaceLongBitwiseOrsWithAnds() {
-        v.forLongFunctionClass(HasLOr.class)
-                .firstMutantShouldReturn(2L, "1");
+          v.forLongFunctionClass(HasLOr.class)
+                .firstMutantShouldReturn(2L, "2");
         v.forLongFunctionClass(HasLOr.class)
                 .firstMutantShouldReturn(4L, "0");
     }
@@ -291,7 +291,7 @@ public class MathMutatorTest {
 
         @Override
         public String apply(int i) {
-            i++;
+            i = i + 42;
             return "" + i;
         }
     }
@@ -300,7 +300,7 @@ public class MathMutatorTest {
 
         @Override
         public String apply(int i) {
-            i--;
+            i = i - 42;
             return "" + i;
         }
     }
