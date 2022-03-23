@@ -71,5 +71,5 @@ public class BiFunctionMutantVerifier<A, B, C> extends MutatorVerifier {
             throw Unchecked.translateCheckedException(ex);
         }
     }
-    
+
 }
