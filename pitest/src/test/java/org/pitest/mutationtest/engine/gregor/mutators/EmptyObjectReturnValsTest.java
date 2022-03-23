@@ -35,7 +35,7 @@ public class EmptyObjectReturnValsTest {
   @Test
   public void describesMutationsToIntegers() {
     v.forClass(BoxedInteger.class)
-            .firstMutantIsDescription()
+            .firstMutantDescription()
             .contains("replaced Integer return value with 0")
             .contains("BoxedInteger::call");
   }
@@ -55,7 +55,7 @@ public class EmptyObjectReturnValsTest {
   @Test
   public void describesMutationsToShorts() {
     v.forClass(BoxedShort.class)
-            .firstMutantIsDescription()
+            .firstMutantDescription()
             .contains("replaced Short return value with 0")
             .contains("BoxedShort::call");
   }
@@ -69,7 +69,7 @@ public class EmptyObjectReturnValsTest {
   @Test
   public void describesMutationsToChars() {
     v.forClass(BoxedChar.class)
-            .firstMutantIsDescription()
+            .firstMutantDescription()
             .contains("replaced Character return value with 0")
             .contains("BoxedChar::call");
   }
@@ -83,7 +83,7 @@ public class EmptyObjectReturnValsTest {
   @Test
   public void describesMutationsToLongs() {
     v.forClass(BoxedLong.class)
-            .firstMutantIsDescription()
+            .firstMutantDescription()
             .contains("replaced Long return value with 0")
             .contains("BoxedLong::call");
   }
@@ -97,7 +97,7 @@ public class EmptyObjectReturnValsTest {
   @Test
   public void describesMutationsToFloats() {
     v.forClass(BoxedFloat.class)
-            .firstMutantIsDescription()
+            .firstMutantDescription()
             .contains("replaced Float return value with 0")
             .contains("BoxedFloat::call");
   }
@@ -111,7 +111,7 @@ public class EmptyObjectReturnValsTest {
   @Test
   public void describesMutationsToDoubles() {
     v.forClass(BoxedDouble.class)
-            .firstMutantIsDescription()
+            .firstMutantDescription()
             .contains("replaced Double return value with 0")
             .contains("BoxedDouble::call");
   }
@@ -131,7 +131,7 @@ public class EmptyObjectReturnValsTest {
   @Test
   public void describesMutationsToString() {
     v.forClass(AString.class)
-            .firstMutantIsDescription()
+            .firstMutantDescription()
             .contains("replaced return value with \"\"")
             .contains("AString::call");
   }

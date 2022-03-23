@@ -68,7 +68,7 @@ public class MutatorVerifierStart {
         GregorMutater engine = makeEngine();
         return new DoubleMutantVerifier<>(engine, clazz, mutantFilter);
     }
-    
+
     public <A,B,C> BiFunctionMutantVerifier<A,B,C> forBiFunctionClass(Class<? extends BiFunction<A,B,C>> clazz) {
         GregorMutater engine = makeEngine();
         return new BiFunctionMutantVerifier<>(engine, clazz, mutantFilter);

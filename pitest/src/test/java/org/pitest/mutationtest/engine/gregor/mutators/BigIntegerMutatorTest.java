@@ -15,7 +15,6 @@
 package org.pitest.mutationtest.engine.gregor.mutators;
 
 import org.junit.Test;
-import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 import org.pitest.verifier.mutants.BiFunctionMutantVerifier;
 import org.pitest.verifier.mutants.MutatorVerifierStart;
 
@@ -27,7 +26,7 @@ import java.util.function.Supplier;
 
 import static org.pitest.mutationtest.engine.gregor.mutators.experimental.BigIntegerMutator.EXPERIMENTAL_BIG_INTEGER;
 
-public class BigIntegerMutatorTest extends MutatorTestBase {
+public class BigIntegerMutatorTest {
 
     MutatorVerifierStart v = MutatorVerifierStart.forMutator(EXPERIMENTAL_BIG_INTEGER);
 

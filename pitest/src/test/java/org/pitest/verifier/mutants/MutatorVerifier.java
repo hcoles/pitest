@@ -46,7 +46,7 @@ public class MutatorVerifier {
         assertThat(findMutations()).isEmpty();
     }
 
-    public final StringAssert firstMutantIsDescription() {
+    public final StringAssert firstMutantDescription() {
         return new StringAssert(firstMutant().getDescription());
     }
 
