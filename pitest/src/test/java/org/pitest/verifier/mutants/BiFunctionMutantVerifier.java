@@ -8,64 +8,65 @@ import org.pitest.util.Unchecked;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.IntFunction;
-import java.util.function.IntSupplier;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Verification based on instantiating mutated versions of a class.
- * <p>
- * Classes must implement java.util.IntFunction and provide a default
- * constructor.
- */
-public class IntMutantVerifier<B> extends MutatorVerifier {
+public class BiFunctionMutantVerifier<A, B, C> extends MutatorVerifier {
 
     private final GregorMutater engine;
-    private final Class<? extends IntFunction<B>> target;
+    private final Class<? extends BiFunction<A, B, C>> target;
 
-    public IntMutantVerifier(GregorMutater engine, Class<? extends IntFunction<B>> target, Predicate<MutationDetails> filter, boolean checkUnmutatedValues) {
+    public BiFunctionMutantVerifier(GregorMutater engine,
+                                    Class<? extends BiFunction<A, B, C>> target,
+                                    Predicate<MutationDetails> filter,
+                                    boolean checkUnmutatedValues) {
         super(engine, target, filter, checkUnmutatedValues);
         this.engine = engine;
         this.target = target;
     }
 
-    public void firstMutantShouldReturn(int input, B expected) {
-        firstMutantShouldReturn(() -> input, expected);
+    public void firstMutantShouldReturn(A a, B b, C expected) {
+        firstMutantShouldReturn( () -> a, () -> b, expected);
     }
 
-    public void firstMutantShouldReturn(IntSupplier is, B expected) {
-        int input = is.getAsInt();
-
+    /**
+     * Suppliers allow consumable inputs (eg streams) can be reused
+     */
+    public void firstMutantShouldReturn(Supplier<A> as, Supplier<B> bs, C expected) {
+        A a = as.get();
+        B b = bs.get();
         if (checkUnmutated()) {
-            assertThat(runWithoutMutation(input))
+            assertThat(runWithoutMutation(a,b))
                     .describedAs("Expected unmutated code to return different value to mutated code")
                     .isNotEqualTo(expected);
         }
 
         List<MutationDetails> mutations = findMutations();
-        assertThat(mutateAndCall(input, getFirstMutant(mutations)))
+        assertThat(mutateAndCall(a, b, getFirstMutant(mutations)))
                 .isEqualTo(expected);
     }
 
-    private B runWithoutMutation(int input) {
-        return this.runInClassLoader(target.getClassLoader(), input);
+
+    private C runWithoutMutation(A a, B b) {
+        return this.runInClassLoader(target.getClassLoader(), a, b);
     }
 
-    private B mutateAndCall(int input, Mutant mutant) {
+    private C mutateAndCall(A a, B b, Mutant mutant) {
         ClassLoader loader = this.createClassLoader(mutant);
-        return this.runInClassLoader(loader, input);
+        return this.runInClassLoader(loader, a, b);
     }
 
-    private B runInClassLoader(ClassLoader loader, int input) {
+    private C runInClassLoader(ClassLoader loader, A a, B b) {
         try {
             Class<?> forLoader = loader.loadClass(target.getName());
 
             Constructor c = forLoader.getDeclaredConstructor();
             c.setAccessible(true);
-            IntFunction<B> instance = (IntFunction<B>) c.newInstance();
-            return instance.apply(input);
+            BiFunction<A, B, C> instance = (BiFunction<A, B, C>) c.newInstance();
+            return instance.apply(a, b);
         } catch (ReflectiveOperationException ex) {
             throw Unchecked.translateCheckedException(ex);
         }

@@ -8,8 +8,8 @@ import org.pitest.util.Unchecked;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.IntFunction;
-import java.util.function.IntSupplier;
+import java.util.function.DoubleFunction;
+import java.util.function.DoubleSupplier;
 import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,24 +20,22 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Classes must implement java.util.IntFunction and provide a default
  * constructor.
  */
-public class IntMutantVerifier<B> extends MutatorVerifier {
+public class DoubleMutantVerifier<B> extends MutatorVerifier {
 
     private final GregorMutater engine;
-    private final Class<? extends IntFunction<B>> target;
+    private final Class<? extends DoubleFunction<B>> target;
 
-    public IntMutantVerifier(GregorMutater engine, Class<? extends IntFunction<B>> target, Predicate<MutationDetails> filter, boolean checkUnmutatedValues) {
+    public DoubleMutantVerifier(GregorMutater engine, Class<? extends DoubleFunction<B>> target, Predicate<MutationDetails> filter, boolean checkUnmutatedValues) {
         super(engine, target, filter, checkUnmutatedValues);
         this.engine = engine;
         this.target = target;
     }
 
-    public void firstMutantShouldReturn(int input, B expected) {
-        firstMutantShouldReturn(() -> input, expected);
-    }
-
-    public void firstMutantShouldReturn(IntSupplier is, B expected) {
-        int input = is.getAsInt();
-
+    /**
+     * Suppliers allow consumable inputs (eg streams) can be reused
+     */
+    public void firstMutantShouldReturn(DoubleSupplier ds, B expected) {
+        double input = ds.getAsDouble();
         if (checkUnmutated()) {
             assertThat(runWithoutMutation(input))
                     .describedAs("Expected unmutated code to return different value to mutated code")
@@ -49,22 +47,22 @@ public class IntMutantVerifier<B> extends MutatorVerifier {
                 .isEqualTo(expected);
     }
 
-    private B runWithoutMutation(int input) {
+    private B runWithoutMutation(double input) {
         return this.runInClassLoader(target.getClassLoader(), input);
     }
 
-    private B mutateAndCall(int input, Mutant mutant) {
+    private B mutateAndCall(double input, Mutant mutant) {
         ClassLoader loader = this.createClassLoader(mutant);
         return this.runInClassLoader(loader, input);
     }
 
-    private B runInClassLoader(ClassLoader loader, int input) {
+    private B runInClassLoader(ClassLoader loader, double input) {
         try {
             Class<?> forLoader = loader.loadClass(target.getName());
 
             Constructor c = forLoader.getDeclaredConstructor();
             c.setAccessible(true);
-            IntFunction<B> instance = (IntFunction<B>) c.newInstance();
+            DoubleFunction<B> instance = (DoubleFunction<B>) c.newInstance();
             return instance.apply(input);
         } catch (ReflectiveOperationException ex) {
             throw Unchecked.translateCheckedException(ex);

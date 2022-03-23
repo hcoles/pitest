@@ -15,22 +15,17 @@
 package org.pitest.mutationtest.engine.gregor.mutators;
 
 import static org.junit.Assert.assertEquals;
+import static org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator.INCREMENTS;
 
-import java.util.Collection;
 import java.util.concurrent.Callable;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
+import org.pitest.verifier.mutants.MutatorVerifierStart;
 
-public class IncrementsMutatorTest extends MutatorTestBase {
+public class IncrementsMutatorTest {
 
-  @Before
-  public void setupEngineToMutateOnlyIncrements() {
-    createTesteeWith(IncrementsMutator.INCREMENTS);
-  }
+  MutatorVerifierStart v = MutatorVerifierStart.forMutator(INCREMENTS);
 
   private static class HasIncrement implements Callable<String> {
     public int containsIincInstructions(int i) {
@@ -45,19 +40,16 @@ public class IncrementsMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldNegateArgumentsToIInc() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(HasIncrement.class);
-    assertEquals(1, actual.size());
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new HasIncrement(), mutant, "0");
+  public void shouldNegateArgumentsToIInc()  {
+    v.forCallableClass(HasIncrement.class)
+            .firstMutantShouldReturn("0");
   }
 
   @Test
   public void shouldRecordCorrectLineNumberForMutations() {
-    final Collection<MutationDetails> actual = findMutationsFor(HasIncrement.class);
-    assertEquals(1, actual.size());
-    final MutationDetails first = actual.iterator().next();
-    assertEquals(37, first.getLineNumber());
+    MutationDetails actual = v.forClass(HasIncrement.class)
+            .firstMutant();
+    assertEquals(32, actual.getLineNumber());
   }
 
 }

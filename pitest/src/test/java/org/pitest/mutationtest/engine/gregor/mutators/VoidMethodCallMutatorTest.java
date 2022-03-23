@@ -15,24 +15,18 @@
 
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutatorTest.HasConstructorCall;
 import org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutatorTest.HasIntMethodCall;
+import org.pitest.verifier.mutants.MutatorVerifierStart;
 
 import java.util.concurrent.Callable;
 
-import static org.junit.Assert.assertTrue;
+import static org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator.VOID_METHOD_CALLS;
 
-public class VoidMethodCallMutatorTest extends MutatorTestBase {
+public class VoidMethodCallMutatorTest {
 
-  @Before
-  public void setupEngineToRemoveVoidMethods() {
-    createTesteeWith(mutateOnlyCallMethod(),
-        VoidMethodCallMutator.VOID_METHOD_CALLS);
-  }
+  MutatorVerifierStart v = MutatorVerifierStart.forMutator(VOID_METHOD_CALLS);
 
   static class HasVoidMethodCall implements Callable<String> {
 
@@ -51,19 +45,21 @@ public class VoidMethodCallMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldRemoveVoidMethodCalls() throws Exception {
-    final Mutant mutant = getFirstMutant(HasVoidMethodCall.class);
-    assertMutantCallableReturns(new HasVoidMethodCall(), mutant, "0");
+  public void shouldRemoveVoidMethodCalls() {
+    v.forCallableClass(HasVoidMethodCall.class)
+            .firstMutantShouldReturn("0");
   }
 
   @Test
-  public void shouldNotRemoveConstructorCalls() throws Exception {
-    assertTrue(findMutationsFor(HasConstructorCall.class).isEmpty());
+  public void shouldNotRemoveConstructorCalls() {
+    v.forClass(HasConstructorCall.class)
+                    .noMutantsCreated();
   }
 
   @Test
-  public void shouldNotRemoveNonVoidMethods() throws Exception {
-    assertTrue(findMutationsFor(HasIntMethodCall.class).isEmpty());
+  public void shouldNotRemoveNonVoidMethods() {
+    v.forClass(HasIntMethodCall.class)
+            .noMutantsCreated();
   }
 
   private static class HasVoidMethodCallWithFinallyBlock implements
@@ -91,10 +87,9 @@ public class VoidMethodCallMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldMaintainStack() throws Exception {
-    final Mutant mutant = getFirstMutant(HasVoidMethodCallWithFinallyBlock.class);
-    assertMutantCallableReturns(new HasVoidMethodCallWithFinallyBlock(),
-        mutant, "0");
+  public void shouldMaintainStack() {
+    v.forCallableClass(HasVoidMethodCallWithFinallyBlock.class)
+            .firstMutantShouldReturn("0");
   }
 
   private static class HasVoidStaticMethodCall implements Callable<String> {
@@ -122,8 +117,8 @@ public class VoidMethodCallMutatorTest extends MutatorTestBase {
 
   @Test
   public void shouldMaintainStackWhenCallIsStatic() throws Exception {
-    final Mutant mutant = getFirstMutant(HasVoidStaticMethodCall.class);
-    assertMutantCallableReturns(new HasVoidStaticMethodCall(), mutant, "0");
+    v.forCallableClass(HasVoidStaticMethodCall.class)
+            .firstMutantShouldReturn("0");
   }
 
 }

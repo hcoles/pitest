@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum BigDecimalMutator implements MethodMutatorFactory {
-  INSTANCE;
+  EXPERIMENTAL_BIG_DECIMAL;
 
   @Override
   public MethodVisitor create(MutationContext context, MethodInfo info, MethodVisitor visitor) {

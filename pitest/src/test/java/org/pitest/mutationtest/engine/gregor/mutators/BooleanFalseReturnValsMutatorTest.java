@@ -1,89 +1,92 @@
 package org.pitest.mutationtest.engine.gregor.mutators;
 
+import org.junit.Test;
+import org.pitest.verifier.mutants.MutatorVerifierStart;
+
 import java.util.concurrent.Callable;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
-import org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanFalseReturnValsMutator;
+import static org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanFalseReturnValsMutator.FALSE_RETURNS;
 
-public class BooleanFalseReturnValsMutatorTest extends MutatorTestBase {
+public class BooleanFalseReturnValsMutatorTest {
 
-  @Before
-  public void setupEngineToMutateOnlyReturnVals() {
-    createTesteeWith(BooleanFalseReturnValsMutator.FALSE_RETURNS);
-  }
+    MutatorVerifierStart v = MutatorVerifierStart.forMutator(FALSE_RETURNS);
 
-  @Test
-  public void mutatesReturnTrueToReturnFalse() throws Exception {
-    assertMutantCallableReturns(new BooleanReturn(),
-        createFirstMutant(BooleanReturn.class), "false");
-  }
-
-  @Test
-  public void describesMutationsToPrimitiveBooleans() {
-    assertMutantDescriptionIncludes("replaced boolean return with false", BooleanReturn.class);
-    assertMutantDescriptionIncludes("BooleanReturn::mutable", BooleanReturn.class);
-  }
-
-  @Test
-  public void doesNotMutatePrimitiveIntReturns() throws Exception {
-    this.assertNoMutants(IntegerReturn.class);
-  }
-
-  @Test
-  public void mutatesBoxedTrueToFalse() throws Exception {
-    assertMutantCallableReturns(new BoxedTrue(),
-        createFirstMutant(BoxedTrue.class), false);
-  }
-
-  @Test
-  public void describesMutationsToBoxedBooleans() {
-    assertMutantDescriptionIncludes("replaced Boolean return with False", BoxedTrue.class);
-    assertMutantDescriptionIncludes("BoxedTrue::call", BoxedTrue.class);
-  }
-
-  @Test
-  public void doesNotMutateBoxedIntegerReturns() throws Exception {
-    this.assertNoMutants(BoxedInteger.class);
-  }
-
-  private static class BooleanReturn implements Callable<String> {
-    public boolean mutable() {
-      return true;
+    @Test
+    public void mutatesReturnTrueToReturnFalse() {
+        v.forCallableClass(BooleanReturn.class)
+                .firstMutantShouldReturn("false");
     }
 
-    @Override
-    public String call() throws Exception {
-      return "" + mutable();
-    }
-  }
-
-  private static class IntegerReturn implements Callable<String> {
-    public int mutable() {
-      return 42;
+    @Test
+    public void describesMutationsToPrimitiveBooleans() {
+        v.forCallableClass(BooleanReturn.class)
+                .firstMutantDescription()
+                .contains("replaced boolean return with false")
+                .contains("BooleanReturn::mutable");
     }
 
-    @Override
-    public String call() throws Exception {
-      return "" + mutable();
+    @Test
+    public void doesNotMutatePrimitiveIntReturns() {
+        v.forClass(IntegerReturn.class)
+                .noMutantsCreated();
     }
-  }
+
+    @Test
+    public void mutatesBoxedTrueToFalse() {
+        v.forCallableClass(BoxedTrue.class)
+                .firstMutantShouldReturn(false);
+    }
+
+    @Test
+    public void describesMutationsToBoxedBooleans() {
+        v.forCallableClass(BoxedTrue.class)
+                .firstMutantDescription()
+                .contains("replaced Boolean return with False")
+                .contains("BoxedTrue::call");
+    }
+
+    @Test
+    public void doesNotMutateBoxedIntegerReturns() {
+        v.forClass(BoxedInteger.class)
+                .noMutantsCreated();
+    }
+
+    private static class BooleanReturn implements Callable<String> {
+        public boolean mutable() {
+            return true;
+        }
+
+        @Override
+        public String call() {
+            return "" + mutable();
+        }
+    }
+
+    private static class IntegerReturn implements Callable<String> {
+        public int mutable() {
+            return 42;
+        }
+
+        @Override
+        public String call() {
+            return "" + mutable();
+        }
+    }
 
 
-  private static class BoxedTrue implements Callable<Boolean> {
-    @Override
-    public Boolean call() {
-      return Boolean.TRUE;
+    private static class BoxedTrue implements Callable<Boolean> {
+        @Override
+        public Boolean call() {
+            return Boolean.TRUE;
+        }
     }
-  }
 
-  private static class BoxedInteger implements Callable<Integer> {
-    @Override
-    public Integer call() {
-      return 42;
+    private static class BoxedInteger implements Callable<Integer> {
+        @Override
+        public Integer call() {
+            return 42;
+        }
     }
-  }
 
 
 }

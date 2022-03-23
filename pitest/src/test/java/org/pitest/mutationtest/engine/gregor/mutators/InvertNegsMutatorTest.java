@@ -14,93 +14,82 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.pitest.verifier.mutants.MutatorVerifierStart;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.concurrent.Callable;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
+import static org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator.INVERT_NEGS;
 
-public class InvertNegsMutatorTest extends MutatorTestBase {
+public class InvertNegsMutatorTest {
 
-  @Before
-  public void setupEngineToMutateOnlyNegs() {
-    createTesteeWith(InvertNegsMutator.INVERT_NEGS);
-  }
+    MutatorVerifierStart v = MutatorVerifierStart.forMutator(INVERT_NEGS);
 
-  private static class NothingToMutate {
-
-  }
-
-  @Test
-  public void shouldFindNoMutationsWhenNonePossible() {
-    final Collection<MutationDetails> actual = findMutationsFor(NothingToMutate.class);
-    assertEquals(Collections.emptyList(), actual);
-  }
-
-  private static class HasINeg implements Callable<String> {
-    public int containsINeg(final int i) {
-      return -i;
+    @Test
+    public void shouldFindNoMutationsWhenNonePossible() {
+        v.forClass(NothingToMutate.class)
+                .noMutantsCreated();
     }
 
-    @Override
-    public String call() throws Exception {
-      return "" + containsINeg(1);
+    @Test
+    public void shouldInvertINegs() {
+        v.forCallableClass(HasINeg.class)
+                .firstMutantShouldReturn
+                        ("1");
     }
 
-  }
-
-  @Test
-  public void shouldInvertINegs() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(HasINeg.class);
-    assertEquals(1, actual.size());
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new HasINeg(), mutant, "1");
-  }
-
-  private static class HasFNeg implements Callable<String> {
-    public float containsFNeg(final float i) {
-      return -i;
+    @Test
+    public void shouldInvertFNegs() {
+        v.forCallableClass(HasFNeg.class)
+                .firstMutantShouldReturn
+                        ("1.0");
     }
 
-    @Override
-    public String call() throws Exception {
-      return "" + containsFNeg(1f);
+    @Test
+    public void shouldInvertLNegs() {
+         v.forCallableClass(HasLNeg.class)
+                .firstMutantShouldReturn
+                        ("1");
     }
 
-  }
+    private static class NothingToMutate {
 
-  @Test
-  public void shouldInvertFNegs() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(HasFNeg.class);
-    assertEquals(1, actual.size());
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new HasFNeg(), mutant, "1.0");
-  }
-
-  private static class HasLNeg implements Callable<String> {
-    public int containsLNeg(final int i) {
-      return -i;
     }
 
-    @Override
-    public String call() throws Exception {
-      return "" + containsLNeg(1);
+    private static class HasINeg implements Callable<String> {
+        public int containsINeg(final int i) {
+            return -i;
+        }
+
+        @Override
+        public String call() {
+            return "" + containsINeg(1);
+        }
+
     }
 
-  }
+    private static class HasFNeg implements Callable<String> {
+        public float containsFNeg(final float i) {
+            return -i;
+        }
 
-  @Test
-  public void shouldInvertLNegs() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(HasLNeg.class);
-    assertEquals(1, actual.size());
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new HasLNeg(), mutant, "1");
-  }
+        @Override
+        public String call() {
+            return "" + containsFNeg(1f);
+        }
+
+    }
+
+    private static class HasLNeg implements Callable<String> {
+        public int containsLNeg(final int i) {
+            return -i;
+        }
+
+        @Override
+        public String call() {
+            return "" + containsLNeg(1);
+        }
+
+    }
 
 }

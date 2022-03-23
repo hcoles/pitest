@@ -1,31 +1,16 @@
 package org.pitest.verifier.mutants;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.util.ASMifier;
-import org.objectweb.asm.util.CheckClassAdapter;
-import org.objectweb.asm.util.TraceClassVisitor;
-import org.pitest.classpath.ClassPath;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
-import org.pitest.simpletest.ExcludedPrefixIsolationStrategy;
-import org.pitest.simpletest.Transformation;
-import org.pitest.simpletest.TransformingClassLoader;
 import org.pitest.util.Unchecked;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.function.IntSupplier;
 import java.util.function.LongFunction;
 import java.util.function.LongSupplier;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,8 +25,8 @@ public class LongMutantVerifier<B> extends MutatorVerifier {
     private final GregorMutater engine;
     private final Class<? extends LongFunction<B>> target;
 
-    public LongMutantVerifier(GregorMutater engine, Class<? extends LongFunction<B>> target, Predicate<MutationDetails> filter) {
-        super(engine, target, filter);
+    public LongMutantVerifier(GregorMutater engine, Class<? extends LongFunction<B>> target, Predicate<MutationDetails> filter, boolean checkUnmutatedValues) {
+        super(engine, target, filter, checkUnmutatedValues);
         this.engine = engine;
         this.target = target;
     }
@@ -49,13 +34,18 @@ public class LongMutantVerifier<B> extends MutatorVerifier {
     /**
      * Suppliers allow consumable inputs (eg streams) can be reused
      */
-    public void firstMutantShouldReturn(LongSupplier input, B expected) {
-        assertThat(runWithoutMutation(input.getAsLong()))
-                .describedAs("Expected unmutated code to return different value to mutated code")
-                .isNotEqualTo(expected);
+    public void firstMutantShouldReturn(LongSupplier ls, B expected) {
+
+        long input = ls.getAsLong();
+
+        if (checkUnmutated()) {
+            assertThat(runWithoutMutation(input))
+                    .describedAs("Expected unmutated code to return different value to mutated code")
+                    .isNotEqualTo(expected);
+        }
 
         List<MutationDetails> mutations = findMutations();
-        assertThat(mutateAndCall(input.getAsLong(), getFirstMutant(mutations)))
+        assertThat(mutateAndCall(input, getFirstMutant(mutations)))
                 .isEqualTo(expected);
     }
 
@@ -66,17 +56,6 @@ public class LongMutantVerifier<B> extends MutatorVerifier {
     private B mutateAndCall(long input, Mutant mutant) {
         ClassLoader loader = this.createClassLoader(mutant);
         return this.runInClassLoader(loader, input);
-    }
-
-    private ClassLoader createClassLoader(Mutant mutant) {
-        return new TransformingClassLoader(new ClassPath(),
-                this.createTransformation(mutant),
-                new ExcludedPrefixIsolationStrategy(new String[0]),
-                Object.class.getClassLoader());
-    }
-
-    private Transformation createTransformation(Mutant mutant) {
-        return (name, bytes) -> name.equals(mutant.getDetails().getClassName().asJavaName()) ? mutant.getBytes() : bytes;
     }
 
     private B runInClassLoader(ClassLoader loader, long input) {
@@ -100,15 +79,6 @@ public class LongMutantVerifier<B> extends MutatorVerifier {
                 .getId());
         verifyMutant(mutant);
         return mutant;
-    }
-
-    private void verifyMutant(Mutant mutant) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        CheckClassAdapter.verify(new ClassReader(mutant.getBytes()), false, pw);
-        assertThat(sw.toString())
-                .describedAs("Mutant is not a valid class")
-                .isEmpty();
     }
 
 }
