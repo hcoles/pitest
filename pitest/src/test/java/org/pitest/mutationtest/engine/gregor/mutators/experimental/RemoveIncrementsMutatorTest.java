@@ -14,64 +14,56 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.pitest.verifier.mutants.MutatorVerifierStart;
 
-import java.util.Collection;
 import java.util.concurrent.Callable;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
+import static org.junit.Assert.assertEquals;
+import static org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator.REMOVE_INCREMENTS;
 
-public class RemoveIncrementsMutatorTest extends MutatorTestBase {
+public class RemoveIncrementsMutatorTest {
 
-  @Before
-  public void setupEngineToMutateOnlyIncrements() {
-    createTesteeWith(RemoveIncrementsMutator.REMOVE_INCREMENTS);
-  }
+    MutatorVerifierStart v = MutatorVerifierStart.forMutator(REMOVE_INCREMENTS)
+            .notCheckingUnMutatedValues();
 
-  private static class HasIncrement implements Callable<String> {
-    public int containsIincInstructions(int i) {
-      return ++i;
+    @Test
+    public void shouldProvideAMeaningfulName() {
+        assertEquals("REMOVE_INCREMENTS",
+                REMOVE_INCREMENTS.getName());
     }
 
-    @Override
-    public String call() throws Exception {
-      return "" + containsIincInstructions(1);
+    @Test
+    public void shouldRemoveArgumentsToIInc() {
+        v.forCallableClass(HasIncrement.class)
+                .firstMutantShouldReturn("1");
     }
 
-  }
-
-  @Test
-  public void shouldProvideAMeaningfulName() {
-    assertEquals("REMOVE_INCREMENTS",
-        RemoveIncrementsMutator.REMOVE_INCREMENTS.getName());
-  }
-
-  @Test
-  public void shouldRemoveArgumentsToIInc() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(HasIncrement.class);
-    assertEquals(1, actual.size());
-    final Mutant mutant = getFirstMutant(actual);
-    assertMutantCallableReturns(new HasIncrement(), mutant, "1");
-  }
-
-  private static class HasNoIncrements implements Callable<String> {
-
-    @Override
-    public String call() throws Exception {
-      return "foo";
+    @Test
+    public void shouldCreateNoMutationsWhenNoIncrementsPresent() {
+        v.forCallableClass(HasNoIncrements.class)
+                .noMutantsCreated();
     }
 
-  }
+    private static class HasIncrement implements Callable<String> {
+        public int containsIincInstructions(int i) {
+            return ++i;
+        }
 
-  @Test
-  public void shouldCreateNoMutationsWhenNoIncrementsPresent() {
-    final Collection<MutationDetails> actual = findMutationsFor(HasNoIncrements.class);
-    assertThat(actual).isEmpty();
-  }
+        @Override
+        public String call() {
+            return "" + containsIincInstructions(1);
+        }
+
+    }
+
+    private static class HasNoIncrements implements Callable<String> {
+
+        @Override
+        public String call() {
+            return "foo";
+        }
+
+    }
 
 }
