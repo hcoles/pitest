@@ -31,8 +31,6 @@ import org.pitest.process.LaunchOptions;
 import org.pitest.process.ProcessArgs;
 import org.pitest.util.ExitCode;
 import org.pitest.util.SocketFinder;
-import org.pitest.util.Verbosity;
-import org.pitest.util.XStreamCloning;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -70,14 +68,6 @@ public class CoverageProcessSystemTest {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test1", 1);
   }
-
-  // @Test
-  // public void shouldCalculateCoverageFor2BlockMethods() throws IOException,
-  // InterruptedException, ExecutionException {
-  // final List<CoverageResult> coveredClasses =
-  // runCoverageForTest(TestsForMultiBlockCoverage.class);
-  // assertCoverage(coveredClasses, "test2", 2);
-  // }
 
   @Test
   public void shouldCalculateCoverageFor3BlockMethods() throws Exception {
@@ -236,26 +226,6 @@ public class CoverageProcessSystemTest {
     assertThat(coveredClasses).anyMatch(coverageFor(BlockLocation.blockLocation(
         Location.location(clazz, "foo", "()I"), 0)));
 
-  }
-
-  public static class TestInDifferentClassLoader {
-    @Test
-    public void testFoo() {
-      final ClassLoader cl = new DefaultPITClassloader(new ClassPath(),
-          XStreamCloning.bootClassLoader());
-      final Testee testee = new Testee();
-      final Runnable r = (Runnable) XStreamCloning.cloneForLoader(testee, cl);
-      r.run();
-    }
-
-  }
-
-  @Test
-  public void shouldCalculateCoverageOfClassesRunInDifferentClassLoader()
-      throws IOException, InterruptedException {
-    final List<CoverageResult> coveredClasses = runCoverageForTest(TestInDifferentClassLoader.class);
-    assertThat(coveredClasses).anyMatch(coverageFor(Testee2.class));
-    assertThat(coveredClasses).anyMatch(coverageFor(Testee.class));
   }
 
   public static class ReliesOnNewLine {
@@ -424,7 +394,5 @@ public class CoverageProcessSystemTest {
 
     };
   }
-  
-
 
 }

@@ -1,24 +1,16 @@
 package org.pitest;
 
-import static org.junit.Assert.fail;
-
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
-import org.pitest.testapi.Description;
 import org.pitest.testapi.TestResult;
-import org.pitest.testapi.TestUnitState;
-import org.pitest.util.XStreamCloning;
+
 
 public class TestResultTest {
 
   @Test
-  public void shouldCloneViaXStreamWithoutError() throws Exception {
-    try {
-      final TestResult testee = new TestResult((Description) null, null,
-          TestUnitState.FINISHED);
-      XStreamCloning.clone(testee);
-    } catch (final Throwable t) {
-      fail();
-    }
+  public void shouldObeyHashcodeEqualsContract()  {
+    EqualsVerifier.forClass(TestResult.class)
+            .verify();
   }
 
 }

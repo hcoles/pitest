@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Optional;
 
-public class TestMethod {
+public final class TestMethod {
 
   private final Method                     method;
   private final Class<? extends Throwable> expected;
