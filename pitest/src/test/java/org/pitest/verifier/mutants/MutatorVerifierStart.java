@@ -1,12 +1,17 @@
 package org.pitest.verifier.mutants;
 
+import org.pitest.classinfo.ClassByteArraySource;
+import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.BiFunction;
 import java.util.function.DoubleFunction;
@@ -14,43 +19,64 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.LongFunction;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.asList;
 
 public class MutatorVerifierStart {
 
-    private final MethodMutatorFactory mmf;
+    private final ClassByteArraySource source;
+    private final List<MethodMutatorFactory> mmfs;
     private final Predicate<MethodInfo> filter;
     private final Predicate<MutationDetails> mutantFilter;
     private final boolean checkUnmutatedValues;
 
-    public MutatorVerifierStart(MethodMutatorFactory mmf,
+    public MutatorVerifierStart(ClassByteArraySource source,
+                                List<MethodMutatorFactory> mmfs,
                                 Predicate<MethodInfo> filter,
                                 Predicate<MutationDetails> mutantFilter,
                                 boolean checkUnmutatedValues) {
-        this.mmf = mmf;
+        this.source = source;
+        this.mmfs = mmfs;
         this.filter = filter;
         this.mutantFilter = mutantFilter;
         this.checkUnmutatedValues = checkUnmutatedValues;
     }
 
-    public static MutatorVerifierStart forMutator(MethodMutatorFactory m) {
-        return new MutatorVerifierStart(m, method -> true, mf -> true, true);
+    public static MutatorVerifierStart forMutator(Collection<MethodMutatorFactory> ms) {
+        return new MutatorVerifierStart(ClassloaderByteArraySource.fromContext(),
+                ms.stream().collect(Collectors.toList()), method -> true, mf -> true, true);
+    }
+
+    public static MutatorVerifierStart forMutator(MethodMutatorFactory... m) {
+        return new MutatorVerifierStart(ClassloaderByteArraySource.fromContext(),
+                asList(m), method -> true, mf -> true, true);
+    }
+
+    public MutatorVerifierStart withByteArraySource(ClassByteArraySource source) {
+        return new MutatorVerifierStart(source, mmfs, filter, mutantFilter, checkUnmutatedValues);
     }
 
     public MutatorVerifierStart mutatingOnly(Predicate<MethodInfo> filter) {
-        return new MutatorVerifierStart(mmf, filter, mutantFilter, checkUnmutatedValues);
+        return new MutatorVerifierStart(source, mmfs, filter, mutantFilter, checkUnmutatedValues);
     }
 
     public MutatorVerifierStart consideringOnlyMutantsMatching(Predicate<MutationDetails> mutantFilter) {
-        return new MutatorVerifierStart(mmf, filter, mutantFilter, checkUnmutatedValues);
+        return new MutatorVerifierStart(source, mmfs, filter, mutantFilter, checkUnmutatedValues);
     }
 
     public MutatorVerifierStart notCheckingUnMutatedValues() {
-        return new MutatorVerifierStart(mmf, filter, mutantFilter, false);
+        return new MutatorVerifierStart(source, mmfs, filter, mutantFilter, false);
     }
 
     public MutatorVerifier forClass(Class<?> clazz) {
         GregorMutater engine = makeEngine();
         return new MutatorVerifier(engine, clazz, mutantFilter, checkUnmutatedValues);
+    }
+
+    public MutatorVerifier forClass(String clazz) {
+        GregorMutater engine = makeEngine();
+        return new MutatorVerifier(engine, ClassName.fromString(clazz), mutantFilter, checkUnmutatedValues);
     }
 
     public <B> CallableMutantVerifier<B> forCallableClass(Class<? extends Callable<B>> clazz) {
@@ -84,7 +110,13 @@ public class MutatorVerifierStart {
     }
 
     private GregorMutater makeEngine() {
-        return new GregorMutater(ClassloaderByteArraySource.fromContext(), filter, Arrays.asList(new NullMutator(), mmf, new NullMutator()));
+        // sandwich between NullMutators as a (non robust) check
+        // that the mutator provides a unique id
+        List<MethodMutatorFactory> mutators = new ArrayList<>();
+        mutators.add(new NullMutator());
+        mutators.addAll(mmfs);
+        mutators.add(new NullMutator());
+        return new GregorMutater(source, filter, mutators);
     }
 
 }

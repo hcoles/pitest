@@ -32,11 +32,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MutatorVerifier {
 
     private final GregorMutater engine;
-    private final Class<?> clazz;
+    private final ClassName clazz;
     private final Predicate<MutationDetails> filter;
     private final boolean checkUnmutatedValues;
 
     public MutatorVerifier(GregorMutater engine, Class<?> clazz, Predicate<MutationDetails> filter, boolean checkUnmutatedValues) {
+        this(engine, ClassName.fromClass(clazz), filter, checkUnmutatedValues);
+    }
+
+    public MutatorVerifier(GregorMutater engine, ClassName clazz, Predicate<MutationDetails> filter, boolean checkUnmutatedValues) {
         this.engine = engine;
         this.clazz = clazz;
         this.filter = filter;
@@ -56,7 +60,7 @@ public class MutatorVerifier {
     }
 
     public final List<MutationDetails> findMutations() {
-        return this.engine.findMutations(ClassName.fromClass(clazz)).stream()
+        return this.engine.findMutations(clazz).stream()
                 .filter(filter)
                 .collect(Collectors.toList());
     }
@@ -104,8 +108,8 @@ public class MutatorVerifier {
         return print(mutant.getBytes());
     }
 
-    protected String printClass(Class<?> clazz) {
-        byte[] bytes = ClassloaderByteArraySource.fromContext().getBytes(ClassName.fromClass(clazz).asInternalName())
+    protected String printClass(ClassName clazz) {
+        byte[] bytes = ClassloaderByteArraySource.fromContext().getBytes(clazz.asInternalName())
                 .get();
         return print(bytes);
     }
