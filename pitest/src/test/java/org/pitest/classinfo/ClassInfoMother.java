@@ -1,12 +1,7 @@
 package org.pitest.classinfo;
 
-import org.pitest.quickbuilder.Builder;
 
 public class ClassInfoMother {
-
-  interface ClassInfoBuilderf extends Builder<ClassInfo> {
-    ClassInfoBuilder withId(Builder<ClassIdentifier> id);
-  }
 
   public static ClassInfo make(final ClassIdentifier id) {
     return make(id, new DefaultClassPointer(null));
