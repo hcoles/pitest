@@ -15,13 +15,14 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
+import static java.util.concurrent.TimeUnit.MICROSECONDS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 
-import java.lang.annotation.ElementType;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
@@ -104,20 +105,16 @@ public class RemoveSwitchMutatorTest {
     v2.firstMutantShouldReturn('z', 'z');
   }
 
-  private enum SwitchEnum {
-    FIRST, SECOND, THIRD, DEFAULT
-  }
-
-  private static class HasEnumSwitchWithDefault implements Function<ElementType,Integer> {
+  private static class HasEnumSwitchWithDefault implements Function<TimeUnit,Integer> {
 
     @Override
-    public Integer apply(ElementType value) {
+    public Integer apply(TimeUnit value) {
       switch (value) {
-        case TYPE:
+        case NANOSECONDS:
         return 1;
-        case ANNOTATION_TYPE:
+        case MICROSECONDS:
         return 2;
-        case FIELD:
+        case MILLISECONDS:
         return 3;
       default:
         return -1;
@@ -127,12 +124,12 @@ public class RemoveSwitchMutatorTest {
 
   @Test
   public void shouldChangeLabelEnum() {
-    MutantVerifier<ElementType, Integer> v2 = v.forFunctionClass(HasEnumSwitchWithDefault.class);
-    v2.firstMutantShouldReturn(TYPE, 1);
-    v2.firstMutantShouldReturn(ANNOTATION_TYPE, 2);
-    v2.firstMutantShouldReturn(FIELD, -1);
-    v2.firstMutantShouldReturn(FIELD, -1);
-    v2.firstMutantShouldReturn(METHOD, -1);
+    MutantVerifier<TimeUnit, Integer> v2 = v.forFunctionClass(HasEnumSwitchWithDefault.class);
+    v2.firstMutantShouldReturn(NANOSECONDS, 1);
+    v2.firstMutantShouldReturn(MICROSECONDS, 2);
+    v2.firstMutantShouldReturn(MILLISECONDS, -1);
+    v2.firstMutantShouldReturn(SECONDS, -1);
+    v2.firstMutantShouldReturn(MINUTES, -1);
   }
 
   private static class HasMultipleArmIntSwitchWithDefault implements IntFunction<Integer> {
