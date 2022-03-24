@@ -1,28 +1,15 @@
 package org.pitest.testapi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
-import org.pitest.util.XStreamCloning;
 
 public class DescriptionTest {
 
-  private Description testee;
 
   @Test
-  public void shouldCloneViaXStreamWithoutError() throws Exception {
-    try {
-      this.testee = new Description("foo", IOException.class);
-      final Description actual = (Description) XStreamCloning
-          .clone(this.testee);
-
-      assertEquals(this.testee, actual);
-    } catch (final Throwable t) {
-      fail(t.getMessage());
-    }
+  public void shouldObeyHashcodeEqualsContract()  {
+    EqualsVerifier.forClass(Description.class)
+            .verify();
   }
 
 }

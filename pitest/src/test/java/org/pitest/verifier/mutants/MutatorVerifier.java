@@ -4,9 +4,11 @@ import org.assertj.core.api.StringAssert;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.CheckClassAdapter;
+import org.objectweb.asm.util.Textifier;
 import org.objectweb.asm.util.TraceClassVisitor;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassPath;
+import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
@@ -17,6 +19,7 @@ import org.pitest.simpletest.TransformingClassLoader;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -29,11 +32,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MutatorVerifier {
 
     private final GregorMutater engine;
-    private final Class<?> clazz;
+    private final ClassName clazz;
     private final Predicate<MutationDetails> filter;
     private final boolean checkUnmutatedValues;
 
     public MutatorVerifier(GregorMutater engine, Class<?> clazz, Predicate<MutationDetails> filter, boolean checkUnmutatedValues) {
+        this(engine, ClassName.fromClass(clazz), filter, checkUnmutatedValues);
+    }
+
+    public MutatorVerifier(GregorMutater engine, ClassName clazz, Predicate<MutationDetails> filter, boolean checkUnmutatedValues) {
         this.engine = engine;
         this.clazz = clazz;
         this.filter = filter;
@@ -53,7 +60,7 @@ public class MutatorVerifier {
     }
 
     public final List<MutationDetails> findMutations() {
-        return this.engine.findMutations(ClassName.fromClass(clazz)).stream()
+        return this.engine.findMutations(clazz).stream()
                 .filter(filter)
                 .collect(Collectors.toList());
     }
@@ -87,12 +94,33 @@ public class MutatorVerifier {
         return (name, bytes) -> name.equals(mutant.getDetails().getClassName().asJavaName()) ? mutant.getBytes() : bytes;
     }
 
+    protected final Mutant getFirstMutant(final Collection<MutationDetails> actual) {
+        assertThat(actual)
+                .as(() -> "Expecting at least one mutant to be generated for " + printClass(clazz))
+                .isNotEmpty();
+        final Mutant mutant = this.engine.getMutation(actual.iterator().next()
+                .getId());
+        verifyMutant(mutant);
+        return mutant;
+    }
+
     protected String printMutant(Mutant mutant) {
-        ClassReader reader = new ClassReader(mutant.getBytes());
+        return print(mutant.getBytes());
+    }
+
+    protected String printClass(ClassName clazz) {
+        byte[] bytes = ClassloaderByteArraySource.fromContext().getBytes(clazz.asInternalName())
+                .get();
+        return print(bytes);
+    }
+
+    protected String print(byte[] bytes) {
+        ClassReader reader = new ClassReader(bytes);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        reader.accept(new TraceClassVisitor(null, new ASMifier(), new PrintWriter(bos)), 8);
+        reader.accept(new TraceClassVisitor(null, new Textifier(), new PrintWriter(bos)), 8);
         return bos.toString();
     }
+
 
     protected boolean checkUnmutated() {
         return this.checkUnmutatedValues;

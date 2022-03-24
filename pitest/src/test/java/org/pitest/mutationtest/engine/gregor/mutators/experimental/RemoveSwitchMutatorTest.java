@@ -15,23 +15,28 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
+import static java.util.concurrent.TimeUnit.MICROSECONDS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 
-import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.function.IntFunction;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
-import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
+import org.pitest.verifier.mutants.IntMutantVerifier;
+import org.pitest.verifier.mutants.MutantVerifier;
+import org.pitest.verifier.mutants.MutatorVerifierStart;
 
-public class RemoveSwitchMutatorTest extends MutatorTestBase {
+public class RemoveSwitchMutatorTest {
 
-  @Before
-  public void setupEngineToMutateOnlySwitchStatements() {
-    createTesteeWith(new RemoveSwitchMutator(2));
-  }
-
+  MutatorVerifierStart v = MutatorVerifierStart.forMutator(new RemoveSwitchMutator(2))
+          .notCheckingUnMutatedValues();
+  
   @Test
   public void shouldProvideAMeaningfulName() {
     assertEquals("EXPERIMENTAL_REMOVE_SWITCH_MUTATOR_[0-99]",
@@ -47,17 +52,10 @@ public class RemoveSwitchMutatorTest extends MutatorTestBase {
     }
   }
 
-  private static class HasIntSwitchWithDefault implements Callable<Integer> {
-
-    private final int value;
-
-    private HasIntSwitchWithDefault(final int value) {
-      this.value = value;
-    }
-
+  private static class HasIntSwitchWithDefault implements IntFunction<Integer> {
     @Override
-    public Integer call() throws Exception {
-      switch (this.value) {
+    public Integer apply(int value) {
+      switch (value) {
       case 0:
         return 0;
       case 1:
@@ -71,25 +69,21 @@ public class RemoveSwitchMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldChangeLabelInt() throws Exception {
-    final Mutant mutant = getFirstMutant(HasIntSwitchWithDefault.class);
-    assertMutantCallableReturns(new HasIntSwitchWithDefault(0), mutant, 0);
-    assertMutantCallableReturns(new HasIntSwitchWithDefault(1), mutant, 1);
-    assertMutantCallableReturns(new HasIntSwitchWithDefault(2), mutant, -1);
-    assertMutantCallableReturns(new HasIntSwitchWithDefault(3), mutant, -1);
+  public void shouldChangeLabelInt() {
+    IntMutantVerifier<Integer> v2 = v.forIntFunctionClass(HasIntSwitchWithDefault.class);
+
+    v2.firstMutantShouldReturn(0, 0);
+    v2.firstMutantShouldReturn(1, 1);
+    v2.firstMutantShouldReturn(2, -1);
+    v2.firstMutantShouldReturn(3, -1);
   }
 
-  private static class HasCharSwitchWithDefault implements Callable<Character> {
-
-    private final char value;
-
-    private HasCharSwitchWithDefault(final char value) {
-      this.value = value;
-    }
+  private static class HasCharSwitchWithDefault implements Function<Character,Character> {
 
     @Override
-    public Character call() throws Exception {
-      switch (this.value) {
+    public Character apply(Character c) {
+      char value = c.charValue();
+      switch (value) {
       case 'a':
         return 'a';
       case 'b':
@@ -103,34 +97,24 @@ public class RemoveSwitchMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldChangeLabelChar() throws Exception {
-    final Mutant mutant = getFirstMutant(HasCharSwitchWithDefault.class);
-    assertMutantCallableReturns(new HasCharSwitchWithDefault('a'), mutant, 'a');
-    assertMutantCallableReturns(new HasCharSwitchWithDefault('b'), mutant, 'b');
-    assertMutantCallableReturns(new HasCharSwitchWithDefault('c'), mutant, 'z');
-    assertMutantCallableReturns(new HasCharSwitchWithDefault('z'), mutant, 'z');
+  public void shouldChangeLabelChar() {
+    MutantVerifier<Character, Character> v2 = v.forFunctionClass(HasCharSwitchWithDefault.class);
+    v2.firstMutantShouldReturn('a', 'a');
+    v2.firstMutantShouldReturn('b', 'b');
+    v2.firstMutantShouldReturn('c', 'z');
+    v2.firstMutantShouldReturn('z', 'z');
   }
 
-  private enum SwitchEnum {
-    FIRST, SECOND, THIRD, DEFAULT
-  }
-
-  private static class HasEnumSwitchWithDefault implements Callable<Integer> {
-
-    private final SwitchEnum value;
-
-    private HasEnumSwitchWithDefault(final SwitchEnum value) {
-      this.value = value;
-    }
+  private static class HasEnumSwitchWithDefault implements Function<TimeUnit,Integer> {
 
     @Override
-    public Integer call() throws Exception {
-      switch (this.value) {
-      case FIRST:
+    public Integer apply(TimeUnit value) {
+      switch (value) {
+        case NANOSECONDS:
         return 1;
-      case SECOND:
+        case MICROSECONDS:
         return 2;
-      case THIRD:
+        case MILLISECONDS:
         return 3;
       default:
         return -1;
@@ -139,30 +123,20 @@ public class RemoveSwitchMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldChangeLabelEnum() throws Exception {
-    final Mutant mutant = getFirstMutant(HasEnumSwitchWithDefault.class);
-    assertMutantCallableReturns(new HasEnumSwitchWithDefault(SwitchEnum.FIRST),
-        mutant, 1);
-    assertMutantCallableReturns(
-        new HasEnumSwitchWithDefault(SwitchEnum.SECOND), mutant, 2);
-    assertMutantCallableReturns(new HasEnumSwitchWithDefault(SwitchEnum.THIRD),
-        mutant, -1);
-    assertMutantCallableReturns(
-        new HasEnumSwitchWithDefault(SwitchEnum.DEFAULT), mutant, -1);
+  public void shouldChangeLabelEnum() {
+    MutantVerifier<TimeUnit, Integer> v2 = v.forFunctionClass(HasEnumSwitchWithDefault.class);
+    v2.firstMutantShouldReturn(NANOSECONDS, 1);
+    v2.firstMutantShouldReturn(MICROSECONDS, 2);
+    v2.firstMutantShouldReturn(MILLISECONDS, -1);
+    v2.firstMutantShouldReturn(SECONDS, -1);
+    v2.firstMutantShouldReturn(MINUTES, -1);
   }
 
-  private static class HasMultipleArmIntSwitchWithDefault implements
-  Callable<Integer> {
-
-    private final int value;
-
-    private HasMultipleArmIntSwitchWithDefault(final int value) {
-      this.value = value;
-    }
+  private static class HasMultipleArmIntSwitchWithDefault implements IntFunction<Integer> {
 
     @Override
-    public Integer call() throws Exception {
-      switch (this.value) {
+    public Integer apply(int value) {
+      switch (value) {
       case 1:
         return 1;
       case 200:
@@ -178,32 +152,25 @@ public class RemoveSwitchMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldReplaceTableLabelsInt() throws Exception {
-    final Mutant mutant = getFirstMutant(HasMultipleArmIntSwitchWithDefault.class);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(0),
-        mutant, 0);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(1),
-        mutant, 1);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(200),
-        mutant, 2);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(4000),
-        mutant, 0);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(800000),
-        mutant, 8);
+  public void shouldReplaceTableLabelsInt() {
+    IntMutantVerifier<Integer> v2 = v.forIntFunctionClass(HasMultipleArmIntSwitchWithDefault.class);
+    v2.firstMutantShouldReturn(0,
+        0);
+    v2.firstMutantShouldReturn(1,
+        1);
+    v2.firstMutantShouldReturn(200,
+        2);
+    v2.firstMutantShouldReturn(4000,
+        0);
+    v2.firstMutantShouldReturn(800000,
+        8);
   }
 
-  private static class HasMultipleArmIntSwitchWithoutDefault implements
-  Callable<Integer> {
-
-    private final int value;
-
-    private HasMultipleArmIntSwitchWithoutDefault(final int value) {
-      this.value = value;
-    }
+  private static class HasMultipleArmIntSwitchWithoutDefault implements IntFunction<Integer> {
 
     @Override
-    public Integer call() throws Exception {
-      switch (this.value) {
+    public Integer apply(int value) {
+      switch (value) {
       case 0:
         return 0;
       case 200:
@@ -218,31 +185,25 @@ public class RemoveSwitchMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldReplaceOtherCasesWithoutDefaultForInt() throws Exception {
-    final Mutant mutant = getFirstMutant(HasMultipleArmIntSwitchWithoutDefault.class);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithoutDefault(0),
-        mutant, 0);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithoutDefault(200),
-        mutant, 2);
-    assertMutantCallableReturns(
-        new HasMultipleArmIntSwitchWithoutDefault(4000), mutant, -1);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithoutDefault(
-        800000), mutant, 8);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithoutDefault(8),
-        mutant, -1);
+  public void shouldReplaceOtherCasesWithoutDefaultForInt() {
+    IntMutantVerifier<Integer> v2 = v.forIntFunctionClass(HasMultipleArmIntSwitchWithoutDefault.class);
+
+    v2.firstMutantShouldReturn(0,
+        0);
+    v2.firstMutantShouldReturn(200,
+        2);
+    v2.firstMutantShouldReturn(4000, -1);
+    v2.firstMutantShouldReturn(
+        800000, 8);
+    v2.firstMutantShouldReturn(8,
+        -1);
   }
 
-  private static class HasFewerLabelsWithDefault implements Callable<Integer> {
-
-    private final int value;
-
-    private HasFewerLabelsWithDefault(final int value) {
-      this.value = value;
-    }
+  private static class HasFewerLabelsWithDefault implements IntFunction<Integer> {
 
     @Override
-    public Integer call() throws Exception {
-      switch (this.value) {
+    public Integer apply(int value) {
+      switch (value) {
       case 1:
         return 1;
       case 200:
@@ -254,7 +215,8 @@ public class RemoveSwitchMutatorTest extends MutatorTestBase {
   }
 
   @Test
-  public void shouldNotTouchIt() throws Exception {
-    assertNoMutants(HasFewerLabelsWithDefault.class);
+  public void shouldNotTouchIt() {
+    v.forClass(HasFewerLabelsWithDefault.class)
+                    .noMutantsCreated();
   }
 }

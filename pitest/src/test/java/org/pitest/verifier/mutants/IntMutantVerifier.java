@@ -22,12 +22,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class IntMutantVerifier<B> extends MutatorVerifier {
 
-    private final GregorMutater engine;
     private final Class<? extends IntFunction<B>> target;
 
     public IntMutantVerifier(GregorMutater engine, Class<? extends IntFunction<B>> target, Predicate<MutationDetails> filter, boolean checkUnmutatedValues) {
         super(engine, target, filter, checkUnmutatedValues);
-        this.engine = engine;
         this.target = target;
     }
 
@@ -45,7 +43,9 @@ public class IntMutantVerifier<B> extends MutatorVerifier {
         }
 
         List<MutationDetails> mutations = findMutations();
-        assertThat(mutateAndCall(input, getFirstMutant(mutations)))
+        Mutant mutant = getFirstMutant(mutations);
+        assertThat(mutateAndCall(input, mutant))
+                .as(() -> "Unexpected return value from mutant\n " + printMutant(mutant))
                 .isEqualTo(expected);
     }
 
@@ -71,14 +71,5 @@ public class IntMutantVerifier<B> extends MutatorVerifier {
         }
     }
 
-    protected Mutant getFirstMutant(final Collection<MutationDetails> actual) {
-        assertThat(actual)
-                .describedAs("Expecting at least one mutant to be generated")
-                .isNotEmpty();
-        final Mutant mutant = this.engine.getMutation(actual.iterator().next()
-                .getId());
-        verifyMutant(mutant);
-        return mutant;
-    }
 
 }

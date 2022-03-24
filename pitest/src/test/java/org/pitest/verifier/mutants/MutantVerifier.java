@@ -31,9 +31,10 @@ public class MutantVerifier<A, B> extends MutatorVerifier {
         this.target = target;
     }
 
-    /**
-     * Suppliers allow consumable inputs (eg streams) can be reused
-     */
+    public void firstMutantShouldReturn(A a, B expected) {
+        firstMutantShouldReturn(() -> a, expected);
+    }
+
     public void firstMutantShouldReturn(Supplier<A> as, B expected) {
         A input = as.get();
         if (checkUnmutated()) {
@@ -43,8 +44,20 @@ public class MutantVerifier<A, B> extends MutatorVerifier {
         }
 
         List<MutationDetails> mutations = findMutations();
-        assertThat(mutateAndCall(input, getFirstMutant(mutations)))
+        Mutant mutant = getFirstMutant(mutations);
+        assertThat(mutateAndCall(input, mutant))
+                .as(() -> "Unexpected return value from mutant\n " + printMutant(mutant))
                 .isEqualTo(expected);
+
+    }
+
+    public void firstMutantShouldReturn(Supplier<A> as, Predicate<B> match) {
+        A input = as.get();
+        List<MutationDetails> mutations = findMutations();
+        Mutant mutant = getFirstMutant(mutations);
+        assertThat(mutateAndCall(input, mutant))
+                .as(() -> "Unexpected return value from mutant\n " + printMutant(mutant))
+                .matches(match);
     }
 
     private B runWithoutMutation(A input) {
@@ -67,16 +80,6 @@ public class MutantVerifier<A, B> extends MutatorVerifier {
         } catch (ReflectiveOperationException ex) {
             throw Unchecked.translateCheckedException(ex);
         }
-    }
-
-    protected Mutant getFirstMutant(final Collection<MutationDetails> actual) {
-        assertThat(actual)
-                .describedAs("Expecting at least one mutant to be generated")
-                .isNotEmpty();
-        final Mutant mutant = this.engine.getMutation(actual.iterator().next()
-                .getId());
-        verifyMutant(mutant);
-        return mutant;
     }
 
 }

@@ -15,269 +15,241 @@
 
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 import org.pitest.mutationtest.engine.gregor.mutators.ConstructorCallMutatorTest.HasConstructorCall;
+import org.pitest.verifier.mutants.MutatorVerifierStart;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.pitest.mutationtest.engine.gregor.mutators.NonVoidMethodCallMutator.NON_VOID_METHOD_CALLS;
 
-public class NonVoidMethodCallMutatorTest extends MutatorTestBase {
+public class NonVoidMethodCallMutatorTest {
 
-  @Before
-  public void setupEngineToRemoveVoidMethods() {
-    createTesteeWith(mutateOnlyCallMethod(),
-        NonVoidMethodCallMutator.NON_VOID_METHOD_CALLS);
-  }
+    MutatorVerifierStart v = MutatorVerifierStart.forMutator(NON_VOID_METHOD_CALLS)
+            .notCheckingUnMutatedValues();
 
-  @Test
-  public void shouldRemoveNonVoidMethods() throws Exception {
-    final Mutant mutant = getFirstMutant(HasIntMethodCall.class);
-    assertMutantCallableReturns(new HasIntMethodCall(), mutant, "0");
-  }
 
-  private static class HasVoidMethodCall implements Callable<String> {
-
-    private String s = "";
-
-    public void set(final int i) {
-      this.s = this.s + i;
+    @Test
+    public void shouldRemoveNonVoidMethods() {
+        v.forCallableClass(HasIntMethodCall.class)
+                .firstMutantShouldReturn("0");
     }
 
-    @Override
-    public String call() throws Exception {
-      set(1);
-      return this.s;
+    @Test
+    public void shouldNotRemoveVoidMethodCalls() {
+        v.forClass(HasVoidMethodCall.class)
+                .noMutantsCreated();
     }
 
-  }
-
-  @Test
-  public void shouldNotRemoveVoidMethodCalls() throws Exception {
-    assertTrue(findMutationsFor(HasVoidMethodCall.class).isEmpty());
-  }
-
-  @Test
-  public void shouldNotRemoveConstructorCalls() throws Exception {
-    final List<MutationDetails> actual = findMutationsFor(HasConstructorCall.class);
-    assertFalse(actual.stream().anyMatch(descriptionContaining("Integer")));
-  }
-
-  private static class HasObjectMethodCall implements Callable<String> {
-
-    @Override
-    public String call() throws Exception {
-      return this.toString();
-    }
-  }
-
-  @Test
-  public void shouldRemoveNonVoidMethodCallReturningObjectType()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(HasObjectMethodCall.class);
-    assertMutantCallableReturns(new HasObjectMethodCall(), mutant, null);
-  }
-
-  private static class HasBooleanMethodCall implements Callable<String> {
-    private boolean booleanMethod() {
-      return true;
+    @Test
+    public void shouldNotRemoveConstructorCalls() {
+        v.consideringOnlyMutantsMatching(m -> m.getDescription().contains("Integer"))
+                .forClass(HasConstructorCall.class)
+                .noMutantsCreated();
     }
 
-    @Override
-    public String call() throws Exception {
-      final boolean result = booleanMethod();
-      return "" + result;
-    }
-  }
-
-  @Test
-  public void shouldRemoveNonVoidMethodCallReturningBooleanType()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(HasBooleanMethodCall.class);
-    assertMutantCallableReturns(new HasBooleanMethodCall(), mutant, "false");
-  }
-
-  private static class HasDoubleMethodCall implements Callable<String> {
-    private double doubleMethod() {
-      return 9123475.3d;
+    @Test
+    public void shouldRemoveNonVoidMethodCallReturningObjectType() {
+        v.forCallableClass(HasObjectMethodCall.class)
+                .firstMutantShouldReturn(null);
     }
 
-    @Override
-    public String call() throws Exception {
-      final double result = doubleMethod();
-      return "" + result;
-    }
-  }
-
-  @Test
-  public void shouldRemoveNonVoidMethodCallReturningDoubleType()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(HasDoubleMethodCall.class);
-    assertMutantCallableReturns(new HasDoubleMethodCall(), mutant, "0.0");
-  }
-
-  private static class HasByteMethodCall implements Callable<String> {
-    private byte byteMethod() {
-      return 5;
+    @Test
+    public void shouldRemoveNonVoidMethodCallReturningBooleanType() {
+        v.forCallableClass(HasBooleanMethodCall.class)
+                .firstMutantShouldReturn("false");
     }
 
-    @Override
-    public String call() throws Exception {
-      final byte result = byteMethod();
-      return "" + result;
-    }
-  }
-
-  @Test
-  public void shouldRemoveNonVoidMethodCallReturningByteType() throws Exception {
-    final Mutant mutant = getFirstMutant(HasByteMethodCall.class);
-    assertMutantCallableReturns(new HasByteMethodCall(), mutant, "0");
-  }
-
-  private static class HasCharMethodCall implements Callable<String> {
-    private char charMethod() {
-      return 'g';
+    @Test
+    public void shouldRemoveNonVoidMethodCallReturningDoubleType() {
+        v.forCallableClass(HasDoubleMethodCall.class)
+                .firstMutantShouldReturn("0.0");
     }
 
-    @Override
-    public String call() throws Exception {
-      final char result = charMethod();
-      return "" + result;
-    }
-  }
-
-  @Test
-  public void shouldRemoveNonVoidMethodCallReturningCharType() throws Exception {
-    final Mutant mutant = getFirstMutant(HasCharMethodCall.class);
-    assertMutantCallableReturns(new HasCharMethodCall(), mutant, "" + '\0');
-  }
-
-  private static class HasShortMethodCall implements Callable<String> {
-    private short shortMethod() {
-      return 23;
+    @Test
+    public void shouldRemoveNonVoidMethodCallReturningByteType() {
+        v.forCallableClass(HasByteMethodCall.class)
+                .firstMutantShouldReturn("0");
     }
 
-    @Override
-    public String call() throws Exception {
-      final short result = shortMethod();
-      return "" + result;
-    }
-  }
-
-  @Test
-  public void shouldRemoveNonVoidMethodCallReturningShortType()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(HasShortMethodCall.class);
-    assertMutantCallableReturns(new HasShortMethodCall(), mutant, "0");
-  }
-
-  private static class HasLongMethodCall implements Callable<String> {
-    private long longMethod() {
-      return 23;
+    @Test
+    public void shouldRemoveNonVoidMethodCallReturningCharType() {
+        v.forCallableClass(HasCharMethodCall.class)
+                .firstMutantShouldReturn("" + '\0');
     }
 
-    @Override
-    public String call() throws Exception {
-      final long result = longMethod();
-      return "" + result;
-    }
-  }
-
-  @Test
-  public void shouldRemoveNonVoidMethodCallReturningLongType() throws Exception {
-    final Mutant mutant = getFirstMutant(HasLongMethodCall.class);
-    assertMutantCallableReturns(new HasLongMethodCall(), mutant, "0");
-  }
-
-  private static class HasFloatMethodCall implements Callable<String> {
-    private float floatMethod() {
-      return 23;
+    @Test
+    public void shouldRemoveNonVoidMethodCallReturningShortType() {
+        v.forCallableClass(HasShortMethodCall.class)
+                .firstMutantShouldReturn("0");
     }
 
-    @Override
-    public String call() throws Exception {
-      final float result = floatMethod();
-      return "" + result;
-    }
-  }
-
-  @Test
-  public void shouldRemoveNonVoidMethodCallReturningFloatType()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(HasFloatMethodCall.class);
-    assertMutantCallableReturns(new HasFloatMethodCall(), mutant, "0.0");
-  }
-
-  private static class UsesReturnValueOfMethodCall implements Callable<String> {
-    @Override
-    public String call() throws Exception {
-      return this.toString().toUpperCase();
-    }
-  }
-
-  @Test(expected = NullPointerException.class)
-  public void canCauseNullPointerExceptionWhenMethodCallRemoved()
-      throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(UsesReturnValueOfMethodCall.class);
-    final Mutant mutant = getFirstMutant(actual);
-    mutateAndCall(new UsesReturnValueOfMethodCall(), mutant);
-  }
-
-  private static class HasLogger implements Callable<String> {
-    @SuppressWarnings("unused")
-    private static Logger log = Logger.getLogger(HasLogger.class.getName());
-
-    @Override
-    public String call() throws Exception {
-      return "ok";
-    }
-  }
-
-  @Test
-  @Ignore("functionality moving to filter")
-  public void shouldNotGenerateRunErrorsWhenMutatingLoggers() throws Exception {
-    createTesteeWith(i -> true,
-        NonVoidMethodCallMutator.NON_VOID_METHOD_CALLS);
-    assertTrue(this.findMutationsFor(HasLogger.class).isEmpty());
-
-  }
-
-  static class HasIntMethodCall implements Callable<String> {
-
-    private static int i = 0;
-
-    public int set(final int newVal) {
-      i = newVal;
-      return i + 42;
+    @Test
+    public void shouldRemoveNonVoidMethodCallReturningLongType() {
+        v.forCallableClass(HasLongMethodCall.class)
+                .firstMutantShouldReturn("0");
     }
 
-    @Override
-    @SuppressWarnings("finally")
-    public String call() throws Exception {
-      int c = 2;
-      try {
-        c = set(1);
-      } finally {
-        return "" + c;
-      }
+    @Test
+    public void shouldRemoveNonVoidMethodCallReturningFloatType() {
+        v.forCallableClass(HasFloatMethodCall.class)
+                .firstMutantShouldReturn("0.0");
     }
 
-  }
+    @Test(expected = RuntimeException.class)
+    public void canCauseNullPointerExceptionWhenMethodCallRemoved() {
+        v.forCallableClass(UsesReturnValueOfMethodCall.class)
+                .firstMutantShouldReturn("?");
+    }
 
-  @Test
-  public void shouldReplaceAssignmentsFromIntMethodCallsWithZero()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(HasIntMethodCall.class);
-    assertMutantCallableReturns(new HasIntMethodCall(), mutant, "0");
-  }
+    @Test
+    public void shouldReplaceAssignmentsFromIntMethodCallsWithZero() {
+        v.forCallableClass(HasIntMethodCall.class)
+                .firstMutantShouldReturn("0");
+    }
+
+    private static class HasVoidMethodCall implements Callable<String> {
+        public void set(final int i) {
+        }
+
+        @Override
+        public String call() {
+            set(1);
+            return "";
+        }
+
+    }
+
+    private static class HasObjectMethodCall implements Callable<String> {
+
+        @Override
+        public String call() {
+            return this.toString();
+        }
+    }
+
+    private static class HasBooleanMethodCall implements Callable<String> {
+        private boolean booleanMethod() {
+            return true;
+        }
+
+        @Override
+        public String call() {
+            final boolean result = booleanMethod();
+            return "" + result;
+        }
+    }
+
+    private static class HasDoubleMethodCall implements Callable<String> {
+        private double doubleMethod() {
+            return 9123475.3d;
+        }
+
+        @Override
+        public String call() {
+            final double result = doubleMethod();
+            return "" + result;
+        }
+    }
+
+    private static class HasByteMethodCall implements Callable<String> {
+        private byte byteMethod() {
+            return 5;
+        }
+
+        @Override
+        public String call() {
+            final byte result = byteMethod();
+            return "" + result;
+        }
+    }
+
+    private static class HasCharMethodCall implements Callable<String> {
+        private char charMethod() {
+            return 'g';
+        }
+
+        @Override
+        public String call() {
+            final char result = charMethod();
+            return "" + result;
+        }
+    }
+
+    private static class HasShortMethodCall implements Callable<String> {
+        private short shortMethod() {
+            return 23;
+        }
+
+        @Override
+        public String call() {
+            final short result = shortMethod();
+            return "" + result;
+        }
+    }
+
+    private static class HasLongMethodCall implements Callable<String> {
+        private long longMethod() {
+            return 23;
+        }
+
+        @Override
+        public String call() {
+            final long result = longMethod();
+            return "" + result;
+        }
+    }
+
+    private static class HasFloatMethodCall implements Callable<String> {
+        private float floatMethod() {
+            return 23;
+        }
+
+        @Override
+        public String call() {
+            final float result = floatMethod();
+            return "" + result;
+        }
+    }
+
+    private static class UsesReturnValueOfMethodCall implements Callable<String> {
+        @Override
+        public String call() {
+            return this.toString().toUpperCase();
+        }
+    }
+
+    private static class HasLogger implements Callable<String> {
+        @SuppressWarnings("unused")
+        private static final Logger log = Logger.getLogger(HasLogger.class.getName());
+
+        @Override
+        public String call() {
+            return "ok";
+        }
+    }
+
+    static class HasIntMethodCall implements Callable<String> {
+
+        private static int i = 0;
+
+        public int set(final int newVal) {
+            i = newVal;
+            return i + 42;
+        }
+
+        @Override
+        @SuppressWarnings("finally")
+        public String call() {
+            int c = 2;
+            try {
+                c = set(1);
+            } finally {
+                return "" + c;
+            }
+        }
+
+    }
 
 }

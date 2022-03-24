@@ -22,18 +22,17 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class LongMutantVerifier<B> extends MutatorVerifier {
 
-    private final GregorMutater engine;
     private final Class<? extends LongFunction<B>> target;
 
     public LongMutantVerifier(GregorMutater engine, Class<? extends LongFunction<B>> target, Predicate<MutationDetails> filter, boolean checkUnmutatedValues) {
         super(engine, target, filter, checkUnmutatedValues);
-        this.engine = engine;
         this.target = target;
     }
 
-    /**
-     * Suppliers allow consumable inputs (eg streams) can be reused
-     */
+    public void firstMutantShouldReturn(long l, B expected) {
+        firstMutantShouldReturn(() -> l, expected);
+    }
+
     public void firstMutantShouldReturn(LongSupplier ls, B expected) {
 
         long input = ls.getAsLong();
@@ -69,16 +68,6 @@ public class LongMutantVerifier<B> extends MutatorVerifier {
         } catch (ReflectiveOperationException ex) {
             throw Unchecked.translateCheckedException(ex);
         }
-    }
-
-    protected Mutant getFirstMutant(final Collection<MutationDetails> actual) {
-        assertThat(actual)
-                .describedAs("Expecting at least one mutant to be generated")
-                .isNotEmpty();
-        final Mutant mutant = this.engine.getMutation(actual.iterator().next()
-                .getId());
-        verifyMutant(mutant);
-        return mutant;
     }
 
 }

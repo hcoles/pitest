@@ -22,18 +22,17 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class DoubleMutantVerifier<B> extends MutatorVerifier {
 
-    private final GregorMutater engine;
     private final Class<? extends DoubleFunction<B>> target;
 
     public DoubleMutantVerifier(GregorMutater engine, Class<? extends DoubleFunction<B>> target, Predicate<MutationDetails> filter, boolean checkUnmutatedValues) {
         super(engine, target, filter, checkUnmutatedValues);
-        this.engine = engine;
         this.target = target;
     }
 
-    /**
-     * Suppliers allow consumable inputs (eg streams) can be reused
-     */
+    public void firstMutantShouldReturn(double ds, B expected) {
+        firstMutantShouldReturn(() -> ds, expected);
+    }
+
     public void firstMutantShouldReturn(DoubleSupplier ds, B expected) {
         double input = ds.getAsDouble();
         if (checkUnmutated()) {
@@ -67,16 +66,6 @@ public class DoubleMutantVerifier<B> extends MutatorVerifier {
         } catch (ReflectiveOperationException ex) {
             throw Unchecked.translateCheckedException(ex);
         }
-    }
-
-    protected Mutant getFirstMutant(final Collection<MutationDetails> actual) {
-        assertThat(actual)
-                .describedAs("Expecting at least one mutant to be generated")
-                .isNotEmpty();
-        final Mutant mutant = this.engine.getMutation(actual.iterator().next()
-                .getId());
-        verifyMutant(mutant);
-        return mutant;
     }
 
 }

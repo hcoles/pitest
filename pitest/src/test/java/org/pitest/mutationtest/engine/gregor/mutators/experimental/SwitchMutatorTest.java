@@ -15,272 +15,222 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import org.junit.Test;
+import org.pitest.verifier.mutants.IntMutantVerifier;
+import org.pitest.verifier.mutants.MutantVerifier;
+import org.pitest.verifier.mutants.MutatorVerifierStart;
+
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+
+import static java.util.concurrent.TimeUnit.MICROSECONDS;
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static org.junit.Assert.assertEquals;
 
-import java.util.concurrent.Callable;
+public class SwitchMutatorTest {
 
-import org.junit.Before;
-import org.junit.Test;
-import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
+    MutatorVerifierStart v = MutatorVerifierStart.forMutator(new SwitchMutator())
+            .notCheckingUnMutatedValues();
 
-public class SwitchMutatorTest extends MutatorTestBase {
 
-  @Before
-  public void setupEngineToMutateOnlySwitchStatements() {
-    createTesteeWith(new SwitchMutator());
-  }
-
-  @Test
-  public void shouldProvideAMeaningfulName() {
-    assertEquals("EXPERIMENTAL_SWITCH", new SwitchMutator().getName());
-  }
-
-  private static class HasIntSwitchWithDefault implements Callable<Integer> {
-
-    private final int value;
-
-    private HasIntSwitchWithDefault(final int value) {
-      this.value = value;
+    @Test
+    public void shouldProvideAMeaningfulName() {
+        assertEquals("EXPERIMENTAL_SWITCH", new SwitchMutator().getName());
     }
 
-    @Override
-    public Integer call() throws Exception {
-      switch (this.value) {
-      case 0:
-        return 1;
-      default:
-        return 0;
-      }
-    }
-  }
-
-  @Test
-  public void createsMeaningfulDescription() {
-    final Mutant mutant = getFirstMutant(HasIntSwitchWithDefault.class);
-    assertThat(mutant.getDetails().getDescription()).isEqualTo("Changed switch default to be first case");
-  }
-
-
-  @Test
-  public void shouldSwapFirstCaseWithDefaultForInt() throws Exception {
-    final Mutant mutant = getFirstMutant(HasIntSwitchWithDefault.class);
-    assertMutantCallableReturns(new HasIntSwitchWithDefault(0), mutant, 0);
-    assertMutantCallableReturns(new HasIntSwitchWithDefault(1), mutant, 1);
-  }
-
-  private static class HasCharSwitchWithDefault implements Callable<Character> {
-
-    private final char value;
-
-    private HasCharSwitchWithDefault(final char value) {
-      this.value = value;
+    @Test
+    public void createsMeaningfulDescription() {
+        v.forIntFunctionClass(HasIntSwitchWithDefault.class)
+                .firstMutantDescription()
+                .isEqualTo("Changed switch default to be first case");
     }
 
-    @Override
-    public Character call() throws Exception {
-      switch (this.value) {
-      case 'a':
-        return 'z';
-      default:
-        return 'a';
-      }
-    }
-  }
-
-  @Test
-  public void shouldSwapFirstCaseWithDefaultForChar() throws Exception {
-    final Mutant mutant = getFirstMutant(HasCharSwitchWithDefault.class);
-    assertMutantCallableReturns(new HasCharSwitchWithDefault('a'), mutant, 'a');
-    assertMutantCallableReturns(new HasCharSwitchWithDefault('z'), mutant, 'z');
-  }
-
-  private enum SwitchEnum {
-    FIRST, SECOND
-  }
-
-  private static class HasEnumSwitchWithDefault implements Callable<Integer> {
-
-    private final SwitchEnum value;
-
-    private HasEnumSwitchWithDefault(final SwitchEnum value) {
-      this.value = value;
+    @Test
+    public void shouldSwapFirstCaseWithDefaultForInt() {
+        IntMutantVerifier<Integer> v2 = v.forIntFunctionClass(HasIntSwitchWithDefault.class);
+        v2.firstMutantShouldReturn(0, 0);
+        v2.firstMutantShouldReturn(1, 1);
     }
 
-    @Override
-    public Integer call() throws Exception {
-      switch (this.value) {
-      case FIRST:
-        return 2;
-      default:
-        return 1;
-      }
-    }
-  }
-
-  @Test
-  public void shouldSwapFirstCaseWithDefaultForEnum() throws Exception {
-    final Mutant mutant = getFirstMutant(HasEnumSwitchWithDefault.class);
-    assertMutantCallableReturns(new HasEnumSwitchWithDefault(SwitchEnum.FIRST),
-        mutant, 1);
-    assertMutantCallableReturns(
-        new HasEnumSwitchWithDefault(SwitchEnum.SECOND), mutant, 2);
-  }
-
-  private static class HasMultipleArmIntSwitchWithDefault implements
-  Callable<Integer> {
-
-    private final int value;
-
-    private HasMultipleArmIntSwitchWithDefault(final int value) {
-      this.value = value;
+    @Test
+    public void shouldSwapFirstCaseWithDefaultForChar() {
+        MutantVerifier<Character, Character> v2 = v.forFunctionClass(HasCharSwitchWithDefault.class);
+        v2.firstMutantShouldReturn('a', 'a');
+        v2.firstMutantShouldReturn('z', 'z');
     }
 
-    @Override
-    public Integer call() throws Exception {
-      switch (this.value) {
-      case 0:
-        return 1;
-      case 2:
-        return 2;
-      case 4:
-        return 3;
-      default:
-        return 0;
-      }
-    }
-  }
-
-  @Test
-  public void shouldReplaceOtherCasesWithDefaultForInt() throws Exception {
-    final Mutant mutant = getFirstMutant(HasMultipleArmIntSwitchWithDefault.class);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(-8),
-        mutant, 1);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(0),
-        mutant, 0);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(1),
-        mutant, 1);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(2),
-        mutant, 0);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(3),
-        mutant, 1);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(4),
-        mutant, 0);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithDefault(8),
-        mutant, 1);
-  }
-
-  private static class HasMultipleArmIntSwitchWithoutDefault implements
-  Callable<Integer> {
-
-    private final int value;
-
-    private HasMultipleArmIntSwitchWithoutDefault(final int value) {
-      this.value = value;
+    @Test
+    public void shouldSwapFirstCaseWithDefaultForEnum() {
+        MutantVerifier<TimeUnit, Integer> v2 = v.forFunctionClass(HasEnumSwitchWithDefault.class);
+        v2.firstMutantShouldReturn(NANOSECONDS, 1);
+        v2.firstMutantShouldReturn(MICROSECONDS, 2);
     }
 
-    @Override
-    public Integer call() throws Exception {
-      switch (this.value) {
-      case 0:
-        return 1;
-      case 200:
-        return 2;
-      case 40000:
-        return 3;
-      }
-      return 0;
-    }
-  }
-
-  @Test
-  public void shouldReplaceOtherCasesWithoutDefaultForInt() throws Exception {
-    final Mutant mutant = getFirstMutant(HasMultipleArmIntSwitchWithoutDefault.class);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithoutDefault(-1),
-        mutant, 1);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithoutDefault(0),
-        mutant, 0);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithoutDefault(8),
-        mutant, 1);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithoutDefault(200),
-        mutant, 0);
-    assertMutantCallableReturns(new HasMultipleArmIntSwitchWithoutDefault(400),
-        mutant, 1);
-    assertMutantCallableReturns(
-        new HasMultipleArmIntSwitchWithoutDefault(40000), mutant, 0);
-    assertMutantCallableReturns(
-        new HasMultipleArmIntSwitchWithoutDefault(45000), mutant, 1);
-  }
-
-  private static class HasTwoTableSwitchStatements implements Callable<Integer> {
-
-    private final int value;
-
-    private HasTwoTableSwitchStatements(final int value) {
-      this.value = value;
+    @Test
+    public void shouldReplaceOtherCasesWithDefaultForInt() {
+        IntMutantVerifier<Integer> v2 = v.forIntFunctionClass(HasMultipleArmIntSwitchWithDefault.class);
+        v2.firstMutantShouldReturn(-8,
+                1);
+        v2.firstMutantShouldReturn(0,
+                0);
+        v2.firstMutantShouldReturn(1,
+                1);
+        v2.firstMutantShouldReturn(2,
+                0);
+        v2.firstMutantShouldReturn(3,
+                1);
+        v2.firstMutantShouldReturn(4,
+                0);
+        v2.firstMutantShouldReturn(8,
+                1);
     }
 
-    @Override
-    public Integer call() throws Exception {
-      int i = 1;
-      switch (this.value) {
-      case 0:
-        i = 10;
-      }
-
-      switch (this.value) {
-      case 0:
-        i = i * 2;
-      }
-
-      return i;
-    }
-  }
-
-  @Test
-  public void shouldOnlyCreateRequestedMutationForTableSwitches()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(HasTwoTableSwitchStatements.class);
-    assertMutantCallableReturns(new HasTwoTableSwitchStatements(0), mutant, 2);
-  }
-
-  private static class HasTwoLookupSwitchStatements implements
-  Callable<Integer> {
-
-    private final int value;
-
-    private HasTwoLookupSwitchStatements(final int value) {
-      this.value = value;
+    @Test
+    public void shouldReplaceOtherCasesWithoutDefaultForInt() {
+        IntMutantVerifier<Integer> v2 = v.forIntFunctionClass(HasMultipleArmIntSwitchWithoutDefault.class);
+        v2.firstMutantShouldReturn(-1,
+                1);
+        v2.firstMutantShouldReturn(0,
+                0);
+        v2.firstMutantShouldReturn(8,
+                1);
+        v2.firstMutantShouldReturn(200,
+                0);
+        v2.firstMutantShouldReturn(400,
+                1);
+        v2.firstMutantShouldReturn(40000, 0);
+        v2.firstMutantShouldReturn(45000, 1);
     }
 
-    @Override
-    public Integer call() throws Exception {
-      int i = 1;
-      switch (this.value) {
-      case 100:
-        i = 42;
-        break;
-      case 0:
-        i = 10;
-      }
-
-      switch (this.value) {
-      case 100:
-        i = 42;
-        break;
-      case 0:
-        i = i * 2;
-      }
-
-      return i;
+    @Test
+    public void shouldOnlyCreateRequestedMutationForTableSwitches() {
+        v.forIntFunctionClass(HasTwoTableSwitchStatements.class)
+                .firstMutantShouldReturn(0, 2);
     }
-  }
 
-  @Test
-  public void shouldOnlyCreateRequestedMutationForLookupSwitches()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(HasTwoLookupSwitchStatements.class);
-    assertMutantCallableReturns(new HasTwoLookupSwitchStatements(0), mutant, 2);
-  }
+    @Test
+    public void shouldOnlyCreateRequestedMutationForLookupSwitches() {
+        v.forIntFunctionClass(HasTwoLookupSwitchStatements.class)
+                .firstMutantShouldReturn(0, 2);
+    }
+
+    private static class HasIntSwitchWithDefault implements IntFunction<Integer> {
+
+        @Override
+        public Integer apply(int value) {
+            switch (value) {
+                case 0:
+                    return 1;
+                default:
+                    return 0;
+            }
+        }
+    }
+
+    private static class HasCharSwitchWithDefault implements Function<Character, Character> {
+
+        @Override
+        public Character apply(Character c) {
+            char value = c.charValue();
+            switch (value) {
+                case 'a':
+                    return 'z';
+                default:
+                    return 'a';
+            }
+        }
+    }
+
+    private static class HasEnumSwitchWithDefault implements Function<TimeUnit, Integer> {
+
+        @Override
+        public Integer apply(TimeUnit value) {
+            switch (value) {
+                case NANOSECONDS:
+                    return 2;
+                default:
+                    return 1;
+            }
+        }
+    }
+
+    private static class HasMultipleArmIntSwitchWithDefault implements IntFunction<Integer> {
+
+        @Override
+        public Integer apply(int value) {
+            switch (value) {
+                case 0:
+                    return 1;
+                case 2:
+                    return 2;
+                case 4:
+                    return 3;
+                default:
+                    return 0;
+            }
+        }
+    }
+
+    private static class HasMultipleArmIntSwitchWithoutDefault implements
+            IntFunction<Integer> {
+
+        @Override
+        public Integer apply(int value) {
+            switch (value) {
+                case 0:
+                    return 1;
+                case 200:
+                    return 2;
+                case 40000:
+                    return 3;
+            }
+            return 0;
+        }
+    }
+
+    private static class HasTwoTableSwitchStatements implements IntFunction<Integer> {
+
+        @Override
+        public Integer apply(int value) {
+            int i = 1;
+            switch (value) {
+                case 0:
+                    i = 10;
+            }
+
+            switch (value) {
+                case 0:
+                    i = i * 2;
+            }
+
+            return i;
+        }
+    }
+
+    private static class HasTwoLookupSwitchStatements implements
+            IntFunction<Integer> {
+
+        @Override
+        public Integer apply(int value) {
+            int i = 1;
+            switch (value) {
+                case 100:
+                    i = 42;
+                    break;
+                case 0:
+                    i = 10;
+            }
+
+            switch (value) {
+                case 100:
+                    i = 42;
+                    break;
+                case 0:
+                    i = i * 2;
+            }
+
+            return i;
+        }
+    }
 }

@@ -12,23 +12,6 @@
 	<url>http://pitest.org</url>
 	<description>Mutation testing system for Java.</description>
 
-	<properties>
-		<surefire.argline/>
-	</properties>
-	<profiles>
-		<profile>
-			<id>jdk17</id>
-			<activation>
-				<jdk>17</jdk>
-			</activation>
-			<properties>
-				<!-- pitest does not use reflection, but some of the tests depend on xstream, which does. Jdk 17 fails with
-				 errors due to the module system. jdk8 does not support the add-opens option, so it must be activated here by jdk-->
-				<surefire.argline>--illegal-access=permit --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.ref=ALL-UNNAMED</surefire.argline>
-			</properties>
-		</profile>
-	</profiles>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -59,8 +42,6 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<testNGArtifactName>none:none</testNGArtifactName>
-					<!-- pitest does not use reflection, but some of the tests depend on xstream, which does -->
-					<argLine>${surefire.argline}</argLine>
 
 					<includes>
 						<include>org/**/Test*.java</include>
@@ -240,12 +221,6 @@
 			<groupId>nl.jqno.equalsverifier</groupId>
 			<artifactId>equalsverifier</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.thoughtworks.xstream</groupId>
-			<artifactId>xstream</artifactId>
-            <version>1.4.19</version>
-            <scope>test</scope>
 		</dependency>
 	</dependencies>
 

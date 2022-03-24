@@ -1,90 +1,11 @@
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
+import org.pitest.verifier.mutants.MutatorVerifierStart;
 
-import java.util.Collection;
 import java.util.concurrent.Callable;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
-import org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator;
-
-public class NullReturnValsMutatorTest extends MutatorTestBase {
-
-  @Before
-  public void setupEngineToMutateOnlyReturnVals() {
-    createTesteeWith(NullReturnValsMutator.NULL_RETURNS);
-  }
-
-  @Test
-  public void mutatesObjectReturnValuesToNull() throws Exception {
-    assertMutantCallableReturns(new ObjectReturn(),
-        createFirstMutant(ObjectReturn.class), null);
-  }
-
-  @Test
-  public void doesNotMutateMethodsAnnotatedWithNotNull() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(
-        AnnotatedObjectReturn.class);
-    assertThat(actual).isEmpty();
-  }
-
-  @Test
-  public void mutatesMethodsWithOtherAnnoations() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(
-        HasOtherAnnotation.class);
-    assertThat(actual).hasSize(1);
-  }
-
-
-  @Test
-  public void doesNotMutateMethodsAnnotatedWithNotNullAndOthers() throws Exception {
-    final Collection<MutationDetails> actual = findMutationsFor(
-        MultipleAnnotatedObjectReturn.class);
-    assertThat(actual).isEmpty();
-  }
-
-
-  @Test
-  public void describesMutationsToObject() {
-    assertMutantDescriptionIncludes("replaced return value with null", ObjectReturn.class);
-    assertMutantDescriptionIncludes("ObjectReturn::call", ObjectReturn.class);
-  }
-
-  private static class ObjectReturn implements Callable<Object> {
-    @Override
-    public Object call() throws Exception {
-      return "";
-    }
-  }
-
-  private static class AnnotatedObjectReturn implements Callable<Object> {
-    @Override
-    @NotNull
-    public Object call() throws Exception {
-      return "";
-    }
-  }
-
-  private static class HasOtherAnnotation implements Callable<Object> {
-    @Override
-    @SomethingElse
-    public Object call() throws Exception {
-      return "";
-    }
-  }
-
-  private static class MultipleAnnotatedObjectReturn implements Callable<Object> {
-    @Override
-    @NotNull
-    @SomethingElse
-    public Object call() throws Exception {
-      return "";
-    }
-  }
-}
+import static org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator.NULL_RETURNS;
 
 @interface SomethingElse {
 
@@ -92,4 +13,79 @@ public class NullReturnValsMutatorTest extends MutatorTestBase {
 
 @interface NotNull {
 
+}
+
+public class NullReturnValsMutatorTest {
+
+    MutatorVerifierStart v = MutatorVerifierStart.forMutator(NULL_RETURNS)
+            .notCheckingUnMutatedValues();
+
+    @Test
+    public void mutatesObjectReturnValuesToNull() {
+        v.forCallableClass(ObjectReturn.class)
+                .firstMutantShouldReturn(null);
+    }
+
+    @Test
+    public void doesNotMutateMethodsAnnotatedWithNotNull() {
+        v.forCallableClass(
+                        AnnotatedObjectReturn.class)
+                .noMutantsCreated();
+    }
+
+    @Test
+    public void mutatesMethodsWithOtherAnnoations() {
+        v.forCallableClass(
+                        HasOtherAnnotation.class)
+                .createsNMutants(1);
+    }
+
+
+    @Test
+    public void doesNotMutateMethodsAnnotatedWithNotNullAndOthers() {
+        v.forCallableClass(
+                        MultipleAnnotatedObjectReturn.class)
+                .noMutantsCreated();
+    }
+
+
+    @Test
+    public void describesMutationsToObject() {
+        v.forCallableClass(ObjectReturn.class)
+                .firstMutantDescription()
+                .contains("replaced return value with null")
+                .contains("ObjectReturn::call");
+    }
+
+    private static class ObjectReturn implements Callable<Object> {
+        @Override
+        public Object call() {
+            return "";
+        }
+    }
+
+    private static class AnnotatedObjectReturn implements Callable<Object> {
+        @Override
+        @NotNull
+        public Object call() {
+            return "";
+        }
+    }
+
+    private static class HasOtherAnnotation implements Callable<Object> {
+        @Override
+        @SomethingElse
+        public Object call() {
+            return "";
+        }
+    }
+
+    private static class MultipleAnnotatedObjectReturn implements Callable<Object> {
+        @Override
+        @NotNull
+        @SomethingElse
+        public Object call() {
+            return "";
+        }
+    }
 }

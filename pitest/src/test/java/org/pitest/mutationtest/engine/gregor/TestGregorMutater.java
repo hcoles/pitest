@@ -20,290 +20,298 @@ import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.util.ResourceFolderByteArraySource;
+import org.pitest.verifier.mutants.MutatorVerifierStart;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TestGregorMutater extends MutatorTestBase {
+public class TestGregorMutater {
 
-  public static class HasMultipleMutations {
-    public int mutable() {
-      int j = 10;
-      for (int i = 0; i != 10; i++) {
-        j = j << 1;
-      }
+    @Test
+    public void shouldFindMutationsFromAllSuppliedMutators() {
 
-      return -j;
+        MutatorVerifierStart v = MutatorVerifierStart.forMutator(MathMutator.MATH,
+                ReturnValsMutator.RETURN_VALS,
+                InvertNegsMutator.INVERT_NEGS,
+                IncrementsMutator.INCREMENTS);
+
+        List<MutationDetails> actualDetails = v.forClass(HasMultipleMutations.class)
+                .findMutations();
+
+        assertTrue(actualDetails.stream()
+                .anyMatch(descriptionContaining("Replaced Shift Left with Shift Right")));
+        assertTrue(actualDetails.stream()
+                .anyMatch(descriptionContaining("replaced return of integer")));
+        assertTrue(actualDetails.stream()
+                .anyMatch(descriptionContaining("Changed increment")));
+        assertTrue(actualDetails.stream()
+                .anyMatch(descriptionContaining("removed negation")));
     }
 
-  }
-
-  @Test
-  public void shouldFindMutationsFromAllSuppliedMutators() throws Exception {
-
-    createTesteeWith(MathMutator.MATH,
-        ReturnValsMutator.RETURN_VALS,
-        InvertNegsMutator.INVERT_NEGS,
-        IncrementsMutator.INCREMENTS);
-
-    final List<MutationDetails> actualDetails = findMutationsFor(HasMultipleMutations.class);
-
-    assertTrue(actualDetails.stream()
-        .anyMatch(descriptionContaining("Replaced Shift Left with Shift Right")));
-    assertTrue(actualDetails.stream()
-        .anyMatch(descriptionContaining("replaced return of integer")));
-    assertTrue(actualDetails.stream()
-        .anyMatch(descriptionContaining("Changed increment")));
-    assertTrue(actualDetails.stream()
-        .anyMatch(descriptionContaining("removed negation")));
-  }
-
-  @Test
-  public void shouldFindNoMutationsWhenNoMutationOperatorsSupplied()
-      throws Exception {
-    class VeryMutable {
-      @SuppressWarnings("unused")
-      public int f(final int i) {
-        switch (i) {
-        case 0:
-          return 1;
+    @Test
+    public void shouldFindNoMutationsWhenNoMutationOperatorsSupplied() {
+        class VeryMutable {
+            @SuppressWarnings("unused")
+            public int f(final int i) {
+                switch (i) {
+                    case 0:
+                        return 1;
+                }
+                return 0;
+            }
         }
-        return 0;
-      }
-    }
-    createTesteeWith();
-    final List<MutationDetails> actualDetails = findMutationsFor(VeryMutable.class);
-    assertTrue(actualDetails.isEmpty());
-
-  }
-
-  static enum AnEnum {
-    Foo, Bar;
-  }
-
-  @Test
-  public void shouldNotMutateCodeGeneratedByCompilerToImplementEnums() {
-    createTesteeWith(Mutator.all());
-    final Collection<MutationDetails> actualDetails = findMutationsFor(AnEnum.class);
-    assertTrue(actualDetails.isEmpty());
-  }
-
-  static enum EnumWithCustomConstructor {
-    Foo, Bar;
-
-    int i;
-
-    EnumWithCustomConstructor() {
-      this.i++;
+        MutatorVerifierStart.forMutator()
+                .forClass(VeryMutable.class)
+                .noMutantsCreated();
     }
 
-  }
-
-  @Test
-  public void shouldMutateCustomConstructorsAddedToEnums() {
-    createTesteeWith(Mutator.all());
-    final Collection<MutationDetails> actualDetails = findMutationsFor(EnumWithCustomConstructor.class);
-    assertThat(actualDetails).isNotEmpty();
-  }
-
-
-
-  public static class HasAssertStatement {
-    public void foo(final int i) {
-      assert ((i + 20) > 10);
-    }
-  }
-
-  @Test
-  public void shouldNotMutateAssertStatments() {
-    createTesteeWith(Mutator.byName("NEGATE_CONDITIONALS"));
-    final Collection<MutationDetails> actualDetails = findMutationsFor(HasAssertStatement.class);
-    assertEquals(0, actualDetails.size());
-  }
-
-  public static class HasAssertStatementAndOtherStatements {
-    public int state;
-
-    public void foo(final int i) {
-      assert ((i + 20) > 10);
-      if (i > 1) {
-        this.state = 1;
-      }
-    }
-  }
-
-  @Test
-  public void shouldMutateOtherStatementsWhenAssertIsPresent() {
-    createTesteeWith(Mutator.byName("NEGATE_CONDITIONALS"));
-    final Collection<MutationDetails> actualDetails = findMutationsFor(HasAssertStatementAndOtherStatements.class);
-    assertEquals(1, actualDetails.size());
-  }
-
-  @Test
-  public void shouldNotMutateGroovyClasses() {
-    createTesteeWith(new ResourceFolderByteArraySource(),
-        i -> true, Mutator.all());
-    final Collection<MutationDetails> actualDetails = findMutationsFor("groovy/SomeGroovyCode");
-    assertTrue(actualDetails.isEmpty());
-  }
-
-  @Test
-  public void shouldNotMutateGroovyClosures() {
-    createTesteeWith(new ResourceFolderByteArraySource(),
-        i -> true, Mutator.all());
-    final Collection<MutationDetails> actualDetails = findMutationsFor("groovy/SomeGroovyCode$_mapToString_closure2");
-    assertTrue(actualDetails.isEmpty());
-  }
-
-  public static class OneStraightThroughMethod {
-    public void straightThrough(int i) {
-      i++;
-      i++;
-    }
-  }
-
-  @Test
-  public void shouldRecordMutationsAsInSameBlockWhenForAStraightThroughMethod() {
-    createTesteeWith(Mutator.byName("INCREMENTS"));
-    final List<MutationDetails> actualDetails = findMutationsFor(OneStraightThroughMethod.class);
-    assertEquals(2, actualDetails.size());
-    final int firstMutationBlock = actualDetails.get(0).getBlock();
-    assertEquals(firstMutationBlock, actualDetails.get(1).getBlock());
-  }
-
-  public static class SimpleBranch {
-    public void straightThrough(int i, final boolean b) {
-      if (b) {
-        i++;
-      } else {
-        i++;
-      }
-    }
-  }
-
-  @Test
-  public void shouldRecordMutationsAsInDifferentBlocksWhenInDifferentBranchesOfIfStatement() {
-    createTesteeWith(Mutator.byName("INCREMENTS"));
-    final List<MutationDetails> actualDetails = findMutationsFor(SimpleBranch.class);
-    assertTwoMutationsInDifferentBlocks(actualDetails);
-  }
-
-  public static class TwoMethods {
-    public void a(int i) {
-      i++;
+    @Test
+    public void shouldNotMutateCodeGeneratedByCompilerToImplementEnums() {
+        MutatorVerifierStart.forMutator(Mutator.all())
+                .forClass(AnEnum.class)
+                .noMutantsCreated();
     }
 
-    public void b(int i) {
-      i++;
-    }
-  }
+    @Test
+    public void shouldMutateCustomConstructorsAddedToEnums() {
+        Collection<MutationDetails> actualDetails = MutatorVerifierStart.forMutator(Mutator.all())
+                .forClass(EnumWithCustomConstructor.class)
+                .findMutations();
 
-  public static class SwitchStatement {
-    public void a(int i, final int b) {
-      switch (b) {
-      case 0:
-        i++;
-        break;
-      case 1:
-        i++;
-        break;
-      default:
-        i++;
-      }
+        assertThat(actualDetails).isNotEmpty();
     }
 
-  }
-
-  @Test
-  public void shouldRecordMutationsAsInDifferentBlocksWhenInDifferentBranchesOfSwitchStatement() {
-    createTesteeWith(Mutator.byName("INCREMENTS"));
-    final List<MutationDetails> actualDetails = findMutationsFor(SwitchStatement.class);
-    assertEquals(3, actualDetails.size());
-    final int firstMutationBlock = actualDetails.get(0).getBlock();
-    assertEquals(firstMutationBlock + 1, actualDetails.get(1).getBlock());
-    assertEquals(firstMutationBlock + 2, actualDetails.get(2).getBlock());
-  }
-
-  public static class FallThroughSwitch {
-    public void a(int i, final int b) {
-      switch (b) {
-      case 0:
-        i++;
-      case 1:
-        i++;
-      }
-    }
-  }
-
-  @Test
-  public void shouldNotRecordMutationsAsInSameBlockWhenSwitchStatementFallsThrough() {
-    createTesteeWith(Mutator.byName("INCREMENTS"));
-    final List<MutationDetails> actualDetails = findMutationsFor(FallThroughSwitch.class);
-    assertEquals(2, actualDetails.size());
-    final int firstMutationBlock = actualDetails.get(0).getBlock();
-    assertEquals(firstMutationBlock+1, actualDetails.get(1).getBlock());
-  }
-
-  public static class HasExceptionBlock {
-    public void foo(int i) {
-      try {
-        i++;
-      } catch (final Exception ex) {
-        i++;
-      }
-    }
-  }
-
-  @Test
-  public void shouldRecordMutationsAsInDifferentBlocksWhenInExceptionHandler() {
-    createTesteeWith(Mutator.byName("INCREMENTS"));
-    final List<MutationDetails> actualDetails = findMutationsFor(HasExceptionBlock.class);
-    assertTwoMutationsInDifferentBlocks(actualDetails);
-  }
-
-  public static class HasTwoMutableMethods {
-    public int a() {
-      return 1;
+    @Test
+    public void shouldNotMutateAssertStatements() {
+        MutatorVerifierStart.forMutator(NegateConditionalsMutator.NEGATE_CONDITIONALS)
+                .forClass(HasAssertStatement.class)
+                .noMutantsCreated();
     }
 
-    public int a(int i) {
-      if (i > 2) {
-        System.out.println(i);
-      }
-      return 1;
+    @Test
+    public void shouldMutateOtherStatementsWhenAssertIsPresent() {
+        MutatorVerifierStart.forMutator(NegateConditionalsMutator.NEGATE_CONDITIONALS)
+                .forClass(HasAssertStatementAndOtherStatements.class)
+                .createsNMutants(1);
     }
-  }
 
-  @Test
-  public void shouldScopeMutationIndexesByInstructionCounter() {
-    createTesteeWith(Mutator.byName("RETURN_VALS"));
-    final List<MutationDetails> actualDetails = findMutationsFor(HasTwoMutableMethods.class);
-    assertEquals(2, actualDetails.size());
-    assertEquals(4, actualDetails.get(0).getId().getFirstIndex());
-    assertEquals(15, actualDetails.get(1).getId().getFirstIndex()); // differs
-                                                                    // by
-                                                                    // target?
-  }
+    @Test
+    public void shouldNotMutateGroovyClasses() {
+        MutatorVerifierStart.forMutator(Mutator.all())
+                .withByteArraySource(new ResourceFolderByteArraySource())
+                .forClass("groovy/SomeGroovyCode")
+                .noMutantsCreated();
+    }
 
-  @Test
-  public void shouldNotMutateCompilerGeneratedConditionalsInStringSwitch() {
-    createTesteeWith(new ResourceFolderByteArraySource(),
-        i -> true, Mutator.byName("REMOVE_CONDITIONALS"));
-    final Collection<MutationDetails> actualDetails = findMutationsFor("Java7SwitchOnString");
-    assertThat(actualDetails).isEmpty();
-  }
+    @Test
+    public void shouldNotMutateGroovyClosures() {
+        MutatorVerifierStart.forMutator(Mutator.all())
+                .withByteArraySource(new ResourceFolderByteArraySource())
+                .forClass("groovy/SomeGroovyCode$_mapToString_closure2")
+                .noMutantsCreated();
+    }
 
+    @Test
+    public void shouldRecordMutationsAsInSameBlockWhenForAStraightThroughMethod() {
+        List<MutationDetails> actualDetails = MutatorVerifierStart.forMutator(IncrementsMutator.INCREMENTS)
+                .forClass(OneStraightThroughMethod.class)
+                .findMutations();
 
-  private void assertTwoMutationsInDifferentBlocks(
-      final List<MutationDetails> actualDetails) {
-    assertEquals(2, actualDetails.size());
-    final int firstMutationBlock = actualDetails.get(0).getBlock();
-    assertEquals(firstMutationBlock + 1, actualDetails.get(1).getBlock());
+        assertEquals(2, actualDetails.size());
+        final int firstMutationBlock = actualDetails.get(0).getBlock();
+        assertEquals(firstMutationBlock, actualDetails.get(1).getBlock());
+    }
+
+    @Test
+    public void shouldRecordMutationsAsInDifferentBlocksWhenInDifferentBranchesOfIfStatement() {
+        List<MutationDetails> actualDetails = MutatorVerifierStart.forMutator(IncrementsMutator.INCREMENTS)
+                .forClass(SimpleBranch.class)
+                .findMutations();
+
+        assertTwoMutationsInDifferentBlocks(actualDetails);
+    }
+
+    @Test
+    public void shouldRecordMutationsAsInDifferentBlocksWhenInDifferentBranchesOfSwitchStatement() {
+        List<MutationDetails> actualDetails = MutatorVerifierStart.forMutator(IncrementsMutator.INCREMENTS)
+                .forClass(SwitchStatement.class)
+                .findMutations();
+
+        assertEquals(3, actualDetails.size());
+        final int firstMutationBlock = actualDetails.get(0).getBlock();
+        assertEquals(firstMutationBlock + 1, actualDetails.get(1).getBlock());
+        assertEquals(firstMutationBlock + 2, actualDetails.get(2).getBlock());
+    }
+
+    @Test
+    public void shouldNotRecordMutationsAsInSameBlockWhenSwitchStatementFallsThrough() {
+        List<MutationDetails> actualDetails = MutatorVerifierStart.forMutator(IncrementsMutator.INCREMENTS)
+                .forClass(FallThroughSwitch.class)
+                .findMutations();
+
+        assertEquals(2, actualDetails.size());
+        final int firstMutationBlock = actualDetails.get(0).getBlock();
+        assertEquals(firstMutationBlock + 1, actualDetails.get(1).getBlock());
+    }
+
+    @Test
+    public void shouldRecordMutationsAsInDifferentBlocksWhenInExceptionHandler() {
+        List<MutationDetails> actualDetails = MutatorVerifierStart.forMutator(IncrementsMutator.INCREMENTS)
+                .forClass(HasExceptionBlock.class)
+                .findMutations();
+
+        assertTwoMutationsInDifferentBlocks(actualDetails);
+    }
+
+    @Test
+    public void shouldScopeMutationIndexesByInstructionCounter() {
+        List<MutationDetails> actualDetails = MutatorVerifierStart.forMutator(ReturnValsMutator.RETURN_VALS)
+                .forClass(HasTwoMutableMethods.class)
+                .findMutations();
+
+        assertEquals(2, actualDetails.size());
+        assertEquals(4, actualDetails.get(0).getId().getFirstIndex());
+        assertEquals(15, actualDetails.get(1).getId().getFirstIndex()); // differs
+        // by
+        // target?
+    }
+
+    @Test
+    public void shouldNotMutateCompilerGeneratedConditionalsInStringSwitch() {
+        MutatorVerifierStart.forMutator(Mutator.byName("REMOVE_CONDITIONALS"))
+                .withByteArraySource(new ResourceFolderByteArraySource())
+                .forClass("Java7SwitchOnString")
+                .noMutantsCreated();
+
+    }
+
+    private void assertTwoMutationsInDifferentBlocks(
+            final List<MutationDetails> actualDetails) {
+        assertEquals(2, actualDetails.size());
+        final int firstMutationBlock = actualDetails.get(0).getBlock();
+        assertEquals(firstMutationBlock + 1, actualDetails.get(1).getBlock());
+    }
+
+    enum AnEnum {
+        Foo, Bar;
+    }
+
+    enum EnumWithCustomConstructor {
+        Foo, Bar;
+
+        int i;
+
+        EnumWithCustomConstructor() {
+            this.i++;
+        }
+
+    }
+
+    public static class HasMultipleMutations {
+        public int mutable() {
+            int j = 10;
+            for (int i = 0; i != 10; i++) {
+                j = j << 1;
+            }
+
+            return -j;
+        }
+
+    }
+
+    public static class HasAssertStatement {
+        public void foo(final int i) {
+            assert ((i + 20) > 10);
+        }
+    }
+
+    public static class HasAssertStatementAndOtherStatements {
+        public int state;
+
+        public void foo(final int i) {
+            assert ((i + 20) > 10);
+            if (i > 1) {
+                this.state = 1;
+            }
+        }
+    }
+
+    public static class OneStraightThroughMethod {
+        public void straightThrough(int i) {
+            i++;
+            i++;
+        }
+    }
+
+    public static class SimpleBranch {
+        public void straightThrough(int i, final boolean b) {
+            if (b) {
+                i++;
+            } else {
+                i++;
+            }
+        }
+    }
+
+    public static class SwitchStatement {
+        public void a(int i, final int b) {
+            switch (b) {
+                case 0:
+                    i++;
+                    break;
+                case 1:
+                    i++;
+                    break;
+                default:
+                    i++;
+            }
+        }
+
+    }
+
+    public static class FallThroughSwitch {
+        public void a(int i, final int b) {
+            switch (b) {
+                case 0:
+                    i++;
+                case 1:
+                    i++;
+            }
+        }
+    }
+
+    public static class HasExceptionBlock {
+        public void foo(int i) {
+            try {
+                i++;
+            } catch (final Exception ex) {
+                i++;
+            }
+        }
+    }
+
+    public static class HasTwoMutableMethods {
+        public int a() {
+            return 1;
+        }
+
+        public int a(int i) {
+            if (i > 2) {
+                System.out.println(i);
+            }
+            return 1;
+        }
+    }
+
+  Predicate<MutationDetails> descriptionContaining(final String value) {
+    return a -> a.getDescription().contains(value);
   }
 }

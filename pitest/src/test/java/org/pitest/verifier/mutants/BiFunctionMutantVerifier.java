@@ -16,7 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class BiFunctionMutantVerifier<A, B, C> extends MutatorVerifier {
 
-    private final GregorMutater engine;
     private final Class<? extends BiFunction<A, B, C>> target;
 
     public BiFunctionMutantVerifier(GregorMutater engine,
@@ -24,7 +23,6 @@ public class BiFunctionMutantVerifier<A, B, C> extends MutatorVerifier {
                                     Predicate<MutationDetails> filter,
                                     boolean checkUnmutatedValues) {
         super(engine, target, filter, checkUnmutatedValues);
-        this.engine = engine;
         this.target = target;
     }
 
@@ -70,16 +68,6 @@ public class BiFunctionMutantVerifier<A, B, C> extends MutatorVerifier {
         } catch (ReflectiveOperationException ex) {
             throw Unchecked.translateCheckedException(ex);
         }
-    }
-
-    protected Mutant getFirstMutant(final Collection<MutationDetails> actual) {
-        assertThat(actual)
-                .describedAs("Expecting at least one mutant to be generated")
-                .isNotEmpty();
-        final Mutant mutant = this.engine.getMutation(actual.iterator().next()
-                .getId());
-        verifyMutant(mutant);
-        return mutant;
     }
 
 }

@@ -101,8 +101,8 @@ public enum NakedReceiverMutator implements MethodMutatorFactory {
 
     private void popMethodArgumentsFromStack(String desc) {
       final Type[] argumentTypes = Type.getArgumentTypes(desc);
-      for (final Type argType : argumentTypes) {
-        popArgument(argType);
+      for (int i = argumentTypes.length; i != 0; i--) {
+        popArgument(argumentTypes[i - 1]);
       }
     }
 
