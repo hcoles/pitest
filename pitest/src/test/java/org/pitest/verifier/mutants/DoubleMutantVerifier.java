@@ -22,12 +22,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class DoubleMutantVerifier<B> extends MutatorVerifier {
 
-    private final GregorMutater engine;
     private final Class<? extends DoubleFunction<B>> target;
 
     public DoubleMutantVerifier(GregorMutater engine, Class<? extends DoubleFunction<B>> target, Predicate<MutationDetails> filter, boolean checkUnmutatedValues) {
         super(engine, target, filter, checkUnmutatedValues);
-        this.engine = engine;
         this.target = target;
     }
 

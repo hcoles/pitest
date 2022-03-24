@@ -15,7 +15,6 @@
 package org.pitest.mutationtest.engine.gregor.mutators;
 
 import org.junit.Test;
-import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
 import org.pitest.verifier.mutants.MutatorVerifierStart;
 
 import java.math.BigDecimal;
@@ -24,7 +23,7 @@ import java.util.function.Function;
 
 import static org.pitest.mutationtest.engine.gregor.mutators.experimental.BigDecimalMutator.EXPERIMENTAL_BIG_DECIMAL;
 
-public class BigDecimalMutatorTest extends MutatorTestBase {
+public class BigDecimalMutatorTest {
 
     MutatorVerifierStart v = MutatorVerifierStart.forMutator(EXPERIMENTAL_BIG_DECIMAL)
             .notCheckingUnMutatedValues();

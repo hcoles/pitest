@@ -15,117 +15,109 @@
 
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
-import static java.util.Collections.singletonList;
+import org.junit.Test;
+import org.pitest.verifier.mutants.MutatorVerifierStart;
+
+import java.util.concurrent.Callable;
+import java.util.function.Function;
+
 import static org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator.EXPERIMENTAL_NAKED_RECEIVER;
 
-import java.util.ArrayList;
-import java.util.concurrent.Callable;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
+public class NakedReceiverMutatorTest {
 
-public class NakedReceiverMutatorTest extends MutatorTestBase {
-
-  @Before
-  public void setupEngineToUseReplaceMethodWithArgumentOfSameTypeAsReturnValueMutator() {
-    createTesteeWith(mutateOnlyCallMethod(), EXPERIMENTAL_NAKED_RECEIVER);
-  }
-
-  @Test
-  public void shouldReplaceMethodCallOnString() throws Exception {
-    final Mutant mutant = getFirstMutant(HasStringMethodCall.class);
-    assertMutantCallableReturns(new HasStringMethodCall("EXAMPLE"), mutant,
-        "EXAMPLE");
-  }
-
-  @Test
-  public void shouldNotReplaceMethodCallWhenDifferentReturnType()
-      throws Exception {
-    assertNoMutants(HasMethodWithDifferentReturnType.class);
-  }
-
-  @Test
-  public void shouldNotMutateVoidMethodCall() throws Exception {
-    assertNoMutants(HasVoidMethodCall.class);
-  }
-
-  @Test
-  public void shouldNotMutateStaticMethodCall() {
-    assertNoMutants(HasStaticMethodCallWithSameType.class);
-  }
+    MutatorVerifierStart v = MutatorVerifierStart.forMutator(EXPERIMENTAL_NAKED_RECEIVER)
+            .notCheckingUnMutatedValues();
 
 
-  @Test
-  public void shouldRemoveDslMethods() throws Exception {
-    final Mutant mutant = getFirstMutant(HasDslMethodCall.class);
-    assertMutantCallableReturns(new HasDslMethodCall(), mutant, "HasDslMethodCall [i=3]");
-  }
-
-  private static class HasStringMethodCall implements Callable<String> {
-    private final String arg;
-
-    public HasStringMethodCall(String arg) {
-      this.arg = arg;
+    @Test
+    public void shouldReplaceMethodCallOnString() {
+        v.forFunctionClass(HasStringMethodCall.class)
+                .firstMutantShouldReturn("EXAMPLE", "EXAMPLE");
     }
 
-    @Override
-    public String call() throws Exception {
-      return this.arg.toLowerCase();
-    }
-  }
-
-  static class HasMethodWithDifferentReturnType {
-    public int call() throws Exception {
-      return "".length();
-    }
-  }
-
-  static class HasVoidMethodCall {
-    public void call() throws Exception {
-    }
-  }
-
-  static class HasStaticMethodCallWithSameType {
-    public void call() {
-      HasStaticMethodCallWithSameType.instance();
+    @Test
+    public void shouldNotReplaceMethodCallWhenDifferentReturnType() {
+        v.forClass(HasMethodWithDifferentReturnType.class)
+                .noMutantsCreated();
     }
 
-    private static HasStaticMethodCallWithSameType instance() {
-      return new HasStaticMethodCallWithSameType();
-    }
-  }
+    @Test
+    public void shouldNotMutateVoidMethodCall() {
+        v.forClass(HasVoidMethodCall.class)
+                .noMutantsCreated();
 
-  static class HasDslMethodCall implements Callable<String> {
-
-    private int i = 0;
-
-    public HasDslMethodCall chain(final int newVal) {
-      this.i += newVal;
-      return this;
     }
 
-    public void voidNonDsl(final int newVal) {
-      this.i += newVal;
+    @Test
+    public void shouldNotMutateStaticMethodCall() {
+        v.forClass(HasStaticMethodCallWithSameType.class)
+                .noMutantsCreated();
     }
 
-    public int nonDsl(final int newVal) {
-      this.i += newVal;
-      return this.i;
+    @Test
+    public void shouldRemoveDslMethods() {
+        v.forCallableClass(HasDslMethodCall.class)
+                .firstMutantShouldReturn("HasDslMethodCall [i=3]");
     }
 
-    @Override
-    public String call() throws Exception {
-      final HasDslMethodCall dsl = this;
-      dsl.chain(1).nonDsl(3);
-      return "" + dsl;
+    private static class HasStringMethodCall implements Function<String, String> {
+        @Override
+        public String apply(String arg) {
+            return arg.toLowerCase();
+        }
     }
 
-    @Override
-    public String toString() {
-      return "HasDslMethodCall [i=" + this.i + "]";
+    static class HasMethodWithDifferentReturnType {
+        public int call() {
+            return "".length();
+        }
     }
 
-  }
+    static class HasVoidMethodCall {
+        public void call() {
+        }
+    }
+
+    static class HasStaticMethodCallWithSameType {
+        private static HasStaticMethodCallWithSameType instance() {
+            return new HasStaticMethodCallWithSameType();
+        }
+
+        public void call() {
+            HasStaticMethodCallWithSameType.instance();
+        }
+    }
+
+    static class HasDslMethodCall implements Callable<String> {
+
+        private int i = 0;
+
+        public HasDslMethodCall chain(final int newVal) {
+            this.i += newVal;
+            return this;
+        }
+
+        public void voidNonDsl(final int newVal) {
+            this.i += newVal;
+        }
+
+        public int nonDsl(final int newVal) {
+            this.i += newVal;
+            return this.i;
+        }
+
+        @Override
+        public String call() {
+            final HasDslMethodCall dsl = this;
+            dsl.chain(1).nonDsl(3);
+            return "" + dsl;
+        }
+
+        @Override
+        public String toString() {
+            return "HasDslMethodCall [i=" + this.i + "]";
+        }
+
+    }
 }

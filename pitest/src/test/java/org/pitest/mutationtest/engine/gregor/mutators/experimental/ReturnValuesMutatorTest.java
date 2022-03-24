@@ -15,387 +15,299 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.pitest.mutationtest.engine.Mutant;
-import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
+import org.pitest.verifier.mutants.MutatorVerifierStart;
 
 import java.util.concurrent.Callable;
+import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
-public class ReturnValuesMutatorTest extends MutatorTestBase {
+public class ReturnValuesMutatorTest {
 
-  @Before
-  public void setupEngineToMutateOnlyReturnValues() {
-    createTesteeWith(new ReturnValuesMutator());
-  }
+    MutatorVerifierStart v = MutatorVerifierStart.forMutator(new ReturnValuesMutator())
+            .notCheckingUnMutatedValues();
 
-  private static class HasPrimitiveBooleanReturn implements Callable<Boolean> {
-
-    private final boolean value;
-
-    public HasPrimitiveBooleanReturn(final boolean value) {
-      this.value = value;
+    @Test
+    public void shouldProvideAMeaningfulName() {
+        assertEquals("EXPERIMENTAL_RETURN_VALUES_MUTATOR",
+                new ReturnValuesMutator().getName());
     }
 
-    private boolean returnPrimitiveBoolean() {
-      return this.value;
+    @Test
+    public void shouldMutateReturnOfPrimitiveBooleanTrueToFalse() {
+        v.forFunctionClass(HasPrimitiveBooleanReturn.class)
+                .firstMutantShouldReturn(true, false);
     }
 
-    @Override
-    public Boolean call() throws Exception {
-      return returnPrimitiveBoolean();
-    }
-  }
-
-  @Test
-  public void shouldProvideAMeaningfulName() {
-    assertEquals("EXPERIMENTAL_RETURN_VALUES_MUTATOR",
-        new ReturnValuesMutator().getName());
-  }
-
-  @Test
-  public void shouldMutateReturnOfPrimitiveBooleanTrueToFalse()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(HasPrimitiveBooleanReturn.class);
-    assertMutantCallableReturns(new HasPrimitiveBooleanReturn(true), mutant,
-        false);
-  }
-
-  @Test
-  public void shouldMutateReturnOfPrimitiveBooleanFalseToTrue()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(HasPrimitiveBooleanReturn.class);
-    assertMutantCallableReturns(new HasPrimitiveBooleanReturn(false), mutant,
-        true);
-  }
-
-  private static class HasPrimitiveIntegerReturn implements Callable<Integer> {
-
-    private final int value;
-
-    public HasPrimitiveIntegerReturn(final int value) {
-      this.value = value;
+    @Test
+    public void shouldMutateReturnOfPrimitiveBooleanFalseToTrue() {
+        v.forFunctionClass(HasPrimitiveBooleanReturn.class)
+                .firstMutantShouldReturn(false, true);
     }
 
-    public int returnPrimitiveInteger() {
-      return this.value;
+    @Test
+    public void shouldMutateReturnOfPrimitiveInteger1To0() {
+        v.forFunctionClass(HasPrimitiveIntegerReturn.class)
+                .firstMutantShouldReturn(1, 0);
     }
 
-    @Override
-    public Integer call() throws Exception {
-      return returnPrimitiveInteger();
-    }
-  }
-
-  @Test
-  public void shouldMutateReturnOfPrimitiveInteger1To0() throws Exception {
-    final Mutant mutant = getFirstMutant(HasPrimitiveIntegerReturn.class);
-    assertMutantCallableReturns(new HasPrimitiveIntegerReturn(1), mutant, 0);
-  }
-
-  @Test
-  public void shouldMutateReturnOfPrimitiveInteger0To1() throws Exception {
-    final Mutant mutant = getFirstMutant(HasPrimitiveIntegerReturn.class);
-    assertMutantCallableReturns(new HasPrimitiveIntegerReturn(0), mutant, 1);
-  }
-
-  @Test
-  public void shouldMutateReturnOfPrimitiveIntegerToValuePlus1()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(HasPrimitiveIntegerReturn.class);
-    assertMutantCallableReturns(new HasPrimitiveIntegerReturn(247), mutant, 248);
-  }
-
-  private static class HasPrimitiveLongReturn implements Callable<Long> {
-
-    private final long value;
-
-    public HasPrimitiveLongReturn(final long value) {
-      this.value = value;
+    @Test
+    public void shouldMutateReturnOfPrimitiveInteger0To1() {
+        v.forFunctionClass(HasPrimitiveIntegerReturn.class)
+                .firstMutantShouldReturn(0, 1);
     }
 
-    public long returnPrimitiveLong() {
-      return this.value;
+    @Test
+    public void shouldMutateReturnOfPrimitiveIntegerToValuePlus1() {
+        v.forFunctionClass(HasPrimitiveIntegerReturn.class)
+                .firstMutantShouldReturn(247, 248);
     }
 
-    @Override
-    public Long call() throws Exception {
-      return returnPrimitiveLong();
-    }
-  }
-
-  @Test
-  public void shouldMutateReturnOfPrimitiveLongToValuePlus1() throws Exception {
-    final Mutant mutant = getFirstMutant(HasPrimitiveLongReturn.class);
-    assertMutantCallableReturns(
-        new HasPrimitiveLongReturn(1234567891234567890L), mutant,
-        1234567891234567891L);
-  }
-
-  private static class HasPrimitiveFloatReturn implements Callable<Float> {
-
-    private final float value;
-
-    public HasPrimitiveFloatReturn(final float value) {
-      this.value = value;
+    @Test
+    public void shouldMutateReturnOfPrimitiveLongToValuePlus1() {
+        v.forFunctionClass(HasPrimitiveLongReturn.class)
+                .firstMutantShouldReturn(1234567891234567890L, 1234567891234567891L);
     }
 
-    public float returnPrimitiveFloat() {
-      return this.value;
+    @Test
+    public void shouldMutateReturnOfAnyNonZeroFloatToInverseOfOnePlusTheValue() {
+        v.forFunctionClass(HasPrimitiveFloatReturn.class)
+                .firstMutantShouldReturn(1234F, -1235.0F);
     }
 
-    @Override
-    public Float call() throws Exception {
-      return returnPrimitiveFloat();
-    }
-  }
-
-  @Test
-  public void shouldMutateReturnOfAnyNonZeroFloatToInverseOfOnePlusTheValue()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(HasPrimitiveFloatReturn.class);
-    assertMutantCallableReturns(new HasPrimitiveFloatReturn(1234F), mutant,
-        -1235.0F);
-  }
-
-  @Test
-  public void shouldMutateReturnOfPrimitiveFloatNANToMinusOne()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(HasPrimitiveFloatReturn.class);
-    assertMutantCallableReturns(new HasPrimitiveFloatReturn(Float.NaN), mutant,
-        -1F);
-  }
-
-  private static class HasPrimitiveDoubleReturn implements Callable<Double> {
-
-    private final double value;
-
-    public HasPrimitiveDoubleReturn(final double value) {
-      this.value = value;
+    @Test
+    public void shouldMutateReturnOfPrimitiveFloatNANToMinusOne() {
+        v.forFunctionClass(HasPrimitiveFloatReturn.class)
+                .firstMutantShouldReturn(Float.NaN, -1F);
     }
 
-    public double returnPrimitiveDouble() {
-      return this.value;
+    @Test
+    public void shouldMutateReturnOfAnyNonZeroDoubleToInverseOfOnePlusTheValue() {
+        v.forFunctionClass(HasPrimitiveDoubleReturn.class)
+                .firstMutantShouldReturn(1234D,
+                        -1235.0D);
     }
 
-    @Override
-    public Double call() throws Exception {
-      return returnPrimitiveDouble();
-    }
-  }
-
-  @Test
-  public void shouldMutateReturnOfAnyNonZeroDoubleToInverseOfOnePlusTheValue()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(HasPrimitiveDoubleReturn.class);
-    assertMutantCallableReturns(new HasPrimitiveDoubleReturn(1234D), mutant,
-        -1235.0D);
-  }
-
-  @Test
-  public void shouldMutateReturnOfPrimitiveDoubleNANToMinusOne()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(HasPrimitiveDoubleReturn.class);
-    assertMutantCallableReturns(new HasPrimitiveDoubleReturn(Double.NaN),
-        mutant, -1D);
-  }
-
-  private static class HasBooleanReturn implements Callable<Boolean> {
-
-    private final Boolean value;
-
-    public HasBooleanReturn(final Boolean value) {
-      this.value = value;
+    @Test
+    public void shouldMutateReturnOfPrimitiveDoubleNANToMinusOne() {
+        v.forFunctionClass(HasPrimitiveDoubleReturn.class)
+                .firstMutantShouldReturn(Double.NaN,
+                        -1D);
     }
 
-    @Override
-    public Boolean call() throws Exception {
-      return this.value;
-    }
-  }
-
-  @Test
-  public void shouldMutateReturnOfBooleanTrueToFalse() throws Exception {
-    final Mutant mutant = getFirstMutant(HasBooleanReturn.class);
-    assertMutantCallableReturns(new HasBooleanReturn(Boolean.TRUE), mutant,
-        Boolean.FALSE);
-  }
-
-  @Test
-  public void shouldMutateReturnOfBooleanFalseToTrue() throws Exception {
-    final Mutant mutant = getFirstMutant(HasBooleanReturn.class);
-    assertMutantCallableReturns(new HasBooleanReturn(Boolean.FALSE), mutant,
-        Boolean.TRUE);
-  }
-
-  @Test
-  public void shouldMutateReturnOfBooleanNullToTrue() throws Exception {
-    final Mutant mutant = getFirstMutant(HasBooleanReturn.class);
-    assertMutantCallableReturns(new HasBooleanReturn(null), mutant,
-        Boolean.TRUE);
-  }
-
-  @Test
-  public void cannotMutateReturnOfBooleanIfDeclaredAsObject() throws Exception {
-    final Mutant mutant = getFirstMutant(HasObjectReturn.class);
-    assertMutantCallableReturns(new HasObjectReturn(Boolean.TRUE), mutant, null);
-  }
-
-  private static class HasIntegerReturn implements Callable<Integer> {
-
-    private final Integer value;
-
-    public HasIntegerReturn(final Integer value) {
-      this.value = value;
+    @Test
+    public void shouldMutateReturnOfBooleanTrueToFalse() {
+        v.forFunctionClass(HasBooleanReturn.class)
+                .firstMutantShouldReturn(Boolean.TRUE,
+                        Boolean.FALSE);
     }
 
-    @Override
-    public Integer call() throws Exception {
-      return this.value;
-    }
-  }
-
-  @Test
-  public void shouldMutateReturnOfIntegerToValuePlus1() throws Exception {
-    final Mutant mutant = getFirstMutant(HasIntegerReturn.class);
-    assertMutantCallableReturns(new HasIntegerReturn(Integer.valueOf(123)),
-        mutant, Integer.valueOf(124));
-  }
-
-  @Test
-  public void shouldMutateReturnOfInteger1To0() throws Exception {
-    final Mutant mutant = getFirstMutant(HasIntegerReturn.class);
-    assertMutantCallableReturns(new HasIntegerReturn(Integer.valueOf(1)),
-        mutant, Integer.valueOf(0));
-  }
-
-  @Test
-  public void shouldMutateReturnOfIntegerNullToOne() throws Exception {
-    final Mutant mutant = getFirstMutant(HasIntegerReturn.class);
-    assertMutantCallableReturns(new HasIntegerReturn(null), mutant,
-        Integer.valueOf(1));
-  }
-
-  private static class HasLongReturn implements Callable<Long> {
-
-    private final Long value;
-
-    public HasLongReturn(final Long value) {
-      this.value = value;
+    @Test
+    public void shouldMutateReturnOfBooleanFalseToTrue() {
+        v.forFunctionClass(HasBooleanReturn.class)
+                .firstMutantShouldReturn(Boolean.FALSE,
+                        Boolean.TRUE);
     }
 
-    @Override
-    public Long call() throws Exception {
-      return this.value;
-    }
-  }
-
-  @Test
-  public void shouldMutateReturnOfLongToValuePlus1() throws Exception {
-    final Mutant mutant = getFirstMutant(HasLongReturn.class);
-    assertMutantCallableReturns(
-        new HasLongReturn(Long.valueOf(Integer.MAX_VALUE + 5L)), mutant,
-        Long.valueOf(Integer.MAX_VALUE + 6L));
-  }
-
-  @Test
-  public void shouldMutateReturnOfLongNullToOne() throws Exception {
-    final Mutant mutant = getFirstMutant(HasLongReturn.class);
-    assertMutantCallableReturns(new HasLongReturn(null), mutant,
-        Long.valueOf(1));
-  }
-
-  @Test
-  public void cannotMutateReturnOfIntegerIfDeclaredAsObject() throws Exception {
-    final Mutant mutant = getFirstMutant(HasObjectReturn.class);
-    assertMutantCallableReturns(new HasObjectReturn(Integer.valueOf(1)),
-        mutant, null);
-  }
-
-  private static class HasObjectReturn implements Callable<Object> {
-
-    private final Object value;
-
-    public HasObjectReturn(final Object value) {
-      this.value = value;
+    @Test
+    public void shouldMutateReturnOfBooleanNullToTrue() {
+        v.forFunctionClass(HasBooleanReturn.class)
+                .firstMutantShouldReturn(() -> null, Boolean.TRUE);
     }
 
-    @Override
-    public Object call() throws Exception {
-      return this.value;
-    }
-  }
-
-  @Test
-  public void shouldMutateReturnsOfNonNullObjectsToNull() throws Exception {
-    final Mutant mutant = getFirstMutant(HasObjectReturn.class);
-    assertMutantCallableReturns(new HasObjectReturn(new Object()), mutant, null);
-  }
-
-  @Test
-  public void shouldMutateReturnsOfNullObjectsToNewObject() throws Exception {
-    final Mutant mutant = getFirstMutant(HasObjectReturn.class);
-    assertNotNull(mutateAndCall(new HasObjectReturn(null), mutant));
-  }
-
-  private static class CustomObject extends Object {
-  }
-
-  private static class HasCustomObjectReturn implements Callable<CustomObject> {
-
-    private final CustomObject value;
-
-    public HasCustomObjectReturn(final CustomObject value) {
-      this.value = value;
+    @Test
+    public void cannotMutateReturnOfBooleanIfDeclaredAsObject() {
+        v.forFunctionClass(HasObjectReturn.class)
+                .firstMutantShouldReturn(Boolean.TRUE, null);
     }
 
-    @Override
-    public CustomObject call() throws Exception {
-      return this.value;
-    }
-  }
-
-  @Test
-  public void shouldMutateReturnsOfNonNullCustomObjectsToNull()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(HasCustomObjectReturn.class);
-    assertMutantCallableReturns(new HasCustomObjectReturn(new CustomObject()),
-        mutant, null);
-  }
-
-  @Test(expected = RuntimeException.class)
-  public void shouldMutateReturnsOfNullCustomObjectsToThrownRuntimeException()
-      throws Exception {
-    final Mutant mutant = getFirstMutant(HasCustomObjectReturn.class);
-    mutateAndCall(new HasCustomObjectReturn(null), mutant);
-  }
-
-  private static class HasGenericStuff<T> implements Callable<T> {
-
-    private final T object;
-
-    private HasGenericStuff(final T object) {
-      this.object = object;
+    @Test
+    public void shouldMutateReturnOfIntegerToValuePlus1() {
+        v.forFunctionClass(HasIntegerReturn.class)
+                .firstMutantShouldReturn(Integer.valueOf(123),
+                        Integer.valueOf(124));
     }
 
-    @Override
-    public T call() throws Exception {
-      return this.object;
+    @Test
+    public void shouldMutateReturnOfInteger1To0() {
+        v.forFunctionClass(HasIntegerReturn.class)
+                .firstMutantShouldReturn(Integer.valueOf(1),
+                        Integer.valueOf(0));
     }
 
-  }
+    @Test
+    public void shouldMutateReturnOfIntegerNullToOne() {
+        v.forFunctionClass(HasIntegerReturn.class)
+                .firstMutantShouldReturn(() -> null, Integer.valueOf(1));
+    }
 
-  @Test(expected = ClassCastException.class)
-  public void cannotDetectGenericsStuff() {
-    final Mutant mutant = getFirstMutant(HasGenericStuff.class);
+    @Test
+    public void shouldMutateReturnOfLongToValuePlus1() {
+        v.forFunctionClass(HasLongReturn.class)
+                .firstMutantShouldReturn(Long.valueOf(Integer.MAX_VALUE + 5L),
+                        Long.valueOf(Integer.MAX_VALUE + 6L));
+    }
 
-    // assigning to x causes a class cast exception! The returned object is
-    final CustomObject x = mutateAndCall(
-        new HasGenericStuff<CustomObject>(null), mutant);
-    assertNotNull(x); // this line never called but prevents x not used warning.
-  }
+    @Test
+    public void shouldMutateReturnOfLongNullToOne() {
+        v.forFunctionClass(HasLongReturn.class)
+                .firstMutantShouldReturn(() -> null, Long.valueOf(1));
+    }
+
+    @Test
+    public void cannotMutateReturnOfIntegerIfDeclaredAsObject() {
+        v.forFunctionClass(HasObjectReturn.class)
+                .firstMutantShouldReturn(Integer.valueOf(1), null);
+    }
+
+    @Test
+    public void shouldMutateReturnsOfNonNullObjectsToNull() {
+        v.forFunctionClass(HasObjectReturn.class)
+                .firstMutantShouldReturn(new Object(), null);
+    }
+
+    @Test
+    public void shouldMutateReturnsOfNullObjectsToNewObject() {
+        v.forFunctionClass(HasObjectReturn.class)
+                .firstMutantShouldReturn(() -> null, o -> o != null);
+    }
+
+    @Test
+    public void shouldMutateReturnsOfNonNullCustomObjectsToNull() {
+        v.forCallableClass(HasCustomObjectReturn.class)
+                .firstMutantShouldReturn(null);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void shouldMutateReturnsOfNullCustomObjectsToThrownRuntimeException() {
+        v.forCallableClass(ReturnsNull.class)
+                .firstMutantShouldReturn(null);
+    }
+
+    private static class HasPrimitiveBooleanReturn implements Function<Boolean, Boolean> {
+        private boolean value;
+
+        private boolean returnPrimitiveBoolean() {
+            return this.value;
+        }
+
+        @Override
+        public Boolean apply(Boolean value) {
+            this.value = value;
+            return returnPrimitiveBoolean();
+        }
+    }
+
+    private static class HasPrimitiveIntegerReturn implements Function<Integer, Integer> {
+
+        private int value;
+
+        public int returnPrimitiveInteger() {
+            return this.value;
+        }
+
+        @Override
+        public Integer apply(Integer value) {
+            this.value = value;
+            return returnPrimitiveInteger();
+        }
+    }
+
+    private static class HasPrimitiveLongReturn implements Function<Long, Long> {
+
+        private long value;
+
+        public long returnPrimitiveLong() {
+            return this.value;
+        }
+
+        @Override
+        public Long apply(Long value) {
+            this.value = value;
+            return returnPrimitiveLong();
+        }
+    }
+
+    private static class HasPrimitiveFloatReturn implements Function<Float, Float> {
+
+        private float value;
+
+        public float returnPrimitiveFloat() {
+            return this.value;
+        }
+
+        @Override
+        public Float apply(Float value) {
+            this.value = value;
+            return returnPrimitiveFloat();
+        }
+    }
+
+    private static class HasPrimitiveDoubleReturn implements Function<Double, Double> {
+
+        private double value;
+
+        public double returnPrimitiveDouble() {
+            return this.value;
+        }
+
+        @Override
+        public Double apply(Double value) {
+            this.value = value;
+            return returnPrimitiveDouble();
+        }
+    }
+
+    private static class HasBooleanReturn implements Function<Boolean, Boolean> {
+        @Override
+        public Boolean apply(Boolean value) {
+            return value;
+        }
+    }
+
+    private static class HasIntegerReturn implements Function<Integer, Integer> {
+        @Override
+        public Integer apply(Integer value) {
+            return value;
+        }
+    }
+
+    private static class HasLongReturn implements Function<Long, Long> {
+        @Override
+        public Long apply(Long value) {
+            return value;
+        }
+    }
+
+    private static class HasObjectReturn implements Function<Object, Object> {
+
+        private Object value;
+
+        @Override
+        public Object apply(Object value) {
+            this.value = value;
+            return this.value;
+        }
+    }
+
+    private static class CustomObject extends Object {
+    }
+
+    private static class HasCustomObjectReturn implements Callable<CustomObject> {
+        private final CustomObject value = new CustomObject();
+
+        @Override
+        public CustomObject call() {
+            return this.value;
+        }
+    }
+
+    private static class ReturnsNull implements Callable<CustomObject> {
+        @Override
+        public CustomObject call() {
+            return null;
+        }
+    }
 
 }

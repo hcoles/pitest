@@ -22,12 +22,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class LongMutantVerifier<B> extends MutatorVerifier {
 
-    private final GregorMutater engine;
     private final Class<? extends LongFunction<B>> target;
 
     public LongMutantVerifier(GregorMutater engine, Class<? extends LongFunction<B>> target, Predicate<MutationDetails> filter, boolean checkUnmutatedValues) {
         super(engine, target, filter, checkUnmutatedValues);
-        this.engine = engine;
         this.target = target;
     }
 

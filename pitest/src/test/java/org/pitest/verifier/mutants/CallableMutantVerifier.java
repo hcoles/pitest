@@ -6,7 +6,6 @@ import org.pitest.mutationtest.engine.gregor.GregorMutater;
 import org.pitest.util.Unchecked;
 
 import java.lang.reflect.Constructor;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
@@ -21,12 +20,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class CallableMutantVerifier<B> extends MutatorVerifier {
 
-    private final GregorMutater engine;
     private final Class<? extends Callable<B>> target;
 
     public CallableMutantVerifier(GregorMutater engine, Class<? extends Callable<B>> target, Predicate<MutationDetails> filter, boolean checkUnmutatedValues) {
         super(engine, target, filter, checkUnmutatedValues);
-        this.engine = engine;
         this.target = target;
     }
 
@@ -47,7 +44,9 @@ public class CallableMutantVerifier<B> extends MutatorVerifier {
         }
 
         List<MutationDetails> mutations = findMutations();
-        assertThat(mutateAndCall(getFirstMutant(mutations)))
+        Mutant mutant = getFirstMutant(mutations);
+        assertThat(mutateAndCall(mutant))
+                .as(() -> "Unexpected return value from mutant\n " + printMutant(mutant))
                 .isEqualTo(expected);
     }
 
