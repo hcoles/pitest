@@ -42,8 +42,6 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<testNGArtifactName>none:none</testNGArtifactName>
-					<!-- pitest does not use reflection, but some of the tests depend on xstream, which does -->
-					<argLine>${surefire.argline}</argLine>
 
 					<includes>
 						<include>org/**/Test*.java</include>
