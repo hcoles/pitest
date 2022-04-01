@@ -107,6 +107,7 @@ public class OptionsParser {
   private final OptionSpec<String>                   mutators;
   private final OptionSpec<String>                   features;
   private final OptionSpec<String>                   jvmArgs;
+  private final CommaAwareArgsProcessor              jvmArgsProcessor;
   private final OptionSpec<Float>                    timeoutFactorSpec;
   private final OptionSpec<Long>                     timeoutConstSpec;
   private final OptionSpec<String>                   excludedMethodsSpec;
@@ -205,8 +206,9 @@ public class OptionsParser {
         .describedAs("comma separated list of features to enable/disable.");
 
     this.jvmArgs = parserAccepts(CHILD_JVM).withRequiredArg()
-        .withValuesSeparatedBy(',')
         .describedAs("comma separated list of child JVM args");
+
+    this.jvmArgsProcessor = new CommaAwareArgsProcessor(jvmArgs);
 
     this.detectInlinedCode = parserAccepts(USE_INLINED_CODE_DETECTION)
         .withOptionalArg()
@@ -408,7 +410,7 @@ public class OptionsParser {
     data.setMutators(this.mutators.values(userArgs));
     data.setFeatures(this.features.values(userArgs));
     data.setDependencyAnalysisMaxDistance(this.depth.value(userArgs));
-    data.addChildJVMArgs(this.jvmArgs.values(userArgs));
+    data.addChildJVMArgs(this.jvmArgsProcessor.values(userArgs));
     
     data.setFullMutationMatrix(this.fullMutationMatrixSpec.value(userArgs));
 
