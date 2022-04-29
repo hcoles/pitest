@@ -37,6 +37,13 @@
 					<targetClasses><param>com.example*</param></targetClasses>
 					<verbose>true</verbose>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-testng-plugin</artifactId>
+						<version>0.1</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
