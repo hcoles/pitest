@@ -66,8 +66,6 @@
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<testNGArtifactName>none:none</testNGArtifactName>
-
 					<includes>
 						<include>org/**/Test*.java</include>
 						<include>org/**/*Test.java</include>
@@ -75,17 +73,9 @@
 					<excludes>
 						<exclude>**/*$*</exclude>
 						<exclude>com/*/**.java</exclude>
-						<exclude>**/FullyCoveredByTestNGTesteeTest.java</exclude>
 					</excludes>
 					<excludedGroups>org.pitest.SystemTest</excludedGroups>
 				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.testng</groupId>
-						<artifactId>testng</artifactId>
-						<version>${testng.version}</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 
 			<plugin>
@@ -164,12 +154,6 @@
 			<groupId>org.easymock</groupId>
 			<artifactId>easymock</artifactId>
 			<version>3.3.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>${testng.version}</version>
 			<scope>test</scope>
 		</dependency>
 

@@ -41,8 +41,6 @@
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<testNGArtifactName>none:none</testNGArtifactName>
-
 					<includes>
 						<include>org/**/Test*.java</include>
 						<include>org/**/*Test.java</include>
@@ -50,17 +48,9 @@
 					<excludes>
 						<exclude>**/*$*</exclude>
 						<exclude>com/*/**.java</exclude>
-						<exclude>**/FullyCoveredByTestNGTesteeTest.java</exclude>
 					</excludes>
 					<excludedGroups>org.pitest.SystemTest</excludedGroups>
 				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.testng</groupId>
-						<artifactId>testng</artifactId>
-						<version>${testng.version}</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 
 			<plugin>
@@ -191,12 +181,6 @@
 			<artifactId>jmock</artifactId>
 			<version>1.2.0</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>${testng.version}</version>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
