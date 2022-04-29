@@ -14,7 +14,6 @@ import com.example.coverage.execute.samples.simple.TesteeWithComplexConstructors
 import com.example.coverage.execute.samples.simple.TesteeWithMultipleLines;
 import com.example.coverage.execute.samples.simple.Tests;
 import com.example.coverage.execute.samples.simple.TestsForMultiBlockCoverage;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.pitest.SystemTest;
@@ -252,27 +251,6 @@ public class CoverageProcessSystemTest {
   public void shouldNotCorruptedTheSystemNewLineProperty() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(ReliesOnNewLineTest.class);
     assertThat(coveredClasses).noneMatch(failingTest());
-  }
-
-  @Test
-  @Ignore("we have testng on the classpath")
-  public void shouldFailWithExitCode() throws Exception {
-    final Consumer<CoverageResult> noOpHandler = a -> {
-    };
-
-    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), excludeTests(), TestPluginArguments.defaults(), VERBOSE, -1);
-
-    final JarCreatingJarFinder agent = new JarCreatingJarFinder();
-    final LaunchOptions lo = new LaunchOptions(agent);
-    final SocketFinder sf = new SocketFinder();
-    final CoverageProcess process = new CoverageProcess(ProcessArgs
-        .withClassPath(classPathWithoutJUnit()).andLaunchOptions(lo), sa,
-        sf.getNextAvailableServerSocket(),
-        Arrays.asList(TestsForMultiBlockCoverage.class.getName()), noOpHandler);
-    process.start();
-
-    final ExitCode exitCode = process.waitToDie();
-    assertEquals(ExitCode.JUNIT_ISSUE, exitCode);
   }
 
   @Test

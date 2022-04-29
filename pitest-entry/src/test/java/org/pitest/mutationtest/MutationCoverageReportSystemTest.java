@@ -263,15 +263,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     }
   }
 
-  @Test
-  public void shouldSupportTestNG() {
-    this.data
-    .setTargetClasses(asList("com.example.testng.FullyCovered*"));
-    this.data.setVerbosity(Verbosity.VERBOSE);
-    createAndRun();
-    verifyResults(KILLED);
-  }
-
   @Test(timeout = ONE_MINUTE)
   public void shouldTerminateWhenThreadpoolCreated() {
     this.data.setTargetClasses(asGlobs(KeepAliveThread.class));
