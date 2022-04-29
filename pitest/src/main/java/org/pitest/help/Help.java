@@ -28,8 +28,8 @@ public enum Help {
       "The class %s does not contain source debug information. All classes must have an associated source file"), //
   NO_LINE_NUMBERS(
       "No classes found with line number debug information. All classes should be compiled with source and line number debug information."), //
-  NO_TEST_LIBRARY(
-      "No test library found on classpath. PIT requires either JUnit 4 (but can run JUnit 3 tests) or TestNG"), //
+  NO_TEST_PLUGIN(
+      "No working test plugins found on classpath. PIT requires either JUnit 4 (but can run JUnit 3 tests) to be on the classpath, or for the JUnit5 or TestNG plugin to be installed."), //
   BAD_FILTER(
       "The supplied filter would cause PIT to try and mutate itself. This will lead to many wasted hours of confusion and debugging. You have better things to do with your life so please don't do this again."), //
   UNKNOWN_MUTATOR(

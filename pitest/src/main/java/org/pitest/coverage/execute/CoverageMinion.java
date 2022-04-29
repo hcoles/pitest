@@ -89,7 +89,7 @@ public class CoverageMinion {
 
     } catch (final PitHelpError phe) {
       LOG.log(Level.SEVERE, phe.getMessage());
-      exitCode = ExitCode.JUNIT_ISSUE;
+      exitCode = ExitCode.TEST_PLUGIN_ISSUE;
     } catch (final Throwable ex) {
       ex.printStackTrace(System.out);
       LOG.log(Level.SEVERE, "Error calculating coverage. Process will exit.",

@@ -566,13 +566,16 @@ public class PitMojoIT {
   }
 
   @Test
-  public void shouldFailCleanlyWhenTestPluginMissing() throws IOException, VerificationException {
-    File testDir = prepare("/pit-missing-test-plugin");
-    verifier.executeGoal("test");
-    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+  public void shouldFailCleanlyWhenTestPluginMissing() throws IOException {
+    try {
+      prepare("/pit-missing-test-plugin");
+      verifier.executeGoal("test");
+      verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
 
-    String actual = readResults(testDir);
-    assertThat(actual).isNotEmpty();
+      fail("Expected execution to fail due to missing plugin");
+    } catch(VerificationException ex) {
+       assertThat(ex.getMessage()).contains("Please check you have correctly installed the pitest plugin for your project's test library");
+    }
   }
 
 

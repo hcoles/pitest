@@ -16,7 +16,7 @@ package org.pitest.util;
 
 public enum ExitCode {
 
-  OK(0), OUT_OF_MEMORY(11), UNKNOWN_ERROR(13), TIMEOUT(14), JUNIT_ISSUE(15);
+  OK(0), OUT_OF_MEMORY(11), UNKNOWN_ERROR(13), TIMEOUT(14), TEST_PLUGIN_ISSUE(15);
 
   private final int code;
 
