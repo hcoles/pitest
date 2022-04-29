@@ -8,6 +8,14 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.7.6
+
+* #1008 Upgrade ASM for initial Java 19 support
+* #1016 Fail cleanly when no working test plugin supplied
+* #1015 Move TestNG support out of main codebase
+
+As a result of #1015 the [TestNG plugin](https://github.com/pitest/pitest-testng-plugin) must now be configured when using pitest in codebases tested by TestNG. In earlier releases support was included automatically.
+
 ### 1.7.5
 
 * #625 / #983 Fixed report aggregation (thanks @therealryan and @aurelien-baudet)
