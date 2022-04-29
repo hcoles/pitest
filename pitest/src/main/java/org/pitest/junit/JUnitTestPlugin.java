@@ -35,7 +35,22 @@ public class JUnitTestPlugin implements TestPluginFactory {
   public Configuration createTestFrameworkConfiguration(TestGroupConfig config,
       ClassByteArraySource source, Collection<String> excludedRunners, Collection<String> includedTestMethods) {
     Objects.requireNonNull(config);
-    return new JUnitCompatibleConfiguration(config, excludedRunners, includedTestMethods);
+
+    if (junit4IsPresent()) {
+      return new JUnitCompatibleConfiguration(config, excludedRunners, includedTestMethods);
+    }
+    return new NullConfiguration();
+  }
+
+  // the plugin performs junit version checks later, but these don't get to run
+  // if junit is completely absent and cannot be loaded.
+  private boolean junit4IsPresent() {
+    try {
+      Class.forName("org.junit.runner.manipulation.Filter");
+      return true;
+    } catch (ClassNotFoundException ex) {
+      return false;
+    }
   }
 
   @Override

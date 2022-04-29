@@ -1,0 +1,41 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.example</groupId>
+	<artifactId>junit-categories-check</artifactId>
+	<packaging>jar</packaging>
+	<version>1.0-SNAPSHOT</version>
+	<name>missing-test-plugin</name>
+	<dependencies>
+<dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter-engine</artifactId>
+    <version>5.8.1</version>
+    <scope>test</scope>
+</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.10.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+				<version>${pit.version}</version>
+				<configuration>
+	                <exportLineCoverage>true</exportLineCoverage>
+				    <outputFormats><value>XML</value></outputFormats>
+				    <timestampedReports>false</timestampedReports>
+                    <targetTests><param>com.example.*</param></targetTests>
+                    <targetClasses><param>com.example*</param></targetClasses>
+					<verbose>true</verbose>
+					<features>+CLASSLIMIT(limit[6])</features>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
