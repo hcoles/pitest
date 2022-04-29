@@ -580,4 +580,15 @@ public class PitMojoIT {
     assertThat(actual).isNotEmpty();
   }
 
+  @Test
+  public void shouldFailCleanlyWhenTestPluginMissing() throws IOException, VerificationException {
+    File testDir = prepare("/pit-missing-test-plugin");
+    verifier.executeGoal("test");
+    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+
+    String actual = readResults(testDir);
+    assertThat(actual).isNotEmpty();
+  }
+
+
 }
