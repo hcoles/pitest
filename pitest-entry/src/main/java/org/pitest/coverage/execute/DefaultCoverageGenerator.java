@@ -137,11 +137,11 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
     final ExitCode exitCode = process.waitToDie();
 
-    if (exitCode == ExitCode.JUNIT_ISSUE) {
-      LOG.severe("Error generating coverage. Please check that your classpath contains modern JUnit 4 or PIT test plugin for other test tool "
-              + "(JUnit 5, TestNG, ...) is enabled.");
+    if (exitCode == ExitCode.TEST_PLUGIN_ISSUE) {
+      LOG.severe("Pitest could not run any tests. Please check that you have installed the pitest plugin for your testing library (eg JUnit 5, TestNG). If your project uses JUnit 4 "
+              + "the plugin is automatically included, but a recent version of JUnit 4 must be on the classpath.");
       throw new PitError(
-          "Coverage generation minion exited abnormally. Please check the classpath and/or enable test plugin for used test tool.");
+          "Please check you have correctly installed the pitest plugin for your project's test library (JUnit 5, TestNG, JUnit 4 etc). ");
     } else if (!exitCode.isOk()) {
       LOG.severe("Coverage generator Minion exited abnormally due to "
           + exitCode);

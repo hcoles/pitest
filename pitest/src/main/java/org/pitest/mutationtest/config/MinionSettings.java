@@ -1,12 +1,16 @@
 package org.pitest.mutationtest.config;
 
 import org.pitest.classinfo.ClassByteArraySource;
+import org.pitest.help.PitHelpError;
+import org.pitest.junit.NullConfiguration;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.testapi.Configuration;
 import org.pitest.util.PitError;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.pitest.help.Help.NO_TEST_PLUGIN;
 
 public class MinionSettings {
 
@@ -33,7 +37,13 @@ public class MinionSettings {
                     source,
                     options.getExcludedRunners(),
                     options.getIncludedTestMethods()))
+            // hack until interface updated to return optional
+            .filter(c -> !(c instanceof NullConfiguration))
             .collect(Collectors.toList());
+
+    if (configurations.isEmpty()) {
+      throw new PitHelpError(NO_TEST_PLUGIN);
+    }
 
     return new PrioritisingTestConfiguration(configurations);
 
