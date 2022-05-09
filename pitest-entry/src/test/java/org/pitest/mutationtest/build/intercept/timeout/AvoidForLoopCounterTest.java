@@ -5,15 +5,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 
 import org.junit.Test;
-import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.intercept.javafeatures.FilterTester;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
 
 public class AvoidForLoopCounterTest {
-  ClassByteArraySource    source = ClassloaderByteArraySource.fromContext();
 
   AvoidForLoopCounterFilter testee = new AvoidForLoopCounterFilter();
   private static final String             PATH      = "forloops/{0}_{1}";
@@ -60,6 +57,33 @@ public class AvoidForLoopCounterTest {
   @Test
   public void shouldFilterIncrementsInArrayLoop() {
     this.verifier.assertFiltersNMutationFromSample(1, "HasArrayIteration");
+  }
+
+  @Test
+  public void shouldFilterLoopsWithLessThanClause() {
+    this.verifier.assertFiltersNMutationFromClass(1, LessThanLoop.class);
+  }
+
+  @Test
+  public void shouldFilterLoopsWithSmallConstant() {
+    this.verifier.assertFiltersNMutationFromClass(1, SmallConstantLoop.class);
+  }
+
+
+  static class LessThanLoop {
+    void foo() {
+      for (int i = 0; i < 10; i++) {
+        System.out.println("" + i);
+      }
+    }
+  }
+
+  static class SmallConstantLoop {
+    void foo() {
+      for (int i = 0; i < 2; i++) {
+        System.out.println("" + i);
+      }
+    }
   }
 
   static class IHaveNoLoops {

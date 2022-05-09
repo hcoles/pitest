@@ -5,6 +5,7 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.aConditionalJumpT
 import static org.pitest.bytecode.analysis.InstructionMatchers.aLabelNode;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anILoadOf;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anIStore;
+import static org.pitest.bytecode.analysis.InstructionMatchers.anIntegerConstant;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.debug;
 import static org.pitest.bytecode.analysis.InstructionMatchers.gotoLabel;
@@ -24,7 +25,6 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.pitest.bytecode.analysis.ClassTree;
-import org.pitest.bytecode.analysis.MethodMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
@@ -74,7 +74,6 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
     final Slot<LabelNode> loopEnd = Slot.create(LabelNode.class);
     return QueryStart
         .any(AbstractInsnNode.class)
-   //     .then(anIntegerConstant()) // skip this?
         .then(anIStore(counterVariable.write()).and(debug("end_counter")))
         .then(isA(LabelNode.class))
         .then(gotoLabel(loopEnd.write()))
@@ -96,7 +95,6 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
     final Slot<LabelNode> loopEnd = Slot.create(LabelNode.class);
     return QueryStart
         .any(AbstractInsnNode.class)
-       // .then(anIntegerConstant().and(debug("constant"))) // skip this?
         .then(anIStore(counterVariable.write()).and(debug("store")))
         .then(aLabelNode(loopStart.write()).and(debug("label")))
         .then(anILoadOf(counterVariable.read()).and(debug("load")))
@@ -112,7 +110,10 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
   }
 
   private static Match<AbstractInsnNode> loadsAnIntegerToCompareTo() {
-    return opCode(Opcodes.BIPUSH).or(integerMethodCall()).or(arrayLength());
+    return opCode(Opcodes.BIPUSH)
+            .or(integerMethodCall())
+            .or(arrayLength())
+            .or(anIntegerConstant());
   }
 
 
@@ -152,9 +153,7 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
   private Predicate<MutationDetails> mutatesAForLoopCounter() {
     return a -> {
       final int instruction = a.getInstructionIndex();
-      final MethodTree method = AvoidForLoopCounterFilter.this.currentClass.methods().stream()
-          .filter(MethodMatchers.forLocation(a.getId().getLocation()))
-          .findFirst().get();
+      final MethodTree method = AvoidForLoopCounterFilter.this.currentClass.method(a.getId().getLocation()).get();
       final AbstractInsnNode mutatedInstruction = method.instruction(instruction);
 
       final Context<AbstractInsnNode> context = Context.start(method.instructions(), DEBUG);
