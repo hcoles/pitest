@@ -24,7 +24,7 @@ import org.pitest.util.ResourceFolderByteArraySource;
 
 public abstract class InfiniteLoopBaseTest {
 
-  ClassByteArraySource    source = ClassloaderByteArraySource.fromContext();
+  ClassByteArraySource source = ClassloaderByteArraySource.fromContext();
 
   abstract InfiniteLoopFilter testee();
 

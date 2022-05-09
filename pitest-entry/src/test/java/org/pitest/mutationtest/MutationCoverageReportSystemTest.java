@@ -168,7 +168,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     this.data.setTargetClasses(asGlobs(CoveredByEasyMock.class));
     this.data.setTargetTests(predicateFor(com.example.EasyMockTest.class));
     createAndRun();
-    verifyResults(KILLED, KILLED, KILLED);
+    verifyResults(KILLED, KILLED);
   }
 
   @Test

@@ -55,9 +55,7 @@ public abstract class InfiniteLoopFilter implements MutationInterceptor {
   private Collection<MutationDetails> findTimeoutMutants(Location location,
       Collection<MutationDetails> mutations, Mutater m) {
 
-    final MethodTree method = this.currentClass.methods().stream()
-        .filter(forLocation(location))
-        .findFirst()
+    final MethodTree method = this.currentClass.method(location)
         .get();
 
     //  give up if our matcher thinks loop is already infinite
