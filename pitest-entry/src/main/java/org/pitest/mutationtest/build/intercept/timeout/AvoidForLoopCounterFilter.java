@@ -59,6 +59,7 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
       .match(Match.<AbstractInsnNode>never())
       .or(conditionalAtEnd())
       .or(conditionalAtStart())
+      .or(biPushAtStart())
       .compile(QueryParams.params(AbstractInsnNode.class)
         .withIgnores(IGNORE)
         .withDebug(DEBUG)
@@ -107,6 +108,25 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
         .then(jumpsTo(loopStart.read()).and(debug("jump")))
         .then(labelNode(loopEnd.read()))
         .zeroOrMore(anything());
+  }
+
+  private static SequenceQuery<AbstractInsnNode> biPushAtStart() {
+    final Slot<Integer> counterVariable = Slot.create(Integer.class);
+    final Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
+    final Slot<LabelNode> loopEnd = Slot.create(LabelNode.class);
+    return QueryStart
+            .any(AbstractInsnNode.class)
+            .then(opCode(Opcodes.BIPUSH))
+            .then(anIStore(counterVariable.write()).and(debug("store")))
+            .then(aLabelNode(loopStart.write()).and(debug("label")))
+            .then(anILoadOf(counterVariable.read()).and(debug("load")))
+            .then(jumpsTo(loopEnd.write()).and(aConditionalJump()))
+            .then(isA(LabelNode.class))
+            .zeroOrMore(anything())
+            .then(targetInstruction(counterVariable).and(debug("target")))
+            .then(jumpsTo(loopStart.read()).and(debug("jump")))
+            .then(labelNode(loopEnd.read()))
+            .zeroOrMore(anything());
   }
 
   private static Match<AbstractInsnNode> loadsAnIntegerToCompareTo() {

@@ -69,6 +69,20 @@ public class AvoidForLoopCounterTest {
     this.verifier.assertFiltersNMutationFromClass(1, SmallConstantLoop.class);
   }
 
+  @Test
+  public void shouldFilterReverseLoops() {
+    this.verifier.assertFiltersNMutationFromClass(1, ReverseLoop.class);
+  }
+
+
+
+  static class ReverseLoop {
+    void foo() {
+      for (int i = 9; i > 0; i--) {
+        System.out.println("" + i);
+      }
+    }
+  }
 
   static class LessThanLoop {
     void foo() {
