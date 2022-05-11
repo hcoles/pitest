@@ -6,7 +6,6 @@ import org.pitest.mutationtest.engine.gregor.GregorMutater;
 import org.pitest.util.Unchecked;
 
 import java.lang.reflect.Constructor;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;

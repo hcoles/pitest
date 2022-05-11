@@ -11,7 +11,6 @@ import org.junit.Test;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
 import org.pitest.mutationtest.report.html.HtmlReportFactory;
-import org.pitest.util.IsolationUtils;
 
 public class PluginFilterTest {
 

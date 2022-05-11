@@ -24,7 +24,6 @@ import org.pitest.coverage.CoverageResult;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.execute.DefaultPITClassloader;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.process.LaunchOptions;
 import org.pitest.process.ProcessArgs;

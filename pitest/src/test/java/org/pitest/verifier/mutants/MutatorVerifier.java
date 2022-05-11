@@ -2,7 +2,6 @@ package org.pitest.verifier.mutants;
 
 import org.assertj.core.api.StringAssert;
 import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.Textifier;
 import org.objectweb.asm.util.TraceClassVisitor;

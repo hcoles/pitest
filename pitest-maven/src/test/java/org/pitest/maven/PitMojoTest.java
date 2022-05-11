@@ -14,7 +14,6 @@ import org.pitest.mutationtest.tooling.CombinedStatistics;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.mockito.ArgumentMatchers.anyMap;
