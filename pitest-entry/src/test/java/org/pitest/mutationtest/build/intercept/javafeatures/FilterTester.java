@@ -107,11 +107,12 @@ public class FilterTester {
     final SoftAssertions softly = new SoftAssertions();
 
     for (final Sample s : samples(sample)) {
+      System.out.println(s.compiler);
       final List<MutationDetails> mutations = mutator.findMutations(s.className);
       final Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
 
       softly.assertThat(actual)
-      .describedAs("Wrong number of mutants  with " + s.compiler + " for class \n" + s.clazz)
+      .describedAs("Wrong number of mutants with " + s.compiler + " for class \n" + s.clazz + " (started with " + mutations.size() + ")")
       .hasSize(n);
 
     }

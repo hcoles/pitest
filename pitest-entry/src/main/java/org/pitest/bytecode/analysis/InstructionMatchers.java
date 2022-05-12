@@ -10,6 +10,7 @@ import static org.objectweb.asm.Opcodes.ICONST_5;
 import static org.objectweb.asm.Opcodes.ICONST_M1;
 import static org.objectweb.asm.Opcodes.ILOAD;
 import static org.objectweb.asm.Opcodes.ISTORE;
+import static org.pitest.sequence.Result.result;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -41,17 +42,17 @@ public class InstructionMatchers {
   }
   
   public static Match<AbstractInsnNode> opCode(final int opcode) {
-    return (c, a) -> a.getOpcode() == opcode;
+    return (c, a) -> result(a.getOpcode() == opcode, c);
   }
 
   public static <T extends AbstractInsnNode> Match<AbstractInsnNode> isA(
       final Class<T> cls) {
-    return (c, a) -> a.getClass().isAssignableFrom(cls);
+    return (c, a) -> result(a.getClass().isAssignableFrom(cls), c);
   }
 
   public static Match<AbstractInsnNode> incrementsVariable(final SlotRead<Integer> counterVariable) {
-   return (context, a) -> (a instanceof IincInsnNode)
-       && context.retrieve(counterVariable).filter(isEqual(((IincInsnNode)a).var)).isPresent();
+   return (context, a) -> result((a instanceof IincInsnNode)
+       && context.retrieve(counterVariable).filter(isEqual(((IincInsnNode)a).var)).isPresent(), context);
   }
 
   public static Match<AbstractInsnNode> anIStore(
@@ -59,9 +60,19 @@ public class InstructionMatchers {
     return opCode(Opcodes.ISTORE).and(aVariableAccess(counterVariable));
   }
 
+  public static Match<AbstractInsnNode> anILoad(
+          final SlotWrite<Integer> counterVariable) {
+    return opCode(Opcodes.ILOAD).and(aVariableAccess(counterVariable));
+  }
+
   public static Match<AbstractInsnNode> aVariableAccess(
       final SlotWrite<Integer> counterVariable) {
-    return (c, t) -> (t instanceof VarInsnNode) && c.store(counterVariable, ((VarInsnNode) t).var);
+    return (c, t) -> {
+      if (t instanceof VarInsnNode) {
+        return result(true, c.store(counterVariable, ((VarInsnNode) t).var));
+      }
+      return result(false, c);
+    };
   }
 
   public static Match<AbstractInsnNode> anIStoreTo(
@@ -76,8 +87,8 @@ public class InstructionMatchers {
 
   public static Match<AbstractInsnNode> variableMatches(
       final SlotRead<Integer> counterVariable) {
-    return (c, t) -> (t instanceof VarInsnNode)
-        && c.retrieve(counterVariable).filter(isEqual(((VarInsnNode) t).var)).isPresent();
+    return (c, t) -> result((t instanceof VarInsnNode)
+        && c.retrieve(counterVariable).filter(isEqual(((VarInsnNode) t).var)).isPresent(), c);
   }
 
 
@@ -100,9 +111,9 @@ public class InstructionMatchers {
   }
 
   public static Match<AbstractInsnNode> aConditionalJump() {
-    return (c, t) -> (t instanceof JumpInsnNode)
+    return (c, t) -> result((t instanceof JumpInsnNode)
         && (t.getOpcode() != Opcodes.GOTO)
-        && (t.getOpcode() != Opcodes.JSR);
+        && (t.getOpcode() != Opcodes.JSR), c);
   }
 
   public static Match<AbstractInsnNode> aConditionalJumpTo(Slot<LabelNode> label) {
@@ -113,19 +124,18 @@ public class InstructionMatchers {
   public static <T extends AbstractInsnNode> Match<AbstractInsnNode> writeNodeToSlot(final SlotWrite<T> slot, final Class<T> clazz) {
     return (c, t) -> {
       if (clazz.isAssignableFrom(t.getClass()) ) {
-        c.store(slot, clazz.cast(t));
-        return true;
+        return result(true, c.store(slot, clazz.cast(t)));
       }
-      return false;
+      return result(false, c);
     };
   }
 
   public static  Match<AbstractInsnNode> methodCallThatReturns(final ClassName type) {
     return (c, t) -> {
       if ( t instanceof MethodInsnNode ) {
-        return ((MethodInsnNode) t).desc.endsWith(type.asInternalName() + ";");
+        return result(((MethodInsnNode) t).desc.endsWith(type.asInternalName() + ";"), c);
       }
-      return false;
+      return result(false, c);
     };
   }
 
@@ -137,9 +147,9 @@ public class InstructionMatchers {
     return (c, t) -> {
       if ( t instanceof MethodInsnNode ) {
         final MethodInsnNode call = (MethodInsnNode) t;
-        return call.name.equals(name);
+        return result(call.name.equals(name), c);
       }
-      return false;
+      return result(false, c);
     };
   }
 
@@ -147,24 +157,24 @@ public class InstructionMatchers {
     return (c, t) -> {
       if ( t instanceof MethodInsnNode ) {
         final MethodInsnNode call = (MethodInsnNode) t;
-        return call.name.equals(name) && call.owner.equals(owner.asInternalName());
+        return result( call.name.equals(name) && call.owner.equals(owner.asInternalName()), c);
       }
-      return false;
+      return result(false, c);
     };
   }
 
 
   public static  Match<AbstractInsnNode> isInstruction(final SlotRead<AbstractInsnNode> target) {
-    return (c, t) -> c.retrieve(target).get() == t;
+    return (c, t) -> result(c.retrieve(target).get() == t, c);
   }
 
   public static Match<AbstractInsnNode> getStatic(String owner, String field) {
     return (c, t) -> {
        if (t instanceof FieldInsnNode) {
          FieldInsnNode fieldNode = (FieldInsnNode) t;
-         return t.getOpcode() == Opcodes.GETSTATIC && fieldNode.name.equals(field) && fieldNode.owner.equals(owner);
+         return result( t.getOpcode() == Opcodes.GETSTATIC && fieldNode.name.equals(field) && fieldNode.owner.equals(owner), c);
        }
-       return false;
+      return result(false, c);
     };
   }
 
@@ -174,9 +184,9 @@ public class InstructionMatchers {
   public static  Match<AbstractInsnNode> recordTarget(final SlotRead<AbstractInsnNode> target, final SlotWrite<Boolean> found) {
     return (c, t) -> {
       if (c.retrieve(target).get() == t) {
-        c.store(found, true);
+        return result(true, c.store(found, true));
       }
-      return true;
+      return result(true, c);
     };
   }
 
@@ -185,10 +195,9 @@ public class InstructionMatchers {
       final SlotWrite<LabelNode> label) {
     return (c, t) -> {
       if (t instanceof JumpInsnNode ) {
-        c.store(label, ((JumpInsnNode) t).label);
-        return true;
+        return result(true, c.store(label, ((JumpInsnNode) t).label));
       }
-      return false;
+      return result(false, c);
     };
   }
 
@@ -196,11 +205,11 @@ public class InstructionMatchers {
       final SlotRead<LabelNode> loopStart) {
     return (context, a) -> {
       if (!(a instanceof JumpInsnNode)) {
-        return false;
+        return result(false, context);
       }
       final JumpInsnNode jump = (JumpInsnNode) a;
 
-      return context.retrieve(loopStart).filter(isEqual(jump.label)).isPresent();
+      return result(context.retrieve(loopStart).filter(isEqual(jump.label)).isPresent(), context);
     };
   }
 
@@ -218,19 +227,19 @@ public class InstructionMatchers {
       final SlotRead<LabelNode> loopEnd) {
     return (c, t) -> {
      if (!(t instanceof LabelNode)) {
-       return false;
+       return result(false, c);
      }
 
      final LabelNode l = (LabelNode) t;
-     return c.retrieve(loopEnd).filter(isEqual(l)).isPresent();
+     return result(c.retrieve(loopEnd).filter(isEqual(l)).isPresent(), c);
 
     };
   }
 
   public static Match<AbstractInsnNode> debug(final String msg) {
     return (context, a) -> {
-      context.debug(msg);
-      return true;
+      context.debug(msg, a);
+      return result(true, context);
     };
   }
 }

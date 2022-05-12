@@ -78,8 +78,8 @@ public class MethodReferenceNullCheckFilter implements MutationInterceptor {
 
       final AbstractInsnNode mutatedInstruction = method.instruction(instruction);
 
-      final Context<AbstractInsnNode> context = Context.start(method.instructions(), DEBUG);
-      context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
+      Context context = Context.start(DEBUG);
+      context = context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
       return NULL_CHECK.matches(method.instructions(), context);
     };
   }

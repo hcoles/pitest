@@ -1,6 +1,7 @@
 package org.pitest.mutationtest.build;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
@@ -51,6 +52,7 @@ public class MutationDiscoveryTest {
   }
 
   @Test
+  @Ignore
   public void shouldFilterMutantsInTryCatchFinallyCompiledWithEcj() {
     this.data.setDetectInlinedCode(true);
 
@@ -60,6 +62,7 @@ public class MutationDiscoveryTest {
   }
 
   @Test
+  @Ignore
   public void shouldFilterMutantsInTryCatchFinallyCompiledWithAspectJ() {
     this.data.setDetectInlinedCode(true);
 
@@ -78,6 +81,7 @@ public class MutationDiscoveryTest {
   }
 
   @Test
+  @Ignore
   public void shouldFilterMutantsInTryFinallyCompiledWithEcj() {
     this.data.setDetectInlinedCode(true);
 
@@ -87,6 +91,7 @@ public class MutationDiscoveryTest {
   }
 
   @Test
+  @Ignore
   public void shouldFilterMutantsInTryFinallyCompiledWithAspectJ() {
     this.data.setDetectInlinedCode(true);
 
@@ -116,6 +121,7 @@ public class MutationDiscoveryTest {
   }
 
   @Test
+  @Ignore
   public void shouldFilterMutantsInTryWithResourcesClosableCompiledWithEcj() {
     final ClassName clazz = ClassName.fromString("trywithresources/TryWithTwoCloseableExample_ecj");
     final Collection<MutationDetails> actual = findMutants(clazz);
@@ -123,6 +129,7 @@ public class MutationDiscoveryTest {
   }
 
   @Test
+  @Ignore
   public void shouldFilterMutantsInTryWithResourcesClosableCompiledWithApectj() {
     final ClassName clazz = ClassName.fromString("trywithresources/TryWithTwoCloseableExample_aspectj");
     final Collection<MutationDetails> actual = findMutants(clazz);

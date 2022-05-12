@@ -45,6 +45,7 @@ import static org.pitest.functional.FCollection.bucket;
 import static org.pitest.functional.FCollection.map;
 import static org.pitest.functional.FCollection.mapTo;
 import static org.pitest.functional.prelude.Prelude.not;
+import static org.pitest.sequence.Result.result;
 
 /**
  * Detects mutations on same line, but within different code blocks. This
@@ -92,9 +93,9 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
       if (t instanceof LabelNode) {
         LabelNode label = (LabelNode) t;
         List<LabelNode> labels = c.retrieve(handlers.read()).get();
-        return labels.contains(label);
+        return result(labels.contains(label), c);
       }
-      return false;
+      return result(false, c);
     };
   }
 
@@ -180,9 +181,9 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
 
     AbstractInsnNode mutatedInstruction = method.instruction(m.getInstructionIndex());
 
-    Context<AbstractInsnNode> context = Context.start(method.instructions(), DEBUG);
-    context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
-    context.store(HANDLERS.write(), handlers);
+    Context context = Context.start(DEBUG);
+    context = context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
+    context = context.store(HANDLERS.write(), handlers);
     return IS_IN_HANDLER.matches(method.instructions(), context);
   }
 

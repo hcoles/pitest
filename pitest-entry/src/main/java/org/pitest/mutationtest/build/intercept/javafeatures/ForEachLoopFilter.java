@@ -15,6 +15,7 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
 import static org.pitest.bytecode.analysis.InstructionMatchers.recordTarget;
+import static org.pitest.sequence.Result.result;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -155,14 +156,13 @@ public class ForEachLoopFilter implements MutationInterceptor {
   }
 
   private static Match<AbstractInsnNode> mutationPoint() {
-    return recordTarget(MUTATED_INSTRUCTION.read(), FOUND.write());
+    return recordTarget(MUTATED_INSTRUCTION.read(), FOUND.write()).and(debug("Mutation point"));
   }
 
 
   private static Match<AbstractInsnNode> containMutation(final Slot<Boolean> found) {
-   return (c, t) -> c.retrieve(found.read()).isPresent();
+   return (c, t) -> result(c.retrieve(found.read()).isPresent(), c);
   }
-
 
   @Override
   public InterceptorType type() {
@@ -189,8 +189,8 @@ public class ForEachLoopFilter implements MutationInterceptor {
           .get();
       final AbstractInsnNode mutatedInstruction = method.instruction(instruction);
 
-      final Context<AbstractInsnNode> context = Context.start(method.instructions(), DEBUG);
-      context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
+      Context context = Context.start(DEBUG);
+      context = context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
       return ITERATOR_LOOP.matches(method.instructions(), context);
     };
   }

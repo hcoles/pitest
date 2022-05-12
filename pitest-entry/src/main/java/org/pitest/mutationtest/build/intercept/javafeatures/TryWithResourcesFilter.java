@@ -35,6 +35,7 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
 import static org.pitest.bytecode.analysis.InstructionMatchers.recordTarget;
 import static org.pitest.sequence.QueryStart.any;
 import static org.pitest.sequence.QueryStart.match;
+import static org.pitest.sequence.Result.result;
 
 public class TryWithResourcesFilter implements MutationInterceptor {
 
@@ -46,58 +47,71 @@ public class TryWithResourcesFilter implements MutationInterceptor {
   private static SequenceQuery<AbstractInsnNode> javac11() {
     return any(AbstractInsnNode.class)
             .zeroOrMore(match(anyInstruction()))
+            .then(closeCallMutationPoint())
+            .then(aGotoMutationPoint())
             .then(aLabel())
-            .then(anALoad())
-            .then(closeCall())
+            .then(anAStoreMutationPoint())
             .then(aLabel())
-            .then(aGoto())
+            .then(anALoadMutationPoint())
+            .then(closeCallMutationPoint())
             .then(aLabel())
-            .then(anAStore())
-            .then(anALoad())
-            .then(anALoad())
-            .then(addSuppressedCall())
+            .then(aGotoMutationPoint())
+            .then(aLabel())
+            .then(anAStoreMutationPoint())
+            .then(anALoadMutationPoint())
+            .then(anALoadMutationPoint())
+            .then(addSuppressedCallMutationPoint())
             .zeroOrMore(match(anyInstruction()));
   }
 
   private static SequenceQuery<AbstractInsnNode> javac8() {
     return any(AbstractInsnNode.class)
             .zeroOrMore(match(anyInstruction()))
-            .then(ifNull())
-            .then(anALoad())
-            .then(ifNull())
+            .then(ifNullMutationPoint())
+            .then(anALoadMutationPoint())
+            .then(ifNullMutationPoint())
             .then(aLabel())
-            .then(anALoad())
-            .then(closeCall())
+            .then(anALoadMutationPoint())
+            .then(closeCallMutationPoint())
             .then(aLabel())
-            .then(aGoto())
+            .then(aGotoMutationPoint())
             .then(aLabel())
-            .then(anAStore())
+            .then(anAStoreMutationPoint())
             .then(aLabel())
-            .then(anALoad())
-            .then(anALoad())
-            .then(addSuppressedCall())
+            .then(anALoadMutationPoint())
+            .then(anALoadMutationPoint())
+            .then(addSuppressedCallMutationPoint())
             .then(aLabel())
-            .then(aGoto())
+            .then(aGotoMutationPoint())
             .then(aLabel())
-            .then(anALoad())
-            .then(closeCall())
+            .then(anALoadMutationPoint())
+            .then(closeCallMutationPoint())
             .zeroOrMore(match(anyInstruction()));
   }
 
   private static SequenceQuery<AbstractInsnNode> ecj() {
     return any(AbstractInsnNode.class)
             .zeroOrMore(match(anyInstruction()))
-            .then(closeCall())
+            .then(ifNullMutationPoint())
+            .then(anALoadMutationPoint())
+            .then(closeCallMutationPoint())
+            .then(aGotoMutationPoint())
             .then(aLabel())
-            .then(anALoad())
+            .then(anAStoreMutationPoint())
+            .then(anALoadMutationPoint())
+            .then(ifNullMutationPoint())
+            .then(anALoadMutationPoint())
+            .then(closeCallMutationPoint())
+            .then(aLabel())
+            .then(anALoadMutationPoint())
             .then(opCode(ATHROW).and(mutationPoint()))
             .then(aLabel())
-            .then(anAStore())
-            .then(anALoad())
-            .then(ifNonNull())
-            .then(anALoad())
-            .then(anAStore())
-            .then(aGoto())
+            .then(anAStoreMutationPoint())
+            .then(anALoadMutationPoint())
+            .then(ifNonNullMutationPoint())
+            .then(anALoadMutationPoint())
+            .then(anAStoreMutationPoint())
+            .then(aGotoMutationPoint())
             .then(aLabel())
             .zeroOrMore(match(anyInstruction()));
   }
@@ -105,17 +119,17 @@ public class TryWithResourcesFilter implements MutationInterceptor {
   private static SequenceQuery<AbstractInsnNode> ecjAddSuppressedCheck() {
     return any(AbstractInsnNode.class)
             .zeroOrMore(match(anyInstruction()))
-            .then(ifNonNull())
-            .then(anALoad())
-            .then(anAStore())
-            .then(aGoto())
+            .then(ifNonNullMutationPoint())
+            .then(anALoadMutationPoint())
+            .then(anAStoreMutationPoint())
+            .then(aGotoMutationPoint())
             .then(aLabel())
-            .then(anALoad())
-            .then(anALoad())
+            .then(anALoadMutationPoint())
+            .then(anALoadMutationPoint())
             .then(opCode(IF_ACMPEQ).and(mutationPoint()))
-            .then(anALoad())
-            .then(anALoad())
-            .then(addSuppressedCall())
+            .then(anALoadMutationPoint())
+            .then(anALoadMutationPoint())
+            .then(addSuppressedCallMutationPoint())
             .then(aLabel())
             .zeroOrMore(match(anyInstruction()));
   }
@@ -163,9 +177,10 @@ public class TryWithResourcesFilter implements MutationInterceptor {
 
       AbstractInsnNode mutatedInstruction = method.instruction(instruction);
 
-      Context<AbstractInsnNode> context = Context.start(method.instructions(), DEBUG);
-      context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
-      return TRY_WITH_RESOURCES.matches(method.instructions(), context);
+      Context context = Context.start(DEBUG);
+      context = context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
+      boolean result =  TRY_WITH_RESOURCES.matches(method.instructions(), context);
+      return result;
     };
   }
 
@@ -177,31 +192,31 @@ public class TryWithResourcesFilter implements MutationInterceptor {
   private static Match<AbstractInsnNode> aLabel() {
     return isA(LabelNode.class);
   }
-  private static Match<AbstractInsnNode> anALoad() {
+  private static Match<AbstractInsnNode> anALoadMutationPoint() {
     return opCode(ALOAD).and(mutationPoint());
   }
 
-  private static Match<AbstractInsnNode> aGoto() {
+  private static Match<AbstractInsnNode> aGotoMutationPoint() {
     return opCode(GOTO).and(mutationPoint());
   }
 
-  private static Match<AbstractInsnNode> addSuppressedCall() {
+  private static Match<AbstractInsnNode> addSuppressedCallMutationPoint() {
     return methodCallNamed("addSuppressed").and(mutationPoint());
   }
 
-  private static Match<AbstractInsnNode> anAStore() {
+  private static Match<AbstractInsnNode> anAStoreMutationPoint() {
     return opCode(ASTORE).and(mutationPoint());
   }
 
-  private static Match<AbstractInsnNode> closeCall() {
+  private static Match<AbstractInsnNode> closeCallMutationPoint() {
     return methodCallNamed("close").and(mutationPoint());
   }
 
-  private static Match<AbstractInsnNode> ifNonNull() {
+  private static Match<AbstractInsnNode> ifNonNullMutationPoint() {
     return opCode(IFNONNULL).and(mutationPoint());
   }
 
-  private static Match<AbstractInsnNode> ifNull() {
+  private static Match<AbstractInsnNode> ifNullMutationPoint() {
     return opCode(IFNULL).and(mutationPoint());
   }
 
@@ -210,7 +225,7 @@ public class TryWithResourcesFilter implements MutationInterceptor {
   }
 
   private static Match<AbstractInsnNode> containMutation(final Slot<Boolean> found) {
-    return (c, t) -> c.retrieve(found.read()).isPresent();
+    return (c, t) -> result(c.retrieve(found.read()).isPresent(), c);
   }
 
 }

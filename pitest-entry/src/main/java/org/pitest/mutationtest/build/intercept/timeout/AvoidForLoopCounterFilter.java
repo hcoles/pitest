@@ -3,6 +3,7 @@ package org.pitest.mutationtest.build.intercept.timeout;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aConditionalJump;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aConditionalJumpTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aLabelNode;
+import static org.pitest.bytecode.analysis.InstructionMatchers.anILoad;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anILoadOf;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anIStore;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anIntegerConstant;
@@ -59,7 +60,6 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
       .match(Match.<AbstractInsnNode>never())
       .or(conditionalAtEnd())
       .or(conditionalAtStart())
-      .or(biPushAtStart())
       .compile(QueryParams.params(AbstractInsnNode.class)
         .withIgnores(IGNORE)
         .withDebug(DEBUG)
@@ -76,8 +76,8 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
     return QueryStart
         .any(AbstractInsnNode.class)
         .then(anIStore(counterVariable.write()).and(debug("end_counter")))
-        .then(isA(LabelNode.class))
-        .then(gotoLabel(loopEnd.write()))
+        .then(isA(LabelNode.class).and(debug("label 1")))
+        .then(gotoLabel(loopEnd.write()).and(debug("goto")))
         .then(aLabelNode(loopStart.write()).and(debug("loop start")))
         .zeroOrMore(anything())
         .then(targetInstruction(counterVariable).and(debug("target")))
@@ -95,32 +95,11 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
     final Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
     final Slot<LabelNode> loopEnd = Slot.create(LabelNode.class);
     return QueryStart
-        .any(AbstractInsnNode.class)
-        .then(anIStore(counterVariable.write()).and(debug("store")))
-        .then(aLabelNode(loopStart.write()).and(debug("label")))
-        .then(anILoadOf(counterVariable.read()).and(debug("load")))
-        .zeroOrMore(QueryStart.match(opCode(Opcodes.ALOAD))) // optionally put object on stack
-        .then(loadsAnIntegerToCompareTo().and(debug("push")))
-        .then(jumpsTo(loopEnd.write()).and(aConditionalJump()))
-        .then(isA(LabelNode.class))
-        .zeroOrMore(anything())
-        .then(targetInstruction(counterVariable).and(debug("target")))
-        .then(jumpsTo(loopStart.read()).and(debug("jump")))
-        .then(labelNode(loopEnd.read()))
-        .zeroOrMore(anything());
-  }
-
-  private static SequenceQuery<AbstractInsnNode> biPushAtStart() {
-    final Slot<Integer> counterVariable = Slot.create(Integer.class);
-    final Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
-    final Slot<LabelNode> loopEnd = Slot.create(LabelNode.class);
-    return QueryStart
             .any(AbstractInsnNode.class)
-            .then(opCode(Opcodes.BIPUSH))
-            .then(anIStore(counterVariable.write()).and(debug("store")))
-            .then(aLabelNode(loopStart.write()).and(debug("label")))
-            .then(anILoadOf(counterVariable.read()).and(debug("load")))
-            .then(jumpsTo(loopEnd.write()).and(aConditionalJump()))
+            .then(aLabelNode(loopStart.write()).and(debug("conditional at start label")))
+            .then(anILoad(counterVariable.write()).and(debug("iload")))
+            .zeroOrMore(anything())
+            .then(jumpsTo(loopEnd.write()).and(aConditionalJump()).and(debug("jump")))
             .then(isA(LabelNode.class))
             .zeroOrMore(anything())
             .then(targetInstruction(counterVariable).and(debug("target")))
@@ -176,8 +155,8 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
       final MethodTree method = AvoidForLoopCounterFilter.this.currentClass.method(a.getId().getLocation()).get();
       final AbstractInsnNode mutatedInstruction = method.instruction(instruction);
 
-      final Context<AbstractInsnNode> context = Context.start(method.instructions(), DEBUG);
-      context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
+      Context context = Context.start(DEBUG);
+      context = context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
       return MUTATED_FOR_COUNTER.matches(method.instructions(), context);
     };
   }

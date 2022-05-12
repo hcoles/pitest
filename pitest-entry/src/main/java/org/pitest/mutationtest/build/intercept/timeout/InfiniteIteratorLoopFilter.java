@@ -57,7 +57,7 @@ public class InfiniteIteratorLoopFilter extends InfiniteLoopFilter {
   }
 
   private boolean isIteratorNext(AbstractInsnNode instruction) {
-    return InstructionMatchers.methodCallTo(ClassName.fromClass(Iterator.class), "next").test(null, instruction);
+    return InstructionMatchers.methodCallTo(ClassName.fromClass(Iterator.class), "next").test(null, instruction).result();
   }
 
   private static SequenceQuery<AbstractInsnNode> inifniteIteratorLoop() {
