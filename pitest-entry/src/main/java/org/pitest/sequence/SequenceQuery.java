@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SequenceQuery<T> {
 
@@ -156,13 +157,29 @@ class NFASequenceMatcher<T> implements SequenceMatcher<T> {
   }
 
   @Override
-  public boolean matches(List<T> sequence, Context context) {
+  public boolean matches(List<T> sequence, Context initialContext) {
+    Set<StateContext<T>> currentState = run(sequence, initialContext);
+    return currentState.stream()
+            .map(c -> c.state)
+            .anyMatch(s -> s != null && s == EndMatch.MATCH);
+  }
+
+  @Override
+  public List<Context> contextMatches(List<T> sequence, Context initialContext) {
+    Set<StateContext<T>> currentState = run(sequence, initialContext);
+    return currentState.stream()
+            .filter(s -> s.state != null && s.state == EndMatch.MATCH)
+            .map(c -> c.context)
+            .collect(Collectors.toList());
+  }
+
+  private Set<StateContext<T>> run(List<T> sequence, Context initialContext) {
     Set<StateContext<T>> currentState = new HashSet<>();
-    addState(currentState, new StateContext<>(this.start, context));
+    addState(currentState, new StateContext<>(this.start, initialContext));
 
     for (final T t : sequence) {
-      // context not allowed in ignore checks
-      if (this.ignore.test(null, t).result()) {
+      // only initial context used in ignore checks
+      if (this.ignore.test(initialContext, t).result()) {
         continue;
       }
 
@@ -170,7 +187,7 @@ class NFASequenceMatcher<T> implements SequenceMatcher<T> {
       currentState = nextStates;
 
     }
-    return isMatch(currentState);
+    return currentState;
   }
 
 
@@ -208,12 +225,6 @@ class NFASequenceMatcher<T> implements SequenceMatcher<T> {
       }
     }
     return nextStates;
-  }
-
-  private static <T> boolean isMatch(Set<StateContext<T>> currentState) {
-    return currentState.stream()
-            .map(c -> c.state)
-            .anyMatch(s -> s != null && s == EndMatch.MATCH);
   }
 
 }
