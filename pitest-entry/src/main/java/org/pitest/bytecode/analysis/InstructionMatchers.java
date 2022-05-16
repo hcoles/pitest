@@ -153,6 +153,15 @@ public class InstructionMatchers {
     };
   }
 
+  public static  Match<AbstractInsnNode> methodDescEquals(final String desc) {
+    return (c, t) -> {
+      if ( t instanceof MethodInsnNode ) {
+        return result(((MethodInsnNode) t).desc.equals(desc), c);
+      }
+      return result(false, c);
+    };
+  }
+
   public static  Match<AbstractInsnNode> methodCallTo(final ClassName owner, final String name) {
     return (c, t) -> {
       if ( t instanceof MethodInsnNode ) {

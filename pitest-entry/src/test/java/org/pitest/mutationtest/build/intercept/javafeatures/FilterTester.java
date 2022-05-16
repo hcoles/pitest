@@ -100,6 +100,17 @@ public class FilterTester {
     assertThat(actual).anyMatch(match.and( m -> m.getId().getIndexes().size() > 1));
   }
 
+  public void assertLeavesNMutants(int n, Class<?> clazz) {
+    final Sample s = makeSampleForCurrentCompiler(clazz);
+    GregorMutater mutator = mutateFromClassLoader();
+    final List<MutationDetails> mutations = mutator.findMutations(s.className);
+    final Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
+
+    assertThat(actual)
+            .describedAs("Wrong number of mutants with " + s.compiler + " for class \n" + s.clazz + " (started with " + mutations.size() + ")")
+            .hasSize(n);
+  }
+
   public void assertLeavesNMutants(int n, String sample) {
     final GregorMutater mutator = mutateFromResourceDir();
     atLeastOneSampleExists(sample);
@@ -107,7 +118,6 @@ public class FilterTester {
     final SoftAssertions softly = new SoftAssertions();
 
     for (final Sample s : samples(sample)) {
-      System.out.println(s.compiler);
       final List<MutationDetails> mutations = mutator.findMutations(s.className);
       final Collection<MutationDetails> actual = filter(s.clazz, mutations, mutator);
 

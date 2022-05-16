@@ -23,6 +23,7 @@ import java.util.function.Predicate;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.IincInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.pitest.bytecode.analysis.ClassTree;
@@ -154,6 +155,11 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
       final int instruction = a.getInstructionIndex();
       final MethodTree method = AvoidForLoopCounterFilter.this.currentClass.method(a.getId().getLocation()).get();
       final AbstractInsnNode mutatedInstruction = method.instruction(instruction);
+
+      // performance hack
+      if (!(mutatedInstruction instanceof IincInsnNode)) {
+        return false;
+      }
 
       Context context = Context.start(DEBUG);
       context = context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);

@@ -50,9 +50,8 @@ public class ForEachLoopFilter implements MutationInterceptor {
   private static final Slot<Boolean> FOUND = Slot.create(Boolean.class);
 
 
-  private static final SequenceMatcher<AbstractInsnNode> ITERATOR_LOOP = QueryStart
-      .match(Match.<AbstractInsnNode>never())
-      .or(conditionalAtStart())
+  private static final SequenceMatcher<AbstractInsnNode> ITERATOR_LOOP =
+       conditionalAtStart()
       .or(conditionalAtEnd())
       .or(arrayConditionalAtEnd())
       .or(arrayConditionalAtStart())
