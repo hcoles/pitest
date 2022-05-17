@@ -2,7 +2,6 @@ package org.pitest.sequence;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -192,18 +191,15 @@ class NFASequenceMatcher<T> implements SequenceMatcher<T> {
 
 
   private static <T> void addState(Set<StateContext<T>> set, StateContext<T> state) {
-    if (state == null) {
-      return;
-    }
-
-    if (state.state == null) {
-      return;
-    }
 
     if (state.state instanceof Split) {
       final Split<T> split = (Split<T>) state.state;
-      addState(set, new StateContext<T>(split.out1, state.context));
-      addState(set, new StateContext<T>(split.out2, state.context));
+      if (split.out1 != null) {
+        addState(set, new StateContext<T>(split.out1, state.context));
+      }
+      if (split.out2 != null) {
+        addState(set, new StateContext<T>(split.out2, state.context));
+      }
     } else {
       set.add(state);
     }
@@ -260,34 +256,4 @@ class Split<T> implements State<T> {
 @SuppressWarnings("rawtypes")
 enum EndMatch implements State {
   MATCH
-}
-
-/**
- * Pair class to hold state and context.
- */
-class StateContext<T> {
-
-  StateContext(State<T> state, Context context) {
-    this.state = state;
-    this.context = context;
-  }
-  final State<T> state;
-  final Context context;
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    StateContext<?> that = (StateContext<?>) o;
-    return Objects.equals(state, that.state) && Objects.equals(context, that.context);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(state, context);
-  }
 }

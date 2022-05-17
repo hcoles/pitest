@@ -3,10 +3,9 @@ package org.pitest.sequence;
 import java.util.IdentityHashMap;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
-public class Context {
+public final class Context {
 
   private final boolean debug;
   private final Map<Slot,Object> slots;
@@ -46,11 +45,11 @@ public class Context {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (!(o instanceof Context)) {
       return false;
     }
     Context context = (Context) o;
-    return debug == context.debug && Objects.equals(slots, context.slots);
+    return slots.equals(context.slots);
   }
 
   @Override
