@@ -178,11 +178,6 @@ class NFASequenceMatcher<T> implements SequenceMatcher<T> {
     addState(currentState, new StateContext<>(this.start, initialContext));
 
     for (final T t : sequence) {
-      // only initial context used in ignore checks
-      if (this.ignore.test(initialContext, t).result()) {
-        continue;
-      }
-
       final Set<StateContext<T>> nextStates = step(currentState, t);
       currentState = nextStates;
 
@@ -210,17 +205,22 @@ class NFASequenceMatcher<T> implements SequenceMatcher<T> {
 
   }
 
-  private static <T> Set<StateContext<T>> step(Set<StateContext<T>> currentState, T c) {
+  private Set<StateContext<T>> step(Set<StateContext<T>> currentState, T c) {
 
     final Set<StateContext<T>> nextStates = new HashSet<>();
     for (final StateContext<T> each : currentState) {
-      if (each.state instanceof Consume) {
-        final Consume<T> consume = (Consume<T>) each.state;
+      // not allowing ignore to update the context
+      if (this.ignore.test(each.context, c).result()) {
+        nextStates.add(each);
+      } else {
+        if (each.state instanceof Consume) {
+          final Consume<T> consume = (Consume<T>) each.state;
 
-        final Result<T> result = consume.c.test(each.context, c);
-        if (result.result()) {
-          // note, context updated here
-          addState(nextStates, new StateContext<>(consume.out, result.context()));
+          final Result<T> result = consume.c.test(each.context, c);
+          if (result.result()) {
+            // note, context updated here
+            addState(nextStates, new StateContext<>(consume.out, result.context()));
+          }
         }
       }
     }

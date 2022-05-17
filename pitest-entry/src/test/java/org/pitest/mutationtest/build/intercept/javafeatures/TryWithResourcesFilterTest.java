@@ -3,7 +3,6 @@ package org.pitest.mutationtest.build.intercept.javafeatures;
 import static org.junit.Assert.assertEquals;
 
 import com.example.trywithresources.LargeTryWithResources;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
