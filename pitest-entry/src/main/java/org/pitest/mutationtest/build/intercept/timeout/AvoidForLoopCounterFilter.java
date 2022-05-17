@@ -20,6 +20,7 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
 
 import java.util.Collection;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -28,8 +29,6 @@ import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
-import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
@@ -147,7 +146,9 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
   @Override
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
-    return FCollection.filter(mutations, Prelude.not(mutatesAForLoopCounter()));
+    return mutations.stream()
+            .filter(mutatesAForLoopCounter().negate())
+            .collect(Collectors.toList());
   }
 
   private Predicate<MutationDetails> mutatesAForLoopCounter() {

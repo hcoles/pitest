@@ -19,17 +19,16 @@ import static org.pitest.sequence.Result.result;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.pitest.bytecode.analysis.ClassTree;
-import org.pitest.bytecode.analysis.MethodMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
@@ -79,7 +78,7 @@ public class ForEachLoopFilter implements MutationInterceptor {
         .zeroOrMore(QueryStart.match(anyInstruction()))
         .then(labelNode(loopEnd.read()))
         .then(opCode(Opcodes.ALOAD))
-        .then(methodCallTo(ClassName.fromString("java/util/Iterator"), "hasNext").and(mutationPoint()))
+        .then(hasNextMethodCall().and(mutationPoint()))
         .then(aConditionalJumpTo(loopStart).and(mutationPoint()))
         .zeroOrMore(QueryStart.match(anyInstruction()));
   }
@@ -95,7 +94,7 @@ public class ForEachLoopFilter implements MutationInterceptor {
         .then(opCode(Opcodes.ASTORE))
         .then(aLabelNode(loopStart.write()))
         .then(opCode(Opcodes.ALOAD))
-        .then(methodCallTo(ClassName.fromString("java/util/Iterator"), "hasNext").and(mutationPoint()))
+        .then(hasNextMethodCall().and(mutationPoint()))
         .then(aConditionalJump().and(jumpsTo(loopEnd.write())).and(mutationPoint()))
         .then(opCode(Opcodes.ALOAD))
         .then(methodCallTo(ClassName.fromString("java/util/Iterator"), "next").and(mutationPoint()))
@@ -104,7 +103,6 @@ public class ForEachLoopFilter implements MutationInterceptor {
         .then(labelNode(loopEnd.read()))
         .zeroOrMore(QueryStart.match(anyInstruction()));
   }
-
 
   private static SequenceQuery<AbstractInsnNode> arrayConditionalAtEnd() {
     final Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
@@ -149,6 +147,9 @@ public class ForEachLoopFilter implements MutationInterceptor {
         .zeroOrMore(QueryStart.match(anyInstruction()));
   }
 
+  private static Match<AbstractInsnNode> hasNextMethodCall() {
+    return methodCallTo(ClassName.fromString("java/util/Iterator"), "hasNext");
+  }
 
   private static Match<AbstractInsnNode> aMethodCallReturningAnIterator() {
     return methodCallThatReturns(ClassName.fromClass(Iterator.class));
@@ -176,22 +177,31 @@ public class ForEachLoopFilter implements MutationInterceptor {
   @Override
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
-    return FCollection.filter(mutations, Prelude.not(mutatesIteratorLoopPlumbing()));
+    return mutations.stream().filter(mutatesIteratorLoopPlumbing().negate())
+            .collect(Collectors.toList());
   }
 
   private Predicate<MutationDetails> mutatesIteratorLoopPlumbing() {
     return a -> {
       final int instruction = a.getInstructionIndex();
-      final MethodTree method = currentClass.methods().stream()
-          .filter(MethodMatchers.forLocation(a.getId().getLocation()))
-          .findFirst()
-          .get();
+      final MethodTree method = currentClass.method(a.getId().getLocation()).get();
+
+      //performance hack
+      if (!mightContainForLoop(method.instructions())) {
+        return false;
+      }
+
       final AbstractInsnNode mutatedInstruction = method.instruction(instruction);
 
       Context context = Context.start(DEBUG);
       context = context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
       return ITERATOR_LOOP.matches(method.instructions(), context);
     };
+  }
+
+  private boolean mightContainForLoop(List<AbstractInsnNode> instructions) {
+    return instructions.stream()
+            .anyMatch(i -> hasNextMethodCall().or(opCode(Opcodes.ARRAYLENGTH)).test(null, i).result());
   }
 
   @Override
