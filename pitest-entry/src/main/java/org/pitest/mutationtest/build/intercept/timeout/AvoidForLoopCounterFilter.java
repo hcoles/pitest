@@ -12,13 +12,17 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.debug;
 import static org.pitest.bytecode.analysis.InstructionMatchers.gotoLabel;
 import static org.pitest.bytecode.analysis.InstructionMatchers.incrementsVariable;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
-import static org.pitest.bytecode.analysis.InstructionMatchers.isInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.jumpsTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.labelNode;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
+import static org.pitest.sequence.Result.result;
 
 import java.util.Collection;
+import java.util.IdentityHashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -40,6 +44,7 @@ import org.pitest.sequence.QueryStart;
 import org.pitest.sequence.SequenceMatcher;
 import org.pitest.sequence.SequenceQuery;
 import org.pitest.sequence.Slot;
+import org.pitest.sequence.SlotWrite;
 
 /**
  * Removes mutants that affect for loop counters as these have
@@ -56,9 +61,7 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
 
   private static final Slot<AbstractInsnNode> MUTATED_INSTRUCTION = Slot.create(AbstractInsnNode.class);
 
-  static final SequenceMatcher<AbstractInsnNode> MUTATED_FOR_COUNTER = QueryStart
-      .match(Match.<AbstractInsnNode>never())
-      .or(conditionalAtEnd())
+  static final SequenceMatcher<AbstractInsnNode> MUTATED_FOR_COUNTER = conditionalAtEnd()
       .or(conditionalAtStart())
       .compile(QueryParams.params(AbstractInsnNode.class)
         .withIgnores(IGNORE)
@@ -67,6 +70,7 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
 
 
   private ClassTree currentClass;
+  private Map<MethodTree, Set<AbstractInsnNode>> cache;
 
 
   private static SequenceQuery<AbstractInsnNode> conditionalAtEnd() {
@@ -130,7 +134,12 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
   }
 
   private static Match<AbstractInsnNode> targetInstruction(Slot<Integer> counterVariable) {
-    return incrementsVariable(counterVariable.read()).and(isInstruction(MUTATED_INSTRUCTION.read()));
+    return incrementsVariable(counterVariable.read())
+            .and(recordInstruction(MUTATED_INSTRUCTION.write()));
+  }
+
+  private static Match<AbstractInsnNode> recordInstruction(SlotWrite<AbstractInsnNode> slot) {
+    return (c,t) -> result(true, c.store(slot, t));
   }
 
   @Override
@@ -141,6 +150,7 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
   @Override
   public void begin(ClassTree clazz) {
     this.currentClass = clazz;
+    this.cache = new IdentityHashMap<>();
   }
 
   @Override
@@ -162,15 +172,25 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
         return false;
       }
 
-      Context context = Context.start(DEBUG);
-      context = context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
-      return MUTATED_FOR_COUNTER.matches(method.instructions(), context);
+      Set<AbstractInsnNode> loopIncrements = cache.computeIfAbsent(method, this::findLoopCounters);
+
+      return loopIncrements.contains(mutatedInstruction);
     };
+  }
+
+  private Set<AbstractInsnNode> findLoopCounters(MethodTree method) {
+    Context context = Context.start(DEBUG);
+    return MUTATED_FOR_COUNTER.contextMatches(method.instructions(), context).stream()
+            .map(c -> c.retrieve(MUTATED_INSTRUCTION.read()))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .collect(Collectors.toSet());
   }
 
   @Override
   public void end() {
     this.currentClass = null;
+    this.cache = null;
   }
 
 }

@@ -30,7 +30,7 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
 
   private static final boolean DEBUG = false;
 
-  // Looks fairly specifically for a conditional mutated to a unconditional
+  // Looks fairly specifically for a conditional mutated to an unconditional
   // rather than any always false condition
   static final SequenceMatcher<AbstractInsnNode> ALWAYS_FALSE = QueryStart
       .any(AbstractInsnNode.class)

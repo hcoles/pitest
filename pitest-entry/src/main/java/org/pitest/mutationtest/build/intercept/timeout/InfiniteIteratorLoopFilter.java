@@ -18,7 +18,6 @@ import org.pitest.bytecode.analysis.InstructionMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.sequence.Match;
 import org.pitest.sequence.QueryParams;
 import org.pitest.sequence.QueryStart;
 import org.pitest.sequence.SequenceMatcher;
@@ -32,9 +31,7 @@ public class InfiniteIteratorLoopFilter extends InfiniteLoopFilter {
 
   private static final boolean DEBUG = false;
 
-  static final SequenceMatcher<AbstractInsnNode> INFINITE_LOOP = QueryStart
-      .match(Match.<AbstractInsnNode>never())
-      .or(inifniteIteratorLoop())
+  static final SequenceMatcher<AbstractInsnNode> INFINITE_LOOP = inifniteIteratorLoop()
       .or(infiniteIteratorLoopJavac())
       .compile(QueryParams.params(AbstractInsnNode.class)
           .withIgnores(notAnInstruction())
