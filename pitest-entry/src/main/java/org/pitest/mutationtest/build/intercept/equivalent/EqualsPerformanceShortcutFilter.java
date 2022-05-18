@@ -17,7 +17,6 @@ import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.InstructionMatchers;
 import org.pitest.bytecode.analysis.MethodMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
-import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Location;
@@ -31,7 +30,7 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
 
   private static final boolean DEBUG = false;
 
-  // Looks fairly specifically for a conditional mutated to a unconditional
+  // Looks fairly specifically for a conditional mutated to an unconditional
   // rather than any always false condition
   static final SequenceMatcher<AbstractInsnNode> ALWAYS_FALSE = QueryStart
       .any(AbstractInsnNode.class)
@@ -60,9 +59,14 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
   @Override
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
-   final List<MutationDetails> doNotTouch = FCollection.filter(mutations, inEqualsMethod().negate());
+   final List<MutationDetails> doNotTouch = mutations.stream()
+           .filter(inEqualsMethod().negate())
+           .collect(Collectors.toList());
+
    if (doNotTouch.size() != mutations.size()) {
-     final List<MutationDetails> inEquals = FCollection.filter(mutations, inEqualsMethod());
+     final List<MutationDetails> inEquals = mutations.stream()
+           .filter(inEqualsMethod())
+           .collect(Collectors.toList());
      final List<MutationDetails> filtered = filter(inEquals, m);
      doNotTouch.addAll(filtered);
    }
@@ -83,10 +87,10 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
   }
 
   private Predicate<MutationDetails> isShortcutEquals(final MethodTree tree, final Mutater m) {
-    return a -> shortCutEquals(tree,a, m);
+    return a -> shortCutEquals(tree, a, m);
   }
 
-  private Boolean shortCutEquals(MethodTree tree, MutationDetails a, Mutater m) {
+  private boolean shortCutEquals(MethodTree tree, MutationDetails a, Mutater m) {
     if (!mutatesAConditionalJump(tree, a.getInstructionIndex())) {
       return false;
     }
@@ -102,7 +106,7 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
 
   private boolean mutatesAConditionalJump(MethodTree tree, int index) {
     final AbstractInsnNode mutatedInsns = tree.instruction(index);
-    return InstructionMatchers.aConditionalJump().test(null, mutatedInsns);
+    return InstructionMatchers.aConditionalJump().test(null, mutatedInsns).result();
   }
 
   private Predicate<MutationDetails> inEqualsMethod() {

@@ -2,7 +2,7 @@ package org.pitest.mutationtest.build.intercept.javafeatures;
 
 import static org.junit.Assert.assertEquals;
 
-import com.example.trywithresources.SimpleCloseCall;
+import com.example.trywithresources.LargeTryWithResources;
 import org.junit.Test;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
@@ -48,6 +48,16 @@ public class TryWithResourcesFilterTest {
   @Test
   public void doesNotFilterProgrammerAddedCloseCalls() {
     this.verifier.assertLeavesNMutants(3, "SimpleCloseCall");
+  }
+
+  @Test
+  public void filtersMultiResourceTries() {
+    this.verifier.assertLeavesNMutants(6, "LargeTryWithResources");
+  }
+
+  @Test
+  public void filtersMultiResourceTriesCurrentCompiler() {
+    this.verifier.assertLeavesNMutants(6, LargeTryWithResources.class);
   }
 
 }

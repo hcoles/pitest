@@ -22,7 +22,6 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.sequence.Match;
 import org.pitest.sequence.QueryParams;
 import org.pitest.sequence.QueryStart;
 import org.pitest.sequence.SequenceMatcher;
@@ -37,9 +36,7 @@ public class InfiniteForLoopFilter extends InfiniteLoopFilter {
 
   private static final boolean DEBUG = false;
 
-  static final SequenceMatcher<AbstractInsnNode> INFINITE_LOOP = QueryStart
-      .match(Match.<AbstractInsnNode>never())
-      .or(countingLoopWithoutWriteConditionalAtStart())
+  static final SequenceMatcher<AbstractInsnNode> INFINITE_LOOP = countingLoopWithoutWriteConditionalAtStart()
       .or(countingLoopWithoutWriteConditionAtEnd())
       .compile(QueryParams.params(AbstractInsnNode.class)
           .withIgnores(notAnInstruction())
