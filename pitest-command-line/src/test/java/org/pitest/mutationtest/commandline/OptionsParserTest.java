@@ -26,7 +26,6 @@ import static org.mockito.Mockito.when;
 import static org.pitest.mutationtest.config.ReportOptions.DEFAULT_CHILD_JVM_ARGS;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;

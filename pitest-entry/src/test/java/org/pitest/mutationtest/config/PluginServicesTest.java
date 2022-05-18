@@ -11,9 +11,7 @@ import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.mutationtest.filter.LimitNumberOfMutationsPerClassFilterFactory;
 import org.pitest.mutationtest.report.csv.CSVReportFactory;
 import org.pitest.plugin.Feature;
-import org.pitest.plugin.ProvidesFeature;
 
-import java.util.Collection;
 import java.util.function.Predicate;
 
 import static java.util.Arrays.asList;

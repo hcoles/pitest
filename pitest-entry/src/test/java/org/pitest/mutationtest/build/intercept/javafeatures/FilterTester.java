@@ -2,7 +2,6 @@ package org.pitest.mutationtest.build.intercept.javafeatures;
 
 import org.assertj.core.api.Condition;
 import org.assertj.core.api.SoftAssertions;
-import org.objectweb.asm.util.Textifier;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassByteArraySource;
