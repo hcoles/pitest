@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.intercept.javafeatures.FilterTester;
@@ -69,6 +70,31 @@ public class AvoidForLoopCounterTest {
     this.verifier.assertFiltersNMutationFromClass(1, SmallConstantLoop.class);
   }
 
+  @Test
+  public void shouldFilterReverseLoops() {
+    this.verifier.assertFiltersNMutationFromClass(1, ReverseLoop.class);
+  }
+
+  @Test
+  public void shouldFilterLoopsWithoutInitialiser() {
+    this.verifier.assertFiltersNMutationFromClass(1, ReverseNoInitialiseLoop.class);
+  }
+
+  static class ReverseNoInitialiseLoop {
+    void foo(int i) {
+      for (; i > 0; i--) {
+        System.out.println("" + i);
+      }
+    }
+  }
+
+  static class ReverseLoop {
+    void foo() {
+      for (int i = 9; i > 0; i--) {
+        System.out.println("" + i);
+      }
+    }
+  }
 
   static class LessThanLoop {
     void foo() {

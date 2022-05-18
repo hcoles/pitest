@@ -3,6 +3,7 @@ package org.pitest.sequence;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SequenceQuery<T> {
 
@@ -151,58 +152,78 @@ class NFASequenceMatcher<T> implements SequenceMatcher<T> {
 
   @Override
   public boolean matches(List<T> sequence) {
-    return matches(sequence, Context.start(sequence, this.debug));
+    return matches(sequence, Context.start(this.debug));
   }
 
   @Override
-  public boolean matches(List<T> sequence, Context<T> context) {
-    Set<State<T>> currentState = new HashSet<>();
-    addstate(currentState, this.start);
+  public boolean matches(List<T> sequence, Context initialContext) {
+    Set<StateContext<T>> currentState = run(sequence, initialContext);
+    return currentState.stream()
+            .map(c -> c.state)
+            .anyMatch(s -> s != null && s == EndMatch.MATCH);
+  }
+
+  @Override
+  public List<Context> contextMatches(List<T> sequence, Context initialContext) {
+    Set<StateContext<T>> currentState = run(sequence, initialContext);
+    return currentState.stream()
+            .filter(s -> s.state != null && s.state == EndMatch.MATCH)
+            .map(c -> c.context)
+            .collect(Collectors.toList());
+  }
+
+  private Set<StateContext<T>> run(List<T> sequence, Context initialContext) {
+    Set<StateContext<T>> currentState = new HashSet<>();
+    addState(currentState, new StateContext<>(this.start, initialContext));
 
     for (final T t : sequence) {
-      context.moveForward();
-
-      if (this.ignore.test(context, t)) {
+      // only initial context used in ignore checks
+      if (this.ignore.test(initialContext, t).result()) {
         continue;
       }
 
-      final Set<State<T>> nextStates = step(context, currentState, t);
+      final Set<StateContext<T>> nextStates = step(currentState, t);
       currentState = nextStates;
+
     }
-    return isMatch(currentState);
+    return currentState;
   }
 
 
-  private static <T> void addstate(Set<State<T>> set, State<T> state) {
-    if (state == null) {
-      return;
-    }
-    if (state instanceof Split) {
-      final Split<T> split = (Split<T>) state;
-      addstate(set, split.out1);
-      addstate(set, split.out2);
+  private static <T> void addState(Set<StateContext<T>> set, StateContext<T> state) {
+
+    if (state.state instanceof Split) {
+      final Split<T> split = (Split<T>) state.state;
+      if (split.out1 != null) {
+        addState(set, new StateContext<T>(split.out1, state.context));
+      }
+      if (split.out2 != null) {
+        addState(set, new StateContext<T>(split.out2, state.context));
+      }
     } else {
       set.add(state);
     }
 
   }
 
-  private static <T> Set<State<T>> step(Context<T> context, Set<State<T>> currentState, T c) {
+  private static <T> Set<StateContext<T>> step(Set<StateContext<T>> currentState, T c) {
 
-    final Set<State<T>> nextStates = new HashSet<>();
-    for (final State<T> each : currentState) {
-      if (each instanceof Consume) {
-        final Consume<T> consume = (Consume<T>) each;
-        if (consume.c.test(context, c)) {
-          addstate(nextStates, consume.out);
+    // adhoc testing suggests setting the initial HashSet size saves 15% of analysis
+    // execution time
+    final Set<StateContext<T>> nextStates = new HashSet<>(currentState.size());
+
+    for (final StateContext<T> each : currentState) {
+      if (each.state instanceof Consume) {
+        final Consume<T> consume = (Consume<T>) each.state;
+
+        final Result<T> result = consume.c.test(each.context, c);
+        if (result.result()) {
+          // note, context updated here
+          addState(nextStates, new StateContext<>(consume.out, result.context()));
         }
       }
     }
     return nextStates;
-  }
-
-  private static <T> boolean isMatch(Set<State<T>> currentState) {
-    return currentState.contains(EndMatch.MATCH);
   }
 
 }
@@ -212,17 +233,14 @@ interface State<T> {
 }
 
 class Consume<T> implements State<T> {
-  final Match< T> c;
-  final State<T>  out;
+  final Match<T> c;
+  final State<T> out;
 
   Consume(Match<T> c, State<T> out) {
     this.c = c;
     this.out = out;
   }
 
-  boolean matches(Context<T> context, T t) {
-    return this.c.test(context, t);
-  }
 }
 
 class Split<T> implements State<T> {

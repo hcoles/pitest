@@ -12,6 +12,7 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
 import static org.pitest.bytecode.analysis.InstructionMatchers.variableMatches;
+import static org.pitest.sequence.Result.result;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -151,8 +152,8 @@ class HardCodedTrueEquivalentFilter implements MutationInterceptor {
       }
 
       private boolean boxedTrue(int instruction, MethodTree method) {
-          final Context<AbstractInsnNode> context = Context.start(method.instructions(), false);
-          context.store(MUTATED_INSTRUCTION.write(), method.instruction(instruction));
+          Context context = Context.start();
+          context = context.store(MUTATED_INSTRUCTION.write(), method.instruction(instruction));
           return EQUIVALENT_TRUE.matches(method.instructions(), context);
       }
     };
@@ -295,7 +296,7 @@ class EmptyReturnsFilter implements MutationInterceptor {
   }
 
   private static Match<AbstractInsnNode> isZeroConstant() {
-      return (context,node) -> ZERO_CONSTANTS.contains(node.getOpcode());
+      return (context,node) -> result(ZERO_CONSTANTS.contains(node.getOpcode()), context);
   }
   
   private Predicate<MutationDetails> isEquivalent(Mutater m) {
@@ -318,8 +319,8 @@ class EmptyReturnsFilter implements MutationInterceptor {
 
       private Boolean returnsZeroValue(SequenceMatcher<AbstractInsnNode> sequence, MethodTree method,
                                        int mutatedInstruction) {
-          final Context<AbstractInsnNode> context = Context.start(method.instructions(), false);
-          context.store(MUTATED_INSTRUCTION.write(), method.instruction(mutatedInstruction));
+          Context context = Context.start();
+          context = context.store(MUTATED_INSTRUCTION.write(), method.instruction(mutatedInstruction));
           return sequence.matches(method.instructions(), context);
       }
 
@@ -354,9 +355,9 @@ class EmptyReturnsFilter implements MutationInterceptor {
     return (c,node) -> {
       if (node instanceof MethodInsnNode ) {
         final MethodInsnNode call = (MethodInsnNode) node;
-        return Type.getArgumentTypes(call.desc).length == 0;
+        return result(Type.getArgumentTypes(call.desc).length == 0, c);
       }
-      return false;
+      return result(false, c);
     };
   }
 

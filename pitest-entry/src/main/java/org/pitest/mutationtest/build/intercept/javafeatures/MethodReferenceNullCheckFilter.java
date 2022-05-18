@@ -12,6 +12,7 @@ import java.util.function.Predicate;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
@@ -77,9 +78,12 @@ public class MethodReferenceNullCheckFilter implements MutationInterceptor {
           .get();
 
       final AbstractInsnNode mutatedInstruction = method.instruction(instruction);
-
-      final Context<AbstractInsnNode> context = Context.start(method.instructions(), DEBUG);
-      context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
+      // performance hack
+      if (!(mutatedInstruction instanceof MethodInsnNode)) {
+        return false;
+      }
+      Context context = Context.start(DEBUG);
+      context = context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
       return NULL_CHECK.matches(method.instructions(), context);
     };
   }

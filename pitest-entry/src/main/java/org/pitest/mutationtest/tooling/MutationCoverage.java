@@ -36,7 +36,6 @@ import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationResultListener;
-import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationAnalysisUnit;
 import org.pitest.mutationtest.build.MutationGrouper;
 import org.pitest.mutationtest.build.MutationInterceptor;
@@ -163,7 +162,7 @@ public class MutationCoverage {
             engine, args, allInterceptors());
     this.timings.registerEnd(Timings.Stage.BUILD_MUTATION_TESTS);
 
-    LOG.info("Created  " + tus.size() + " mutation test units");
+    LOG.info("Created  " + tus.size() + " mutation test units" );
 
     recordClassPath(history, coverageData);
 
@@ -202,13 +201,13 @@ public class MutationCoverage {
     // an initial run here we are able to skip coverage generation when no mutants
     // are found, e.g if pitest is being run against diffs.
     this.timings.registerStart(Timings.Stage.MUTATION_PRE_SCAN);
-    List<MutationAnalysisUnit> mutants = buildMutationTests(new NoCoverage(), new NullHistoryStore(), engine, args, noReports());
+    List<MutationAnalysisUnit> mutants = buildMutationTests(new NoCoverage(), new NullHistoryStore(), engine, args, noReportsOrFilters());
     this.timings.registerEnd(Timings.Stage.MUTATION_PRE_SCAN);
     return mutants;
   }
 
-  private Predicate<MutationInterceptor> noReports() {
-    return i -> !i.type().equals(InterceptorType.REPORT);
+  private Predicate<MutationInterceptor> noReportsOrFilters() {
+    return i -> i.type().includeInPrescan();
   }
 
 

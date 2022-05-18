@@ -14,21 +14,24 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallThatRet
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
-import static org.pitest.bytecode.analysis.InstructionMatchers.recordTarget;
+import static org.pitest.sequence.Result.result;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.pitest.bytecode.analysis.ClassTree;
-import org.pitest.bytecode.analysis.MethodMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
@@ -45,23 +48,20 @@ public class ForEachLoopFilter implements MutationInterceptor {
 
   private static final boolean DEBUG = false;
 
-  private static final Slot<AbstractInsnNode> MUTATED_INSTRUCTION = Slot.create(AbstractInsnNode.class);
-  private static final Slot<Boolean> FOUND = Slot.create(Boolean.class);
+  private static final Slot<List<AbstractInsnNode>> LOOP_INSTRUCTIONS = Slot.createList(AbstractInsnNode.class);
 
-
-  private static final SequenceMatcher<AbstractInsnNode> ITERATOR_LOOP = QueryStart
-      .match(Match.<AbstractInsnNode>never())
-      .or(conditionalAtStart())
+  private static final SequenceMatcher<AbstractInsnNode> ITERATOR_LOOP =
+       conditionalAtStart()
       .or(conditionalAtEnd())
       .or(arrayConditionalAtEnd())
       .or(arrayConditionalAtStart())
-      .then(containMutation(FOUND))
       .compile(QueryParams.params(AbstractInsnNode.class)
         .withIgnores(notAnInstruction())
         .withDebug(DEBUG)
         );
 
   private ClassTree currentClass;
+  private Map<MethodTree, Set<AbstractInsnNode>> cache;
 
 
   private static SequenceQuery<AbstractInsnNode> conditionalAtEnd() {
@@ -79,7 +79,7 @@ public class ForEachLoopFilter implements MutationInterceptor {
         .zeroOrMore(QueryStart.match(anyInstruction()))
         .then(labelNode(loopEnd.read()))
         .then(opCode(Opcodes.ALOAD))
-        .then(methodCallTo(ClassName.fromString("java/util/Iterator"), "hasNext").and(mutationPoint()))
+        .then(hasNextMethodCall().and(mutationPoint()))
         .then(aConditionalJumpTo(loopStart).and(mutationPoint()))
         .zeroOrMore(QueryStart.match(anyInstruction()));
   }
@@ -95,7 +95,7 @@ public class ForEachLoopFilter implements MutationInterceptor {
         .then(opCode(Opcodes.ASTORE))
         .then(aLabelNode(loopStart.write()))
         .then(opCode(Opcodes.ALOAD))
-        .then(methodCallTo(ClassName.fromString("java/util/Iterator"), "hasNext").and(mutationPoint()))
+        .then(hasNextMethodCall().and(mutationPoint()))
         .then(aConditionalJump().and(jumpsTo(loopEnd.write())).and(mutationPoint()))
         .then(opCode(Opcodes.ALOAD))
         .then(methodCallTo(ClassName.fromString("java/util/Iterator"), "next").and(mutationPoint()))
@@ -104,7 +104,6 @@ public class ForEachLoopFilter implements MutationInterceptor {
         .then(labelNode(loopEnd.read()))
         .zeroOrMore(QueryStart.match(anyInstruction()));
   }
-
 
   private static SequenceQuery<AbstractInsnNode> arrayConditionalAtEnd() {
     final Slot<LabelNode> loopStart = Slot.create(LabelNode.class);
@@ -149,20 +148,24 @@ public class ForEachLoopFilter implements MutationInterceptor {
         .zeroOrMore(QueryStart.match(anyInstruction()));
   }
 
+  private static Match<AbstractInsnNode> hasNextMethodCall() {
+    return methodCallTo(ClassName.fromString("java/util/Iterator"), "hasNext");
+  }
 
   private static Match<AbstractInsnNode> aMethodCallReturningAnIterator() {
     return methodCallThatReturns(ClassName.fromClass(Iterator.class));
   }
 
   private static Match<AbstractInsnNode> mutationPoint() {
-    return recordTarget(MUTATED_INSTRUCTION.read(), FOUND.write());
+    return (c,t) -> {
+      c.retrieve(LOOP_INSTRUCTIONS.read()).get().add(t);
+      return result(true, c);
+    };
   }
-
 
   private static Match<AbstractInsnNode> containMutation(final Slot<Boolean> found) {
-   return (c, t) -> c.retrieve(found.read()).isPresent();
+   return (c, t) -> result(c.retrieve(found.read()).isPresent(), c);
   }
-
 
   @Override
   public InterceptorType type() {
@@ -172,31 +175,49 @@ public class ForEachLoopFilter implements MutationInterceptor {
   @Override
   public void begin(ClassTree clazz) {
     this.currentClass = clazz;
+    this.cache = new IdentityHashMap<>();
   }
 
   @Override
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
-    return FCollection.filter(mutations, Prelude.not(mutatesIteratorLoopPlumbing()));
+    return mutations.stream().filter(mutatesIteratorLoopPlumbing().negate())
+            .collect(Collectors.toList());
   }
 
   private Predicate<MutationDetails> mutatesIteratorLoopPlumbing() {
     return a -> {
       final int instruction = a.getInstructionIndex();
-      final MethodTree method = currentClass.methods().stream()
-          .filter(MethodMatchers.forLocation(a.getId().getLocation()))
-          .findFirst()
-          .get();
+      final MethodTree method = currentClass.method(a.getId().getLocation()).get();
+
+      //performance hack
+      if (!mightContainForLoop(method.instructions())) {
+        return false;
+      }
+
       final AbstractInsnNode mutatedInstruction = method.instruction(instruction);
 
-      final Context<AbstractInsnNode> context = Context.start(method.instructions(), DEBUG);
-      context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
-      return ITERATOR_LOOP.matches(method.instructions(), context);
+      Set<AbstractInsnNode> toAvoid = cache.computeIfAbsent(method, this::findLoopInstructions);
+
+      return toAvoid.contains(mutatedInstruction);
     };
+  }
+
+  private Set<AbstractInsnNode> findLoopInstructions(MethodTree method) {
+    Context context = Context.start(DEBUG).store(LOOP_INSTRUCTIONS.write(), new ArrayList<>());
+    return ITERATOR_LOOP.contextMatches(method.instructions(), context).stream()
+            .flatMap(c -> c.retrieve(LOOP_INSTRUCTIONS.read()).get().stream())
+            .collect(Collectors.toSet());
+  }
+
+  private boolean mightContainForLoop(List<AbstractInsnNode> instructions) {
+    return instructions.stream()
+            .anyMatch(i -> hasNextMethodCall().or(opCode(Opcodes.ARRAYLENGTH)).test(null, i).result());
   }
 
   @Override
   public void end() {
     this.currentClass = null;
+    this.cache = null;
   }
 }
