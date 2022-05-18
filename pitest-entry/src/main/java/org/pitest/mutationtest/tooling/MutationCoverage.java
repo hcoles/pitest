@@ -162,7 +162,7 @@ public class MutationCoverage {
             engine, args, allInterceptors());
     this.timings.registerEnd(Timings.Stage.BUILD_MUTATION_TESTS);
 
-    LOG.info("Created  " + tus.size() + " mutation test units");
+    LOG.info("Created  " + tus.size() + " mutation test units" );
 
     recordClassPath(history, coverageData);
 
