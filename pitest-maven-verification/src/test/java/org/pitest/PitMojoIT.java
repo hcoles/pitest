@@ -24,6 +24,7 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestName;
 import org.pitest.support.DirectoriesOnlyWalker;
 import org.pitest.testapi.execute.Pitest;
+import org.pitest.util.CurrentRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,7 @@ import java.util.Properties;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeFalse;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * @author Stefan Penndorf <stefan.penndorf@gmail.com>
@@ -55,7 +57,7 @@ public class PitMojoIT {
 
   @Before
   public void beforeEachTest() {
-    LOGGER.info("running test '{}'", testName.getMethodName());
+    LOGGER.info("running test '{}' with {} ", testName.getMethodName(), VERSION);
     startTime = System.currentTimeMillis();
   }
 
@@ -389,6 +391,27 @@ public class PitMojoIT {
                     "<mutation detected='true' status='KILLED' numberOfTestsRun='1'><sourceFile>SomeClass.java</sourceFile>");
     assertThat(actual).doesNotContain("status='NO_COVERAGE'");
     assertThat(actual).doesNotContain("status='RUN_ERROR'");
+  }
+
+  @Test
+  // note this test depends on the junit5 plugin
+  public void shouldWorkWithQuarkus() throws Exception {
+    assumeTrue(CurrentRuntime.version() >= 11);
+
+    File testDir = prepare("/pit-quarkus");
+    verifier.executeGoal("test");
+    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+
+    String actual = readResults(testDir);
+    assertThat(actual)
+            .contains(
+                    "<mutation detected='false' status='SURVIVED' numberOfTestsRun='2'>" +
+                            "<sourceFile>ExampleController.java</sourceFile>");
+
+    assertThat(actual)
+            .contains(
+                    "<mutation detected='true' status='KILLED' numberOfTestsRun='2'><sourceFile>ExampleController.java</sourceFile>");
+
   }
 
 

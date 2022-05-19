@@ -87,7 +87,7 @@ public class MutationTestWorker {
 
   private void processMutation(final Reporter r,
       final TimeOutDecoratedTestSource testSource,
-      final MutationDetails mutationDetails) throws IOException {
+      final MutationDetails mutationDetails) {
 
     final MutationIdentifier mutationId = mutationDetails.getId();
     final Mutant mutatedClass = this.mutater.getMutation(mutationId);
@@ -141,12 +141,18 @@ public class MutationTestWorker {
 
     final Container c = createNewContainer();
     final long t0 = System.currentTimeMillis();
+
+    // Some frameworks (eg quarkus) run tests in non delegating
+    // classloaders. Need to make sure these are transformed too
+    CatchNewClassLoadersTransformer.setMutant(mutatedClass.getDetails().getClassName().asInternalName(), mutatedClass.getBytes());
+
     if (this.hotswap.apply(mutationId.getClassName(), this.loader,
         mutatedClass.getBytes())) {
       if (DEBUG) {
         LOG.fine("replaced class with mutant in "
             + (System.currentTimeMillis() - t0) + " ms");
       }
+
       mutationDetected = doTestsDetectMutation(c, relevantTests);
     } else {
       LOG.warning("Mutation " + mutationId + " was not viable ");

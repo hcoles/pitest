@@ -16,7 +16,6 @@ package org.pitest.functional.prelude;
 
 import java.io.PrintStream;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -54,12 +53,6 @@ public abstract class Prelude {
     return new Or<>(ps);
   }
 
-  public static <A> Consumer<A> accumulateTo(
-      final Collection<A> collection) {
-    return collection::add;
-
-  }
-
   public static <A, B> Consumer<A> putToMap(final Map<A, B> map,
       final B value) {
     return key -> map.put(key, value);
@@ -92,10 +85,6 @@ public abstract class Prelude {
 
   public static <T> Consumer<T> printlnWith(final T t) {
     return a -> System.out.println(t + " : " + a);
-  }
-
-  public static <T extends Number> Predicate<T> isGreaterThan(final T value) {
-    return o -> o.longValue() > value.longValue();
   }
 
   public static <T> Function<T, Iterable<T>> asList(final Class<T> type) {
