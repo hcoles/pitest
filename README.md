@@ -8,6 +8,12 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.8.0
+
+* #1017 - Improve static infinite loop detection
+* #1020 - Rework NFA matching library and try with resource filtering
+* #1022 - Support quarkus test
+
 ### 1.7.6
 
 * #1008 Upgrade ASM for initial Java 19 support
