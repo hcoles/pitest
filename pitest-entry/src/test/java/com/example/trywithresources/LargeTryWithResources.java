@@ -5,6 +5,7 @@ import java.io.IOException;
 
 public class LargeTryWithResources {
     public static void main(String[] args) {
+        System.out.print("before");
         try (ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
              ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
              ByteArrayOutputStream baos3 = new ByteArrayOutputStream();
@@ -18,6 +19,7 @@ public class LargeTryWithResources {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.print("after");
 
     }
 }

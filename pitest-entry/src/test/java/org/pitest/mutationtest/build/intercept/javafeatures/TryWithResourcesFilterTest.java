@@ -57,7 +57,7 @@ public class TryWithResourcesFilterTest {
 
   @Test
   public void filtersMultiResourceTriesCurrentCompiler() {
-    this.verifier.assertLeavesNMutants(6, LargeTryWithResources.class);
+    this.verifier.assertLeavesNMutants(8, LargeTryWithResources.class);
   }
 
 }
