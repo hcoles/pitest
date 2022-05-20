@@ -79,6 +79,8 @@ public class MutationTestMinion {
 
       final ClassLoader loader = IsolationUtils.getContextClassLoader();
 
+      CatchNewClassLoadersTransformer.setLoader(loader);
+
       final ClassByteArraySource byteSource = new CachingByteArraySource(new ClassloaderByteArraySource(
           loader), CACHE_SIZE);
 
@@ -126,6 +128,7 @@ public class MutationTestMinion {
     LOG.fine(() -> "minion started");
 
     enablePowerMockSupport();
+    HotSwapAgent.addTransformer(new CatchNewClassLoadersTransformer());
 
     final int port = Integer.parseInt(args[0]);
 

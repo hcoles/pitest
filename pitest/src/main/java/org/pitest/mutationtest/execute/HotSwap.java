@@ -21,6 +21,9 @@ class HotSwap implements F3<ClassName, ClassLoader, byte[], Boolean> {
   public Boolean apply(final ClassName clazzName, final ClassLoader loader,
       final byte[] b) {
     try {
+
+      System.out.println("Hotswap loader " + loader);
+
       restoreLastClass(this.byteSource, clazzName, loader);
       this.lastUsedLoader = loader;
       Class<?> clazz = Class.forName(clazzName.asJavaName(), false, loader);
