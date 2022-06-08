@@ -10,6 +10,7 @@ import org.pitest.verifier.interceptors.VerifierStart;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
 import static org.pitest.bytecode.analysis.OpcodeMatchers.ARETURN;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.GOTO;
 import static org.pitest.bytecode.analysis.OpcodeMatchers.IADD;
 
 public class StringSwitchTest {
@@ -66,12 +67,27 @@ public class StringSwitchTest {
     @Test
     public void filtersSmallSideEffectingSwitches() {
         v.forClass(SmallStringSwitch.class)
-                .forCodeMatching( methodCallTo(ClassName.fromClass(String.class), "hashCode").asPredicate() )
+                .forCodeMatching(isA(JumpInsnNode.class).and(GOTO.negate()).asPredicate() )
                 .mutantsAreGenerated()
                 .allMutantsAreFiltered()
                 .verify();
 
         v.forClass(SmallStringSwitch.class)
+                .forCodeMatching(IADD.asPredicate())
+                .mutantsAreGenerated()
+                .noMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void filtersMultipleSwitchesInSingleMethod() {
+        v.forClass(MultipleSwitches.class)
+                .forCodeMatching(isA(JumpInsnNode.class).and(GOTO.negate()).asPredicate() )
+                .mutantsAreGenerated()
+                .allMutantsAreFiltered()
+                .verify();
+
+        v.forClass(MultipleSwitches.class)
                 .forCodeMatching(IADD.asPredicate())
                 .mutantsAreGenerated()
                 .noMutantsAreFiltered()
@@ -134,6 +150,45 @@ class SmallStringSwitch {
                 a = a + 1;
                 break;
             case "Coo":
+                a = a + 10;
+                // fall through
+            default:
+                a = a + 2;
+        }
+        return a;
+    }
+}
+
+class MultipleSwitches {
+    public int target(String in) {
+        int a = 0;
+        switch (in) {
+            case "Boo":
+                a = a + 1;
+                break;
+            case "Coo":
+                a = a + 10;
+                // fall through
+            default:
+                a = a + 2;
+        }
+
+        switch (in) {
+            case "A":
+                a = a + 1;
+                break;
+            case "B":
+                a = a + 10;
+                // fall through
+            default:
+                a = a + 2;
+        }
+
+        switch (in) {
+            case "C":
+                a = a + 1;
+                break;
+            case "D":
                 a = a + 10;
                 // fall through
             default:
