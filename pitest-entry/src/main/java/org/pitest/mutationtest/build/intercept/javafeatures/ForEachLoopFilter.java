@@ -13,7 +13,13 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.labelNode;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallThatReturns;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
-import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ALOAD;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ARRAYLENGTH;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ASTORE;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.GOTO;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ICONST_0;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ILOAD;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ISTORE;
 import static org.pitest.sequence.Result.result;
 
 import java.util.ArrayList;
@@ -26,7 +32,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.pitest.bytecode.analysis.ClassTree;
@@ -71,14 +76,14 @@ public class ForEachLoopFilter implements MutationInterceptor {
         .any(AbstractInsnNode.class)
         .zeroOrMore(QueryStart.match(anyInstruction()))
         .then(aMethodCallReturningAnIterator().and(mutationPoint()))
-        .then(opCode(Opcodes.ASTORE))
+        .then(ASTORE)
         .then(gotoLabel(loopEnd.write()))
         .then(aLabelNode(loopStart.write()))
-        .then(opCode(Opcodes.ALOAD))
+        .then(ALOAD)
         .then(methodCallTo(ClassName.fromString("java/util/Iterator"), "next").and(mutationPoint()))
         .zeroOrMore(QueryStart.match(anyInstruction()))
         .then(labelNode(loopEnd.read()))
-        .then(opCode(Opcodes.ALOAD))
+        .then(ALOAD)
         .then(hasNextMethodCall().and(mutationPoint()))
         .then(aConditionalJumpTo(loopStart).and(mutationPoint()))
         .zeroOrMore(QueryStart.match(anyInstruction()));
@@ -92,15 +97,15 @@ public class ForEachLoopFilter implements MutationInterceptor {
         .any(AbstractInsnNode.class)
         .zeroOrMore(QueryStart.match(anyInstruction()))
         .then(aMethodCallReturningAnIterator().and(mutationPoint()))
-        .then(opCode(Opcodes.ASTORE))
+        .then(ASTORE)
         .then(aLabelNode(loopStart.write()))
-        .then(opCode(Opcodes.ALOAD))
+        .then(ALOAD)
         .then(hasNextMethodCall().and(mutationPoint()))
         .then(aConditionalJump().and(jumpsTo(loopEnd.write())).and(mutationPoint()))
-        .then(opCode(Opcodes.ALOAD))
+        .then(ALOAD)
         .then(methodCallTo(ClassName.fromString("java/util/Iterator"), "next").and(mutationPoint()))
         .zeroOrMore(QueryStart.match(anyInstruction()))
-        .then(opCode(Opcodes.GOTO).and(jumpsTo(loopStart.read())))
+        .then(GOTO.and(jumpsTo(loopStart.read())))
         .then(labelNode(loopEnd.read()))
         .zeroOrMore(QueryStart.match(anyInstruction()));
   }
@@ -112,17 +117,17 @@ public class ForEachLoopFilter implements MutationInterceptor {
     return QueryStart
         .any(AbstractInsnNode.class)
         .zeroOrMore(QueryStart.match(anyInstruction()))
-        .then(opCode(Opcodes.ARRAYLENGTH).and(mutationPoint()))
-        .then(opCode(Opcodes.ISTORE))
-        .then(opCode(Opcodes.ICONST_0).and(mutationPoint()))
+        .then(ARRAYLENGTH.and(mutationPoint()))
+        .then(ISTORE)
+        .then(ICONST_0.and(mutationPoint()))
         .then(anIStore(counter.write()).and(debug("store")))
         .then(gotoLabel(loopEnd.write()))
         .then(aLabelNode(loopStart.write()))
         .zeroOrMore(QueryStart.match(anyInstruction()))
         .then(incrementsVariable(counter.read()).and(mutationPoint()))
         .then(labelNode(loopEnd.read()))
-        .then(opCode(Opcodes.ILOAD))
-        .then(opCode(Opcodes.ILOAD))
+        .then(ILOAD)
+        .then(ILOAD)
         .then(aConditionalJumpTo(loopStart).and(mutationPoint()))
         .zeroOrMore(QueryStart.match(anyInstruction()));
   }
@@ -134,17 +139,17 @@ public class ForEachLoopFilter implements MutationInterceptor {
     return QueryStart
         .any(AbstractInsnNode.class)
         .zeroOrMore(QueryStart.match(anyInstruction()))
-        .then(opCode(Opcodes.ARRAYLENGTH).and(mutationPoint()))
-        .then(opCode(Opcodes.ISTORE))
-        .then(opCode(Opcodes.ICONST_0).and(mutationPoint()))
+        .then(ARRAYLENGTH.and(mutationPoint()))
+        .then(ISTORE)
+        .then(ICONST_0.and(mutationPoint()))
         .then(anIStore(counter.write()).and(debug("store")))
         .then(aLabelNode(loopStart.write()))
-        .then(opCode(Opcodes.ILOAD))
-        .then(opCode(Opcodes.ILOAD))
+        .then(ILOAD)
+        .then(ILOAD)
         .then(aConditionalJump().and(jumpsTo(loopEnd.write())).and(mutationPoint()))
         .zeroOrMore(QueryStart.match(anyInstruction()))
         .then(incrementsVariable(counter.read()).and(mutationPoint()))
-        .then(opCode(Opcodes.GOTO).and(jumpsTo(loopStart.read())))
+        .then(GOTO.and(jumpsTo(loopStart.read())))
         .zeroOrMore(QueryStart.match(anyInstruction()));
   }
 
@@ -161,10 +166,6 @@ public class ForEachLoopFilter implements MutationInterceptor {
       c.retrieve(LOOP_INSTRUCTIONS.read()).get().add(t);
       return result(true, c);
     };
-  }
-
-  private static Match<AbstractInsnNode> containMutation(final Slot<Boolean> found) {
-   return (c, t) -> result(c.retrieve(found.read()).isPresent(), c);
   }
 
   @Override
@@ -212,7 +213,7 @@ public class ForEachLoopFilter implements MutationInterceptor {
 
   private boolean mightContainForLoop(List<AbstractInsnNode> instructions) {
     return instructions.stream()
-            .anyMatch(i -> hasNextMethodCall().or(opCode(Opcodes.ARRAYLENGTH)).test(null, i).result());
+            .anyMatch(i -> hasNextMethodCall().or(ARRAYLENGTH).test(null, i).result());
   }
 
   @Override

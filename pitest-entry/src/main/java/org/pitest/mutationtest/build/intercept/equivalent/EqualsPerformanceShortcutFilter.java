@@ -3,7 +3,9 @@ package org.pitest.mutationtest.build.intercept.equivalent;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.debug;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
-import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ALOAD;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.GOTO;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.POP2;
 
 import java.util.Collection;
 import java.util.List;
@@ -11,7 +13,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.InstructionMatchers;
@@ -34,10 +35,10 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
   // rather than any always false condition
   static final SequenceMatcher<AbstractInsnNode> ALWAYS_FALSE = QueryStart
       .any(AbstractInsnNode.class)
-      .then(opCode(Opcodes.ALOAD))
-      .then(opCode(Opcodes.ALOAD))
-      .then(opCode(Opcodes.POP2))
-      .then(opCode(Opcodes.GOTO).and(debug("goto")))
+      .then(ALOAD)
+      .then(ALOAD)
+      .then(POP2)
+      .then(GOTO.and(debug("goto")))
       .zeroOrMore(QueryStart.match(anyInstruction()))
       .compile(QueryParams.params(AbstractInsnNode.class)
           .withIgnores(notAnInstruction())

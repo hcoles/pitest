@@ -4,13 +4,13 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
-import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.INVOKEDYNAMIC;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.POP;
 
 import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.pitest.bytecode.analysis.ClassTree;
@@ -42,8 +42,8 @@ public class MethodReferenceNullCheckFilter implements MutationInterceptor {
   static final SequenceMatcher<AbstractInsnNode> NULL_CHECK = QueryStart
       .any(AbstractInsnNode.class)
       .then(methodCallTo(ClassName.fromClass(Objects.class), "requireNonNull").and(isInstruction(MUTATED_INSTRUCTION.read())))
-      .then(opCode(Opcodes.POP))
-      .then(opCode(Opcodes.INVOKEDYNAMIC))
+      .then(POP)
+      .then(INVOKEDYNAMIC)
       .zeroOrMore(QueryStart.match(anyInstruction()))
       .compile(QueryParams.params(AbstractInsnNode.class)
           .withIgnores(notAnInstruction())

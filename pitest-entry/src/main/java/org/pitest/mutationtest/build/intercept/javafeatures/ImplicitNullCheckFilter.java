@@ -5,12 +5,11 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
-import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.POP;
 
 import java.util.Collection;
 import java.util.function.Predicate;
 
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
@@ -38,7 +37,7 @@ public class ImplicitNullCheckFilter implements MutationInterceptor {
   static final SequenceMatcher<AbstractInsnNode> GET_CLASS_NULL_CHECK = QueryStart
       .any(AbstractInsnNode.class)
       .then(methodCallTo(ClassName.fromClass(Object.class), "getClass").and(isInstruction(MUTATED_INSTRUCTION.read())))
-      .then(opCode(Opcodes.POP)) // immediate discard
+      .then(POP) // immediate discard
       .then(isA(LabelNode.class).negate()) // use presence of a label to indicate this was a programmer call to getClass
       .zeroOrMore(QueryStart.match(anyInstruction()))
       .compile(QueryParams.params(AbstractInsnNode.class)

@@ -7,11 +7,10 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.jumpsTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallThatReturns;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
-import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ASTORE;
 
 import java.util.Iterator;
 
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.pitest.bytecode.analysis.InstructionMatchers;
@@ -63,7 +62,7 @@ public class InfiniteIteratorLoopFilter extends InfiniteLoopFilter {
     return QueryStart
         .any(AbstractInsnNode.class)
         .then(methodCallThatReturns(ClassName.fromString("java/util/Iterator")))
-        .then(opCode(Opcodes.ASTORE))
+        .then(ASTORE)
         .zeroOrMore(QueryStart.match(anyInstruction()))
         .then(aJump())
         .then(aLabelNode(loopStart.write()))
@@ -79,7 +78,7 @@ public class InfiniteIteratorLoopFilter extends InfiniteLoopFilter {
     return  QueryStart
         .any(AbstractInsnNode.class)
         .then(methodCallThatReturns(ClassName.fromString("java/util/Iterator")))
-        .then(opCode(Opcodes.ASTORE))
+        .then(ASTORE)
         .then(aLabelNode(loopStart.write()))
         .oneOrMore(doesNotBreakIteratorLoop())
         .then(jumpsTo(loopStart.read()))

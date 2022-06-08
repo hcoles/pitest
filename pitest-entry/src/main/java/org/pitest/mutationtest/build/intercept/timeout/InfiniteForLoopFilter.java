@@ -15,7 +15,10 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.jumpsTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.labelNode;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCall;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
-import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ALOAD;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.IADD;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ILOAD;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ISTORE;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -60,16 +63,16 @@ public class InfiniteForLoopFilter extends InfiniteLoopFilter {
     return QueryStart
         .any(AbstractInsnNode.class)
         .then(anIntegerConstant().and(debug("constant")))
-        .zeroOrMore(QueryStart.match(opCode(Opcodes.IADD))) // FIXME just one rather than many
+        .zeroOrMore(QueryStart.match(IADD)) // FIXME just one rather than many
         .then(anIStore(counterVariable.write()).and(debug("counter")))
-        .zeroOrMore(QueryStart.match(opCode(Opcodes.ILOAD)
-                                    .or(opCode(Opcodes.ALOAD)
-                                    .or(opCode(Opcodes.ISTORE))
-                                    .or(methodCall()))))
+        .zeroOrMore(QueryStart.match(ILOAD
+                                    .or(ALOAD)
+                                    .or(ISTORE)
+                                    .or(methodCall())))
         .then(aLabelNode(loopStart.write()).and(debug("label")))
         .then(anILoadOf(counterVariable.read()).and(debug("load")))
         .zeroOrMore(doesNotBreakLoop(counterVariable))
-        .zeroOrMore(QueryStart.match(opCode(Opcodes.ILOAD).or(opCode(Opcodes.ALOAD).or(methodCall()))))
+        .zeroOrMore(QueryStart.match(ILOAD.or(ALOAD).or(methodCall())))
         .then(aConditionalJump().and(debug("jump")))
         .zeroOrMore(doesNotBreakLoop(counterVariable))
         .then(jumpsTo(loopStart.read()))

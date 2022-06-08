@@ -30,17 +30,17 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static java.util.function.Predicate.isEqual;
-import static org.objectweb.asm.Opcodes.ARETURN;
-import static org.objectweb.asm.Opcodes.ATHROW;
-import static org.objectweb.asm.Opcodes.DRETURN;
-import static org.objectweb.asm.Opcodes.FRETURN;
-import static org.objectweb.asm.Opcodes.IRETURN;
-import static org.objectweb.asm.Opcodes.LRETURN;
-import static org.objectweb.asm.Opcodes.RETURN;
+
 import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
-import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ARETURN;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ATHROW;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.DRETURN;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.FRETURN;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.IRETURN;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.LRETURN;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.RETURN;
 import static org.pitest.functional.FCollection.bucket;
 import static org.pitest.functional.FCollection.map;
 import static org.pitest.functional.FCollection.mapTo;
@@ -79,13 +79,13 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
   }
 
   private static Match<AbstractInsnNode> endsBlock() {
-    return opCode(RETURN)
-            .or(opCode(ARETURN))
-            .or(opCode(DRETURN))
-            .or(opCode(FRETURN))
-            .or(opCode(IRETURN))
-            .or(opCode(LRETURN))
-            .or(opCode(ATHROW)); // dubious if this is needed
+    return RETURN
+            .or(ARETURN)
+            .or(DRETURN)
+            .or(FRETURN)
+            .or(IRETURN)
+            .or(LRETURN)
+            .or(ATHROW); // dubious if this is needed
   }
 
   private static Match<AbstractInsnNode> handlerLabel(Slot<List> handlers) {
