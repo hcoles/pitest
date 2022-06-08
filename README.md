@@ -8,6 +8,10 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.8.1-SNAPSHOT
+
+* #1025 - Rework String Switch filtering
+
 ### 1.8.0
 
 * #1017 - Improve static infinite loop detection

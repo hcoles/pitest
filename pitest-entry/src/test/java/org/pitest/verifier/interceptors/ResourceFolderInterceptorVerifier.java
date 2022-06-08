@@ -29,7 +29,7 @@ public class ResourceFolderInterceptorVerifier {
     public Verifier forClass(String clazz) {
         final Sample s = makeSample(clazz);
         Mutater m = mutateFromResourceDir();
-        return new Verifier(s, ClassloaderByteArraySource.fromContext(), testee, m);
+        return new Verifier(s, testee, m);
     }
 
     private Sample makeSample(String sample) {

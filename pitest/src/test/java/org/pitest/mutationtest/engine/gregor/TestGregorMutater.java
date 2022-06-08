@@ -183,16 +183,7 @@ public class TestGregorMutater {
         // by
         // target?
     }
-
-    @Test
-    public void shouldNotMutateCompilerGeneratedConditionalsInStringSwitch() {
-        MutatorVerifierStart.forMutator(Mutator.byName("REMOVE_CONDITIONALS"))
-                .withByteArraySource(new ResourceFolderByteArraySource())
-                .forClass("Java7SwitchOnString")
-                .noMutantsCreated();
-
-    }
-
+    
     private void assertTwoMutationsInDifferentBlocks(
             final List<MutationDetails> actualDetails) {
         assertEquals(2, actualDetails.size());

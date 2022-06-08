@@ -262,16 +262,6 @@ public class TryWithResourcesFilter implements MutationInterceptor {
     return regions;
   }
 
-  static class Region {
-    final AbstractInsnNode start;
-    final AbstractInsnNode end;
-    Region(AbstractInsnNode start, AbstractInsnNode end) {
-      this.start = start;
-      this.end = end;
-    }
-
-  }
-
   @Override
   public void end() {
     this.currentClass = null;
@@ -310,4 +300,13 @@ public class TryWithResourcesFilter implements MutationInterceptor {
 
 }
 
+class Region {
+  final AbstractInsnNode start;
+  final AbstractInsnNode end;
+  Region(AbstractInsnNode start, AbstractInsnNode end) {
+    this.start = start;
+    this.end = end;
+  }
+
+}
 

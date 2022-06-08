@@ -28,7 +28,7 @@ public class InterceptorVerifier {
     public Verifier forClass(Class<?> clazz) {
         final Sample s = makeSampleForCurrentCompiler(clazz);
         Mutater m = mutateFromClassLoader();
-        return new Verifier(s, ClassloaderByteArraySource.fromContext(), testee, m);
+        return new Verifier(s, testee, m);
     }
 
     public ResourceFolderInterceptorVerifier usingResourceFolder(String path) {

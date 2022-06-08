@@ -15,13 +15,11 @@ import java.util.function.Predicate;
 public class Verifier {
 
     private final Sample sample;
-    private final ClassByteArraySource source;
     private final MutationInterceptor interceptor;
     private final Mutater mutator;
 
-    public Verifier(Sample sample, ClassByteArraySource source, MutationInterceptor interceptor, Mutater m) {
+    public Verifier(Sample sample, MutationInterceptor interceptor, Mutater m) {
         this.sample = sample;
-        this.source = source;
         this.interceptor = interceptor;
         this.mutator = m;
     }
