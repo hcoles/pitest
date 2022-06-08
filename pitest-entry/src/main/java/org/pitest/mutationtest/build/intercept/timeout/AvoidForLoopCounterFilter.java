@@ -15,7 +15,9 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.jumpsTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.labelNode;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
-import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ARRAYLENGTH;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.BIPUSH;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.GETFIELD;
 import static org.pitest.sequence.Result.result;
 
 import java.util.Collection;
@@ -26,7 +28,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.IincInsnNode;
 import org.objectweb.asm.tree.LabelNode;
@@ -56,8 +57,7 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
 
   // GETFIELDS are ignored so field access can be matched in the same way as  local variables
   private static final Match<AbstractInsnNode> IGNORE = notAnInstruction()
-                                                        .or(opCode(Opcodes.GETFIELD)
-                                                        );
+                                                        .or(GETFIELD);
 
   private static final Slot<AbstractInsnNode> MUTATED_INSTRUCTION = Slot.create(AbstractInsnNode.class);
 
@@ -113,15 +113,10 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
   }
 
   private static Match<AbstractInsnNode> loadsAnIntegerToCompareTo() {
-    return opCode(Opcodes.BIPUSH)
+    return BIPUSH
             .or(integerMethodCall())
-            .or(arrayLength())
+            .or(ARRAYLENGTH)
             .or(anIntegerConstant());
-  }
-
-
-  private static Match<AbstractInsnNode> arrayLength() {
-    return opCode(Opcodes.ARRAYLENGTH);
   }
 
 

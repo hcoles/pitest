@@ -1,7 +1,5 @@
 package org.pitest.mutationtest.build.intercept.equivalent;
 
-import static org.objectweb.asm.Opcodes.ALOAD;
-import static org.objectweb.asm.Opcodes.ASTORE;
 import static org.pitest.bytecode.analysis.InstructionMatchers.aVariableAccess;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.getStatic;
@@ -10,8 +8,10 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.isInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallNamed;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
-import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
 import static org.pitest.bytecode.analysis.InstructionMatchers.variableMatches;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ALOAD;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ASTORE;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ICONST_1;
 import static org.pitest.sequence.Result.result;
 
 import java.util.Arrays;
@@ -93,7 +93,7 @@ class HardCodedTrueEquivalentFilter implements MutationInterceptor {
   private static final Slot<AbstractInsnNode> MUTATED_INSTRUCTION = Slot.create(AbstractInsnNode.class);
 
   static final SequenceQuery<AbstractInsnNode> BOXED_TRUE = QueryStart
-      .match(opCode(Opcodes.ICONST_1))
+      .match(ICONST_1)
       .then(methodCallNamed("valueOf"));
 
   static final SequenceQuery<AbstractInsnNode> CONSTANT_TRUE = QueryStart
@@ -254,7 +254,7 @@ class EmptyReturnsFilter implements MutationInterceptor {
           // possible we will get issues here if there is a jump instruction
           // to get to the point that the empty value is returned.
           .zeroOrMore(QueryStart.match(aStoreTo(LOCAL_VAR).negate()))
-          .then(opCode(ALOAD).and(variableMatches(LOCAL_VAR.read())))
+          .then(ALOAD.and(variableMatches(LOCAL_VAR.read())))
           .then(isInstruction(MUTATED_INSTRUCTION.read()))
           .zeroOrMore(QueryStart.match(anyInstruction()))
           .compile(QueryParams.params(AbstractInsnNode.class)
@@ -292,7 +292,7 @@ class EmptyReturnsFilter implements MutationInterceptor {
   }
 
   private static Match<AbstractInsnNode> aStoreTo(Slot<Integer> variable) {
-    return opCode(ASTORE).and(aVariableAccess(variable.write()));
+    return ASTORE.and(aVariableAccess(variable.write()));
   }
 
   private static Match<AbstractInsnNode> isZeroConstant() {

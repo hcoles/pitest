@@ -26,23 +26,22 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static org.objectweb.asm.Opcodes.ALOAD;
-import static org.objectweb.asm.Opcodes.ASTORE;
-import static org.objectweb.asm.Opcodes.GOTO;
-import static org.objectweb.asm.Opcodes.ATHROW;
-import static org.objectweb.asm.Opcodes.IFNONNULL;
-import static org.objectweb.asm.Opcodes.IFNULL;
-import static org.objectweb.asm.Opcodes.IF_ACMPEQ;
-import static org.objectweb.asm.Opcodes.INVOKEINTERFACE;
-import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.debug;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallNamed;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodDescEquals;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
-import static org.pitest.bytecode.analysis.InstructionMatchers.opCode;
 import static org.pitest.bytecode.analysis.InstructionMatchers.writeNodeToSlot;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ALOAD;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ASTORE;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ATHROW;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.GOTO;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.IFNONNULL;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.IFNULL;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.IF_ACMPEQ;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.INVOKEINTERFACE;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.INVOKEVIRTUAL;
 import static org.pitest.sequence.QueryStart.any;
 import static org.pitest.sequence.QueryStart.match;
 import static org.pitest.sequence.Result.result;
@@ -74,17 +73,17 @@ public class TryWithResourcesFilter implements MutationInterceptor {
             .then(closeSequence(true))
             .zeroOrMore(match(anyInstruction()))
             .then(isLabel(HANDLERS.read()).and(debug("handler")))
-            .then(opCode(ASTORE))
-            .then(opCode(ALOAD))
+            .then(ASTORE)
+            .then(ALOAD)
             .then(closeSequence(false))
-            .then(opCode(GOTO))
+            .then(GOTO)
             .then(isLabel(HANDLERS.read()).and(debug("handler")))
-            .then(opCode(ASTORE))
-            .then(opCode(ALOAD))
-            .then(opCode(ALOAD))
+            .then(ASTORE)
+            .then(ALOAD)
+            .then(ALOAD)
             .then(addSuppressedMethodCall().and(debug("add suppressed")))
-            .then(opCode(ALOAD))
-            .then(opCode(ATHROW).and(recordPoint(END, true)))
+            .then(ALOAD)
+            .then(ATHROW.and(recordPoint(END, true)))
             .zeroOrMore(match(anyInstruction()));
   }
 
@@ -94,15 +93,15 @@ public class TryWithResourcesFilter implements MutationInterceptor {
             .then(javacCloseSequence(true))
             .zeroOrMore(match(anyInstruction()))
             .then(isLabel(HANDLERS.read()).and(debug("handler")))
-            .then(opCode(ASTORE))
-            .then(opCode(ALOAD))
-            .then(opCode(ASTORE))
-            .then(opCode(ALOAD))
-            .then(opCode(ATHROW))
-            .then(opCode(ASTORE))
+            .then(ASTORE)
+            .then(ALOAD)
+            .then(ASTORE)
+            .then(ALOAD)
+            .then(ATHROW)
+            .then(ASTORE)
             .then(javacCloseSequence(false))
-            .then(opCode(ALOAD))
-            .then(opCode(ATHROW).and(recordPoint(END, true)))
+            .then(ALOAD)
+            .then(ATHROW.and(recordPoint(END, true)))
             .zeroOrMore(match(anyInstruction()));
   }
 
@@ -114,48 +113,48 @@ public class TryWithResourcesFilter implements MutationInterceptor {
             .then(ecjCloseAndThrow())
             .zeroOrMore(ecjCloseSuppress())
             .then(ecjSuppress())
-            .then(opCode(ALOAD))
-            .then(opCode(ATHROW).and(recordPoint(END, true)))
+            .then(ALOAD)
+            .then(ATHROW.and(recordPoint(END, true)))
             .zeroOrMore(match(anyInstruction()));
   }
 
   private static SequenceQuery<AbstractInsnNode> ecjCloseSuppress() {
     return ecjCloseSequence(false)
-            .then(opCode(GOTO)) // FIXME check jump target?
+            .then(GOTO) // FIXME check jump target?
             .then(ecjSuppress())
             .then(ecjCloseAndThrow());
   }
 
   private static SequenceQuery<AbstractInsnNode> ecjSuppress() {
-    return match(opCode(ASTORE))
-            .then(opCode(ALOAD))
-            .then(opCode(IFNONNULL))
-            .then(opCode(ALOAD))
-            .then(opCode(ASTORE))
-            .then(opCode(GOTO))
-            .then(opCode(ALOAD))
-            .then(opCode(ALOAD))
-            .then(opCode(IF_ACMPEQ))
-            .then(opCode(ALOAD))
-            .then(opCode(ALOAD))
+    return match(ASTORE)
+            .then(ALOAD)
+            .then(IFNONNULL)
+            .then(ALOAD)
+            .then(ASTORE)
+            .then(GOTO)
+            .then(ALOAD)
+            .then(ALOAD)
+            .then(IF_ACMPEQ)
+            .then(ALOAD)
+            .then(ALOAD)
             .then(addSuppressedMethodCall());
   }
 
   private static SequenceQuery<AbstractInsnNode> ecjCloseSequence(boolean record) {
-    return match(opCode(ALOAD).and(recordPoint(START,record)))
-            .then(opCode(IFNULL)) // FIXME check jump target?
-            .then(opCode(ALOAD))
+    return match(ALOAD.and(recordPoint(START,record)))
+            .then(IFNULL) // FIXME check jump target?
+            .then(ALOAD)
             .then(closeMethodCall());
   }
 
   private static SequenceQuery<AbstractInsnNode> ecjCloseAndThrow() {
-    return match(opCode(ALOAD))
-            .then(opCode(IFNULL)) // FIXME check jump target?
-            .then(opCode(ALOAD))
+    return match(ALOAD)
+            .then(IFNULL) // FIXME check jump target?
+            .then(ALOAD)
             .then(closeMethodCall())
             // omit label check ?
-            .then(opCode(ALOAD))
-            .then(opCode(ATHROW));
+            .then(ALOAD)
+            .then(ATHROW);
   }
 
   private static SequenceQuery<AbstractInsnNode> javacCloseSequence(boolean record) {
@@ -167,46 +166,46 @@ public class TryWithResourcesFilter implements MutationInterceptor {
   }
 
   private static SequenceQuery<AbstractInsnNode> methodSequence(boolean record) {
-    return QueryStart.match(opCode(ALOAD).and(recordPoint(START, record)))
-            .then(opCode(IFNULL))
-            .then(opCode(ALOAD))
-            .then(opCode(ALOAD))
+    return QueryStart.match(ALOAD.and(recordPoint(START, record)))
+            .then(IFNULL)
+            .then(ALOAD)
+            .then(ALOAD)
             .then(closeResourceMethodCall());
   }
 
   private static SequenceQuery<AbstractInsnNode> fullSequence(boolean record) {
-    return QueryStart.match(opCode(ALOAD).and(recordPoint(START, record)))
-            .then(opCode(IFNULL))
+    return QueryStart.match(ALOAD.and(recordPoint(START, record)))
+            .then(IFNULL)
             .then(omittedNullCheckSequence(false));
   }
 
   private static SequenceQuery<AbstractInsnNode> omittedNullCheckSequence(boolean record) {
-    return QueryStart.match(opCode(ALOAD).and(recordPoint(START, record)))
-            .then(opCode(IFNULL))
-            .then(opCode(ALOAD))
+    return QueryStart.match(ALOAD.and(recordPoint(START, record)))
+            .then(IFNULL)
+            .then(ALOAD)
             .then(closeMethodCall())
-            .then(opCode(GOTO).and(debug("goto")))
+            .then(GOTO.and(debug("goto")))
             .then(isLabel(HANDLERS.read()).and(debug("handler")))
-            .then(opCode(ASTORE).and(debug("store")))
-            .then(opCode(ALOAD))
-            .then(opCode(ALOAD))
+            .then(ASTORE.and(debug("store")))
+            .then(ALOAD)
+            .then(ALOAD)
             .then(addSuppressedMethodCall())
-            .then(opCode(GOTO))
-            .then(opCode(ALOAD))
+            .then(GOTO)
+            .then(ALOAD)
             .then(closeMethodCall().and(debug("end of sequence")));
   }
 
   private static SequenceQuery<AbstractInsnNode> optimalSequence(boolean record) {
-    return QueryStart.match(opCode(ALOAD).and(recordPoint(START, record)))
-            .then(opCode(ALOAD))
+    return QueryStart.match(ALOAD.and(recordPoint(START, record)))
+            .then(ALOAD)
             .then(closeResourceMethodCall());
   }
 
   private static SequenceQuery<AbstractInsnNode> closeSequence(boolean record) {
     // javac may (or may not) generate a null check before the close
     return match(closeMethodCall().and(recordPoint(START, record)))
-            .or(match(opCode(IFNULL).and(recordPoint(START, record)))
-                    .then(opCode(ALOAD))
+            .or(match(IFNULL.and(recordPoint(START, record)))
+                    .then(ALOAD)
                     .then(closeMethodCall()));
   }
 
@@ -289,7 +288,7 @@ public class TryWithResourcesFilter implements MutationInterceptor {
 
   private static Match<AbstractInsnNode> closeMethodCall() {
     return methodCallNamed("close")
-            .and(opCode(INVOKEINTERFACE).or(opCode(INVOKEVIRTUAL)))
+            .and(INVOKEINTERFACE.or(INVOKEVIRTUAL))
             .and(methodDescEquals("()V"));
   }
 
