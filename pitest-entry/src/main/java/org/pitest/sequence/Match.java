@@ -1,5 +1,7 @@
 package org.pitest.sequence;
 
+import java.util.function.Predicate;
+
 import static org.pitest.sequence.Result.result;
 
 /**
@@ -55,5 +57,12 @@ public interface Match<T> {
       }
       return other.test(c,t);
     };
+  }
+
+  /**
+   * Convert to plain predicate with no context
+   */
+  default Predicate<T> asPredicate() {
+    return t -> this.test(Context.start(), t).result();
   }
 }

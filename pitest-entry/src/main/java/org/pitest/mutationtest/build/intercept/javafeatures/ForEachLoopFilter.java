@@ -213,7 +213,7 @@ public class ForEachLoopFilter implements MutationInterceptor {
 
   private boolean mightContainForLoop(List<AbstractInsnNode> instructions) {
     return instructions.stream()
-            .anyMatch(i -> hasNextMethodCall().or(ARRAYLENGTH).test(null, i).result());
+            .anyMatch(hasNextMethodCall().or(ARRAYLENGTH).asPredicate());
   }
 
   @Override

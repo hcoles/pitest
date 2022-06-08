@@ -1,5 +1,6 @@
 package org.pitest.sequence;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -55,6 +56,12 @@ public class MatchTest {
     assertTrue(isTrue.or(isFalse).test(this.unused, 1).result());
     assertFalse(isFalse.or(isFalse).test(this.unused, 1).result());
     assertTrue(isFalse.or(isTrue).test(this.unused, 1).result());
+  }
+
+  @Test
+  public void asPredicateConvertsToPredicate() {
+    assertThat(Match.always().asPredicate().test("anything")).isTrue();
+    assertThat(Match.never().asPredicate().test("anything")).isFalse();
   }
 
 }

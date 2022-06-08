@@ -9,6 +9,7 @@ org.pitest.mutationtest.build.intercept.javafeatures.MethodReferenceNullCheckFil
 org.pitest.mutationtest.build.intercept.javafeatures.ForEachLoopFilterFactory
 org.pitest.mutationtest.build.intercept.javafeatures.EnumConstructorFilterFactory
 org.pitest.mutationtest.build.intercept.javafeatures.RecordFilterFactory
+org.pitest.mutationtest.build.intercept.javafeatures.StringSwitchFilterFactory
 org.pitest.mutationtest.build.intercept.logging.LoggingCallsFilterFactory
 org.pitest.mutationtest.build.intercept.timeout.InfiniteForLoopFilterFactory
 org.pitest.mutationtest.build.intercept.timeout.InfiniteIteratorLoopFilterFactory
