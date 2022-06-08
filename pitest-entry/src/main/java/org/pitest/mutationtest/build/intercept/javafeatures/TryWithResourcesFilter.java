@@ -2,14 +2,9 @@ package org.pitest.mutationtest.build.intercept.javafeatures;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.LabelNode;
-import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
-import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
-import org.pitest.mutationtest.build.InterceptorType;
-import org.pitest.mutationtest.build.MutationInterceptor;
-import org.pitest.mutationtest.engine.Mutater;
-import org.pitest.mutationtest.engine.MutationDetails;
+import org.pitest.mutationtest.build.intercept.Region;
+import org.pitest.mutationtest.build.intercept.RegionInterceptor;
 import org.pitest.sequence.Context;
 import org.pitest.sequence.Match;
 import org.pitest.sequence.QueryParams;
@@ -19,11 +14,8 @@ import org.pitest.sequence.SequenceQuery;
 import org.pitest.sequence.Slot;
 import org.pitest.sequence.SlotRead;
 
-import java.util.Collection;
-import java.util.IdentityHashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
@@ -46,7 +38,7 @@ import static org.pitest.sequence.QueryStart.any;
 import static org.pitest.sequence.QueryStart.match;
 import static org.pitest.sequence.Result.result;
 
-public class TryWithResourcesFilter implements MutationInterceptor {
+public class TryWithResourcesFilter extends RegionInterceptor {
 
   private static final boolean DEBUG = false;
 
@@ -55,8 +47,6 @@ public class TryWithResourcesFilter implements MutationInterceptor {
   private static final Slot<AbstractInsnNode> START = Slot.create(AbstractInsnNode.class);
   private static final Slot<AbstractInsnNode> END = Slot.create(AbstractInsnNode.class);
 
-  private ClassTree currentClass;
-  private Map<MethodTree, List<Region>> cache;
 
   private static final SequenceMatcher<AbstractInsnNode> TRY_WITH_RESOURCES =
           javac11()
@@ -210,49 +200,17 @@ public class TryWithResourcesFilter implements MutationInterceptor {
   }
 
 
-  @Override
-  public InterceptorType type() {
-    return InterceptorType.FILTER;
-  }
+  protected List<Region> computeRegions(MethodTree method) {
+    // performance hack
+    if (method.rawNode().tryCatchBlocks.size() <= 1) {
+      return Collections.emptyList();
+    }
 
-  @Override
-  public void begin(ClassTree clazz) {
-    this.currentClass = clazz;
-    this.cache = new IdentityHashMap<>();
-  }
-
-  @Override
-  public Collection<MutationDetails> intercept(
-          Collection<MutationDetails> mutations, Mutater m) {
-    return FCollection.filter(mutations, Prelude.not(mutatesTryWithResourcesScaffolding()));
-  }
-
-  private Predicate<MutationDetails> mutatesTryWithResourcesScaffolding() {
-    return a -> {
-      int instruction = a.getInstructionIndex();
-      MethodTree method = currentClass.method(a.getId().getLocation())
-              .orElseThrow(() -> new IllegalStateException("Could not find method for mutant " + a));
-
-      // performance hack
-      if (method.rawNode().tryCatchBlocks.size() <= 1) {
-        return false;
-      }
-
-      List<Region> regions = cache.computeIfAbsent(method, this::computeRegions);
-
-      return regions.stream()
-              .anyMatch(r -> instruction >= method.instructions().indexOf(r.start) && instruction <= method.instructions().indexOf(r.end));
-
-    };
-  }
-
-  private List<Region> computeRegions(MethodTree method) {
     List<LabelNode> handlers = method.rawNode().tryCatchBlocks.stream()
             .filter(t -> "java/lang/Throwable".equals(t.type))
             .filter(t -> t.handler != null)
             .map(t -> t.handler)
             .collect(Collectors.toList());
-
 
     Context context = Context.start(DEBUG);
     context = context.store(HANDLERS.write(), handlers);
@@ -262,21 +220,6 @@ public class TryWithResourcesFilter implements MutationInterceptor {
     return regions;
   }
 
-  static class Region {
-    final AbstractInsnNode start;
-    final AbstractInsnNode end;
-    Region(AbstractInsnNode start, AbstractInsnNode end) {
-      this.start = start;
-      this.end = end;
-    }
-
-  }
-
-  @Override
-  public void end() {
-    this.currentClass = null;
-    this.cache = null;
-  }
 
   private static Match<AbstractInsnNode> aLabel() {
     return isA(LabelNode.class);

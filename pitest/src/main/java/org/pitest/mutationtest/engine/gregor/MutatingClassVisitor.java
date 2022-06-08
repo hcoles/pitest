@@ -105,25 +105,12 @@ class MutatingClassVisitor extends ClassVisitor {
       next = each.create(methodContext, methodInfo, next);
     }
 
-    return wrapWithDecorators(methodContext, wrapWithFilters(methodContext, next), methodInfo);
+    return wrapWithDecorators(methodContext, wrapWithAssertFilter(methodContext, next), methodInfo);
   }
 
   private static MethodVisitor wrapWithLineTracker(
       MethodMutationContext methodContext, final MethodVisitor mv) {
     return new LineTrackingMethodVisitor(methodContext, mv);
-  }
-
-  private MethodVisitor wrapWithFilters(MethodMutationContext methodContext,
-      final MethodVisitor wrappedMethodVisitor) {
-    return
-        wrapWithStringSwitchFilter(methodContext, wrapWithAssertFilter(methodContext, wrappedMethodVisitor));
-  }
-
-  private static MethodVisitor wrapWithStringSwitchFilter(
-    MethodMutationContext methodContext,
-    final MethodVisitor wrappedMethodVisitor) {
-  return new AvoidStringSwitchedMethodAdapter(methodContext, wrappedMethodVisitor);
-
   }
 
   private static MethodVisitor wrapWithAssertFilter(
