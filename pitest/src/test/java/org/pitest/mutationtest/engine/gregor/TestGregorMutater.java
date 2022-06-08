@@ -183,7 +183,7 @@ public class TestGregorMutater {
         // by
         // target?
     }
-    
+
     private void assertTwoMutationsInDifferentBlocks(
             final List<MutationDetails> actualDetails) {
         assertEquals(2, actualDetails.size());

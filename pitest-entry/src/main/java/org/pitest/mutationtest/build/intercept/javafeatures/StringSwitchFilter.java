@@ -2,13 +2,10 @@ package org.pitest.mutationtest.build.intercept.javafeatures;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.LabelNode;
-import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassName;
-import org.pitest.mutationtest.build.InterceptorType;
-import org.pitest.mutationtest.build.MutationInterceptor;
-import org.pitest.mutationtest.engine.Mutater;
-import org.pitest.mutationtest.engine.MutationDetails;
+import org.pitest.mutationtest.build.intercept.Region;
+import org.pitest.mutationtest.build.intercept.RegionInterceptor;
 import org.pitest.sequence.Context;
 import org.pitest.sequence.Match;
 import org.pitest.sequence.QueryParams;
@@ -18,11 +15,7 @@ import org.pitest.sequence.SequenceQuery;
 import org.pitest.sequence.Slot;
 import org.pitest.sequence.SlotWrite;
 
-import java.util.Collection;
-import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static org.pitest.bytecode.analysis.InstructionMatchers.anIntegerConstant;
@@ -43,9 +36,7 @@ import static org.pitest.bytecode.analysis.OpcodeMatchers.SIPUSH;
 import static org.pitest.bytecode.analysis.OpcodeMatchers.TABLESWITCH;
 import static org.pitest.sequence.Result.result;
 
-public class StringSwitchFilter implements MutationInterceptor {
-    private ClassTree currentClass;
-    private Map<MethodTree, List<Region>> cache;
+public class StringSwitchFilter extends RegionInterceptor {
 
     static final Slot<AbstractInsnNode> START = Slot.create(AbstractInsnNode.class);
     static final Slot<AbstractInsnNode> END = Slot.create(AbstractInsnNode.class);
@@ -87,50 +78,12 @@ public class StringSwitchFilter implements MutationInterceptor {
     }
 
 
-    @Override
-    public InterceptorType type() {
-        return InterceptorType.FILTER;
-    }
-
-    @Override
-    public void begin(ClassTree clazz) {
-        currentClass = clazz;
-        cache = new IdentityHashMap<>();
-    }
-
-    @Override
-    public Collection<MutationDetails> intercept(
-            Collection<MutationDetails> mutations, Mutater m) {
-        return mutations.stream()
-                .filter(mutatesStringSwitch().negate())
-                .collect(Collectors.toList());
-    }
-
-    private Predicate<MutationDetails> mutatesStringSwitch() {
-        return a -> {
-            final int instruction = a.getInstructionIndex();
-            final MethodTree method = this.currentClass.method(a.getId().getLocation()).get();
-
-            List<Region> regions = cache.computeIfAbsent(method, this::computeRegions);
-
-            return regions.stream()
-                    .anyMatch(r -> instruction >= method.instructions().indexOf(r.start) && instruction <= method.instructions().indexOf(r.end));
-        };
-    }
-
-    private List<Region> computeRegions(MethodTree method) {
+    protected List<Region> computeRegions(MethodTree method) {
         Context context = Context.start();
         List<Region> regions = STRING_SWITCH.contextMatches(method.instructions(), context).stream()
                 .map(c -> new Region(c.retrieve(START.read()).get(), c.retrieve(END.read()).get()))
                 .collect(Collectors.toList());
         return regions;
-    }
-
-
-    @Override
-    public void end() {
-        currentClass = null;
-        cache = null;
     }
 
 }
