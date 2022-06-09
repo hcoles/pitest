@@ -89,19 +89,6 @@ public class TestGregorMutater {
         assertThat(actualDetails).isNotEmpty();
     }
 
-    @Test
-    public void shouldNotMutateAssertStatements() {
-        MutatorVerifierStart.forMutator(NegateConditionalsMutator.NEGATE_CONDITIONALS)
-                .forClass(HasAssertStatement.class)
-                .noMutantsCreated();
-    }
-
-    @Test
-    public void shouldMutateOtherStatementsWhenAssertIsPresent() {
-        MutatorVerifierStart.forMutator(NegateConditionalsMutator.NEGATE_CONDITIONALS)
-                .forClass(HasAssertStatementAndOtherStatements.class)
-                .createsNMutants(1);
-    }
 
     @Test
     public void shouldNotMutateGroovyClasses() {
@@ -216,23 +203,6 @@ public class TestGregorMutater {
             return -j;
         }
 
-    }
-
-    public static class HasAssertStatement {
-        public void foo(final int i) {
-            assert ((i + 20) > 10);
-        }
-    }
-
-    public static class HasAssertStatementAndOtherStatements {
-        public int state;
-
-        public void foo(final int i) {
-            assert ((i + 20) > 10);
-            if (i > 1) {
-                this.state = 1;
-            }
-        }
     }
 
     public static class OneStraightThroughMethod {

@@ -1,8 +1,5 @@
 package org.pitest.mutationtest.engine.gregor;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
@@ -16,7 +13,6 @@ class MethodMutationContext implements MutationContext, InstructionCounter {
   private int                instructionIndex;
 
   private int                lastLineNumber;
-  private final Set<String>  mutationFindingDisabledReasons = new HashSet<>();
 
   MethodMutationContext(final ClassContext classContext, final Location location) {
     this.classContext = classContext;
@@ -42,13 +38,7 @@ class MethodMutationContext implements MutationContext, InstructionCounter {
   }
 
   private void registerMutation(final MutationDetails details) {
-    if (!isMutationFindingDisabled()) {
       this.classContext.addMutation(details);
-    }
-  }
-
-  private boolean isMutationFindingDisabled() {
-    return !this.mutationFindingDisabledReasons.isEmpty();
   }
 
   @Override
@@ -74,20 +64,6 @@ class MethodMutationContext implements MutationContext, InstructionCounter {
   @Override
   public boolean shouldMutate(final MutationIdentifier newId) {
     return this.classContext.shouldMutate(newId);
-  }
-
-  @Override
-  @Deprecated
-  // create a mutation interceptor instead
-  public void disableMutations(final String reason) {
-    this.mutationFindingDisabledReasons.add(reason);
-  }
-
-  @Override
-  @Deprecated
-  // create a mutation interceptor instead
-  public void enableMutatations(final String reason) {
-    this.mutationFindingDisabledReasons.remove(reason);
   }
 
   @Override

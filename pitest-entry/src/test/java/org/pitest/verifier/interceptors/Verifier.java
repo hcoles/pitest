@@ -17,11 +17,22 @@ public class Verifier {
     private final Sample sample;
     private final MutationInterceptor interceptor;
     private final Mutater mutator;
+    private final Predicate<MutationDetails> match;
+
 
     public Verifier(Sample sample, MutationInterceptor interceptor, Mutater m) {
+        this(sample,interceptor, m, mut -> true);
+    }
+
+    public Verifier(Sample sample, MutationInterceptor interceptor, Mutater m, Predicate<MutationDetails> match) {
         this.sample = sample;
         this.interceptor = interceptor;
         this.mutator = m;
+        this.match = match;
+    }
+
+    public Verifier forMethod(String name) {
+        return new Verifier(sample, interceptor, mutator, match.and(m -> m.getMethod().equals(name)));
     }
 
     public MutantVerifier forAnyCode() {
@@ -29,7 +40,7 @@ public class Verifier {
     }
 
     public MutantVerifier forCodeMatching(Predicate<AbstractInsnNode> match) {
-        return forMutantsMatching(mutates(match, sample));
+        return forMutantsMatching(mutates(match, sample).and(this.match));
     }
 
     public Collection<MutationDetails>  findMutants() {
@@ -43,7 +54,7 @@ public class Verifier {
         List<MutationDetails> filtered = new ArrayList<>(mutations);
         filtered.removeAll(afterFiltering);
 
-        return new MutantVerifier(sample, match, mutations, afterFiltering, filtered);
+        return new MutantVerifier(sample, this.match.and(match), mutations, afterFiltering, filtered);
     }
 
     private Collection<MutationDetails> filter(ClassTree clazz,

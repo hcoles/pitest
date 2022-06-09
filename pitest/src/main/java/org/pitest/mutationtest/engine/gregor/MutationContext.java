@@ -14,8 +14,4 @@ public interface MutationContext extends BlockCounter {
 
   boolean shouldMutate(MutationIdentifier newId);
 
-  void disableMutations(String reason);
-
-  void enableMutatations(String reason);
-
 }
