@@ -11,6 +11,7 @@ Read all about it at http://pitest.org
 ### 1.8.1-SNAPSHOT
 
 * #1025 - Rework String Switch filtering
+* #1027 - Rework assert filtering and remove legacy filter mechanism
 
 ### 1.8.0
 

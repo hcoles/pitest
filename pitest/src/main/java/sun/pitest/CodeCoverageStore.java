@@ -41,7 +41,6 @@ public final class CodeCoverageStore {
                                                                      .replace(
                                                                          '.',
                                                                          '/');
-  public static final String                   PROBE_METHOD_NAME = "visitProbes";
 
   private static InvokeReceiver                invokeQueue;
   private static int                           classId           = 0;
@@ -81,7 +80,7 @@ public final class CodeCoverageStore {
         continue;
       }
       final int classId = each.getKey();
-      // final int[] mapping = classProbeToBlockMapping.get(classId);
+
       for (int probeId = 1; probeId != bs.length; probeId++) {
         if (bs[probeId]) {
           blockHits.add(encode(classId, probeId));
