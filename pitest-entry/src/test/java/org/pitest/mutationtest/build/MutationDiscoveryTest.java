@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.logging.Logger;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
@@ -198,7 +199,9 @@ public class MutationDiscoveryTest {
   public void shouldFilterMutationsToEnumConstructors() {
     final Collection<MutationDetails>  actual = findMutants(AnEnum.class);
 
-    this.data.setFeatures(Collections.singletonList("-FENUM"));
+    // both the enum and static initializer filters pick up
+    // enum constructors. Both left in place for now, but enum one could perhaps be removed
+    this.data.setFeatures(asList("-FENUM", "-FSTATI"));
     final Collection<MutationDetails> actualWithoutFilter = findMutants(AnEnum.class);
 
     assertThat(actual.size()).isLessThan(actualWithoutFilter.size());
