@@ -29,7 +29,7 @@ import org.pitest.mutationtest.engine.MutationDetails;
  * for static initialisation if it is
  *
  * 1. In a static initializer (i.e <clinit>)
- * 2. In a private static method called directly from <clinit>
+ * 2. In a private static method or constructor called directly from <clinit>
  *
  * TODO A better analysis would include private static methods called indirectly from <clinit>
  * and would exclude methods called from location other than <clinit>.
@@ -74,7 +74,7 @@ class StaticInitializerInterceptor implements MutationInterceptor {
       final Predicate<MethodTree> matchingCalls = Prelude.or(selfCalls);
 
       final Predicate<MutationDetails> initOnlyMethods = Prelude.or(tree.methods().stream()
-      .filter(isPrivateStatic())
+      .filter(isPrivateStatic().or(isConstructor()))
       .filter(matchingCalls)
       .map(AnalysisFunctions.matchMutationsInMethod())
       .collect(Collectors.toList())
@@ -84,7 +84,6 @@ class StaticInitializerInterceptor implements MutationInterceptor {
     }
   }
 
-
   private static Predicate<MutationDetails> isInStaticInitializer() {
     return a -> a.getId().getLocation().getMethodName().equals("<clinit>");
   }
@@ -92,6 +91,10 @@ class StaticInitializerInterceptor implements MutationInterceptor {
   private static Predicate<MethodTree> isPrivateStatic() {
     return a -> ((a.rawNode().access & Opcodes.ACC_STATIC) != 0)
         && ((a.rawNode().access & Opcodes.ACC_PRIVATE) != 0);
+  }
+
+  private Predicate<MethodTree> isConstructor() {
+    return a -> a.rawNode().name.equals("<init>");
   }
 
   private static Predicate<MethodTree> matchesCall(final MethodInsnNode call) {

@@ -13,6 +13,10 @@ import java.util.stream.Collectors;
 /**
  * Filters out mutations in Enum constructors, these are called only once
  * per instance so are effectively static initializers.
+ *
+ * This filter overlaps with the StaticInitializerInterceptor, and could
+ * probably be removed. Left in place for now as it is computationally less
+ * expensive.
  */
 public class EnumConstructorFilter implements MutationInterceptor {
 
