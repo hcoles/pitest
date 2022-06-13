@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -53,10 +54,12 @@ public class MutationHtmlReportListener implements MutationResultListener {
   private final Set<String>               mutatorNames;
 
   private final String                    css;
+  private final Charset                   outputCharset;
 
-  public MutationHtmlReportListener(final ReportCoverage coverage,
-      final ResultOutputStrategy outputStrategy,
-      Collection<String> mutatorNames, final SourceLocator... locators) {
+  public MutationHtmlReportListener(Charset outputCharset, final ReportCoverage coverage,
+                                    final ResultOutputStrategy outputStrategy,
+                                    Collection<String> mutatorNames, final SourceLocator... locators) {
+    this.outputCharset = outputCharset;
     this.coverage = coverage;
     this.outputStrategy = outputStrategy;
     this.sourceRoots = new HashSet<>(Arrays.asList(locators));
@@ -96,6 +99,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
 
       st.setAttribute("sourceFile", sourceFile);
       st.setAttribute("mutatedClasses", mutationMetaData.getMutatedClasses());
+      st.setAttribute("outputCharset", this.outputCharset);
 
       writer.write(st.toString());
 

@@ -18,6 +18,7 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -322,6 +323,13 @@ public class AbstractPitMojo extends AbstractMojo {
    */
   @Parameter(defaultValue = "false", property = "useSlf4j")
   private boolean                     useSlf4j;
+
+  @Parameter(property = "pit.sourceEncoding", defaultValue = "${project.build.sourceEncoding}")
+  private String sourceEncoding;
+
+
+  @Parameter(property = "pit.outputEncoding", defaultValue = "${project.reporting.outputEncoding}")
+  private String outputEncoding;
 
   /**
    * The base directory of a multi-module project. Defaults to the execution
@@ -647,6 +655,19 @@ public class AbstractPitMojo extends AbstractMojo {
     return this.exportLineCoverage;
   }
 
+  public Charset getSourceEncoding() {
+    if (sourceEncoding != null) {
+      return Charset.forName(sourceEncoding);
+    }
+    return Charset.defaultCharset();
+  }
+
+  public Charset getOutputEncoding() {
+    if (outputEncoding != null) {
+      return Charset.forName(outputEncoding);
+    }
+    return Charset.defaultCharset();
+  }
 
   protected RunDecision shouldRun() {
     RunDecision decision = new RunDecision();

@@ -61,6 +61,8 @@ abstract class AbstractPitAggregationReportMojo extends PitReportMojo {
       }
 
       final ReportAggregator reportAggregator = reportAggregationBuilder
+              .inputCharSet(this.getSourceEncoding())
+              .outputCharset(this.getOutputEncoding())
           .resultOutputStrategy(new DirectoryResultOutputStrategy(
               getReportsDirectory().getAbsolutePath(),
               new UndatedReportDirCreationStrategy()))

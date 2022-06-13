@@ -16,6 +16,7 @@ package org.pitest.mutationtest.tooling;
 
 import java.io.File;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.function.Function;
 
@@ -29,13 +30,15 @@ public class SmartSourceLocator implements SourceLocator {
   private static final int                MAX_DEPTH = 4;
 
   private final Collection<SourceLocator> children;
+  private final Charset inputCharset;
 
-  public SmartSourceLocator(final Collection<File> roots) {
+  public SmartSourceLocator(final Collection<File> roots, Charset inputCharset) {
+    this.inputCharset = inputCharset;
     final Collection<File> childDirs = FCollection.flatMap(roots,
         collectChildren(0));
     childDirs.addAll(roots);
 
-    this.children = FCollection.map(childDirs, DirectorySourceLocator::new);
+    this.children = FCollection.map(childDirs, f -> new DirectorySourceLocator(f, this.inputCharset));
   }
 
   private Function<File, Collection<File>> collectChildren(final int depth) {

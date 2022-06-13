@@ -38,6 +38,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -141,6 +142,8 @@ public class ReportOptions {
   private boolean                        useClasspathJar;
 
   private Path                           projectBase;
+  private Charset                        inputCharSet;
+  private Charset                        outputCharSet;
 
 
   public Verbosity getVerbosity() {
@@ -626,6 +629,22 @@ public class ReportOptions {
     this.projectBase = projectBase;
   }
 
+  public Charset getInputCharSet() {
+    return this.inputCharSet;
+  }
+
+  public void setInputCharSet(Charset inputCharSet) {
+    this.inputCharSet = inputCharSet;
+  }
+
+  public Charset getOutputCharSet() {
+    return this.outputCharSet;
+  }
+
+  public void setOutputCharSet(Charset outputCharSet) {
+    this.outputCharSet = outputCharSet;
+  }
+
   @Override
   public String toString() {
     return "ReportOptions [targetClasses=" + targetClasses
@@ -654,5 +673,6 @@ public class ReportOptions {
         + ", testPlugin=" + testPlugin + ", useClasspathJar=" + useClasspathJar
         + ", skipFailingTests=" + skipFailingTests + "]";
   }
+
 
 }
