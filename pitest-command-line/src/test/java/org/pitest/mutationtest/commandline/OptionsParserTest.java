@@ -26,6 +26,8 @@ import static org.mockito.Mockito.when;
 import static org.pitest.mutationtest.config.ReportOptions.DEFAULT_CHILD_JVM_ARGS;
 
 import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -563,6 +565,35 @@ public class OptionsParserTest {
             "--projectBase", "foo");
     assertThat(actual.getProjectBase()).hasFileName("foo");
   }
+
+  @Test
+  public void inputEncodingDefaultsToSystemDefault() {
+    final ReportOptions actual = parseAddingRequiredArgs(
+            "");
+    assertThat(actual.getInputCharSet()).isEqualTo(Charset.defaultCharset());
+  }
+
+  @Test
+  public void parsesInputEncoding() {
+    final ReportOptions actual = parseAddingRequiredArgs(
+            "--inputEncoding", "US-ASCII");
+    assertThat(actual.getInputCharSet()).isEqualTo(StandardCharsets.US_ASCII);
+  }
+
+  @Test
+  public void outputEncodingDefaultsToSystemDefault() {
+    final ReportOptions actual = parseAddingRequiredArgs(
+            "");
+    assertThat(actual.getOutputCharSet()).isEqualTo(Charset.defaultCharset());
+  }
+
+  @Test
+  public void parsesOutputEncoding() {
+    final ReportOptions actual = parseAddingRequiredArgs(
+            "--outputEncoding", "US-ASCII");
+    assertThat(actual.getOutputCharSet()).isEqualTo(StandardCharsets.US_ASCII);
+  }
+
 
   private String getNonCanonicalGregorEngineClassPath() {
     final String gregorEngineClassPath = GregorMutationEngine.class

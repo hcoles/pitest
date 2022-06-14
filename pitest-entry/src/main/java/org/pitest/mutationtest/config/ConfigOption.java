@@ -17,6 +17,7 @@ package org.pitest.mutationtest.config;
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
 
 import java.io.Serializable;
+import java.nio.charset.Charset;
 
 public enum ConfigOption {
 
@@ -237,7 +238,17 @@ public enum ConfigOption {
    * be set to the directory that contains the top level build file. Usually
    * this is the same directory as the source control root/
    */
-  PROJECT_BASE("projectBase");
+  PROJECT_BASE("projectBase"),
+
+  /**
+   * Source file encoding
+   */
+  INPUT_ENCODING("inputEncoding", Charset.defaultCharset().name()),
+
+  /**
+   * Source file encoding
+   */
+  OUTPUT_ENCODING("outputEncoding", Charset.defaultCharset().name());
 
   private final String       text;
   private final Serializable defaultValue;

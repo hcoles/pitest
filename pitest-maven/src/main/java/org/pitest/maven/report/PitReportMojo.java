@@ -190,7 +190,6 @@ public class PitReportMojo extends AbstractMavenReport {
       return Charset.forName(sourceEncoding);
     }
     return Charset.defaultCharset();
-
   }
 
   public Charset getOutputEncoding() {
