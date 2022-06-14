@@ -481,7 +481,22 @@ public class PitestTaskTest {
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--fullMutationMatrix=true");
   }
-  
+
+  @Test
+  public void passesInputEncodingToJavaTask() {
+    this.pitestTask.setInputEncoding("US-ASCII");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--inputEncoding=US-ASCII");
+  }
+
+  @Test
+  public void passesOutputEncodingToJavaTask() {
+    this.pitestTask.setOutputEncoding("US-ASCII");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--outputEncoding=US-ASCII");
+  }
+
+
   private static class PathMatcher implements ArgumentMatcher<Path> {
 
     private final String[] expectedPaths;

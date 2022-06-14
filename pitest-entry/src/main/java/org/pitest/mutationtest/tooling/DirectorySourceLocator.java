@@ -14,10 +14,13 @@
  */
 package org.pitest.mutationtest.tooling;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
@@ -31,13 +34,20 @@ public class DirectorySourceLocator implements SourceLocator {
   private final File                    root;
   private final Function<File, Optional<Reader>> fileToReader;
 
-  private static class FileToReader implements Function<File, Optional<Reader>> {
+  private static final class FileToReader implements Function<File, Optional<Reader>> {
+
+    private final Charset inputCharset;
+
+    private FileToReader(Charset inputCharset) {
+      this.inputCharset = inputCharset;
+    }
 
     @Override
     public Optional<Reader> apply(final File f) {
       if (f.exists()) {
         try {
-          return Optional.of(new FileReader(f));
+          return Optional.of(new InputStreamReader(new BufferedInputStream(new FileInputStream(f)),
+                  inputCharset));
         } catch (final FileNotFoundException e) {
           return Optional.empty();
         }
@@ -53,8 +63,8 @@ public class DirectorySourceLocator implements SourceLocator {
     this.fileToReader = fileToReader;
   }
 
-  public DirectorySourceLocator(final File root) {
-    this(root, new FileToReader());
+  public DirectorySourceLocator(final File root, final Charset inputCharset) {
+    this(root, new FileToReader(inputCharset));
   }
 
   @Override

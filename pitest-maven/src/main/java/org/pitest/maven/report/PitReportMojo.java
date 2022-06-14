@@ -15,6 +15,7 @@
 package org.pitest.maven.report;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Locale;
 
@@ -92,6 +93,12 @@ public class PitReportMojo extends AbstractMavenReport {
    */
   @Parameter(property = "pit.report.outputdir", defaultValue = "pit-reports")
   private String                  siteReportDirectory;
+
+  @Parameter(property = "pit.inputEncoding", defaultValue = "${project.build.sourceEncoding}")
+  private String inputEncoding;
+
+  @Parameter(property = "pit.outputEncoding", defaultValue = "${project.reporting.outputEncoding}")
+  private String outputEncoding;
 
   private ReportGenerationManager reportGenerationManager;
 
@@ -176,6 +183,20 @@ public class PitReportMojo extends AbstractMavenReport {
 
   public List<String> getSourceDataFormats() {
     return this.sourceDataFormats;
+  }
+
+  public Charset getInputEncoding() {
+    if (inputEncoding != null) {
+      return Charset.forName(inputEncoding);
+    }
+    return Charset.defaultCharset();
+  }
+
+  public Charset getOutputEncoding() {
+    if (outputEncoding != null) {
+      return Charset.forName(outputEncoding);
+    }
+    return Charset.defaultCharset();
   }
 
   private ReportGenerationContext buildReportGenerationContext(Locale locale) {

@@ -21,6 +21,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -68,7 +69,7 @@ public class MutationHtmlReportListenerTest {
     when(this.coverageDb.getClassInfo(any(Collection.class))).thenReturn(
         Collections.singleton(this.classInfo));
 
-    this.testee = new MutationHtmlReportListener(this.coverageDb,
+    this.testee = new MutationHtmlReportListener(StandardCharsets.UTF_8, this.coverageDb,
         this.outputStrategy, Collections.<String>emptyList(), this.sourceLocator);
   }
 

@@ -35,6 +35,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -62,6 +63,7 @@ import static org.pitest.mutationtest.config.ConfigOption.HISTORY_OUTPUT_LOCATIO
 import static org.pitest.mutationtest.config.ConfigOption.INCLUDED_GROUPS;
 import static org.pitest.mutationtest.config.ConfigOption.INCLUDED_TEST_METHODS;
 import static org.pitest.mutationtest.config.ConfigOption.INCLUDE_LAUNCH_CLASSPATH;
+import static org.pitest.mutationtest.config.ConfigOption.INPUT_ENCODING;
 import static org.pitest.mutationtest.config.ConfigOption.JVM_PATH;
 import static org.pitest.mutationtest.config.ConfigOption.MAX_MUTATIONS_PER_CLASS;
 import static org.pitest.mutationtest.config.ConfigOption.MAX_SURVIVING;
@@ -69,6 +71,7 @@ import static org.pitest.mutationtest.config.ConfigOption.MUTATIONS;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATION_ENGINE;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATION_THRESHOLD;
 import static org.pitest.mutationtest.config.ConfigOption.MUTATION_UNIT_SIZE;
+import static org.pitest.mutationtest.config.ConfigOption.OUTPUT_ENCODING;
 import static org.pitest.mutationtest.config.ConfigOption.OUTPUT_FORMATS;
 import static org.pitest.mutationtest.config.ConfigOption.PLUGIN_CONFIGURATION;
 import static org.pitest.mutationtest.config.ConfigOption.PROJECT_BASE;
@@ -140,6 +143,8 @@ public class OptionsParser {
   private final ArgumentAcceptingOptionSpec<Boolean> includeLaunchClasspathSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> useClasspathJarSpec;
   private final OptionSpec<File>                     projectBaseSpec;
+  private final OptionSpec<String>                   inputEncoding;
+  private final OptionSpec<String>                   outputEncoding;
   
   public OptionsParser(Predicate<String> dependencyFilter) {
 
@@ -366,6 +371,14 @@ public class OptionsParser {
     this.javaExecutable = parserAccepts(JVM_PATH).withRequiredArg()
         .ofType(String.class).describedAs("path to java executable");
 
+    this.inputEncoding = parserAccepts(INPUT_ENCODING).withRequiredArg()
+            .ofType(String.class).describedAs("input encoding")
+            .defaultsTo(INPUT_ENCODING.getDefault(String.class));
+
+    this.outputEncoding = parserAccepts(OUTPUT_ENCODING).withRequiredArg()
+            .ofType(String.class).describedAs("output encoding")
+            .defaultsTo(OUTPUT_ENCODING.getDefault(String.class));
+
     this.pluginPropertiesSpec = parserAccepts(PLUGIN_CONFIGURATION)
         .withRequiredArg().ofType(KeyValuePair.class)
         .describedAs("custom plugin properties");
@@ -461,6 +474,8 @@ public class OptionsParser {
     data.setIncludedTestMethods(this.includedTestMethodsSpec.values(userArgs));
     data.setJavaExecutable(this.javaExecutable.value(userArgs));
 
+    setEncoding(data, userArgs);
+
     if (userArgs.has(projectBaseSpec)) {
       data.setProjectBase(this.projectBaseSpec.value(userArgs).toPath());
     }
@@ -470,6 +485,11 @@ public class OptionsParser {
     } else {
       return new ParseResult(data, null);
     }
+  }
+
+  private void setEncoding(ReportOptions data, OptionSet userArgs) {
+    data.setInputEncoding(Charset.forName(this.inputEncoding.value(userArgs)));
+    data.setOutputEncoding(Charset.forName(this.outputEncoding.value(userArgs)));
   }
 
   private void configureVerbosity(ReportOptions data, OptionSet userArgs) {

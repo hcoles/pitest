@@ -26,6 +26,7 @@ import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.util.Unchecked;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -424,6 +425,16 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
   public void testParsesProjectBase() {
     final ReportOptions actual = parseConfig("<projectBase>user</projectBase>");
     assertThat(actual.getProjectBase().toString()).isEqualTo("user");
+  }
+
+  public void testParsesInputSourceEncoding() {
+    final ReportOptions actual = parseConfig("<inputEncoding>US-ASCII</inputEncoding>");
+    assertThat(actual.getInputEncoding()).isEqualTo(StandardCharsets.US_ASCII);
+  }
+
+  public void testParsesOutputEncoding() {
+    final ReportOptions actual = parseConfig("<outputEncoding>US-ASCII</outputEncoding>");
+    assertThat(actual.getOutputEncoding()).isEqualTo(StandardCharsets.US_ASCII);
   }
 
   private ReportOptions parseConfig(final String xml) {
