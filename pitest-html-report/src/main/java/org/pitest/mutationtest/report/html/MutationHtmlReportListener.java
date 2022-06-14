@@ -210,6 +210,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
 
     st.setAttribute("totals", totals);
     st.setAttribute("packageSummaries", psd);
+    st.setAttribute("outputCharset", this.outputCharset);
     try {
       writer.write(st.toString());
       writer.close();
@@ -227,6 +228,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
     final Writer writer = this.outputStrategy.createWriterForFile(psData
         .getPackageDirectory() + File.separator + "index.html");
     st.setAttribute("packageData", psData);
+    st.setAttribute("outputCharset", this.outputCharset);
     try {
       writer.write(st.toString());
       writer.close();

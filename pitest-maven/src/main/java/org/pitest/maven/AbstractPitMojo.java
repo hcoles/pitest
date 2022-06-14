@@ -324,8 +324,8 @@ public class AbstractPitMojo extends AbstractMojo {
   @Parameter(defaultValue = "false", property = "useSlf4j")
   private boolean                     useSlf4j;
 
-  @Parameter(property = "pit.sourceEncoding", defaultValue = "${project.build.sourceEncoding}")
-  private String sourceEncoding;
+  @Parameter(property = "pit.inputEncoding", defaultValue = "${project.build.sourceEncoding}")
+  private String inputEncoding;
 
 
   @Parameter(property = "pit.outputEncoding", defaultValue = "${project.reporting.outputEncoding}")
@@ -656,8 +656,8 @@ public class AbstractPitMojo extends AbstractMojo {
   }
 
   public Charset getSourceEncoding() {
-    if (sourceEncoding != null) {
-      return Charset.forName(sourceEncoding);
+    if (inputEncoding != null) {
+      return Charset.forName(inputEncoding);
     }
     return Charset.defaultCharset();
   }

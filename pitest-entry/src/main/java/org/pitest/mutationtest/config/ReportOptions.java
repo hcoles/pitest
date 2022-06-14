@@ -49,6 +49,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.StringJoiner;
 import java.util.function.Predicate;
 
 import static org.pitest.functional.prelude.Prelude.not;
@@ -142,8 +143,8 @@ public class ReportOptions {
   private boolean                        useClasspathJar;
 
   private Path                           projectBase;
-  private Charset                        inputCharSet;
-  private Charset                        outputCharSet;
+  private Charset inputEncoding;
+  private Charset outputEncoding;
 
 
   public Verbosity getVerbosity() {
@@ -629,50 +630,69 @@ public class ReportOptions {
     this.projectBase = projectBase;
   }
 
-  public Charset getInputCharSet() {
-    return this.inputCharSet;
+  public Charset getInputEncoding() {
+    return this.inputEncoding;
   }
 
-  public void setInputCharSet(Charset inputCharSet) {
-    this.inputCharSet = inputCharSet;
+  public void setInputEncoding(Charset inputEncoding) {
+    this.inputEncoding = inputEncoding;
   }
 
-  public Charset getOutputCharSet() {
-    return this.outputCharSet;
+  public Charset getOutputEncoding() {
+    return this.outputEncoding;
   }
 
-  public void setOutputCharSet(Charset outputCharSet) {
-    this.outputCharSet = outputCharSet;
+  public void setOutputEncoding(Charset outputEncoding) {
+    this.outputEncoding = outputEncoding;
   }
 
   @Override
   public String toString() {
-    return "ReportOptions [targetClasses=" + targetClasses
-        + ", excludedMethods=" + excludedMethods + ", excludedClasses="
-        + excludedClasses + ", excludedTestClasses=" + excludedTestClasses
-        + ", codePaths=" + codePaths + ", reportDir=" + reportDir
-        + ", historyInputLocation=" + historyInputLocation
-        + ", historyOutputLocation=" + historyOutputLocation + ", sourceDirs="
-        + sourceDirs + ", classPathElements=" + classPathElements
-        + ", mutators=" + mutators + ", features=" + features
-        + ", dependencyAnalysisMaxDistance=" + dependencyAnalysisMaxDistance
-        + ", jvmArgs=" + jvmArgs + ", numberOfThreads=" + numberOfThreads
-        + ", timeoutFactor=" + timeoutFactor + ", timeoutConstant="
-        + timeoutConstant + ", targetTests=" + targetTests + ", loggingClasses="
-        + loggingClasses + ", verbosity=" + verbosity + ", failWhenNoMutations="
-        + failWhenNoMutations + ", outputs=" + outputs + ", groupConfig="
-        + groupConfig + ", fullMutationMatrix=" + fullMutationMatrix + ", mutationUnitSize=" + mutationUnitSize
-        + ", shouldCreateTimestampedReports=" + shouldCreateTimestampedReports
-        + ", detectInlinedCode=" + detectInlinedCode + ", exportLineCoverage="
-        + exportLineCoverage + ", mutationThreshold=" + mutationThreshold + ", testStrengthThreshold=" + testStrengthThreshold
-        + ", coverageThreshold=" + coverageThreshold + ", mutationEngine="
-        + mutationEngine + ", javaExecutable=" + javaExecutable
-        + ", includeLaunchClasspath=" + includeLaunchClasspath + ", properties="
-        + properties + ", maxSurvivors=" + maxSurvivors + ", excludedRunners="
-        + excludedRunners + ", includedTestMethods=" + includedTestMethods
-        + ", testPlugin=" + testPlugin + ", useClasspathJar=" + useClasspathJar
-        + ", skipFailingTests=" + skipFailingTests + "]";
+    return new StringJoiner(", ", ReportOptions.class.getSimpleName() + "[", "]")
+            .add("targetClasses=" + targetClasses)
+            .add("excludedMethods=" + excludedMethods)
+            .add("excludedClasses=" + excludedClasses)
+            .add("excludedTestClasses=" + excludedTestClasses)
+            .add("codePaths=" + codePaths)
+            .add("reportDir='" + reportDir + "'")
+            .add("historyInputLocation=" + historyInputLocation)
+            .add("historyOutputLocation=" + historyOutputLocation)
+            .add("sourceDirs=" + sourceDirs)
+            .add("classPathElements=" + classPathElements)
+            .add("mutators=" + mutators)
+            .add("features=" + features)
+            .add("dependencyAnalysisMaxDistance=" + dependencyAnalysisMaxDistance)
+            .add("jvmArgs=" + jvmArgs)
+            .add("numberOfThreads=" + numberOfThreads)
+            .add("timeoutFactor=" + timeoutFactor)
+            .add("timeoutConstant=" + timeoutConstant)
+            .add("targetTests=" + targetTests)
+            .add("loggingClasses=" + loggingClasses)
+            .add("verbosity=" + verbosity)
+            .add("failWhenNoMutations=" + failWhenNoMutations)
+            .add("skipFailingTests=" + skipFailingTests)
+            .add("outputs=" + outputs)
+            .add("groupConfig=" + groupConfig)
+            .add("fullMutationMatrix=" + fullMutationMatrix)
+            .add("mutationUnitSize=" + mutationUnitSize)
+            .add("shouldCreateTimestampedReports=" + shouldCreateTimestampedReports)
+            .add("detectInlinedCode=" + detectInlinedCode)
+            .add("exportLineCoverage=" + exportLineCoverage)
+            .add("mutationThreshold=" + mutationThreshold)
+            .add("coverageThreshold=" + coverageThreshold)
+            .add("testStrengthThreshold=" + testStrengthThreshold)
+            .add("mutationEngine='" + mutationEngine + "'")
+            .add("javaExecutable='" + javaExecutable + "'")
+            .add("includeLaunchClasspath=" + includeLaunchClasspath)
+            .add("properties=" + properties)
+            .add("maxSurvivors=" + maxSurvivors)
+            .add("excludedRunners=" + excludedRunners)
+            .add("includedTestMethods=" + includedTestMethods)
+            .add("testPlugin='" + testPlugin + "'")
+            .add("useClasspathJar=" + useClasspathJar)
+            .add("projectBase=" + projectBase)
+            .add("inputEncoding=" + inputEncoding)
+            .add("outputEncoding=" + outputEncoding)
+            .toString();
   }
-
-
 }

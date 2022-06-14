@@ -570,28 +570,28 @@ public class OptionsParserTest {
   public void inputEncodingDefaultsToSystemDefault() {
     final ReportOptions actual = parseAddingRequiredArgs(
             "");
-    assertThat(actual.getInputCharSet()).isEqualTo(Charset.defaultCharset());
+    assertThat(actual.getInputEncoding()).isEqualTo(Charset.defaultCharset());
   }
 
   @Test
   public void parsesInputEncoding() {
     final ReportOptions actual = parseAddingRequiredArgs(
             "--inputEncoding", "US-ASCII");
-    assertThat(actual.getInputCharSet()).isEqualTo(StandardCharsets.US_ASCII);
+    assertThat(actual.getInputEncoding()).isEqualTo(StandardCharsets.US_ASCII);
   }
 
   @Test
   public void outputEncodingDefaultsToSystemDefault() {
     final ReportOptions actual = parseAddingRequiredArgs(
             "");
-    assertThat(actual.getOutputCharSet()).isEqualTo(Charset.defaultCharset());
+    assertThat(actual.getOutputEncoding()).isEqualTo(Charset.defaultCharset());
   }
 
   @Test
   public void parsesOutputEncoding() {
     final ReportOptions actual = parseAddingRequiredArgs(
             "--outputEncoding", "US-ASCII");
-    assertThat(actual.getOutputCharSet()).isEqualTo(StandardCharsets.US_ASCII);
+    assertThat(actual.getOutputEncoding()).isEqualTo(StandardCharsets.US_ASCII);
   }
 
 

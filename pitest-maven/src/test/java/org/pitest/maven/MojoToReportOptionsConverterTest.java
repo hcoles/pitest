@@ -428,13 +428,13 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
   }
 
   public void testParsesInputSourceEncoding() {
-    final ReportOptions actual = parseConfig("<sourceEncoding>US-ASCII</sourceEncoding>");
-    assertThat(actual.getInputCharSet()).isEqualTo(StandardCharsets.US_ASCII);
+    final ReportOptions actual = parseConfig("<inputEncoding>US-ASCII</inputEncoding>");
+    assertThat(actual.getInputEncoding()).isEqualTo(StandardCharsets.US_ASCII);
   }
 
   public void testParsesOutputEncoding() {
     final ReportOptions actual = parseConfig("<outputEncoding>US-ASCII</outputEncoding>");
-    assertThat(actual.getOutputCharSet()).isEqualTo(StandardCharsets.US_ASCII);
+    assertThat(actual.getOutputEncoding()).isEqualTo(StandardCharsets.US_ASCII);
   }
 
   private ReportOptions parseConfig(final String xml) {

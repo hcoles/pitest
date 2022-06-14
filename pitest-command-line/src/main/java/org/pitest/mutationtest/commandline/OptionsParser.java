@@ -372,11 +372,11 @@ public class OptionsParser {
         .ofType(String.class).describedAs("path to java executable");
 
     this.inputEncoding = parserAccepts(INPUT_ENCODING).withRequiredArg()
-            .ofType(String.class).describedAs("source file encoding")
+            .ofType(String.class).describedAs("input encoding")
             .defaultsTo(INPUT_ENCODING.getDefault(String.class));
 
     this.outputEncoding = parserAccepts(OUTPUT_ENCODING).withRequiredArg()
-            .ofType(String.class).describedAs("putput encoding")
+            .ofType(String.class).describedAs("output encoding")
             .defaultsTo(OUTPUT_ENCODING.getDefault(String.class));
 
     this.pluginPropertiesSpec = parserAccepts(PLUGIN_CONFIGURATION)
@@ -488,8 +488,8 @@ public class OptionsParser {
   }
 
   private void setEncoding(ReportOptions data, OptionSet userArgs) {
-    data.setInputCharSet(Charset.forName(this.inputEncoding.value(userArgs)));
-    data.setOutputCharSet(Charset.forName(this.outputEncoding.value(userArgs)));
+    data.setInputEncoding(Charset.forName(this.inputEncoding.value(userArgs)));
+    data.setOutputEncoding(Charset.forName(this.outputEncoding.value(userArgs)));
   }
 
   private void configureVerbosity(ReportOptions data, OptionSet userArgs) {

@@ -94,8 +94,8 @@ public class PitReportMojo extends AbstractMavenReport {
   @Parameter(property = "pit.report.outputdir", defaultValue = "pit-reports")
   private String                  siteReportDirectory;
 
-  @Parameter(property = "pit.sourceEncoding", defaultValue = "${project.build.sourceEncoding}")
-  private String sourceEncoding;
+  @Parameter(property = "pit.inputEncoding", defaultValue = "${project.build.sourceEncoding}")
+  private String inputEncoding;
 
   @Parameter(property = "pit.outputEncoding", defaultValue = "${project.reporting.outputEncoding}")
   private String outputEncoding;
@@ -185,9 +185,9 @@ public class PitReportMojo extends AbstractMavenReport {
     return this.sourceDataFormats;
   }
 
-  public Charset getSourceEncoding() {
-    if (sourceEncoding != null) {
-      return Charset.forName(sourceEncoding);
+  public Charset getInputEncoding() {
+    if (inputEncoding != null) {
+      return Charset.forName(inputEncoding);
     }
     return Charset.defaultCharset();
   }
