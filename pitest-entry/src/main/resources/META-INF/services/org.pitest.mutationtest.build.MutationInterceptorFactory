@@ -11,6 +11,7 @@ org.pitest.mutationtest.build.intercept.javafeatures.EnumConstructorFilterFactor
 org.pitest.mutationtest.build.intercept.javafeatures.RecordFilterFactory
 org.pitest.mutationtest.build.intercept.javafeatures.StringSwitchFilterFactory
 org.pitest.mutationtest.build.intercept.javafeatures.AssertionsFilterFactory
+org.pitest.mutationtest.build.intercept.javafeatures.EnumSwitchFilterFactory
 org.pitest.mutationtest.build.intercept.logging.LoggingCallsFilterFactory
 org.pitest.mutationtest.build.intercept.timeout.InfiniteForLoopFilterFactory
 org.pitest.mutationtest.build.intercept.timeout.InfiniteIteratorLoopFilterFactory
