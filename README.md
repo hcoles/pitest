@@ -13,6 +13,7 @@ Read all about it at http://pitest.org
 * #1025 - Rework String Switch filtering
 * #1027 - Rework assert filtering and remove legacy filter mechanism
 * #903  - Filter mutants in singleton constructors
+* #1030 - Filter enum switch junk mutations
 
 ### 1.8.0
 
