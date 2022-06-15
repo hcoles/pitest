@@ -69,10 +69,17 @@ public class GlobTest {
   }
 
   @Test
-  public void shouldBeCaseSensitice() {
+  public void shouldBeCaseSensitive() {
     final Glob glob = new Glob("foo*bar*car");
     assertTrue(glob.matches("foo!!!bar!!!car"));
     assertFalse(glob.matches("foo!!!Bar!!!car"));
+  }
+
+  @Test
+  public void matchesStringsWithPlusSign() {
+    final Glob glob = new Glob("foo+bar+car");
+    assertTrue(glob.matches("foo+bar+car"));
+    assertFalse(glob.matches("foo-Bar-car"));
   }
 
 }

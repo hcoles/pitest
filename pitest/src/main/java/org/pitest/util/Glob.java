@@ -26,12 +26,14 @@ public class Glob implements Predicate<String> {
   private final Pattern regex;
 
   public Glob(final String glob) {
+    String rectifiedGlob;
     if (glob.startsWith("~")) {
-      this.regex = Pattern.compile(glob.substring(1));
+      rectifiedGlob = glob.substring(1);
     } else {
-      this.regex = Pattern.compile(convertGlobToRegex(glob)
-      );
+      rectifiedGlob = convertGlobToRegex(glob);
     }
+    rectifiedGlob = rectifiedGlob.replace("+", "\\+");
+    this.regex = Pattern.compile(rectifiedGlob);
   }
 
   public boolean matches(final CharSequence seq) {
