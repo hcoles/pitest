@@ -10,6 +10,7 @@ Read all about it at http://pitest.org
 
 ### 1.8.1-SNAPSHOT
 
+* #637  - Support different input and output encodings (thanks @qxo)
 * #705  - Allow + in file paths (thanks @ali-ghanbari)
 * #903  - Filter mutants in singleton constructors
 * #1025 - Rework String Switch filtering
