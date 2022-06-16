@@ -23,7 +23,6 @@ import static org.pitest.mutationtest.DetectionStatus.NO_COVERAGE;
 import static org.pitest.mutationtest.DetectionStatus.SURVIVED;
 import static org.pitest.mutationtest.DetectionStatus.TIMED_OUT;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,6 +31,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import com.example.systemtest.EatsMemoryWhenMutated;
+import com.example.systemtest.InfiniteLoop;
+import com.example.systemtest.NoMutations;
+import com.example.systemtest.NoMutationsTest;
+import com.example.systemtest.NoTests;
+import com.example.systemtest.OneMutationFullTest;
+import com.example.systemtest.OneMutationFullTestWithSystemPropertyDependency;
+import com.example.systemtest.OneMutationOnly;
+import com.example.systemtest.ThreeMutations;
+import com.example.systemtest.ThreeMutationsTwoMeaningfullTests;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -97,59 +106,11 @@ public class TestMutationTesting {
             .<MutationResultListener> singletonList(this.metaDataExtractor));
   }
 
-  public static class NoMutations {
-
-  }
-
-  public static class OneMutationOnly {
-    public static int returnOne() {
-      return 1;
-    }
-  }
-
-  public static class ThreeMutations {
-    public static int returnOne() {
-      return 1;
-    }
-
-    public static int returnTwo() {
-      return 2;
-    }
-
-    public static int returnThree() {
-      return 3;
-    }
-  }
-
-  public static class OneMutationFullTest {
-    @TestAnnotationForTesting
-    public void testReturnOne() {
-      assertEquals(1, OneMutationOnly.returnOne());
-    }
-  }
-
   @Test
   public void shouldKillAllCoveredMutations() {
     run(OneMutationOnly.class, OneMutationFullTest.class,
         "RETURN_VALS");
     verifyResults(KILLED);
-  }
-
-  public static class ThreeMutationsTwoMeaningfullTests {
-    @TestAnnotationForTesting
-    public void testReturnOne() {
-      assertEquals(1, ThreeMutations.returnOne());
-    }
-
-    @TestAnnotationForTesting
-    public void testReturnTwo() {
-      assertEquals(2, ThreeMutations.returnTwo());
-    }
-
-    @TestAnnotationForTesting
-    public void coverButDoNotTestReturnThree() {
-      ThreeMutations.returnThree();
-    }
   }
 
   @Test
@@ -159,54 +120,16 @@ public class TestMutationTesting {
     verifyResults(SURVIVED, KILLED, KILLED);
   }
 
-  public static class FailingTest {
-    @TestAnnotationForTesting
-    public void fail() {
-      assertEquals(1, 2);
-    }
-  }
-
-  public static class NoMutationsTest {
-    @TestAnnotationForTesting
-    public void pass() {
-
-    }
-  }
-
   @Test
   public void shouldReportNoResultsIfNoMutationsPossible() {
     run(NoMutations.class, NoMutationsTest.class, "RETURN_VALS");
     verifyResults();
   }
 
-  public static class NoTests {
-
-  }
-
   @Test
   public void shouldReportStatusOfNoCoverageWhenNoTestsAvailable() {
     run(ThreeMutations.class, NoTests.class, "RETURN_VALS");
     verifyResults(NO_COVERAGE, NO_COVERAGE, NO_COVERAGE);
-  }
-
-  public static class OneMutationTest {
-
-  }
-
-  public static class InfiniteLoop {
-    public static int loop() {
-      int i = 1;
-      do {
-        i++;
-        try {
-          Thread.sleep(1);
-        } catch (final InterruptedException e) {
-          e.printStackTrace();
-        }
-      } while (i < 1);
-      i++;
-      return i;
-    }
   }
 
   public static class InfiniteLoopTest {
@@ -221,15 +144,6 @@ public class TestMutationTesting {
     run(InfiniteLoop.class, InfiniteLoopTest.class,
         "INCREMENTS");
     verifyResults(KILLED, TIMED_OUT);
-  }
-
-  public static class OneMutationFullTestWithSystemPropertyDependency {
-    @TestAnnotationForTesting
-    public void testReturnOne() {
-      if (System.getProperty("foo").equals("foo")) {
-        assertEquals(1, OneMutationOnly.returnOne());
-      }
-    }
   }
 
   @Test
@@ -257,23 +171,6 @@ public class TestMutationTesting {
         "UNVIABLE_CLASS_MUTATOR");
     verifyResults(NON_VIABLE, NON_VIABLE);
 
-  }
-
-  public static class EatsMemoryWhenMutated {
-    public static int loop() throws InterruptedException {
-      int i = 1;
-      final List<String[]> vals = new ArrayList<>();
-      Thread.sleep(1500);
-      do {
-        i++;
-        vals.add(new String[9999999]);
-        vals.add(new String[9999999]);
-        vals.add(new String[9999999]);
-        vals.add(new String[9999999]);
-      } while (i < 1);
-      i++;
-      return i;
-    }
   }
 
   public static class EatsMemoryTest {

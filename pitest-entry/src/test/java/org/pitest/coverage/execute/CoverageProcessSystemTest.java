@@ -62,7 +62,7 @@ public class CoverageProcessSystemTest {
   // check all the specialised implementations broadly work
   @Test
   public void shouldCalculateCoverageForSingleBlockMethods()
-      throws IOException, InterruptedException, ExecutionException {
+      throws IOException, InterruptedException {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test1", 1);
   }
@@ -74,8 +74,7 @@ public class CoverageProcessSystemTest {
   }
 
   @Test
-  public void shouldCalculateCoverageForConstructors() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageForConstructors() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TesteeWithComplexConstructorsTest.class);
     assertTrue(coversBlock(coveredClasses, "testHigh", 0));
     assertTrue(coversBlock(coveredClasses, "testHigh", 1));
@@ -88,22 +87,19 @@ public class CoverageProcessSystemTest {
   }
 
   @Test
-  public void shouldCalculateCoverageFor4BlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageFor4BlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test4", 2);
   }
 
   @Test
-  public void shouldCalculateCoverageFor5BlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageFor5BlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test5", 2);
   }
 
   @Test
-  public void shouldCalculateCoverageForBlockMethods() throws IOException,
-  InterruptedException, ExecutionException {
+  public void shouldCalculateCoverageForBlockMethods() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestsForMultiBlockCoverage.class);
     assertCoverage(coveredClasses, "test6", 2);
   }
@@ -171,7 +167,7 @@ public class CoverageProcessSystemTest {
 
   @Test
   public void shouldCalculateCoverageForAllRelevantClasses()
-      throws Exception{
+      throws Exception {
 
     final List<CoverageResult> coveredClasses = runCoverageForTest(Tests.class);
 
@@ -215,7 +211,7 @@ public class CoverageProcessSystemTest {
 
   @Test
   public void shouldCalculateCoverageForLargeMethodThatThrowsException()
-      throws IOException, InterruptedException {
+      throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(TestThrowsExceptionFromLargeMethodTestee.class);
 
     final ClassName clazz = ClassName
