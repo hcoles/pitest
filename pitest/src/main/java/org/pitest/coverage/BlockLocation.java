@@ -16,6 +16,7 @@ public final class BlockLocation {
       final int firstInsnInBlock, final int lastInsnInBlock) {
     this.location = location;
     this.block = block;
+    // what are these for?
     this.firstInsnInBlock = firstInsnInBlock;
     this.lastInsnInBlock = lastInsnInBlock;
   }

@@ -88,7 +88,7 @@ public class XMLReportListener implements MutationResultListener {
         + makeNode("" + details.getLineNumber(), lineNumber)
         + makeNode(clean(details.getMutator()), mutator)
         + makeNode("" + details.getFirstIndex(), index)
-        + makeNode("" + details.getBlock(), block)
+        + makeNode("" + details.getFirstBlock(), block)
         + makeNodeWhenConditionSatisfied(!fullMutationMatrix,
             createKillingTestDesc(mutation.getKillingTest()), killingTest)
         + makeNodeWhenConditionSatisfied(fullMutationMatrix,

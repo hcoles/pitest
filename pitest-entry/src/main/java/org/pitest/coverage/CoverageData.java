@@ -77,8 +77,8 @@ public class CoverageData implements CoverageDatabase {
 
 
   @Override
-  public Collection<TestInfo> getTestsForInstructionLocation(InstructionLocation location) {
-    return this.blockCoverage.getOrDefault(location.getBlockLocation(), Collections.emptySet());
+  public Collection<TestInfo> getTestsForBlockLocation(BlockLocation location) {
+    return this.blockCoverage.getOrDefault(location, Collections.emptySet());
   }
 
   @Override

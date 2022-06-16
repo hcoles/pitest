@@ -36,13 +36,13 @@ public class MutationResultDataLoaderTest {
 
     for (final MutationResult result : results) {
       if (result.getDetails().getFirstIndex() == 5) {
-        assertEquals(38, result.getDetails().getBlock());
+        assertEquals(38, result.getDetails().getFirstBlock());
         assertEquals("com.mycompany.OrderedWeightedValueSampler", result.getDetails().getId().getClassName().asJavaName());
         assertEquals(202, result.getDetails().getLineNumber());
         assertFalse(result.getStatus().isDetected());
         assertEquals(DetectionStatus.NO_COVERAGE, result.getStatus());
       } else {
-        assertEquals(27, result.getDetails().getBlock());
+        assertEquals(27, result.getDetails().getFirstBlock());
         assertEquals("com.mycompany.OrderedWeightedValueSampler", result.getDetails().getId().getClassName().asJavaName());
         assertEquals(77, result.getDetails().getLineNumber());
         assertTrue(result.getStatus().isDetected());

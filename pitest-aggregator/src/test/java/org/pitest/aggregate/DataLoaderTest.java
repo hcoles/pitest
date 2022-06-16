@@ -36,7 +36,7 @@ public class DataLoaderTest {
         "com.mycompany.SmallScaleOrderedWeightedValueSamplerTest.shouldSucceedWithVariousGapTimestamps(com.mycompany.SmallScaleOrderedWeightedValueSamplerTest)",
         result.getKillingTest().orElse(null));
     assertEquals("Replaced long multiplication with division", result.getDetails().getDescription());
-    assertEquals(27, result.getDetails().getBlock());
+    assertEquals(27, result.getDetails().getFirstBlock());
   }
 
   @Test
