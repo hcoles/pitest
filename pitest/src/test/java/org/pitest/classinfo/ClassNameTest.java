@@ -160,7 +160,7 @@ public class ClassNameTest {
 
   @Test
   public void shouldObeyHashcodeEqualsContract() {
-    EqualsVerifier.forClass(ClassName.class).verify();
+    EqualsVerifier.forClass(ClassName.class).withNonnullFields("name").verify();
   }
 
   @Test

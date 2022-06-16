@@ -18,7 +18,6 @@ import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
 
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -149,7 +148,7 @@ public final class ClassName implements Comparable<ClassName>, Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(name);
+    return name.hashCode();
   }
 
   @Override
@@ -161,7 +160,7 @@ public final class ClassName implements Comparable<ClassName>, Serializable {
       return false;
     }
     final ClassName other = (ClassName) obj;
-    return Objects.equals(name, other.name);
+    return name.equals(other.name);
   }
 
   @Override
