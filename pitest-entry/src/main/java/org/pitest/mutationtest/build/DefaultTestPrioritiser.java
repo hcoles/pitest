@@ -37,7 +37,7 @@ public class DefaultTestPrioritiser implements TestPrioritiser {
 
   private Collection<TestInfo> pickTests(MutationDetails mutation) {
     return mutation.getBlocks().stream()
-            .map(block -> new BlockLocation(mutation.getId().getLocation(), block, -1, -1))
+            .map(block -> new BlockLocation(mutation.getId().getLocation(), block))
             .flatMap(loc -> this.coverage.getTestsForBlockLocation(loc).stream())
             .collect(Collectors.toCollection(() -> new HashSet<>()));
   }

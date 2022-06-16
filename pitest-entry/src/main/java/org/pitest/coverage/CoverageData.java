@@ -42,9 +42,6 @@ public class CoverageData implements CoverageDatabase {
 
   private static final Logger LOG = Log.getLogger();
 
-  // We calculate block coverage, but everything currently runs on line
-  // coverage. Ugly mess of maps below should go when
-  // api changed to work via blocks
   private final Map<BlockLocation, Set<TestInfo>> blockCoverage = new LinkedHashMap<>();
   private final LegacyClassCoverage legacyClassCoverage;
 

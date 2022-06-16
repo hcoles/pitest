@@ -4,7 +4,6 @@ import java.io.OutputStream;
 import java.util.Collection;
 
 import org.pitest.coverage.CoverageReceiver;
-import org.pitest.coverage.analysis.Block;
 import org.pitest.testapi.Description;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Id;
@@ -55,17 +54,13 @@ public class CoveragePipe implements CoverageReceiver {
 
   @Override
   public synchronized void registerProbes(int classId, String methodName,
-      String methodDesc, int firstProbe, int lastProbe, Iterable<Block> blocks) {
+      String methodDesc, int firstProbe, int lastProbe) {
     this.dos.writeByte(Id.PROBES);
     this.dos.writeInt(classId);
     this.dos.writeString(methodName);
     this.dos.writeString(methodDesc);
     this.dos.writeInt(firstProbe);
     this.dos.writeInt(lastProbe);
-    for (Block b : blocks) {
-      this.dos.writeInt(b.getFirstInstruction());
-      this.dos.writeInt(b.getLastInstruction());
-    }
   }
 
 }

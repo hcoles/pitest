@@ -9,21 +9,15 @@ public final class BlockLocation {
 
   private final Location location;
   private final int      block;
-  private final int      firstInsnInBlock;
-  private final int      lastInsnInBlock;
 
-  public BlockLocation(final Location location, final int block,
-      final int firstInsnInBlock, final int lastInsnInBlock) {
+  public BlockLocation(final Location location, final int block) {
     this.location = location;
     this.block = block;
-    // what are these for?
-    this.firstInsnInBlock = firstInsnInBlock;
-    this.lastInsnInBlock = lastInsnInBlock;
   }
 
   public static BlockLocation blockLocation(final Location location,
       final int block ) {
-    return new BlockLocation(location, block, -1, -1);
+    return new BlockLocation(location, block);
   }
 
   public boolean isFor(final ClassName clazz) {
@@ -36,14 +30,6 @@ public final class BlockLocation {
 
   public Location getLocation() {
     return this.location;
-  }
-
-  public int getFirstInsnInBlock() {
-    return firstInsnInBlock;
-  }
-
-  public int getLastInsnInBlock() {
-    return lastInsnInBlock;
   }
 
   @Override

@@ -28,8 +28,6 @@ class BlockCoverageDataLoader extends DataLoader<BlockCoverage> {
   private static final String METHOD     = "method";
   private static final String CLASSNAME  = "classname";
   private static final String NUMBER     = "number";
-  private static final String FIRST_INSN = "firstInstruction";
-  private static final String LAST_INSN  = "lastInstruction";
 
   private static final String OPEN_PAREN = "(";
 
@@ -75,11 +73,9 @@ class BlockCoverageDataLoader extends DataLoader<BlockCoverage> {
     String method = getAttributeValue(enclosingNode, METHOD);
     String methodName = method.substring(0, method.indexOf(OPEN_PAREN));
     int blockNum = getAttributeValueAsInt(enclosingNode, NUMBER);
-    int firstInstruction = getAttributeValueAsInt(enclosingNode, FIRST_INSN);
-    int lastInstruction = getAttributeValueAsInt(enclosingNode, LAST_INSN);
     String methodDesc = method.substring(method.indexOf(OPEN_PAREN));
     Location location = new Location(className, methodName, methodDesc);
-    block = new BlockLocation(location, blockNum, firstInstruction, lastInstruction);
+    block = new BlockLocation(location, blockNum);
     return block;
   }
 

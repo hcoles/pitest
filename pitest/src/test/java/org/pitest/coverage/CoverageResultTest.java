@@ -37,7 +37,7 @@ public class CoverageResultTest {
   private BlockLocation makeCoverage(final String name, final int block) {
     final Location l = Location.location(ClassName.fromString(name),
         "amethod", "methodDesc");
-    return new BlockLocation(l, block, 0, 1);
+    return new BlockLocation(l, block);
   }
 
 }
