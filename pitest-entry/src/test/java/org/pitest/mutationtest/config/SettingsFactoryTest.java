@@ -91,9 +91,9 @@ public class SettingsFactoryTest {
   @Test
   public void shouldNotAllowUserToCalculateCoverageForCoreClasses() {
     this.options.setTargetClasses(Collections
-        .singleton("java/Integer"));
+        .singleton("java.Integer"));
     final CoverageOptions actual = this.testee.createCoverageOptions();
-    assertFalse(actual.getFilter().test("java/Integer"));
+    assertFalse(actual.getFilter().test("java.Integer"));
   }
 
   @Test

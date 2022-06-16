@@ -67,12 +67,14 @@ public class CoverageOptions implements Serializable {
 
   private static Predicate<String> commonClasses() {
     return Prelude.or(
-        glob("java/*"),
-        glob("sun/*"),
-        glob("org/pitest/coverage/*"),
-        glob("org/pitest/reloc/*"),
-        glob("org/pitest/boot/*"));
+            glob("org.pitest.*"),
+            glob("java.*"),
+            glob("javax.*"),
+            glob("com.sun*"),
+            glob("org.junit*"),
+            glob("sun.*"));
   }
+
 
   private static Glob glob(String match) {
     return new Glob(match);
