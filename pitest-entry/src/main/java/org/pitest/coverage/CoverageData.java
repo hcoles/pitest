@@ -45,7 +45,7 @@ public class CoverageData implements CoverageDatabase {
   // We calculate block coverage, but everything currently runs on line
   // coverage. Ugly mess of maps below should go when
   // api changed to work via blocks
-  private final Map<InstructionLocation, Set<TestInfo>> instructionCoverage = new LinkedHashMap<>();
+  private final Map<BlockLocation, Set<TestInfo>> blockCoverage = new LinkedHashMap<>();
   private final LegacyClassCoverage legacyClassCoverage;
 
   private final CodeSource code;
@@ -66,13 +66,9 @@ public class CoverageData implements CoverageDatabase {
     legacyClassCoverage.addTestToClasses(ti,cr.getCoverage());
 
     for (final BlockLocation each : cr.getCoverage()) {
-      for (int i = each.getFirstInsnInBlock();
-           i <= each.getLastInsnInBlock(); i++) {
-        addTestsToBlockMap(ti, new InstructionLocation(each, i));
-      }
+        addTestsToBlockMap(ti, each);
     }
   }
-
 
   // populates class with class level data only, without block level data
   public void loadBlockDataOnly(Collection<BlockLocation> coverageData) {
@@ -82,7 +78,7 @@ public class CoverageData implements CoverageDatabase {
 
   @Override
   public Collection<TestInfo> getTestsForInstructionLocation(InstructionLocation location) {
-    return this.instructionCoverage.getOrDefault(location, Collections.emptySet());
+    return this.blockCoverage.getOrDefault(location.getBlockLocation(), Collections.emptySet());
   }
 
   @Override
@@ -117,11 +113,11 @@ public class CoverageData implements CoverageDatabase {
     return legacyClassCoverage.getTestsForClass(clazz);
   }
 
-  private void addTestsToBlockMap(final TestInfo ti, InstructionLocation each) {
-    Set<TestInfo> tests = this.instructionCoverage.get(each);
+  private void addTestsToBlockMap(final TestInfo ti, BlockLocation each) {
+    Set<TestInfo> tests = this.blockCoverage.get(each);
     if (tests == null) {
       tests = new TreeSet<>(new TestInfoNameComparator());
-      this.instructionCoverage.put(each, tests);
+      this.blockCoverage.put(each, tests);
     }
     tests.add(ti);
   }
@@ -137,11 +133,11 @@ public class CoverageData implements CoverageDatabase {
   }
 
   public List<BlockCoverage> createCoverage() {
-    return FCollection.map(this.instructionCoverage.entrySet(), toBlockCoverage());
+    return FCollection.map(this.blockCoverage.entrySet(), toBlockCoverage());
   }
 
-  private static Function<Entry<InstructionLocation, Set<TestInfo>>, BlockCoverage> toBlockCoverage() {
-    return a -> new BlockCoverage(a.getKey().getBlockLocation(), FCollection.map(a.getValue(),
+  private static Function<Entry<BlockLocation, Set<TestInfo>>, BlockCoverage> toBlockCoverage() {
+    return a -> new BlockCoverage(a.getKey(), FCollection.map(a.getValue(),
         TestInfo.toName()));
   }
 
