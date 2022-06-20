@@ -15,8 +15,10 @@
 package org.pitest.mutationtest.report.xml;
 
 import static org.pitest.mutationtest.report.xml.Tag.block;
+import static org.pitest.mutationtest.report.xml.Tag.blocks;
 import static org.pitest.mutationtest.report.xml.Tag.description;
 import static org.pitest.mutationtest.report.xml.Tag.index;
+import static org.pitest.mutationtest.report.xml.Tag.indexes;
 import static org.pitest.mutationtest.report.xml.Tag.killingTest;
 import static org.pitest.mutationtest.report.xml.Tag.killingTests;
 import static org.pitest.mutationtest.report.xml.Tag.lineNumber;
@@ -42,7 +44,7 @@ import org.pitest.util.StringUtil;
 import org.pitest.util.Unchecked;
 
 enum Tag {
-  mutation, sourceFile, mutatedClass, mutatedMethod, methodDescription, lineNumber, mutator, index, killingTest, killingTests, succeedingTests, description, block
+  mutation, sourceFile, mutatedClass, mutatedMethod, methodDescription, lineNumber, mutator, indexes, index, killingTest, killingTests, succeedingTests, description, blocks, block
 }
 
 public class XMLReportListener implements MutationResultListener {
@@ -87,8 +89,8 @@ public class XMLReportListener implements MutationResultListener {
             methodDescription)
         + makeNode("" + details.getLineNumber(), lineNumber)
         + makeNode(clean(details.getMutator()), mutator)
-        + makeNode("" + details.getFirstIndex(), index)
-        + makeNode("" + details.getFirstBlock(), block)
+        + makeNodes(indexes, details.getId().getIndexes(), index)
+        + makeNodes(blocks, details.getBlocks(), block)
         + makeNodeWhenConditionSatisfied(!fullMutationMatrix,
             createKillingTestDesc(mutation.getKillingTest()), killingTest)
         + makeNodeWhenConditionSatisfied(fullMutationMatrix,
@@ -127,6 +129,16 @@ public class XMLReportListener implements MutationResultListener {
     } else {
       return "<" + tag + "/>";
     }
+  }
+
+  private String makeNodes(Tag topTag, List<Integer> values, final Tag tag) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("<" + topTag + ">");
+    for (Integer each : values) {
+      sb.append(makeNode("" + each, tag));
+    }
+    sb.append("</" + topTag + ">");
+    return sb.toString();
   }
 
   private String createKillingTestDesc(final Optional<String> killingTest) {

@@ -11,9 +11,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 abstract class DataLoader<T> {
 
@@ -38,7 +38,7 @@ abstract class DataLoader<T> {
     return data;
   }
 
-  protected abstract Set<T> mapToData(XMLEventReader doc) throws XMLStreamException;
+  protected abstract Set<T> mapToData(XMLStreamReader xr) throws XMLStreamException;
 
   Set<T> loadData(final File dataLocation) throws ReportAggregationException {
     if (!dataLocation.exists() || !dataLocation.isFile()) {
@@ -53,8 +53,9 @@ abstract class DataLoader<T> {
   
   Set<T> loadData(final InputStream inputStream, final File dataLocation) throws ReportAggregationException {
     try {
-      final XMLEventReader doc = XMLInputFactory.newInstance().createXMLEventReader(inputStream);
-      return mapToData(doc);
+      XMLInputFactory xif = XMLInputFactory.newInstance();
+      XMLStreamReader xr = xif.createXMLStreamReader(inputStream);
+      return mapToData(xr);
     } catch (final XMLStreamException e) {
       throw new ReportAggregationException("Could not parse file: " + dataLocation.getAbsolutePath(), e);
     } finally {

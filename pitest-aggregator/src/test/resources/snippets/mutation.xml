@@ -5,8 +5,14 @@
 	<methodDescription>(JLjava/util/function/Consumer;Ljava/util/function/BiFunction;I)V</methodDescription>
 	<lineNumber>77</lineNumber>
 	<mutator>org.pitest.mutationtest.engine.gregor.mutators.MathMutator</mutator>
-	<index>61</index>
+	<indexes>
+		<index>61</index>
+		<index>62</index>
+	</indexes>
 	<killingTest>com.mycompany.SmallScaleOrderedWeightedValueSamplerTest.shouldSucceedWithVariousGapTimestamps(com.mycompany.SmallScaleOrderedWeightedValueSamplerTest)</killingTest>
 	<description>Replaced long multiplication with division</description>
-	<block>27</block>
+	<blocks>
+		<block>27</block>
+		<block>28</block>
+	</blocks>
 </mutation>

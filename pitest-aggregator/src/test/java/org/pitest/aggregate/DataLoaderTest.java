@@ -1,6 +1,7 @@
 package org.pitest.aggregate;
 
 import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.pitest.mutationtest.DetectionStatus.KILLED;
 
@@ -31,12 +32,15 @@ public class DataLoaderTest {
     assertEquals("(JLjava/util/function/Consumer;Ljava/util/function/BiFunction;I)V", result.getDetails().getId().getLocation().getMethodDesc());
     assertEquals(77, result.getDetails().getLineNumber());
     assertEquals("org.pitest.mutationtest.engine.gregor.mutators.MathMutator", result.getDetails().getMutator());
-    assertEquals(61, result.getDetails().getFirstIndex());
+
+    assertThat(result.getDetails().getId().getIndexes()).containsExactly(61, 62);
+
     assertEquals(
         "com.mycompany.SmallScaleOrderedWeightedValueSamplerTest.shouldSucceedWithVariousGapTimestamps(com.mycompany.SmallScaleOrderedWeightedValueSamplerTest)",
         result.getKillingTest().orElse(null));
     assertEquals("Replaced long multiplication with division", result.getDetails().getDescription());
-    assertEquals(27, result.getDetails().getFirstBlock());
+
+    assertThat(result.getDetails().getBlocks()).containsExactly(27, 28);
   }
 
   @Test

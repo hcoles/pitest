@@ -110,8 +110,7 @@ public class TestGregorMutater {
                 .findMutations();
 
         assertEquals(2, actualDetails.size());
-        final int firstMutationBlock = actualDetails.get(0).getFirstBlock();
-        assertEquals(firstMutationBlock, actualDetails.get(1).getFirstBlock());
+        assertThat(actualDetails.get(0).getBlocks()).containsAll(actualDetails.get(1).getBlocks());
     }
 
     @Test
