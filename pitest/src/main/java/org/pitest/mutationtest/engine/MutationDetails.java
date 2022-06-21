@@ -25,6 +25,8 @@ import org.pitest.coverage.ClassLine;
 import org.pitest.coverage.TestInfo;
 import org.pitest.util.StringUtil;
 
+import static java.util.Collections.singletonList;
+
 /**
  * Captures all data relating to a mutant.
  */
@@ -34,29 +36,34 @@ public final class MutationDetails implements Serializable {
 
   private final MutationIdentifier  id;
   private final String              filename;
-  private final int                 block;
+  private final List<Integer>       blocks;
   private final int                 lineNumber;
   private final String              description;
   private final ArrayList<TestInfo> testsInOrder = new ArrayList<>();
 
   public MutationDetails(final MutationIdentifier id, final String filename,
       final String description, final int lineNumber, final int block) {
+    this(id, filename, description, lineNumber, singletonList(block));
+  }
+
+  public MutationDetails(final MutationIdentifier id, final String filename,
+                         final String description, final int lineNumber, List<Integer> blocks) {
     this.id = id;
     this.description = Objects.requireNonNull(description);
     this.filename = defaultFilenameIfNotSupplied(filename);
     this.lineNumber = lineNumber;
-    this.block = block;
+    this.blocks = blocks;
   }
 
   @Override
   public String toString() {
     return "MutationDetails [id=" + this.id + ", filename=" + this.filename + ", block="
-        + this.block + ", lineNumber=" + this.lineNumber + ", description=" + this.description
+        + this.blocks + ", lineNumber=" + this.lineNumber + ", description=" + this.description
         + ", testsInOrder=" + this.testsInOrder + "]";
   }
 
   public MutationDetails withDescription(String desc) {
-    return new MutationDetails(this.id, this.filename, desc, this.lineNumber, this.block);
+    return new MutationDetails(this.id, this.filename, desc, this.lineNumber, this.blocks);
   }
 
   /**
@@ -168,14 +175,26 @@ public final class MutationDetails implements Serializable {
   }
 
   /**
-   * Returns the basic block in which this mutation occurs. See
+   * Returns the basic blocks in which this mutation occurs. See
    * https://github.com/hcoles/pitest/issues/131 for discussion on block
    * coverage
    *
+   * Usually this will be only a single block, but where mutants have
+   * been combined as code has been inlined, the mutant may occupy
+   * more than one block.
+   *
    * @return the block within the method that this mutation is located in
    */
-  public int getBlock() {
-    return this.block;
+  public List<Integer> getBlocks() {
+    return this.blocks;
+  }
+
+  /**
+   * Legacy method to retain interface for report code expecting a single block
+   */
+  @Deprecated
+  public int getFirstBlock() {
+    return this.blocks.get(0);
   }
 
   /**

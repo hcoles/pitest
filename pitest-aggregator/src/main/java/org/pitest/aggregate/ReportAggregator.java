@@ -5,7 +5,6 @@ import org.pitest.coverage.BlockCoverage;
 import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.CoverageData;
 import org.pitest.coverage.ReportCoverage;
-import org.pitest.coverage.TestInfo;
 import org.pitest.coverage.analysis.LineMapper;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.ClassMutationResults;
@@ -23,11 +22,8 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Logger;
@@ -99,29 +95,6 @@ public final class ReportAggregator {
     } catch (final Exception e) {
       throw new ReportAggregationException(e.getMessage(), e);
     }
-  }
-
-  private Map<TestInfo, Collection<BlockLocation>>  blocksToMap(
-      final Collection<BlockCoverage> coverageData) {
-
-    Map<TestInfo, Collection<BlockLocation>> blockCoverageMap = new HashMap<>();
-
-    for (final BlockCoverage blockData : coverageData) {
-      List<TestInfo> tests = blockData.getTests().stream()
-              .map(toTestInfo(blockData))
-              .collect(Collectors.toList());
-
-      for (TestInfo each : tests) {
-        Collection<BlockLocation> collection = blockCoverageMap.computeIfAbsent(each, k -> new ArrayList<>());
-        collection.add(blockData.getBlock());
-      }
-
-    }
-    return blockCoverageMap;
-  }
-
-  private Function<String, TestInfo> toTestInfo(final BlockCoverage blockData) {
-    return a -> new TestInfo(null, a, 0, Optional.ofNullable(blockData.getBlock().getLocation().getClassName()), blockData.getBlock().getBlock());
   }
 
   public static Builder builder() {

@@ -24,7 +24,7 @@ public class NoCoverage implements CoverageDatabase {
     }
 
     @Override
-    public Collection<TestInfo> getTestsForInstructionLocation(InstructionLocation location) {
+    public Collection<TestInfo> getTestsForBlockLocation(BlockLocation location) {
         return Collections.emptyList();
     }
 

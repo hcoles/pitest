@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.CoverageDatabase;
-import org.pitest.coverage.InstructionLocation;
 import org.pitest.coverage.TestInfo;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.util.Log;
 
 /**
  * Assigns tests based on line coverage and order them by execution speed with a
@@ -23,9 +21,6 @@ import org.pitest.util.Log;
  *
  */
 public class DefaultTestPrioritiser implements TestPrioritiser {
-
-  private static final Logger    LOG                                  = Log
-                                                                          .getLogger();
 
   private static final int       TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS = 1000;
 
@@ -41,23 +36,10 @@ public class DefaultTestPrioritiser implements TestPrioritiser {
   }
 
   private Collection<TestInfo> pickTests(MutationDetails mutation) {
-      if (mutation.getId().getIndexes().size() > 1) {
-        HashSet<TestInfo> ret = new HashSet<>();
-        for (int each : mutation.getId().getIndexes()) {
-          Collection<TestInfo> r = this.coverage.getTestsForInstructionLocation(
-              new InstructionLocation(
-                  new BlockLocation(mutation.getId().getLocation(),
-                      mutation.getBlock(), -1, -1), each - 1));
-          if (r != null) {
-            ret.addAll(r);
-          }
-        }
-        return ret;
-      } else {
-        return this.coverage
-            .getTestsForInstructionLocation(new InstructionLocation(new BlockLocation(mutation.getId().getLocation(), mutation.getBlock(), -1, -1),
-                mutation.getId().getFirstIndex() - 1));
-      }
+    return mutation.getBlocks().stream()
+            .map(block -> new BlockLocation(mutation.getId().getLocation(), block))
+            .flatMap(loc -> this.coverage.getTestsForBlockLocation(loc).stream())
+            .collect(Collectors.toCollection(() -> new HashSet<>()));
   }
 
   private List<TestInfo> prioritizeTests(ClassName clazz,

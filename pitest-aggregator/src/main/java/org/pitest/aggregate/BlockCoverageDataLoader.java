@@ -1,96 +1,70 @@
 package org.pitest.aggregate;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
+import javax.xml.stream.XMLStreamReader;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.BlockCoverage;
 import org.pitest.coverage.BlockLocation;
 import org.pitest.mutationtest.engine.Location;
+import org.pitest.util.Unchecked;
+
+import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 class BlockCoverageDataLoader extends DataLoader<BlockCoverage> {
-
-  private static final String BLOCK      = "block";
-  private static final String TESTS      = "tests";
-  private static final String TEST       = "test";
-  private static final String NAME       = "name";
-  private static final String METHOD     = "method";
-  private static final String CLASSNAME  = "classname";
-  private static final String NUMBER     = "number";
-  private static final String FIRST_INSN = "firstInstruction";
-  private static final String LAST_INSN  = "lastInstruction";
 
   private static final String OPEN_PAREN = "(";
 
   BlockCoverageDataLoader(final Collection<File> filesToLoad) {
     super(filesToLoad);
   }
-  
+
   @Override
-  protected Set<BlockCoverage> mapToData(XMLEventReader doc) throws XMLStreamException {
+  protected Set<BlockCoverage> mapToData(XMLStreamReader xr) throws XMLStreamException {
+    XmlMapper xm = new XmlMapper();
     final Set<BlockCoverage> data = new HashSet<>();
-    List<String> tests = new ArrayList<>();
-    StartElement enclosingNode = null;
-    BlockLocation block = null;
-    while (doc.hasNext()) {
-      XMLEvent next = doc.peek();
-      if (next.isStartElement()) {
-        enclosingNode = next.asStartElement();
-        String nodeName = next.asStartElement().getName().getLocalPart();
-        if (nodeName.equals(BLOCK)) {
-          block = toBlockLocation(enclosingNode);
-        }
-        if (nodeName.equals(TESTS)) {
-          tests = new ArrayList<>();
-        }
-        if (nodeName.equals(TEST)) {
-          tests.add(getAttributeValue(enclosingNode, NAME));
+    while (xr.hasNext()) {
+      xr.next();
+      if (xr.getEventType() == START_ELEMENT) {
+        if ("block".equals(xr.getLocalName())) {
+          try {
+            CoverageXml line = xm.readValue(xr, CoverageXml.class);
+            data.add(xmlToCoverage(line));
+          } catch (IOException e) {
+            throw Unchecked.translateCheckedException(e);
+          }
         }
       }
-      if (next.isEndElement()) {
-        String nodeName = next.asEndElement().getName().getLocalPart();
-        if (nodeName.equals(BLOCK)) {
-          data.add(new BlockCoverage(block, tests.isEmpty() ? null : tests));
-        }
-      }
-      doc.next();
     }
     return data;
   }
 
-  private BlockLocation toBlockLocation(StartElement enclosingNode) {
-    BlockLocation block;
-    ClassName className = ClassName.fromString(getAttributeValue(enclosingNode, CLASSNAME));
-    String method = getAttributeValue(enclosingNode, METHOD);
-    String methodName = method.substring(0, method.indexOf(OPEN_PAREN));
-    int blockNum = getAttributeValueAsInt(enclosingNode, NUMBER);
-    int firstInstruction = getAttributeValueAsInt(enclosingNode, FIRST_INSN);
-    int lastInstruction = getAttributeValueAsInt(enclosingNode, LAST_INSN);
-    String methodDesc = method.substring(method.indexOf(OPEN_PAREN));
+  private BlockCoverage xmlToCoverage(CoverageXml line) {
+    ClassName className = ClassName.fromString(line.classname);
+    String methodName = line.method.substring(0, line.method.indexOf(OPEN_PAREN));
+    String methodDesc = line.method.substring(line.method.indexOf(OPEN_PAREN));
     Location location = new Location(className, methodName, methodDesc);
-    block = new BlockLocation(location, blockNum, firstInstruction, lastInstruction);
-    return block;
+    BlockLocation loc = new BlockLocation(location, line.number);
+    return new BlockCoverage(loc, toTestStrings(line));
   }
 
-  private String getAttributeValue(StartElement enclosingNode, String attributeName) {
-    Attribute attribute = enclosingNode.getAttributeByName(QName.valueOf(attributeName));
-    return attribute == null ? null : attribute.getValue();
-  }
-
-  private int getAttributeValueAsInt(StartElement enclosingNode, String attributeName) {
-    String value = getAttributeValue(enclosingNode, attributeName);
-    return value == null ? 0 : Integer.parseInt(value);
+  private List<String> toTestStrings(CoverageXml line) {
+    if (line.tests == null) {
+      return Collections.emptyList();
+    }
+    return line.tests.stream()
+            .map(t -> t.name)
+            .collect(Collectors.toList());
   }
 
 }

@@ -1,5 +1,6 @@
 package org.pitest.mutationtest.build;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -16,8 +17,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
+import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.CoverageDatabase;
-import org.pitest.coverage.InstructionLocation;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
 import java.util.Optional;
@@ -45,7 +46,7 @@ public class DefaultTestPrioritiserTest {
   @Test
   public void shouldAssignTestsForRelevantLineToGeneratedMutations() {
     final List<TestInfo> expected = makeTestInfos(0);
-    when(this.coverage.getTestsForInstructionLocation(any(InstructionLocation.class))).thenReturn(
+    when(this.coverage.getTestsForBlockLocation(any(BlockLocation.class))).thenReturn(
         expected);
     final List<TestInfo> actual = this.testee.assignTests(makeMutation("foo"));
     assertEquals(expected, actual);
@@ -54,9 +55,11 @@ public class DefaultTestPrioritiserTest {
   @Test
   public void shouldPrioritiseTestsByExecutionTime() {
     final List<TestInfo> unorderedTests = makeTestInfos(10000, 100, 1000, 1);
-    when(this.coverage.getTestsForInstructionLocation(any(InstructionLocation.class))).thenReturn(
+    when(this.coverage.getTestsForBlockLocation(any(BlockLocation.class))).thenReturn(
         unorderedTests);
     final List<TestInfo> actual = this.testee.assignTests(makeMutation("foo"));
+
+    assertThat(actual.stream().map(toTime())).contains(1, 100, 1000, 10000);
 
     assertEquals(Arrays.asList(1, 100, 1000, 10000),
         FCollection.map(actual, toTime()));
@@ -72,7 +75,7 @@ public class DefaultTestPrioritiserTest {
   }
 
   private Function<Integer, TestInfo> timeToTestInfo() {
-    return a -> new TestInfo("foo", "bar", a, Optional.<ClassName> empty(), 0);
+    return a -> new TestInfo("foo", "bar" + a, a, Optional.<ClassName> empty(), 0);
   }
 
   private MutationDetails makeMutation(final String method) {

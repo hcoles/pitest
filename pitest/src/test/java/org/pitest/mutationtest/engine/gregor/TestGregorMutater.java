@@ -20,7 +20,6 @@ import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.util.ResourceFolderByteArraySource;
 import org.pitest.verifier.mutants.MutatorVerifierStart;
@@ -31,7 +30,6 @@ import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class TestGregorMutater {
 
@@ -46,14 +44,13 @@ public class TestGregorMutater {
         List<MutationDetails> actualDetails = v.forClass(HasMultipleMutations.class)
                 .findMutations();
 
-        assertTrue(actualDetails.stream()
-                .anyMatch(descriptionContaining("Replaced Shift Left with Shift Right")));
-        assertTrue(actualDetails.stream()
-                .anyMatch(descriptionContaining("replaced return of integer")));
-        assertTrue(actualDetails.stream()
-                .anyMatch(descriptionContaining("Changed increment")));
-        assertTrue(actualDetails.stream()
-                .anyMatch(descriptionContaining("removed negation")));
+        assertThat(actualDetails.stream()).anyMatch(descriptionContaining("Replaced Shift Left with Shift Right"));
+        assertThat(actualDetails.stream())
+                .anyMatch(descriptionContaining("replaced return of integer"));
+        assertThat(actualDetails.stream())
+                .anyMatch(descriptionContaining("Changed increment"));
+        assertThat(actualDetails.stream())
+                .anyMatch(descriptionContaining("removed negation"));
     }
 
     @Test
@@ -113,8 +110,7 @@ public class TestGregorMutater {
                 .findMutations();
 
         assertEquals(2, actualDetails.size());
-        final int firstMutationBlock = actualDetails.get(0).getBlock();
-        assertEquals(firstMutationBlock, actualDetails.get(1).getBlock());
+        assertThat(actualDetails.get(0).getBlocks()).containsAll(actualDetails.get(1).getBlocks());
     }
 
     @Test
@@ -133,9 +129,9 @@ public class TestGregorMutater {
                 .findMutations();
 
         assertEquals(3, actualDetails.size());
-        final int firstMutationBlock = actualDetails.get(0).getBlock();
-        assertEquals(firstMutationBlock + 1, actualDetails.get(1).getBlock());
-        assertEquals(firstMutationBlock + 2, actualDetails.get(2).getBlock());
+        final int firstMutationBlock = actualDetails.get(0).getFirstBlock();
+        assertEquals(firstMutationBlock + 1, actualDetails.get(1).getFirstBlock());
+        assertEquals(firstMutationBlock + 2, actualDetails.get(2).getFirstBlock());
     }
 
     @Test
@@ -145,8 +141,8 @@ public class TestGregorMutater {
                 .findMutations();
 
         assertEquals(2, actualDetails.size());
-        final int firstMutationBlock = actualDetails.get(0).getBlock();
-        assertEquals(firstMutationBlock + 1, actualDetails.get(1).getBlock());
+        final int firstMutationBlock = actualDetails.get(0).getFirstBlock();
+        assertEquals(firstMutationBlock + 1, actualDetails.get(1).getFirstBlock());
     }
 
     @Test
@@ -174,8 +170,8 @@ public class TestGregorMutater {
     private void assertTwoMutationsInDifferentBlocks(
             final List<MutationDetails> actualDetails) {
         assertEquals(2, actualDetails.size());
-        final int firstMutationBlock = actualDetails.get(0).getBlock();
-        assertEquals(firstMutationBlock + 1, actualDetails.get(1).getBlock());
+        final int firstMutationBlock = actualDetails.get(0).getFirstBlock();
+        assertEquals(firstMutationBlock + 1, actualDetails.get(1).getFirstBlock());
     }
 
     enum AnEnum {

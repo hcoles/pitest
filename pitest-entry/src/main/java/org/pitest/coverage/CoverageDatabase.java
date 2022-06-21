@@ -9,7 +9,7 @@ public interface CoverageDatabase extends ReportCoverage {
 
   Collection<TestInfo> getTestsForClass(ClassName clazz);
 
-  Collection<TestInfo> getTestsForInstructionLocation(InstructionLocation location);
+  Collection<TestInfo> getTestsForBlockLocation(BlockLocation location);
 
   BigInteger getCoverageIdForClass(ClassName clazz);
 

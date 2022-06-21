@@ -42,7 +42,6 @@ import static org.pitest.bytecode.analysis.OpcodeMatchers.IRETURN;
 import static org.pitest.bytecode.analysis.OpcodeMatchers.LRETURN;
 import static org.pitest.bytecode.analysis.OpcodeMatchers.RETURN;
 import static org.pitest.functional.FCollection.bucket;
-import static org.pitest.functional.FCollection.map;
 import static org.pitest.functional.FCollection.mapTo;
 import static org.pitest.functional.prelude.Prelude.not;
 import static org.pitest.sequence.Result.result;
@@ -155,18 +154,20 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
     }
 
     final MutationDetails baseMutation = mutationsInHandlerBlock.get(0);
-    final int firstBlock = baseMutation.getBlock();
+    final int firstBlock = baseMutation.getBlocks().get(0);
 
     // check that we have at least on mutation in a different block
     // to the base one (is this not implied by there being only 1 mutation in
     // the handler ????)
-    final List<Integer> ids = map(similarMutantsOnSameLine, MutationDetails::getBlock);
+    final List<Integer> ids = blocksForMutants(similarMutantsOnSameLine);
     if (ids.stream().anyMatch(not(isEqual(firstBlock)))) {
       mutantsToReturn.add(makeCombinedMutant(similarMutantsOnSameLine));
     } else {
       mutantsToReturn.addAll(similarMutantsOnSameLine);
     }
   }
+
+
 
   private boolean isInFinallyBlock(MutationDetails m) {
     MethodTree method = currentClass.method(m.getId().getLocation()).get();
@@ -205,12 +206,18 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
         .getLocation(), indexes, first.getId().getMutator());
 
     return new MutationDetails(id, first.getFilename(), first.getDescription(),
-        first.getLineNumber(), first.getBlock());
+        first.getLineNumber(), blocksForMutants(value));
   }
 
   private static Function<MutationDetails, LineMutatorPair> toLineMutatorPair() {
     // bucket by combination of mutator and description
     return a -> new LineMutatorPair(a.getLineNumber(), a.getMutator() + a.getDescription());
+  }
+
+  private static List<Integer> blocksForMutants(Collection<MutationDetails> mutants) {
+    return mutants.stream()
+            .flatMap(m -> m.getBlocks().stream())
+            .collect(Collectors.toList());
   }
 
 }
