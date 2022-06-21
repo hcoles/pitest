@@ -19,6 +19,11 @@ import java.util.List;
 
 public interface TestUnitFinder {
 
-  List<TestUnit> findTestUnits(Class<?> clazz);
+  /**
+   * Discover test units for a class. Most implementations can ignore the listener
+   * parameter, it is only required if tests are executed as part of discovery
+   * (eg JUnit 5).
+   */
+  List<TestUnit> findTestUnits(Class<?> clazz, TestUnitExecutionListener listener);
 
 }

@@ -1,6 +1,7 @@
 package org.pitest.mutationtest.config;
 
 import org.pitest.testapi.TestUnit;
+import org.pitest.testapi.TestUnitExecutionListener;
 import org.pitest.testapi.TestUnitFinder;
 
 import java.util.Collections;
@@ -14,9 +15,9 @@ class PrioritisingTestUnitFinder implements TestUnitFinder {
     }
 
     @Override
-    public List<TestUnit> findTestUnits(Class<?> clazz) {
+    public List<TestUnit> findTestUnits(Class<?> clazz, TestUnitExecutionListener listener) {
        for (TestUnitFinder each : orderedChildren) {
-           List<TestUnit> found = each.findTestUnits(clazz);
+           List<TestUnit> found = each.findTestUnits(clazz, listener);
            if (!found.isEmpty()) {
                return found;
            }

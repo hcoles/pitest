@@ -1,6 +1,7 @@
 package org.pitest.junit;
 
 import org.junit.Test;
+import org.pitest.testapi.NullExecutionListener;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -10,7 +11,7 @@ public class NullConfigurationTest {
 
     @Test
     public void findsNoTests() {
-        assertThat(underTest.testUnitFinder().findTestUnits(this.getClass())).isEmpty();
+        assertThat(underTest.testUnitFinder().findTestUnits(this.getClass(), new NullExecutionListener())).isEmpty();
     }
 
     @Test

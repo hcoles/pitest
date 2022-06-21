@@ -54,8 +54,8 @@ public class TestJUnitConfiguration {
 
   private  JUnitCompatibleConfiguration testee = new JUnitCompatibleConfiguration(
                                                         new TestGroupConfig(),
-                                                        Collections.<String>emptyList(),
-                                                        Collections.<String>emptyList());
+                                                        Collections.emptyList(),
+                                                        Collections.emptyList());
   private Pitest                             pitest;
   private Container                          container;
 
@@ -630,7 +630,7 @@ public class TestJUnitConfiguration {
     final List<String> include = Collections.emptyList();
     this.testee = new JUnitCompatibleConfiguration(
             new TestGroupConfig(include,exclude),
-            Collections.<String>emptyList(), Collections.<String>emptyList());
+            Collections.emptyList(), Collections.emptyList());
   }
 
   private void run(final Class<?> clazz) {
@@ -640,7 +640,7 @@ public class TestJUnitConfiguration {
   private List<TestUnit> find(Class<?> clazz) {
     final FindTestUnits finder = new FindTestUnits(this.testee);
     return finder.findTestUnitsForAllSuppliedClasses(Arrays
-        .<Class<?>> asList(clazz));
+        .asList(clazz));
   }
 
 }

@@ -189,6 +189,11 @@ public class CoverageData implements CoverageDatabase {
 
   private TestInfo createTestInfo(final Description description,
       final int executionTime, final int linesCovered) {
+
+    if (description.getFirstTestClass() == null) {
+      System.out.println(description);
+    }
+
     final Optional<ClassName> testee = this.code.findTestee(description
         .getFirstTestClass());
     return new TestInfo(description.getFirstTestClass(),

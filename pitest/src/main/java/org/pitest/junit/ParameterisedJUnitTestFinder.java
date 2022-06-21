@@ -27,11 +27,12 @@ import org.pitest.functional.FCollection;
 import java.util.Optional;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
 import org.pitest.testapi.TestUnit;
+import org.pitest.testapi.TestUnitExecutionListener;
 import org.pitest.testapi.TestUnitFinder;
 
 public class ParameterisedJUnitTestFinder implements TestUnitFinder {
   @Override
-  public List<TestUnit> findTestUnits(final Class<?> clazz) {
+  public List<TestUnit> findTestUnits(final Class<?> clazz, TestUnitExecutionListener unused) {
 
     final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
     if ((runner == null)
