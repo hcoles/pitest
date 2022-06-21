@@ -48,10 +48,7 @@ public enum ConfigOption {
    * Features to enable/disable
    */
   FEATURES("features"),
-  /**
-   * Maximum number of hops from a mutable class to a test
-   */
-  DEPENDENCY_DISTANCE("dependencyDistance", -1),
+
   /**
    * Arguments to launch child processes with
    */

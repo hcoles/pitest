@@ -135,8 +135,7 @@ public class SettingsFactory {
   public CoverageOptions createCoverageOptions() {
     return new CoverageOptions(
         this.options.getTargetClasses(), this.options.getExcludedClasses(),
-        this.options.createMinionSettings(), this.options.getVerbosity(),
-        this.options.getDependencyAnalysisMaxDistance());
+        this.options.createMinionSettings(), this.options.getVerbosity());
   }
 
   public CompoundInterceptorFactory getInterceptor() {

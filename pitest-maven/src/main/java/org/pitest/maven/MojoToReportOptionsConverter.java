@@ -97,7 +97,7 @@ public class MojoToReportOptionsConverter {
 
     data.setUseClasspathJar(this.mojo.isUseClasspathJar());
     data.setClassPathElements(classPath);
-    data.setDependencyAnalysisMaxDistance(this.mojo.getMaxDependencyDistance());
+
     data.setFailWhenNoMutations(shouldFailWhenNoMutations());
 
     data.setTargetClasses(determineTargetClasses());

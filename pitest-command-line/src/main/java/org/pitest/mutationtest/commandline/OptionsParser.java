@@ -49,7 +49,6 @@ import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH;
 import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH_FILE;
 import static org.pitest.mutationtest.config.ConfigOption.CODE_PATHS;
 import static org.pitest.mutationtest.config.ConfigOption.COVERAGE_THRESHOLD;
-import static org.pitest.mutationtest.config.ConfigOption.DEPENDENCY_DISTANCE;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_GROUPS;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_METHOD;
@@ -102,7 +101,6 @@ public class OptionsParser {
   private final OptionSpec<String>                   targetClassesSpec;
   private final OptionSpec<String>                   targetTestsSpec;
   private final OptionSpec<String>                   avoidCallsSpec;
-  private final OptionSpec<Integer>                  depth;
   private final OptionSpec<Integer>                  threadsSpec;
   private final OptionSpec<File>                     sourceDirSpec;
   private final OptionSpec<File>                     historyOutputSpec;
@@ -183,11 +181,6 @@ public class OptionsParser {
         .withValuesSeparatedBy(',')
         .describedAs(
             "comma separated list of filters to match against tests to run");
-
-    this.depth = parserAccepts(DEPENDENCY_DISTANCE).withRequiredArg()
-        .ofType(Integer.class)
-        .defaultsTo(DEPENDENCY_DISTANCE.getDefault(Integer.class))
-        .describedAs("maximum distance to look from test for covered classes");
 
     this.threadsSpec = parserAccepts(THREADS).withRequiredArg()
         .ofType(Integer.class).defaultsTo(THREADS.getDefault(Integer.class))
@@ -422,7 +415,7 @@ public class OptionsParser {
     data.setSourceDirs(this.sourceDirSpec.values(userArgs));
     data.setMutators(this.mutators.values(userArgs));
     data.setFeatures(this.features.values(userArgs));
-    data.setDependencyAnalysisMaxDistance(this.depth.value(userArgs));
+
     data.addChildJVMArgs(this.jvmArgsProcessor.values(userArgs));
     
     data.setFullMutationMatrix(this.fullMutationMatrixSpec.value(userArgs));

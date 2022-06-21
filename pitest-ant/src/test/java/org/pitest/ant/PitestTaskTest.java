@@ -74,13 +74,6 @@ public class PitestTaskTest {
   }
 
   @Test
-  public void shouldPassDependencyDistanceOptionToJavaTask() {
-    this.pitestTask.setDependencyDistance("distance");
-    this.pitestTask.execute(this.java);
-    verify(this.arg).setValue("--dependencyDistance=distance");
-  }
-
-  @Test
   public void shouldPassExcludedClassesOptionToJavaTask() {
     this.pitestTask.setExcludedClasses("String");
     this.pitestTask.execute(this.java);

@@ -282,7 +282,7 @@ public class CoverageProcessSystemTest {
       InterruptedException {
     final Consumer<CoverageResult> handler = a -> coveredClasses.add(a);
 
-    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), excludeTests(), TestPluginArguments.defaults(), VERBOSE, -1);
+    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), excludeTests(), TestPluginArguments.defaults(), VERBOSE);
 
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     try {

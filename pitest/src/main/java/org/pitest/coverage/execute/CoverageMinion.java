@@ -16,10 +16,8 @@ package org.pitest.coverage.execute;
 
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.classinfo.ClassName;
-import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.CoverageTransformer;
-import org.pitest.dependency.DependencyExtractor;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.config.ClientPluginServices;
@@ -139,17 +137,7 @@ public class CoverageMinion {
               + " test classes supplied. This may indicate an issue with the classpath or a missing test plugin (e.g for JUnit 5).");
     }
 
-    final DependencyFilter filter = new DependencyFilter(
-        new DependencyExtractor(new ClassPathByteArraySource(),
-            paramsFromParent.getDependencyAnalysisMaxDistance()),
-        paramsFromParent.getFilter());
-    final List<TestUnit> filteredTus = filter
-        .filterTestsByDependencyAnalysis(tus);
-
-    LOG.info(() -> "Dependency analysis reduced number of potential tests by "
-        + (tus.size() - filteredTus.size()));
-    return filteredTus;
-
+    return tus;
   }
 
   private static List<TestUnit> discoverTests(final Configuration testPlugin,

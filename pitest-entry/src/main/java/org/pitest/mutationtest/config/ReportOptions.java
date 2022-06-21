@@ -96,8 +96,6 @@ public class ReportOptions {
   private Collection<String>             mutators;
   private Collection<String>             features;
 
-  private int                            dependencyAnalysisMaxDistance;
-
   private final List<String>             jvmArgs                        = new ArrayList<>(DEFAULT_CHILD_JVM_ARGS);
   private int                            numberOfThreads                = 0;
   private float                          timeoutFactor                  = PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR;
@@ -211,22 +209,6 @@ public class ReportOptions {
 
   public void setFeatures(Collection<String> features) {
     this.features = features;
-  }
-
-  /**
-   * @return the dependencyAnalysisMaxDistance
-   */
-  public int getDependencyAnalysisMaxDistance() {
-    return this.dependencyAnalysisMaxDistance;
-  }
-
-  /**
-   * @param dependencyAnalysisMaxDistance
-   *          the dependencyAnalysisMaxDistance to set
-   */
-  public void setDependencyAnalysisMaxDistance(
-      final int dependencyAnalysisMaxDistance) {
-    this.dependencyAnalysisMaxDistance = dependencyAnalysisMaxDistance;
   }
 
   public List<String> getJvmArgs() {
@@ -661,7 +643,6 @@ public class ReportOptions {
             .add("classPathElements=" + classPathElements)
             .add("mutators=" + mutators)
             .add("features=" + features)
-            .add("dependencyAnalysisMaxDistance=" + dependencyAnalysisMaxDistance)
             .add("jvmArgs=" + jvmArgs)
             .add("numberOfThreads=" + numberOfThreads)
             .add("timeoutFactor=" + timeoutFactor)

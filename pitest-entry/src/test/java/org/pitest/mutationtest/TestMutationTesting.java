@@ -212,7 +212,6 @@ public class TestMutationTesting {
 
     final Set<Predicate<String>> tests = Collections.singleton(isEqual(test.getName()));
     data.setTargetTests(tests);
-    data.setDependencyAnalysisMaxDistance(-1);
 
     final Set<String> mutees = Collections.singleton(clazz.getName() + "*");
     data.setTargetClasses(mutees);
@@ -295,7 +294,7 @@ public class TestMutationTesting {
 
   private CoverageOptions createCoverageOptions(ReportOptions data) {
     return new CoverageOptions(data.getTargetClasses(),data.getExcludedClasses(), this.config,
-        data.getVerbosity(), data.getDependencyAnalysisMaxDistance());
+        data.getVerbosity());
   }
 
   protected void verifyResults(final DetectionStatus... detectionStatus) {
