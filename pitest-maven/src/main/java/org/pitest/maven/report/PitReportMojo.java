@@ -185,18 +185,18 @@ public class PitReportMojo extends AbstractMavenReport {
     return this.sourceDataFormats;
   }
 
-  public Charset getInputEncoding() {
+  public String getInputEncoding() {
     if (inputEncoding != null) {
-      return Charset.forName(inputEncoding);
+      return inputEncoding;
     }
-    return Charset.defaultCharset();
+    return Charset.defaultCharset().name();
   }
 
-  public Charset getOutputEncoding() {
+  public String getOutputEncoding() {
     if (outputEncoding != null) {
-      return Charset.forName(outputEncoding);
+      return outputEncoding;
     }
-    return Charset.defaultCharset();
+    return Charset.defaultCharset().name();
   }
 
   private ReportGenerationContext buildReportGenerationContext(Locale locale) {

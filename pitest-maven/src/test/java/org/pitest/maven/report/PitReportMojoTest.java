@@ -14,7 +14,7 @@
  */
 package org.pitest.maven.report;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
@@ -93,7 +93,7 @@ public class PitReportMojoTest {
     assertThat(actualContext.getReportsDataDirectory(),
         sameInstance(this.reportsDirectory));
     assertThat(actualContext.getSink(), sameInstance(this.sink));
-    assertThat(actualContext.getSiteDirectory().getPath(), is("abspath"
+    assertThat(actualContext.getSiteDirectory().getPath(), endsWith("abspath"
         + File.separator + "pit-reports"));
   }
 

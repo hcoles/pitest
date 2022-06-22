@@ -14,6 +14,7 @@ import org.pitest.mutationtest.config.UndatedReportDirCreationStrategy;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -61,8 +62,8 @@ abstract class AbstractPitAggregationReportMojo extends PitReportMojo {
       }
 
       final ReportAggregator reportAggregator = reportAggregationBuilder
-              .inputCharSet(this.getInputEncoding())
-              .outputCharset(this.getOutputEncoding())
+              .inputCharSet(Charset.forName(this.getInputEncoding()))
+              .outputCharset(Charset.forName(this.getOutputEncoding()))
           .resultOutputStrategy(new DirectoryResultOutputStrategy(
               getReportsDirectory().getAbsolutePath(),
               new UndatedReportDirCreationStrategy()))
