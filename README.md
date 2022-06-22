@@ -8,6 +8,16 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.9.0 (unreleased)
+
+* #1035 - Improve coverage memory consumption
+* #1040 - Faster JUnit 5 coverage calculation
+* #1040 - Remove `dependencyDistance` parameter
+
+As a result of #1040 any external pitest test plugins (eg JUnit 5, TestNG, arcmutate accelerator) must be
+updated to a compatible version when upgrading.
+
+
 ### 1.8.1-SNAPSHOT
 
 * #637  - Support different input and output encodings (thanks @qxo)
