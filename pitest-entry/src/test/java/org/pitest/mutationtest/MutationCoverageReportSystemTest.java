@@ -79,15 +79,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   }
 
   @Test
-  public void shouldPickRelevantTestsAndKillMutationsBasedOnCoverageDataWhenLimitedByClassReach() {
-    this.data.setDependencyAnalysisMaxDistance(2);
-    this.data.setTargetTests(predicateFor("com.example.*FullyCovered*"));
-    this.data.setTargetClasses(asList("com.example.FullyCovered*"));
-    createAndRun();
-    verifyResults(KILLED);
-  }
-
-  @Test
   public void shouldReportUnCoveredMutations() {
     this.data.setTargetClasses(asList("com.example.PartiallyCovered*"));
     createAndRun();
@@ -254,7 +245,6 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
       cp.add(location);
 
       this.data.setClassPathElements(cp);
-      this.data.setDependencyAnalysisMaxDistance(-1);
       this.data.setExcludedClasses(asList("*Power*", "*JMockit*"));
       createAndRun();
       verifyResults(KILLED);

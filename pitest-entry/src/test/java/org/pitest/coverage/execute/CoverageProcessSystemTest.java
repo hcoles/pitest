@@ -7,6 +7,7 @@ import com.example.coverage.execute.samples.exceptions.TestsClassWithException;
 import com.example.coverage.execute.samples.exceptions.ThrowsExceptionFromLargeMethodTestee;
 import com.example.coverage.execute.samples.exceptions.ThrowsExceptionInFinallyBlockTestee;
 import com.example.coverage.execute.samples.exceptions.ThrowsExceptionTestee;
+import com.example.coverage.execute.samples.executionindiscovery.AnExecutingTest;
 import com.example.coverage.execute.samples.simple.ParentChildInitializationTest;
 import com.example.coverage.execute.samples.simple.Testee;
 import com.example.coverage.execute.samples.simple.Testee2;
@@ -31,7 +32,6 @@ import org.pitest.util.ExitCode;
 import org.pitest.util.SocketFinder;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -243,7 +242,7 @@ public class CoverageProcessSystemTest {
   }
 
   @Test
-  public void shouldNotCorruptedTheSystemNewLineProperty() throws Exception {
+  public void shouldNotCorruptTheSystemNewLineProperty() throws Exception {
     final List<CoverageResult> coveredClasses = runCoverageForTest(ReliesOnNewLineTest.class);
     assertThat(coveredClasses).noneMatch(failingTest());
   }
@@ -255,13 +254,11 @@ public class CoverageProcessSystemTest {
             .anyMatch(coverageFor(ClassName.fromString("com.example.coverage.execute.samples.simple.TesteeChild")));
   }
 
-  private ClassPath classPathWithoutJUnit() {
-    final List<File> cpWithoutJUnit = 
-        ClassPath.getClassPathElementsAsFiles().stream()
-        .filter(file -> !file.getName().contains("junit"))
-        .collect(Collectors.toList());
-
-    return new ClassPath(cpWithoutJUnit);
+  @Test
+  public void gathersCoverageWhenTestsExecutedDuringDiscovery() throws Exception {
+    final List<CoverageResult> coveredClasses = runCoverageForTest(AnExecutingTest.class);
+    assertThat(coveredClasses)
+            .anyMatch(coverageFor(ClassName.fromString("com.example.coverage.execute.samples.executionindiscovery.ATesteeClass")));
   }
 
   private Predicate<CoverageResult> failingTest() {
@@ -282,7 +279,7 @@ public class CoverageProcessSystemTest {
       InterruptedException {
     final Consumer<CoverageResult> handler = a -> coveredClasses.add(a);
 
-    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), excludeTests(), TestPluginArguments.defaults(), VERBOSE, -1);
+    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), excludeTests(), TestPluginArguments.defaults(), VERBOSE);
 
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     try {

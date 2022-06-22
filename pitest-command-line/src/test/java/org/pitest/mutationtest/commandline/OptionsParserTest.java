@@ -97,13 +97,6 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldParseMaxDepenencyDistance() {
-    final ReportOptions actual = parseAddingRequiredArgs(
-        "--dependencyDistance", "42");
-    assertEquals(42, actual.getDependencyAnalysisMaxDistance());
-  }
-
-  @Test
   public void shouldParseCommaSeparatedListOfJVMArgs() {
     final ReportOptions actual = parseAddingRequiredArgs("--jvmArgs", "foo,bar");
 

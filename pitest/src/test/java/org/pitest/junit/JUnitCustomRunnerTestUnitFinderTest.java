@@ -47,6 +47,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
 import org.mockito.MockitoAnnotations;
 import org.pitest.junit.RunnerSuiteFinderTest.ThrowsOnDiscoverySuite;
+import org.pitest.testapi.NullExecutionListener;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestUnit;
 
@@ -177,7 +178,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   }
 
   private Collection<TestUnit> findWithTestee(final Class<?> clazz) {
-    return this.testee.findTestUnits(clazz);
+    return this.testee.findTestUnits(clazz, new NullExecutionListener());
   }
 
   public static class NotATest {
@@ -199,7 +200,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   @Test
   public void shouldFindTestUnitsInCustomJUnit3Class() {
     final Collection<TestUnit> actual = this.testee
-        .findTestUnits(JMockTest.class);
+        .findTestUnits(JMockTest.class, new NullExecutionListener());
     assertFalse(actual.isEmpty());
   }
 

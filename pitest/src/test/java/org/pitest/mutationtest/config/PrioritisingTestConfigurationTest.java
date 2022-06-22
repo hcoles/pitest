@@ -5,6 +5,7 @@ import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.Description;
+import org.pitest.testapi.NullExecutionListener;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestSuiteFinder;
 import org.pitest.testapi.TestUnit;
@@ -28,7 +29,7 @@ public class PrioritisingTestConfigurationTest {
     public void findsNoTestsWhenNothingMatchesChildConfiguration() {
         Configuration findsNothing = configuration(1, emptyList());
         PrioritisingTestConfiguration testee = new PrioritisingTestConfiguration(asList(findsNothing));
-        List<TestUnit> actual = testee.testUnitFinder().findTestUnits(String.class);
+        List<TestUnit> actual = testee.testUnitFinder().findTestUnits(String.class, new NullExecutionListener());
         assertThat(actual).isEmpty();
     }
 
@@ -39,7 +40,7 @@ public class PrioritisingTestConfigurationTest {
         Configuration c2 = configuration(2, dontFindMe);
         PrioritisingTestConfiguration testee = new PrioritisingTestConfiguration(asList(c0, c1, c2));
 
-        List<TestUnit> actual = testee.testUnitFinder().findTestUnits(String.class);
+        List<TestUnit> actual = testee.testUnitFinder().findTestUnits(String.class, new NullExecutionListener());
 
         assertThat(actual).containsOnly(findMe);
     }
@@ -50,7 +51,7 @@ public class PrioritisingTestConfigurationTest {
         Configuration c1 = configuration(2, findMe);
         PrioritisingTestConfiguration testee = new PrioritisingTestConfiguration(asList(c0, c1));
 
-        List<TestUnit> actual = testee.testUnitFinder().findTestUnits(String.class);
+        List<TestUnit> actual = testee.testUnitFinder().findTestUnits(String.class, new NullExecutionListener());
 
         assertThat(actual).containsOnly(findMe);
     }
@@ -62,7 +63,7 @@ public class PrioritisingTestConfigurationTest {
         Configuration c2 = configuration(3, dontFindMe);
         PrioritisingTestConfiguration testee = new PrioritisingTestConfiguration(asList(findsNothing, c1, c2));
 
-        List<TestUnit> actual = testee.testUnitFinder().findTestUnits(String.class);
+        List<TestUnit> actual = testee.testUnitFinder().findTestUnits(String.class, new NullExecutionListener());
 
         assertThat(actual).containsOnly(findMe);
     }
@@ -130,7 +131,7 @@ public class PrioritisingTestConfigurationTest {
 
             @Override
             public TestUnitFinder testUnitFinder() {
-                return c -> testUnits;
+                return (c,l) -> testUnits;
             }
 
             @Override
@@ -155,7 +156,7 @@ public class PrioritisingTestConfigurationTest {
 
             @Override
             public TestUnitFinder testUnitFinder() {
-                return c -> emptyList();
+                return (c,l) -> emptyList();
             }
 
             @Override

@@ -99,6 +99,7 @@ public class PitMojoIT {
   }
 
   @Test
+  @Ignore
   // debatable if this test should be here. Relies on external testng plugin
   public void shouldWorkWithTestNG() throws Exception {
     File testDir = prepare("/pit-testng");
@@ -394,6 +395,7 @@ public class PitMojoIT {
   }
 
   @Test
+  @Ignore
   // note this test depends on the junit5 plugin
   public void shouldWorkWithQuarkus() throws Exception {
     assumeTrue(CurrentRuntime.version() >= 11);

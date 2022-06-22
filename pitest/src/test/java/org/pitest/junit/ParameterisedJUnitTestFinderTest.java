@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.pitest.testapi.NullExecutionListener;
 import org.pitest.testapi.TestUnit;
 
 public class ParameterisedJUnitTestFinderTest {
@@ -72,7 +73,7 @@ public class ParameterisedJUnitTestFinderTest {
   }
 
   private Collection<TestUnit> findWithTestee(final Class<?> clazz) {
-    return this.testee.findTestUnits(clazz);
+    return this.testee.findTestUnits(clazz, new NullExecutionListener());
   }
 
 }

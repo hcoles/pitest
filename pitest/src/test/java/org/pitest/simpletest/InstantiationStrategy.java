@@ -19,8 +19,8 @@ import java.util.List;
 
 public interface InstantiationStrategy {
 
-  public boolean canInstantiate(Class<?> clazz);
+  boolean canInstantiate(Class<?> clazz);
 
-  public List<TestStep> instantiations(Class<?> clazz);
+  List<TestStep> instantiations(Class<?> clazz);
 
 }

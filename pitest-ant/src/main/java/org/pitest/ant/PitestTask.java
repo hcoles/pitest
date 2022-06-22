@@ -124,10 +124,6 @@ public class PitestTask extends Task { // NO_UCD (test only)
     this.setOption(ConfigOption.TEST_FILTER, value);
   }
 
-  public void setDependencyDistance(final String value) {
-    this.setOption(ConfigOption.DEPENDENCY_DISTANCE, value);
-  }
-
   public void setThreads(final String value) {
     this.setOption(ConfigOption.THREADS, value);
   }

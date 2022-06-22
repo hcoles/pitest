@@ -43,6 +43,7 @@ import org.pitest.reflection.IsAnnotatedWith;
 import org.pitest.reflection.Reflection;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestUnit;
+import org.pitest.testapi.TestUnitExecutionListener;
 import org.pitest.testapi.TestUnitFinder;
 import org.pitest.util.IsolationUtils;
 
@@ -65,7 +66,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   }
 
   @Override
-  public List<TestUnit> findTestUnits(final Class<?> clazz) {
+  public List<TestUnit> findTestUnits(final Class<?> clazz, TestUnitExecutionListener unused) {
 
     final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
 

@@ -32,6 +32,7 @@ import org.pitest.reflection.Reflection;
 import org.pitest.simpletest.steps.CallStep;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestUnit;
+import org.pitest.testapi.TestUnitExecutionListener;
 import org.pitest.testapi.TestUnitFinder;
 import org.pitest.util.PitError;
 
@@ -48,7 +49,7 @@ public class BasicTestUnitFinder implements TestUnitFinder {
   }
 
   @Override
-  public List<TestUnit> findTestUnits(final Class<?> testClass) {
+  public List<TestUnit> findTestUnits(final Class<?> testClass, TestUnitExecutionListener unused) {
     try {
 
       final List<TestUnit> units = new ArrayList<>();

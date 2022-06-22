@@ -34,17 +34,15 @@ public class CoverageOptions implements Serializable {
   private final Collection<String>      exclude;
   private final Verbosity verbosity;
   private final TestPluginArguments pitConfig;
-  private final int               maxDependencyDistance;
+
 
   public CoverageOptions(final Collection<String> include, final Collection<String> exclude,
-      final TestPluginArguments pitConfig, final Verbosity verbose,
-      final int maxDependencyDistance) {
+      final TestPluginArguments pitConfig, final Verbosity verbose) {
     Objects.requireNonNull(pitConfig);
     this.include = include;
     this.exclude = exclude;
     this.verbosity = verbose;
     this.pitConfig = pitConfig;
-    this.maxDependencyDistance = maxDependencyDistance;
   }
 
   public Predicate<String> getFilter() {
@@ -59,10 +57,6 @@ public class CoverageOptions implements Serializable {
 
   public TestPluginArguments getPitConfig() {
     return this.pitConfig;
-  }
-
-  public int getDependencyAnalysisMaxDistance() {
-    return this.maxDependencyDistance;
   }
 
   private static Predicate<String> commonClasses() {

@@ -17,8 +17,7 @@ public class CoverageProcess {
 
   public CoverageProcess(final ProcessArgs processArgs,
       final CoverageOptions arguments, final ServerSocket socket,
-      final List<String> testClases, final Consumer<CoverageResult> handler)
-          throws IOException {
+      final List<String> testClases, final Consumer<CoverageResult> handler) {
     this.process = new WrappingProcess(socket.getLocalPort(), processArgs,
         CoverageMinion.class);
     this.crt = new CoverageCommunicationThread(socket, arguments, testClases,
@@ -30,7 +29,7 @@ public class CoverageProcess {
     this.process.start();
   }
 
-  public ExitCode waitToDie() throws InterruptedException {
+  public ExitCode waitToDie() {
     try {
       return this.crt.waitToFinish();
     } finally {

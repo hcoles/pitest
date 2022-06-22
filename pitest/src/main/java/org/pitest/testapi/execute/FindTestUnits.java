@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.pitest.testapi.Configuration;
+import org.pitest.testapi.NullExecutionListener;
 import org.pitest.testapi.TestUnit;
+import org.pitest.testapi.TestUnitExecutionListener;
 
 /**
  * Scans classes to discover TestUnits
@@ -16,13 +18,18 @@ import org.pitest.testapi.TestUnit;
 public class FindTestUnits {
 
   private final Configuration config;
+  private final TestUnitExecutionListener listener;
 
-  public FindTestUnits(final Configuration config) {
-    this.config = config;
+  public FindTestUnits(Configuration config) {
+    this(config, new NullExecutionListener());
   }
 
-  public List<TestUnit> findTestUnitsForAllSuppliedClasses(
-      final Iterable<Class<?>> classes) {
+  public FindTestUnits(Configuration config, TestUnitExecutionListener listener) {
+    this.config = config;
+    this.listener = listener;
+  }
+
+  public List<TestUnit> findTestUnitsForAllSuppliedClasses(Iterable<Class<?>> classes) {
     final List<TestUnit> testUnits = new ArrayList<>();
 
     for (final Class<?> c : classes) {
@@ -54,7 +61,7 @@ public class FindTestUnits {
     }
 
     final List<TestUnit> testsInThisClass = this.config.testUnitFinder()
-        .findTestUnits(suiteClass);
+        .findTestUnits(suiteClass, listener);
     if (!testsInThisClass.isEmpty()) {
       tus.addAll(testsInThisClass);
     }

@@ -16,10 +16,8 @@ package org.pitest.coverage.execute;
 
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.classinfo.ClassName;
-import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.CoverageTransformer;
-import org.pitest.dependency.DependencyExtractor;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.config.ClientPluginServices;
@@ -27,7 +25,9 @@ import org.pitest.mutationtest.config.MinionSettings;
 import org.pitest.mutationtest.mocksupport.BendJavassistToMyWillTransformer;
 import org.pitest.mutationtest.mocksupport.JavassistInputStreamInterceptorAdapater;
 import org.pitest.testapi.Configuration;
+import org.pitest.testapi.ExecutedInDiscovery;
 import org.pitest.testapi.TestUnit;
+import org.pitest.testapi.TestUnitExecutionListener;
 import org.pitest.testapi.execute.FindTestUnits;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Glob;
@@ -79,13 +79,22 @@ public class CoverageMinion {
       HotSwapAgent.addTransformer(new CoverageTransformer(
           convertToJVMClassFilter(paramsFromParent.getFilter())));
 
-      final List<TestUnit> tus = getTestsFromParent(dis, paramsFromParent);
+      final List<TestUnit> tus = getTestsFromParent(dis, paramsFromParent, invokeQueue);
 
-      LOG.info(() -> tus.size() + " tests received");
+      LOG.info(() -> tus.size() + " tests discovered");
 
-      final CoverageWorker worker = new CoverageWorker(invokeQueue, tus);
+      // If we have more than one test plugin on the classpath we may have a mix
+      // of tests executed during discovery (JUnit 5) and still requiring execution
+      // (junit4, testng and JUnit5 tests accelerated by arcmutate)
+      List<TestUnit> toExecute = removeTestsExecutedDuringDiscovery(tus);
 
-      worker.run();
+      if (!toExecute.isEmpty()) {
+        LOG.info(() -> tus.size() + "Executing " + toExecute.size() + " tests not run during discovery.");
+        CoverageWorker worker = new CoverageWorker(invokeQueue, toExecute);
+        worker.run();
+      } else {
+        LOG.info(() -> tus.size() + "All tests were executed as part of discovery.");
+      }
 
     } catch (final PitHelpError phe) {
       LOG.log(Level.SEVERE, phe.getMessage());
@@ -112,6 +121,13 @@ public class CoverageMinion {
 
   }
 
+  private static List<TestUnit> removeTestsExecutedDuringDiscovery(List<TestUnit> tus) {
+    List<TestUnit> toExecute = tus.stream()
+            .filter(t -> !(t instanceof ExecutedInDiscovery))
+            .collect(Collectors.toList());
+    return toExecute;
+  }
+
   private static void enablePowerMockSupport() {
     // Bwahahahahahahaha
     HotSwapAgent.addTransformer(new BendJavassistToMyWillTransformer(Prelude
@@ -125,38 +141,30 @@ public class CoverageMinion {
   }
 
   private static List<TestUnit> getTestsFromParent(
-      final SafeDataInputStream dis, final CoverageOptions paramsFromParent) {
+          final SafeDataInputStream dis, final CoverageOptions paramsFromParent, CoveragePipe invokeQueue) {
     final List<ClassName> classes = receiveTestClassesFromParent(dis);
     Collections.sort(classes); // ensure classes loaded in a consistent order
 
     final Configuration testPlugin = createTestPlugin(paramsFromParent);
     verifyEnvironment(testPlugin);
 
-    final List<TestUnit> tus = discoverTests(testPlugin, classes);
+    final List<TestUnit> tus = discoverTests(testPlugin, classes, invokeQueue);
 
     if (tus.isEmpty()) {
       LOG.warning("No executable tests were found after examining the " + classes.size()
               + " test classes supplied. This may indicate an issue with the classpath or a missing test plugin (e.g for JUnit 5).");
     }
 
-    final DependencyFilter filter = new DependencyFilter(
-        new DependencyExtractor(new ClassPathByteArraySource(),
-            paramsFromParent.getDependencyAnalysisMaxDistance()),
-        paramsFromParent.getFilter());
-    final List<TestUnit> filteredTus = filter
-        .filterTestsByDependencyAnalysis(tus);
-
-    LOG.info(() -> "Dependency analysis reduced number of potential tests by "
-        + (tus.size() - filteredTus.size()));
-    return filteredTus;
-
+    return tus;
   }
 
-  private static List<TestUnit> discoverTests(final Configuration testPlugin,
- final List<ClassName> classes) {
-    final FindTestUnits finder = new FindTestUnits(testPlugin);
-    final List<TestUnit> tus = finder
-        .findTestUnitsForAllSuppliedClasses(classes.stream().flatMap(ClassName.nameToClass()).collect(Collectors.toList()));
+  private static List<TestUnit> discoverTests(Configuration testPlugin, List<ClassName> classes, CoveragePipe invokeQueue) {
+    TestUnitExecutionListener listener = new CoverageTestExecutionListener(invokeQueue);
+    FindTestUnits finder = new FindTestUnits(testPlugin, listener);
+    List<TestUnit> tus = finder
+        .findTestUnitsForAllSuppliedClasses(classes.stream()
+                .flatMap(ClassName.nameToClass())
+                .collect(Collectors.toList()));
     LOG.info(() -> "Found  " + tus.size() + " tests");
     return tus;
   }
