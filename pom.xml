@@ -18,6 +18,24 @@
 		<tag>HEAD</tag>
 	</scm>
 
+	<!-- versions of libraries which are used in different projects or which
+    are used for few artifacts -->
+	<properties>
+		<!-- this revision number used only for local builds -->
+		<revision>1.0.0-SNAPSHOT</revision>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<asm.version>9.3</asm.version>
+		<hamcrest.version>1.3</hamcrest.version>
+		<junit.version>4.11</junit.version>
+		<surefire.version>2.18.1</surefire.version> <!-- [2.19, 3.0.0-M7] seem to cause ASM-related test failures -->
+		<slf4j.version>1.7.12</slf4j.version>
+
+		<maven.failsafe-plugin.version>${surefire.version}</maven.failsafe-plugin.version>
+		<maven.surefire-plugin.version>${surefire.version}</maven.surefire-plugin.version>
+	</properties>
+
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
@@ -389,25 +407,6 @@
 		</repository>
 	</distributionManagement>
 
-	<!-- versions of libraries which are used in different projects or which 
-		are used for few artifacts -->
-	<properties>
-		<!-- this revision number used only for local builds -->
-		<revision>1.0.0-SNAPSHOT</revision>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<asm.version>9.3</asm.version>
-		<ant.version>1.9.4</ant.version>
-		<hamcrest.version>1.3</hamcrest.version>
-		<junit.version>4.11</junit.version>
-		<maven.version>2.2.1</maven.version>
-		<powermock.version>1.7.3</powermock.version>
-		<surefire.version>2.18.1</surefire.version> <!-- [2.19, 3.0.0-M7] seem to cause ASM-related test failures -->
-		<slf4j.version>1.7.12</slf4j.version>
-
-		<maven.failsafe-plugin.version>${surefire.version}</maven.failsafe-plugin.version>
-		<maven.surefire-plugin.version>${surefire.version}</maven.surefire-plugin.version>
-	</properties>
 
 </project>

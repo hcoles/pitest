@@ -11,6 +11,10 @@
 	<url>http://pitest.org</url>
 	<description>Pitest Ant task.</description>
 
+	<properties>
+		<ant.version>1.9.4</ant.version>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.pitest</groupId>
