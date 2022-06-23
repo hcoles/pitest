@@ -15,7 +15,7 @@
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
     <quarkus.platform.version>2.8.3.Final</quarkus.platform.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
-    <pitest.junit5.version>0.14</pitest.junit5.version>
+    <pitest.junit5.version>1.0.0</pitest.junit5.version>
   </properties>
   <dependencyManagement>
     <dependencies>

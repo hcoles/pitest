@@ -99,7 +99,6 @@ public class PitMojoIT {
   }
 
   @Test
-  @Ignore
   // debatable if this test should be here. Relies on external testng plugin
   public void shouldWorkWithTestNG() throws Exception {
     File testDir = prepare("/pit-testng");
@@ -395,7 +394,6 @@ public class PitMojoIT {
   }
 
   @Test
-  @Ignore
   // note this test depends on the junit5 plugin
   public void shouldWorkWithQuarkus() throws Exception {
     assumeTrue(CurrentRuntime.version() >= 11);
@@ -417,158 +415,6 @@ public class PitMojoIT {
 
   }
 
-
-  private static String readResults(File testDir) throws IOException {
-    File mutationReport = new File(testDir.getAbsoluteFile() + File.separator
-        + "target" + File.separator + "pit-reports" + File.separator
-        + "mutations.xml");
-    return FileUtils.readFileToString(mutationReport);
-  }
-
-  private static String readCoverage(File testDir) throws IOException {
-    File coverage = new File(testDir.getAbsoluteFile() + File.separator
-        + "target" + File.separator + "pit-reports" + File.separator
-        + "linecoverage.xml");
-    return FileUtils.readFileToString(coverage);
-  }
-
-  private File prepare(String testPath) throws IOException,
-      VerificationException {
-    String path = ResourceExtractor.extractResourcePath(getClass(), testPath,
-        testFolder.getRoot(), true).getAbsolutePath();
-
-    verifier = new Verifier(path);
-    verifier.setAutoclean(false);
-    verifier.setDebug(true);
-    verifier.getCliOptions().add("-Dpit.version=" + VERSION);
-    verifier.getCliOptions().add(
-        "-Dthreads=" + (Runtime.getRuntime().availableProcessors()));
-
-    return new File(testFolder.getRoot().getAbsolutePath() + testPath);
-  }
-
-  private static String getVersion() {
-    String path = "/version.prop";
-    try(InputStream stream = Pitest.class.getResourceAsStream(path)) {
-      Properties props = new Properties();
-      props.load(stream);
-      return (String) props.get("version");
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  /**
-   * Creates a new {@link File} object building off an existing {@link File}
-   * object and appending subfolders.
-   * 
-   * For example, if this function is called with these arguments:
-   * <code>buildFile(new File("/foo/bar"), "subdir1", "subdir2", "file1.txt");</code>
-   * The returned {@link File} object would represent the path:
-   * /foo/bar/subdir1/subdir/file1.txt
-   * 
-   * @param base
-   *          {@link File} representing the starting location
-   * @param pathParts
-   *          {@link String} varags containing the subfolders to append to the
-   *          base, this argument should contain at least one value and none of
-   *          its values should be blank or null.
-   * 
-   * @return {@link File}
-   */
-  private File buildFilePath(File base, String... pathParts) {
-    StringBuilder path = new StringBuilder(base.getAbsolutePath());
-
-    for (String part : pathParts) {
-      path.append(File.separator).append(part);
-    }
-
-    return new File(path.toString());
-  }
-
-  /**
-   * Sets up a test of the reporting mojo simulating multiple runs of mvn
-   * install (as in the case where timestampedReports is set to true). First
-   * calls {@link #prepareSiteTest(String)} then walks all directories starting
-   * at target/pit-reports setting their last modified time to 0 (epoch time).
-   * Finally, the directory specified in the {@code latestDir} parameter has its
-   * last modified time set to {@link System#currentTimeMillis()}.
-   * 
-   * @param testPath
-   *          {@link String} see {@link #prepareSiteTest(String)}
-   * @param latestDir
-   *          {@link String} containing the subdirectory of target/pit-reports
-   *          that should be set as the latest, pass an empty string to indicate
-   *          the target/pit-reports directory should be the latest
-   * 
-   * @return {@link File} representing the temporary folder that was set up for
-   *         this execution of the test
-   * @throws Exception
-   */
-  private File prepareSiteTest(String testPath, String latestDir)
-      throws Exception {
-    File testDir = prepareSiteTest(testPath);
-    // location where the target directory would be if a mvn clean install was executed
-    File testTargetDir = this.buildFilePath(testDir, "target", "pit-reports"); 
-    DirectoriesOnlyWalker walker = new DirectoriesOnlyWalker();
-
-    for (File f : walker.locateDirectories(testTargetDir)) {
-      f.setLastModified(0L);
-    }
-
-    assertThat(
-        buildFilePath(testTargetDir, latestDir).setLastModified(
-            System.currentTimeMillis())).isTrue();
-
-    return testDir;
-  }
-
-  /**
-   * Sets up a test of the reporting mojo by simulating what a mvn clean install
-   * would do. After this function is executed, the maven site can be generated
-   * by executing the site goal.
-   * 
-   * The provided {@code testPath} must have this folder structure set up
-   * underneath it: src/test/resources/pit-reports The contents of this
-   * directory will be moved to the target directory simulating a mvn clean
-   * install.
-   * 
-   * @param testPath
-   *          {@link String} location of the test to set up, this path is
-   *          relative to <code>${basedir}/src/test/resources</code>
-   * 
-   * @return {@link File} representing the temporary folder that was set up for
-   *         this execution of the test
-   * @throws Exception
-   */
-  private File prepareSiteTest(String testPath) throws Exception {
-    File tempTestExecutionDir = prepare(testPath);
-    File targetDir = this.buildFilePath(tempTestExecutionDir, "target",
-        "pit-reports");
-
-    FileUtils.copyDirectory(
-        buildFilePath(tempTestExecutionDir, "src", "test", "resources",
-            "pit-reports"), targetDir);
-
-    return tempTestExecutionDir;
-  }
-
-  private void verifyPitReportTest(File testDir) throws Exception {
-    File pitReportSiteDir = buildFilePath(testDir, "target", "site",
-        "pit-reports");
-
-    assertThat(pitReportSiteDir).exists();
-    assertThat(this.buildFilePath(pitReportSiteDir, "marker_expected.txt"))
-        .exists();
-
-    String projectReportsHtmlContents = FileUtils
-        .readFileToString(buildFilePath(testDir, "target", "site",
-            "project-reports.html"));
-    assertTrue(
-        "did not find expected anchor tag to pit site report",
-        projectReportsHtmlContents
-            .contains("<a href=\"pit-reports/index.html\" title=\"PIT Test Report\">PIT Test Report</a>"));
-  }
 
   @Test
   public void shouldFindOccupiedTestPackages() throws IOException, VerificationException {
@@ -602,6 +448,159 @@ public class PitMojoIT {
     } catch(VerificationException ex) {
        assertThat(ex.getMessage()).contains("Please check you have correctly installed the pitest plugin for your project's test library");
     }
+  }
+
+
+  private static String readResults(File testDir) throws IOException {
+    File mutationReport = new File(testDir.getAbsoluteFile() + File.separator
+            + "target" + File.separator + "pit-reports" + File.separator
+            + "mutations.xml");
+    return FileUtils.readFileToString(mutationReport);
+  }
+
+  private static String readCoverage(File testDir) throws IOException {
+    File coverage = new File(testDir.getAbsoluteFile() + File.separator
+            + "target" + File.separator + "pit-reports" + File.separator
+            + "linecoverage.xml");
+    return FileUtils.readFileToString(coverage);
+  }
+
+  private File prepare(String testPath) throws IOException,
+          VerificationException {
+    String path = ResourceExtractor.extractResourcePath(getClass(), testPath,
+            testFolder.getRoot(), true).getAbsolutePath();
+
+    verifier = new Verifier(path);
+    verifier.setAutoclean(false);
+    verifier.setDebug(true);
+    verifier.getCliOptions().add("-Dpit.version=" + VERSION);
+    verifier.getCliOptions().add(
+            "-Dthreads=" + (Runtime.getRuntime().availableProcessors()));
+
+    return new File(testFolder.getRoot().getAbsolutePath() + testPath);
+  }
+
+  private static String getVersion() {
+    String path = "/version.prop";
+    try(InputStream stream = Pitest.class.getResourceAsStream(path)) {
+      Properties props = new Properties();
+      props.load(stream);
+      return (String) props.get("version");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Creates a new {@link File} object building off an existing {@link File}
+   * object and appending subfolders.
+   *
+   * For example, if this function is called with these arguments:
+   * <code>buildFile(new File("/foo/bar"), "subdir1", "subdir2", "file1.txt");</code>
+   * The returned {@link File} object would represent the path:
+   * /foo/bar/subdir1/subdir/file1.txt
+   *
+   * @param base
+   *          {@link File} representing the starting location
+   * @param pathParts
+   *          {@link String} varags containing the subfolders to append to the
+   *          base, this argument should contain at least one value and none of
+   *          its values should be blank or null.
+   *
+   * @return {@link File}
+   */
+  private File buildFilePath(File base, String... pathParts) {
+    StringBuilder path = new StringBuilder(base.getAbsolutePath());
+
+    for (String part : pathParts) {
+      path.append(File.separator).append(part);
+    }
+
+    return new File(path.toString());
+  }
+
+  /**
+   * Sets up a test of the reporting mojo simulating multiple runs of mvn
+   * install (as in the case where timestampedReports is set to true). First
+   * calls {@link #prepareSiteTest(String)} then walks all directories starting
+   * at target/pit-reports setting their last modified time to 0 (epoch time).
+   * Finally, the directory specified in the {@code latestDir} parameter has its
+   * last modified time set to {@link System#currentTimeMillis()}.
+   *
+   * @param testPath
+   *          {@link String} see {@link #prepareSiteTest(String)}
+   * @param latestDir
+   *          {@link String} containing the subdirectory of target/pit-reports
+   *          that should be set as the latest, pass an empty string to indicate
+   *          the target/pit-reports directory should be the latest
+   *
+   * @return {@link File} representing the temporary folder that was set up for
+   *         this execution of the test
+   * @throws Exception
+   */
+  private File prepareSiteTest(String testPath, String latestDir)
+          throws Exception {
+    File testDir = prepareSiteTest(testPath);
+    // location where the target directory would be if a mvn clean install was executed
+    File testTargetDir = this.buildFilePath(testDir, "target", "pit-reports");
+    DirectoriesOnlyWalker walker = new DirectoriesOnlyWalker();
+
+    for (File f : walker.locateDirectories(testTargetDir)) {
+      f.setLastModified(0L);
+    }
+
+    assertThat(
+            buildFilePath(testTargetDir, latestDir).setLastModified(
+                    System.currentTimeMillis())).isTrue();
+
+    return testDir;
+  }
+
+  /**
+   * Sets up a test of the reporting mojo by simulating what a mvn clean install
+   * would do. After this function is executed, the maven site can be generated
+   * by executing the site goal.
+   *
+   * The provided {@code testPath} must have this folder structure set up
+   * underneath it: src/test/resources/pit-reports The contents of this
+   * directory will be moved to the target directory simulating a mvn clean
+   * install.
+   *
+   * @param testPath
+   *          {@link String} location of the test to set up, this path is
+   *          relative to <code>${basedir}/src/test/resources</code>
+   *
+   * @return {@link File} representing the temporary folder that was set up for
+   *         this execution of the test
+   * @throws Exception
+   */
+  private File prepareSiteTest(String testPath) throws Exception {
+    File tempTestExecutionDir = prepare(testPath);
+    File targetDir = this.buildFilePath(tempTestExecutionDir, "target",
+            "pit-reports");
+
+    FileUtils.copyDirectory(
+            buildFilePath(tempTestExecutionDir, "src", "test", "resources",
+                    "pit-reports"), targetDir);
+
+    return tempTestExecutionDir;
+  }
+
+  private void verifyPitReportTest(File testDir) throws Exception {
+    File pitReportSiteDir = buildFilePath(testDir, "target", "site",
+            "pit-reports");
+
+    assertThat(pitReportSiteDir).exists();
+    assertThat(this.buildFilePath(pitReportSiteDir, "marker_expected.txt"))
+            .exists();
+
+    String projectReportsHtmlContents = FileUtils
+            .readFileToString(buildFilePath(testDir, "target", "site",
+                    "project-reports.html"));
+    assertTrue(
+            "did not find expected anchor tag to pit site report",
+            projectReportsHtmlContents
+                    .contains("<a href=\"pit-reports/index.html\" title=\"PIT Test Report\">PIT Test Report</a>"));
   }
 
 
