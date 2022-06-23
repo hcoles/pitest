@@ -8,9 +8,10 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.9.0 (unreleased)
+### 1.9.0 
 
 * #1035 - Improve coverage memory consumption
+* #1038 - Support Maven Site Plugin 3.12.0+ (thanks IOs)
 * #1040 - Faster JUnit 5 coverage calculation
 * #1040 - Remove `dependencyDistance` parameter
 
