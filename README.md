@@ -16,7 +16,7 @@ Read all about it at http://pitest.org
 * #1040 - Remove `dependencyDistance` parameter
 
 As a result of #1040 any external pitest test plugins (eg JUnit 5, TestNG, arcmutate accelerator) must be
-updated to a compatible version when upgrading.
+updated to a compatible version (1.0.0) when upgrading.
 
 
 ### 1.8.1-SNAPSHOT
