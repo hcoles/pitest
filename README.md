@@ -18,6 +18,7 @@ Read all about it at http://pitest.org
 As a result of #1040 any external pitest test plugins (eg JUnit 5, TestNG, arcmutate accelerator) must be
 updated to a compatible version (1.0.0) when upgrading.
 
+History files from earlier releases are incompatible and should be deleted when upgrading.
 
 ### 1.8.1-SNAPSHOT
 
