@@ -20,7 +20,7 @@ updated to a compatible version (1.0.0) when upgrading.
 
 History files from earlier releases are incompatible and should be deleted when upgrading.
 
-### 1.8.1-SNAPSHOT
+### 1.8.1
 
 * #637  - Support different input and output encodings (thanks @qxo)
 * #705  - Allow + in file paths (thanks @ali-ghanbari)
