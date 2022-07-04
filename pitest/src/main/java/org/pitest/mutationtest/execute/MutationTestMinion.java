@@ -100,13 +100,24 @@ public class MutationTestMinion {
           new TimeOutDecoratedTestSource(paramsFromParent.timeoutStrategy,
               tests, this.reporter));
 
-      this.reporter.done(ExitCode.OK);
+      repeatedlySendDoneSignal();
     } catch (final Throwable ex) {
       ex.printStackTrace(System.out);
       LOG.log(Level.WARNING, "Error during mutation test", ex);
       this.reporter.done(ExitCode.UNKNOWN_ERROR);
     }
 
+  }
+
+  private void repeatedlySendDoneSignal() throws InterruptedException {
+    // there have been reports of the done signal getting lost, causing the main process
+    // to hang. The root cause of this issue has not been found, this attempts to mitigate it
+    // by resending the signal. We don't want to spend too long doing this, as it is better for
+    // the minion to end naturally, than be killed by the main process.
+    for (int i = 0; i != 10; i++) {
+      this.reporter.done(ExitCode.OK);
+      Thread.sleep(100);
+    }
   }
 
   private void configureVerbosity(MinionArguments paramsFromParent) {
