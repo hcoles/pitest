@@ -50,6 +50,10 @@ public class WrappingProcess {
         this.processArgs.getStdErr());
   }
 
+  public boolean isAlive() {
+    return process.isAlive();
+  }
+
   
    // Reportedly passing the classpath as an environment variable rather than on the command
    // line increases the allowable size of the classpath, but this has not been confirmed

@@ -58,6 +58,7 @@ import com.example.JUnitThreeSuite;
 import com.example.KeepAliveThread;
 import com.example.MultipleMutations;
 import com.example.coverage.execute.samples.mutationMatrix.TestsForSimpleCalculator;
+import org.pitest.util.PitError;
 import org.pitest.util.Verbosity;
 
 @Category(SystemTest.class)
@@ -409,6 +410,22 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     createAndRun();
 
     verifyResults();
+  }
+
+  @Test(timeout = 20000, expected = PitError.class)
+  public void shouldRecoverFromMinionThatDoesNotStart() {
+    setMutators("RETURN_VALS");
+
+    this.data
+            .setTargetClasses(asGlobs(com.example.testhasignores.Mutee.class));
+    this.data
+            .setTargetTests(predicateFor(com.example.testhasignores.MuteeTest.class));
+
+    this.data.addChildJVMArgs(asList("-Xmx1k"));
+
+    createAndRun();
+
+    // just running without a hang then erroring is success
   }
 
   @Generated
