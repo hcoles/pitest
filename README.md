@@ -8,6 +8,10 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.9.2
+
+* #1050 - Check minions are alive to prevent process hangs
+
 ### 1.9.1
 
 * #1047 Mitigation for intermittent process hangs
