@@ -3,6 +3,7 @@ package org.pitest.coverage.execute;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.pitest.coverage.CoverageResult;
@@ -31,7 +32,11 @@ public class CoverageProcess {
 
   public ExitCode waitToDie() {
     try {
-      return this.crt.waitToFinish();
+      Optional<ExitCode> maybeExit = this.crt.waitToFinish(5);
+      while (!maybeExit.isPresent() && this.process.isAlive()) {
+        maybeExit = this.crt.waitToFinish(10);
+      }
+      return maybeExit.orElse(ExitCode.MINION_DIED);
     } finally {
       this.process.destroy();
     }

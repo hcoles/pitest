@@ -16,8 +16,11 @@ package org.pitest.util;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,15 +57,17 @@ public class CommunicationThread {
     return newFuture;
   }
 
-  public ExitCode waitToFinish() {
+  public Optional<ExitCode> waitToFinish(int pollSeconds) {
     try {
-      return this.future.get();
+      return Optional.of(this.future.get(pollSeconds, TimeUnit.SECONDS));
     } catch (final ExecutionException e) {
       LOG.log(Level.WARNING, "Error while watching child process", e);
-      return ExitCode.UNKNOWN_ERROR;
+      return Optional.of(ExitCode.UNKNOWN_ERROR);
     } catch (final InterruptedException e) {
       LOG.log(Level.WARNING, "interrupted while waiting for child process", e);
-      return ExitCode.UNKNOWN_ERROR;
+      return Optional.of(ExitCode.UNKNOWN_ERROR);
+    } catch (final TimeoutException e) {
+      return Optional.empty();
     }
 
   }

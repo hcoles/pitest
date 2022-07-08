@@ -145,7 +145,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     } else if (!exitCode.isOk()) {
       LOG.severe("Coverage generator Minion exited abnormally due to "
           + exitCode);
-      throw new PitError("Coverage generation minion exited abnormally!");
+      throw new PitError("Coverage generation minion exited abnormally! (" + exitCode + ")");
     } else {
       LOG.fine("Coverage generator Minion exited ok");
     }

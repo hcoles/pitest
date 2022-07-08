@@ -91,6 +91,9 @@ public class MutationTestUnit implements MutationAnalysisUnit {
   private static ExitCode waitForMinionToDie(final MutationTestProcess worker) {
     final ExitCode exitCode = worker.waitToDie();
     LOG.fine("Exit code was - " + exitCode);
+    if (exitCode == ExitCode.MINION_DIED) {
+      LOG.severe("Minion did not start or died during analysis. This may indicate an issue in your environment such as insufficient memory.");
+    }
     return exitCode;
   }
 

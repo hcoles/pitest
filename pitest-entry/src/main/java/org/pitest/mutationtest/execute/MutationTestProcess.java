@@ -3,6 +3,7 @@ package org.pitest.mutationtest.execute;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.pitest.mutationtest.MutationStatusMap;
 import org.pitest.mutationtest.MutationStatusTestPair;
@@ -43,7 +44,11 @@ public class MutationTestProcess {
 
   public ExitCode waitToDie() {
     try {
-      return this.thread.waitToFinish();
+      Optional<ExitCode> maybeExit = this.thread.waitToFinish(5);
+      while (!maybeExit.isPresent() && this.process.isAlive()) {
+        maybeExit = this.thread.waitToFinish(10);
+      }
+      return maybeExit.orElse(ExitCode.MINION_DIED);
     } finally {
       this.process.destroy();
     }
