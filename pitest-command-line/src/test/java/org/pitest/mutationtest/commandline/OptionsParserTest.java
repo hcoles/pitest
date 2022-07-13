@@ -97,6 +97,13 @@ public class OptionsParserTest {
   }
 
   @Test
+  public void shouldSetArgLine() {
+    final ReportOptions actual = parseAddingRequiredArgs("--argLine", "-Dfoo=\"bar\"");
+
+    assertThat(actual.getArgLine()).isEqualTo("-Dfoo=\"bar\"");
+  }
+
+  @Test
   public void shouldParseCommaSeparatedListOfJVMArgs() {
     final ReportOptions actual = parseAddingRequiredArgs("--jvmArgs", "foo,bar");
 

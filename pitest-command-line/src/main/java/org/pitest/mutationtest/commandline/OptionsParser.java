@@ -43,6 +43,7 @@ import java.util.Properties;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
+import static org.pitest.mutationtest.config.ConfigOption.ARG_LINE;
 import static org.pitest.mutationtest.config.ConfigOption.AVOID_CALLS;
 import static org.pitest.mutationtest.config.ConfigOption.CHILD_JVM;
 import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH;
@@ -107,6 +108,7 @@ public class OptionsParser {
   private final OptionSpec<File>                     historyInputSpec;
   private final OptionSpec<String>                   mutators;
   private final OptionSpec<String>                   features;
+  private final OptionSpec<String>                   argLine;
   private final OptionSpec<String>                   jvmArgs;
   private final CommaAwareArgsProcessor              jvmArgsProcessor;
   private final OptionSpec<Float>                    timeoutFactorSpec;
@@ -202,6 +204,9 @@ public class OptionsParser {
     this.features = parserAccepts(FEATURES).withRequiredArg()
         .ofType(String.class).withValuesSeparatedBy(',')
         .describedAs("comma separated list of features to enable/disable.");
+
+    this.argLine = parserAccepts(ARG_LINE).withRequiredArg()
+            .describedAs("argline for child JVMs");
 
     this.jvmArgs = parserAccepts(CHILD_JVM).withRequiredArg()
         .describedAs("comma separated list of child JVM args");
@@ -415,6 +420,8 @@ public class OptionsParser {
     data.setSourceDirs(this.sourceDirSpec.values(userArgs));
     data.setMutators(this.mutators.values(userArgs));
     data.setFeatures(this.features.values(userArgs));
+
+    data.setArgLine(this.argLine.value(userArgs));
 
     data.addChildJVMArgs(this.jvmArgsProcessor.values(userArgs));
     

@@ -54,6 +54,10 @@ public enum ConfigOption {
    */
   CHILD_JVM("jvmArgs"),
 
+  /**
+   * Arguments to launch child processes with expressed as single line
+   */
+  ARG_LINE("argLine"),
 
   /**
    * Do/don't create timestamped folders for reports

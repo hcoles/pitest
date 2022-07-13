@@ -116,6 +116,9 @@ public class MojoToReportOptionsConverter {
     if (this.mojo.getJvmArgs() != null) {
       data.addChildJVMArgs(this.mojo.getJvmArgs());
     }
+    if (this.mojo.getArgLine() != null) {
+      data.setArgLine(this.mojo.getArgLine());
+    }
 
     data.setMutators(determineMutators());
     data.setFeatures(determineFeatures());

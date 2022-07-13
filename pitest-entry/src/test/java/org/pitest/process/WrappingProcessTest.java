@@ -33,8 +33,8 @@ public class WrappingProcessTest {
   InterruptedException {
 
     final LaunchOptions launchOptions = new LaunchOptions(NullJavaAgent.instance(),
-        new DefaultJavaExecutableLocator(), Collections.<String> emptyList(),
-        new HashMap<String, String>());
+        new DefaultJavaExecutableLocator(), Collections.emptyList(),
+        new HashMap<>());
 
     final ProcessArgs processArgs = ProcessArgs
         .withClassPath(new ClassPath().getLocalClassPath())

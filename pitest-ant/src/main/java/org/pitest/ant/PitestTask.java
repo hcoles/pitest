@@ -260,6 +260,10 @@ public class PitestTask extends Task { // NO_UCD (test only)
     this.setOption(ConfigOption.OUTPUT_ENCODING, value);
   }
 
+  public void setArgLine(String value) {
+    this.setOption(ConfigOption.ARG_LINE, value);
+  }
+
   private void setOption(final ConfigOption option, final String value) {
     if (!"".equals(value)) {
       this.options.put(option.getParamName(), value);
@@ -269,6 +273,7 @@ public class PitestTask extends Task { // NO_UCD (test only)
   public void setUseClasspathJar(String value) {
     this.setOption(ConfigOption.USE_CLASSPATH_JAR, value);
   }
+
 
 
 }

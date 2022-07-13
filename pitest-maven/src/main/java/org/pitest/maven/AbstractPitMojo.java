@@ -166,6 +166,12 @@ public class AbstractPitMojo extends AbstractMojo {
   private ArrayList<String>           jvmArgs;
 
   /**
+   * Single line commandline argument
+   */
+  @Parameter(property = "argLine")
+  private String                      argLine;
+
+  /**
    * Formats to output during analysis phase
    */
   @Parameter(property = "outputFormats")
@@ -589,6 +595,10 @@ public class AbstractPitMojo extends AbstractMojo {
 
   public List<String> getJvmArgs() {
     return withoutNulls(this.jvmArgs);
+  }
+
+  public String getArgLine() {
+    return argLine;
   }
 
   public List<String> getOutputFormats() {
