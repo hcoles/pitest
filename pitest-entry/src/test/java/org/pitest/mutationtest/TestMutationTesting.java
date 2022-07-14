@@ -232,12 +232,11 @@ public class TestMutationTesting {
       final JavaAgent agent,
       final Collection<String> mutators) {
 
-    // data.setConfiguration(this.config);
     final CoverageOptions coverageOptions = createCoverageOptions(data);
 
     final LaunchOptions launchOptions = new LaunchOptions(agent,
         new DefaultJavaExecutableLocator(), data.getJvmArgs(),
-        new HashMap<String, String>());
+        new HashMap<>());
 
     final PathFilter pf = new PathFilter(
         Prelude.not(new DefaultDependencyPathPredicate()),

@@ -97,6 +97,9 @@ public class ReportOptions {
   private Collection<String>             features;
 
   private final List<String>             jvmArgs                        = new ArrayList<>(DEFAULT_CHILD_JVM_ARGS);
+
+  private String                         argLine;
+
   private int                            numberOfThreads                = 0;
   private float                          timeoutFactor                  = PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR;
   private long                           timeoutConstant                = PercentAndConstantTimeoutStrategy.DEFAULT_CONSTANT;
@@ -217,6 +220,14 @@ public class ReportOptions {
 
   public void addChildJVMArgs(final List<String> args) {
     this.jvmArgs.addAll(args);
+  }
+
+  public String getArgLine() {
+    return argLine;
+  }
+
+  public void setArgLine(String argLine) {
+    this.argLine = argLine;
   }
 
   public ClassPath getClassPath() {
@@ -628,6 +639,7 @@ public class ReportOptions {
     this.outputEncoding = outputEncoding;
   }
 
+
   @Override
   public String toString() {
     return new StringJoiner(", ", ReportOptions.class.getSimpleName() + "[", "]")
@@ -644,6 +656,7 @@ public class ReportOptions {
             .add("mutators=" + mutators)
             .add("features=" + features)
             .add("jvmArgs=" + jvmArgs)
+            .add("argLine=" + argLine)
             .add("numberOfThreads=" + numberOfThreads)
             .add("timeoutFactor=" + timeoutFactor)
             .add("timeoutConstant=" + timeoutConstant)
@@ -676,4 +689,6 @@ public class ReportOptions {
             .add("outputEncoding=" + outputEncoding)
             .toString();
   }
+
+
 }

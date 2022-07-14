@@ -106,7 +106,7 @@ public abstract class ReportTestBase {
       final CoverageOptions coverageOptions = createCoverageOptions(settings.createCoverageOptions().getPitConfig());
       final LaunchOptions launchOptions = new LaunchOptions(agent,
           new DefaultJavaExecutableLocator(), this.data.getJvmArgs(),
-          new HashMap<String, String>());
+          new HashMap<>());
 
       final PathFilter pf = new PathFilter(p -> true, p -> true);
       final ProjectClassPaths cps = new ProjectClassPaths(

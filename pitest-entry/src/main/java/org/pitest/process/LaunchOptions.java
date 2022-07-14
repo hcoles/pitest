@@ -33,14 +33,17 @@ public class LaunchOptions {
   }
   
   public LaunchOptions(JavaAgent javaAgentFinder,
-      JavaExecutableLocator javaExecutable, List<String> childJVMArgs,
-      Map<String, String> environmentVariables) {
+                       JavaExecutableLocator javaExecutable,
+                       List<String> childJVMArgs,
+                       Map<String, String> environmentVariables) {
     this(javaAgentFinder, javaExecutable, childJVMArgs, environmentVariables, false);
   }
 
   public LaunchOptions(JavaAgent javaAgentFinder,
-      JavaExecutableLocator javaExecutable, List<String> childJVMArgs,
-      Map<String, String> environmentVariables, boolean usingClassPathJar) {
+                       JavaExecutableLocator javaExecutable,
+                       List<String> childJVMArgs,
+                       Map<String, String> environmentVariables,
+                       boolean usingClassPathJar) {
     this.javaAgentFinder = javaAgentFinder;
     this.childJVMArgs = childJVMArgs;
     this.javaExecutable = javaExecutable;

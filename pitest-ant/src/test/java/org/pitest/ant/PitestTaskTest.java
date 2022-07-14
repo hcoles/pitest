@@ -489,6 +489,12 @@ public class PitestTaskTest {
     verify(this.arg).setValue("--outputEncoding=US-ASCII");
   }
 
+  @Test
+  public void passesArgLineToJavaTask() {
+    this.pitestTask.setArgLine("-Dfoo=\"bar\"");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--argLine=-Dfoo=\"bar\"");
+  }
 
   private static class PathMatcher implements ArgumentMatcher<Path> {
 

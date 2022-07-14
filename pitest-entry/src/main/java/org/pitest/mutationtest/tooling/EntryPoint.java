@@ -18,6 +18,7 @@ import org.pitest.mutationtest.incremental.ObjectOutputStreamHistoryStore;
 import org.pitest.mutationtest.incremental.WriterFactory;
 import org.pitest.plugin.Feature;
 import org.pitest.plugin.FeatureParameter;
+import org.pitest.process.ArgLineParser;
 import org.pitest.process.JavaAgent;
 import org.pitest.process.LaunchOptions;
 import org.pitest.util.Log;
@@ -28,6 +29,8 @@ import org.pitest.util.Timings;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -97,7 +100,7 @@ public class EntryPoint {
 
     final CoverageOptions coverageOptions = settings.createCoverageOptions();
     final LaunchOptions launchOptions = new LaunchOptions(ja,
-        settings.getJavaExecutable(), data.getJvmArgs(), environmentVariables)
+        settings.getJavaExecutable(), createJvmArgs(data), environmentVariables)
         .usingClassPathJar(data.useClasspathJar());
     final ProjectClassPaths cps = data.getMutationClassPaths();
 
@@ -130,6 +133,12 @@ public class EntryPoint {
       historyWriter.close();
     }
 
+  }
+
+  private List<String> createJvmArgs(ReportOptions data) {
+    List<String> args = new ArrayList<>(data.getJvmArgs());
+    args.addAll(ArgLineParser.split(data.getArgLine()));
+    return args;
   }
 
   private HistoryStore makeHistoryStore(ReportOptions data,  Optional<WriterFactory> historyWriter) {

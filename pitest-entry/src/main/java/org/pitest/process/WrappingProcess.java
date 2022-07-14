@@ -1,7 +1,6 @@
 package org.pitest.process;
 
 import static org.pitest.functional.prelude.Prelude.or;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -34,7 +33,8 @@ public class WrappingProcess {
     final String[] args = { "" + this.port };
 
     final ProcessBuilder processBuilder = createProcessBuilder(
-        this.processArgs.getJavaExecutable(), this.processArgs.getJvmArgs(),
+        this.processArgs.getJavaExecutable(),
+            this.processArgs.getJvmArgs(),
         this.minionClass, Arrays.asList(args),
         this.processArgs.getJavaAgentFinder(),
         this.processArgs.getLaunchClassPath());
@@ -109,6 +109,7 @@ public class WrappingProcess {
     cmd.addAll(args);
 
     addPITJavaAgent(agentJarLocator, cmd);
+
     addLaunchJavaAgents(cmd);
 
     cmd.add(mainClass.getName());
