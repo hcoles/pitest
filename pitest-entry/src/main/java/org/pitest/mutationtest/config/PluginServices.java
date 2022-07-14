@@ -48,6 +48,7 @@ public class PluginServices {
     l.addAll(findGroupers());
     l.addAll(findTestPrioritisers());
     l.addAll(findInterceptors());
+    l.addAll(findConfigurationUpdaters());
     return l;
   }
 
@@ -62,6 +63,10 @@ public class PluginServices {
     l.addAll(findTestFrameworkPlugins());
     l.addAll(nullPlugins());
     return l;
+  }
+
+  public Collection<? extends ConfigurationUpdater> findConfigurationUpdaters() {
+    return load(ConfigurationUpdater.class);
   }
 
   public Collection<? extends MethodMutatorFactory> findMutationOperators() {

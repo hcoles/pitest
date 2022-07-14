@@ -23,7 +23,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.pitest.mutationtest.config.ReportOptions.DEFAULT_CHILD_JVM_ARGS;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -108,7 +107,6 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("--jvmArgs", "foo,bar");
 
     List<String> expected = new ArrayList<>();
-    expected.addAll(DEFAULT_CHILD_JVM_ARGS);
     expected.add("foo");
     expected.add("bar");
     assertEquals(expected, actual.getJvmArgs());

@@ -71,6 +71,8 @@ public class EntryPoint {
   public AnalysisResult execute(File baseDir, ReportOptions data,
       SettingsFactory settings, Map<String, String> environmentVariables) {
 
+    updateData(data, settings);
+
     if (data.getVerbosity() == VERBOSE) {
       Log.getLogger().info("Project base directory is " + data.getProjectBase());
       Log.getLogger().info("---------------------------------------------------------------------------");
@@ -139,6 +141,11 @@ public class EntryPoint {
     List<String> args = new ArrayList<>(data.getJvmArgs());
     args.addAll(ArgLineParser.split(data.getArgLine()));
     return args;
+  }
+
+  private void updateData(ReportOptions data, SettingsFactory settings) {
+    settings.createUpdater().updateConfig(data);
+
   }
 
   private HistoryStore makeHistoryStore(ReportOptions data,  Optional<WriterFactory> historyWriter) {

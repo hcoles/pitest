@@ -11,6 +11,10 @@ Read all about it at http://pitest.org
 ### 1.9.3 (unreleased)
 
 * #1052 - Support maven argLine property and single string argLines
+* #1054 - Provide control over auto addition of -Djava.awt.headless=true
+
+1054 Moves support of auto adding headless=true (to prevent keyboard focus being stolen on Macs) into a feature. 
+It is enabled by default, but can be disabled by adding `-MACOS_FOCUS` to the features string.
 
 ### 1.9.2
 

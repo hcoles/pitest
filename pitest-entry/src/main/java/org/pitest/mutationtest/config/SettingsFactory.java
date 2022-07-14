@@ -73,6 +73,11 @@ public class SettingsFactory {
     return new CompoundListenerFactory(parser.parseFeatures(this.options.getFeatures()), findListeners());
   }
 
+  public ConfigurationUpdater createUpdater() {
+    final FeatureParser parser = new FeatureParser();
+    return new CompoundConfigurationUpdater(parser.parseFeatures(this.options.getFeatures()), new ArrayList<>(plugins.findConfigurationUpdaters()));
+  }
+
   public JavaExecutableLocator getJavaExecutable() {
     if (this.options.getJavaExecutable() != null) {
       return new KnownLocationJavaExecutableLocator(
