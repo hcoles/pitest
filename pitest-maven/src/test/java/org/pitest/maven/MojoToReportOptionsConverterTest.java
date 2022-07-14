@@ -108,7 +108,6 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     final ReportOptions actual = parseConfig(xml);
 
     List<String> expectedArgs = new ArrayList<>();
-    expectedArgs.addAll(ReportOptions.DEFAULT_CHILD_JVM_ARGS);
     expectedArgs.add("foo");
     expectedArgs.add("bar");
 

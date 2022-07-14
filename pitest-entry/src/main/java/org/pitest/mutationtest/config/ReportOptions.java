@@ -64,8 +64,6 @@ import static org.pitest.functional.prelude.Prelude.or;
  */
 public class ReportOptions {
 
-  public static final List<String> DEFAULT_CHILD_JVM_ARGS = Collections.singletonList("-Djava.awt.headless=true");
-
   public static final Collection<String> LOGGING_CLASSES                = Arrays
       .asList(
           "java.util.logging",
@@ -96,9 +94,9 @@ public class ReportOptions {
   private Collection<String>             mutators;
   private Collection<String>             features;
 
-  private final List<String>             jvmArgs                        = new ArrayList<>(DEFAULT_CHILD_JVM_ARGS);
 
   private String                         argLine;
+  private final List<String>             jvmArgs                        = new ArrayList<>();
 
   private int                            numberOfThreads                = 0;
   private float                          timeoutFactor                  = PercentAndConstantTimeoutStrategy.DEFAULT_FACTOR;

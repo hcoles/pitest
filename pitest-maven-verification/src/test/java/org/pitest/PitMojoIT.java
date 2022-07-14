@@ -373,11 +373,6 @@ public class PitMojoIT {
     assertThat(actual).doesNotContain("status='RUN_ERROR'");
   }
 
-  private void skipIfJavaVersionNotSupportByThirdParty() {
-    String javaVersion = System.getProperty("java.version");
-    assumeFalse(javaVersion.startsWith("9") || javaVersion.startsWith("10") || javaVersion.startsWith("11"));
-  }
-
   @Test
   @Ignore("yatspec is not available on maven central. Repo currently down")
   public void shouldWorkWithYatspec() throws Exception {
@@ -448,6 +443,12 @@ public class PitMojoIT {
     } catch(VerificationException ex) {
        assertThat(ex.getMessage()).contains("Please check you have correctly installed the pitest plugin for your project's test library");
     }
+  }
+
+
+  private void skipIfJavaVersionNotSupportByThirdParty() {
+    String javaVersion = System.getProperty("java.version");
+    assumeFalse(javaVersion.startsWith("9") || javaVersion.startsWith("10") || javaVersion.startsWith("11"));
   }
 
 
