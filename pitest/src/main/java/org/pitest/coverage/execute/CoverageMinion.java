@@ -63,6 +63,8 @@ public class CoverageMinion {
 
       final int port = Integer.parseInt(args[0]);
       s = new Socket("localhost", port);
+      // if we can't read/write in 10 seconds, something is badly wrong
+      s.setSoTimeout(10000);
 
       final SafeDataInputStream dis = new SafeDataInputStream(
           s.getInputStream());

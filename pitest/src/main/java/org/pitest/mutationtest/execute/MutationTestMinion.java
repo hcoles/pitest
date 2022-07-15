@@ -135,6 +135,8 @@ public class MutationTestMinion {
     Socket s = null;
     try {
       s = new Socket("localhost", port);
+      // if we can't read/write in 20 seconds, something is badly wrong
+      s.setSoTimeout(20000);
       final SafeDataInputStream dis = new SafeDataInputStream(
           s.getInputStream());
 
