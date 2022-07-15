@@ -1,1 +1,2 @@
 org.pitest.mutationtest.autoconfig.KeepMacOsFocus
+org.pitest.mutationtest.autoconfig.AutoSetThreads
