@@ -12,9 +12,14 @@ Read all about it at http://pitest.org
 
 * #1052 - Support maven argLine property and single string argLines
 * #1054 - Provide control over auto addition of -Djava.awt.headless=true
+* #1055 - Option to autoset number of threads
 
-1054 Moves support of auto adding headless=true (to prevent keyboard focus being stolen on Macs) into a feature. 
+1054 Moves support of auto adding headless=true (to prevent keyboard focus being stolen on Macs) into a feature.
 It is enabled by default, but can be disabled by adding `-MACOS_FOCUS` to the features string.
+
+1055 adds the option to guess the appropriate number of threads for the current machine by adding `+auto_threads`
+the features string. This option is disabled by default and designed for local use. It is not recommended
+for use on a CI server.
 
 ### 1.9.2
 
