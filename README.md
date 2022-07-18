@@ -14,6 +14,7 @@ Read all about it at http://pitest.org
 * #1054 - Provide control over auto addition of -Djava.awt.headless=true
 * #1055 - Option to autoset number of threads
 * #1056 - Set timeout for socket communication
+* #1058 - Set defaults for input and output encoding for programmatic api
 
 1054 Moves support of auto adding headless=true (to prevent keyboard focus being stolen on Macs) into a feature.
 It is enabled by default, but can be disabled by adding `-MACOS_FOCUS` to the features string.
