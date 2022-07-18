@@ -110,8 +110,8 @@ public final class ReportAggregator {
     private final Set<File>      mutationResultsFiles    = new HashSet<>();
     private final Set<File>      sourceCodeDirectories   = new HashSet<>();
     private final Set<File>      compiledCodeDirectories = new HashSet<>();
-    private Charset inputCharset;
-    private Charset outputCharset;
+    private Charset inputCharset = Charset.defaultCharset();
+    private Charset outputCharset = Charset.defaultCharset();
 
     public Builder inputCharSet(Charset inputCharset) {
       this.inputCharset = inputCharset;
@@ -206,6 +206,14 @@ public final class ReportAggregator {
 
     public Set<File> getSourceCodeDirectories() {
       return this.sourceCodeDirectories;
+    }
+
+    public Charset getInputCharSet() {
+      return this.inputCharset;
+    }
+
+    public Charset getOutputCharSet() {
+      return this.outputCharset;
     }
 
     public ReportAggregator build() {

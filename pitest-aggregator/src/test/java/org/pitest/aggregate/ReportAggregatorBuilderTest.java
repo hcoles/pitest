@@ -1,5 +1,6 @@
 package org.pitest.aggregate;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.pitest.aggregate.TestInvocationHelper.getCompiledDirectory;
@@ -11,6 +12,7 @@ import static org.pitest.aggregate.TestInvocationHelper.getTestCompiledDirectory
 import static org.pitest.aggregate.TestInvocationHelper.getTestSourceDirectory;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import org.hamcrest.Matchers;
@@ -191,6 +193,18 @@ public class ReportAggregatorBuilderTest {
         .mutationResultsFiles(Arrays.asList(getMutationFile())) // mutationResultsFiles
         .compiledCodeDirectories(Arrays.asList(getCompiledDirectory(), getTestCompiledDirectory())) // compiledCodeDirectories
         .build();
+  }
+
+  @Test
+  public void defaultsInputCharset() {
+    ReportAggregator.Builder actual = ReportAggregator.builder();
+    assertThat(actual.getInputCharSet()).isEqualTo(Charset.defaultCharset());
+  }
+
+  @Test
+  public void defaultsOutputCharset() {
+    ReportAggregator.Builder actual = ReportAggregator.builder();
+    assertThat(actual.getOutputCharSet()).isEqualTo(Charset.defaultCharset());
   }
 
 }
