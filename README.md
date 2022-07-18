@@ -8,7 +8,7 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.9.3 (unreleased)
+### 1.9.3
 
 * #1052 - Support maven argLine property and single string argLines
 * #1054 - Provide control over auto addition of -Djava.awt.headless=true
