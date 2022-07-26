@@ -235,17 +235,15 @@ class EmptyReturnsFilter implements MutationInterceptor {
   static final SequenceQuery<AbstractInsnNode> CONSTANT_FALSE = QueryStart
           .match(getStatic("java/lang/Boolean","FALSE"));
 
-  static final SequenceMatcher<AbstractInsnNode> ZERO_VALUES = QueryStart
+
+  static final SequenceQuery<AbstractInsnNode> DIRECT_ZERO_VALUES = QueryStart
           .any(AbstractInsnNode.class)
           .zeroOrMore(QueryStart.match(anyInstruction()))
           .then(CONSTANT_ZERO.or(CONSTANT_FALSE).or(QueryStart.match(loadsEmptyReturnOntoStack())))
           .then(isInstruction(MUTATED_INSTRUCTION.read()))
-          .zeroOrMore(QueryStart.match(anyInstruction()))
-          .compile(QueryParams.params(AbstractInsnNode.class)
-                  .withIgnores(notAnInstruction().or(isA(LabelNode.class)))
-          );
+          .zeroOrMore(QueryStart.match(anyInstruction()));
 
-  static final SequenceMatcher<AbstractInsnNode> INDIRECT_ZERO_VALUES = QueryStart
+  static final SequenceQuery<AbstractInsnNode> INDIRECT_ZERO_VALUES = QueryStart
           .any(AbstractInsnNode.class)
           .zeroOrMore(QueryStart.match(anyInstruction()))
           .then(loadsEmptyReturnOntoStack())
@@ -253,13 +251,16 @@ class EmptyReturnsFilter implements MutationInterceptor {
           // match anything that doesn't overwrite the local var
           // possible we will get issues here if there is a jump instruction
           // to get to the point that the empty value is returned.
-          .zeroOrMore(QueryStart.match(aStoreTo(LOCAL_VAR).negate()))
+          .zeroOrMore(QueryStart.match(ASTORE.and(variableMatches(LOCAL_VAR.read())).negate()))
           .then(ALOAD.and(variableMatches(LOCAL_VAR.read())))
           .then(isInstruction(MUTATED_INSTRUCTION.read()))
-          .zeroOrMore(QueryStart.match(anyInstruction()))
-          .compile(QueryParams.params(AbstractInsnNode.class)
-                  .withIgnores(notAnInstruction().or(isA(LabelNode.class)))
-          );
+          .zeroOrMore(QueryStart.match(anyInstruction()));
+
+  static final SequenceMatcher<AbstractInsnNode> ZERO_VALUES =
+          DIRECT_ZERO_VALUES.or(INDIRECT_ZERO_VALUES)
+                  .compile(QueryParams.params(AbstractInsnNode.class)
+                          .withIgnores(notAnInstruction().or(isA(LabelNode.class)))
+                  );
 
   private static final Set<String> MUTATOR_IDS = new HashSet<>();
   private static final Set<Integer> ZERO_CONSTANTS = new HashSet<>();
@@ -299,7 +300,7 @@ class EmptyReturnsFilter implements MutationInterceptor {
       return (context,node) -> result(ZERO_CONSTANTS.contains(node.getOpcode()), context);
   }
   
-  private Predicate<MutationDetails> isEquivalent(Mutater m) {
+  private Predicate<MutationDetails> isEquivalent(Mutater unused) {
     return new Predicate<MutationDetails>() {
       @Override
       public boolean test(MutationDetails a) {
@@ -312,9 +313,7 @@ class EmptyReturnsFilter implements MutationInterceptor {
             .findFirst()
             .get();
         final int mutatedInstruction = a.getInstructionIndex();
-        return returnsZeroValue(ZERO_VALUES, method, mutatedInstruction)
-            || returnsZeroValue(INDIRECT_ZERO_VALUES, method, mutatedInstruction)
-            || returnsEmptyString(method, mutatedInstruction);
+        return returnsZeroValue(ZERO_VALUES, method, mutatedInstruction) || returnsEmptyString(method, mutatedInstruction);
       }
 
       private Boolean returnsZeroValue(SequenceMatcher<AbstractInsnNode> sequence, MethodTree method,

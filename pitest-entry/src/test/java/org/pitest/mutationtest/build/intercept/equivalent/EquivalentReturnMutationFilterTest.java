@@ -201,14 +201,10 @@ public class EquivalentReturnMutationFilterTest {
 
   @Test
   public void filtersEquivalentOptionalMutantsInTryWithResourcesBlocks() {
-    // skip test if we are running/compiling with java 8 as out analysis can't yet
-    // handle the bytecode
-    assumeTrue(CurrentRuntime.version() >= 9);
     verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyOptionalInTryWithResourcesBlock.class);
   }
 
   @Test
-  @Ignore("need more complex analysis")
   public void filtersEquivalentOptionalMutantsInTryWithResourcesBlocksForOtherCompilers() {
     // javac sample is for java 8
     verifier.assertFiltersNMutationFromSample(1, "AlreadyReturnsEmptyOptionalInTryWithResourcesBlock");
