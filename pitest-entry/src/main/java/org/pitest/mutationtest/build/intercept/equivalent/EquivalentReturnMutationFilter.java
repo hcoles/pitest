@@ -1,11 +1,15 @@
 package org.pitest.mutationtest.build.intercept.equivalent;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
+import org.pitest.classinfo.ClassName;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.CompoundMutationInterceptor;
@@ -15,12 +19,10 @@ import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanFalseReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanTrueReturnValsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.returns.PrimitiveReturnsMutator;
 import org.pitest.plugin.Feature;
 import org.pitest.sequence.Context;
+import org.pitest.sequence.Match;
 import org.pitest.sequence.QueryParams;
 import org.pitest.sequence.QueryStart;
 import org.pitest.sequence.SequenceMatcher;
@@ -38,8 +40,21 @@ import static org.pitest.bytecode.analysis.InstructionMatchers.getStatic;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallNamed;
+import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ACONST_NULL;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.ARETURN;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.DRETURN;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.FRETURN;
 import static org.pitest.bytecode.analysis.OpcodeMatchers.ICONST_1;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.IRETURN;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.LDC;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.LRETURN;
+import static org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanFalseReturnValsMutator.FALSE_RETURNS;
+import static org.pitest.mutationtest.engine.gregor.mutators.returns.EmptyObjectReturnValsMutator.EMPTY_RETURNS;
+import static org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator.NULL_RETURNS;
+import static org.pitest.mutationtest.engine.gregor.mutators.returns.PrimitiveReturnsMutator.PRIMITIVE_RETURNS;
+import static org.pitest.sequence.Result.result;
 
 /**
  * Tightly coupled to the PrimitiveReturnsMutator and EmptyObjectReturnValsMutator
@@ -64,14 +79,88 @@ public class EquivalentReturnMutationFilter implements MutationInterceptorFactor
 
   @Override
   public MutationInterceptor createInterceptor(InterceptorParameters params) {
-    return new CompoundMutationInterceptor(Arrays.asList(new PrimitiveEquivalentFilter(),
-        new NullReturnsFilter(),
-        new EmptyReturnsFilter(),
-        new HardCodedTrueEquivalentFilter())) {
+    return new CompoundMutationInterceptor(Arrays.asList(new EmptyReturnsFilter(primitiveZeroConstants(), primitiveReturns(), PRIMITIVE_RETURNS, FALSE_RETURNS),
+        new EmptyReturnsFilter(QueryStart.match(ACONST_NULL), ARETURN, NULL_RETURNS),
+       new EmptyReturnsFilter(emptyReturns(), ARETURN, EMPTY_RETURNS, FALSE_RETURNS),
+       new HardCodedTrueEquivalentFilter()
+    )) {
+
       @Override
       public InterceptorType type() {
         return InterceptorType.FILTER;
       }
+    };
+  }
+
+  private Match<AbstractInsnNode> primitiveReturns() {
+    return IRETURN.or(FRETURN).or(DRETURN).or(LRETURN);
+  }
+
+  private SequenceQuery<AbstractInsnNode> primitiveZeroConstants() {
+    Set<Integer> zeroConstants = new HashSet<>();
+    zeroConstants.add(Opcodes.ICONST_0);
+    zeroConstants.add(Opcodes.LCONST_0);
+    zeroConstants.add(Opcodes.FCONST_0);
+    zeroConstants.add(Opcodes.DCONST_0);
+    return QueryStart.match((c,n) -> result(zeroConstants.contains(n.getOpcode()),c));
+  }
+
+  private SequenceQuery<AbstractInsnNode> emptyReturns() {
+      return constantZero().or(constantFalse()).or(emptyString()).or(QueryStart.match(loadsEmptyReturnOntoStack()));
+    }
+
+    private SequenceQuery<AbstractInsnNode> constantZero() {
+      return QueryStart
+              .match(isZeroConstant())
+              .then(methodCallNamed("valueOf"));
+    }
+
+    private SequenceQuery<AbstractInsnNode> constantFalse() {
+      return QueryStart
+              .match(getStatic("java/lang/Boolean","FALSE"));
+    }
+
+    private SequenceQuery<AbstractInsnNode> emptyString() {
+      return QueryStart
+              .match(LDC.and(ldcConstant("")));
+    }
+
+    private static Match<AbstractInsnNode> ldcConstant(String s) {
+      return (c,n) -> result(s.equals(((LdcInsnNode) n).cst), c);
+    }
+
+  private static Match<AbstractInsnNode> isZeroConstant() {
+    Set<Integer> zeroConstants = new HashSet<>();
+
+    zeroConstants.add(Opcodes.ICONST_0);
+    zeroConstants.add(Opcodes.LCONST_0);
+    zeroConstants.add(Opcodes.FCONST_0);
+    zeroConstants.add(Opcodes.DCONST_0);
+
+    return (context,node) -> result(zeroConstants.contains(node.getOpcode()), context);
+  }
+
+  private static Match<AbstractInsnNode> loadsEmptyReturnOntoStack() {
+    return noArgsCall("java/util/Optional", "empty")
+            .or(noArgsCall("java/util/stream/Stream", "empty"))
+            .or(noArgsCall("java/util/Collections", "emptyList"))
+            .or(noArgsCall("java/util/Collections", "emptyMap"))
+            .or(noArgsCall("java/util/Collections", "emptySet"))
+            .or(noArgsCall("java/util/List", "of"))
+            .or(noArgsCall("java/util/Set", "of"));
+  }
+
+  private static Match<AbstractInsnNode> noArgsCall(String owner, String name) {
+    return methodCallTo(ClassName.fromString(owner), name).and(takesNoArgs());
+  }
+
+  private static Match<AbstractInsnNode> takesNoArgs() {
+    return (c,node) -> {
+      if (node instanceof MethodInsnNode) {
+        final MethodInsnNode call = (MethodInsnNode) node;
+        return result(Type.getArgumentTypes(call.desc).length == 0, c);
+      }
+      return result(false, c);
     };
   }
 
@@ -154,109 +243,3 @@ class HardCodedTrueEquivalentFilter implements MutationInterceptor {
 
 }
 
-
-class PrimitiveEquivalentFilter implements MutationInterceptor {
-
-  private static final Set<String> MUTATOR_IDS = new HashSet<>();
-  private static final Set<Integer> ZERO_CONSTANTS = new HashSet<>();
-  static {
-    ZERO_CONSTANTS.add(Opcodes.ICONST_0);
-    ZERO_CONSTANTS.add(Opcodes.LCONST_0);
-    ZERO_CONSTANTS.add(Opcodes.FCONST_0);
-    ZERO_CONSTANTS.add(Opcodes.DCONST_0);
-
-    MUTATOR_IDS.add(PrimitiveReturnsMutator.PRIMITIVE_RETURNS.getGloballyUniqueId());
-    MUTATOR_IDS.add(BooleanFalseReturnValsMutator.FALSE_RETURNS.getGloballyUniqueId());
-  }
-
-  private ClassTree currentClass;
-
-  @Override
-  public InterceptorType type() {
-    return InterceptorType.FILTER;
-  }
-
-  @Override
-  public void begin(ClassTree clazz) {
-    this.currentClass = clazz;
-  }
-
-  @Override
-  public Collection<MutationDetails> intercept(
-      Collection<MutationDetails> mutations, Mutater m) {
-    return FCollection.filter(mutations, Prelude.not(isEquivalent(m)));
-  }
-
-  private Predicate<MutationDetails> isEquivalent(Mutater m) {
-    return a -> {
-      if (!MUTATOR_IDS.contains(a.getMutator())) {
-        return false;
-      }
-      final MethodTree method = PrimitiveEquivalentFilter.this.currentClass.methods().stream()
-          .filter(MethodMatchers.forLocation(a.getId().getLocation()))
-          .findFirst()
-          .get();
-      return ZERO_CONSTANTS.contains(method.realInstructionBefore(a.getInstructionIndex()).getOpcode());
-    };
-  }
-
-  @Override
-  public void end() {
-    this.currentClass = null;
-  }
-
-}
-
-
-
-class NullReturnsFilter implements MutationInterceptor {
-
-  private static final String MUTATOR_ID = NullReturnValsMutator.NULL_RETURNS.getGloballyUniqueId();
-
-  private ClassTree currentClass;
-
-  @Override
-  public InterceptorType type() {
-    return InterceptorType.FILTER;
-  }
-
-  @Override
-  public void begin(ClassTree clazz) {
-    this.currentClass = clazz;
-  }
-
-  @Override
-  public Collection<MutationDetails> intercept(
-      Collection<MutationDetails> mutations, Mutater m) {
-    return FCollection.filter(mutations, Prelude.not(isEquivalent(m)));
-  }
-
-  private Predicate<MutationDetails> isEquivalent(Mutater m) {
-    return new Predicate<MutationDetails>() {
-      @Override
-      public boolean test(MutationDetails a) {
-        if (!MUTATOR_ID.equals(a.getMutator())) {
-          return false;
-        }
-
-        final MethodTree method = NullReturnsFilter.this.currentClass.methods().stream()
-            .filter(MethodMatchers.forLocation(a.getId().getLocation()))
-            .findFirst()
-            .get();
-        final int mutatedInstruction = a.getInstructionIndex();
-        return returnsNull(method, mutatedInstruction);
-      }
-
-      private Boolean returnsNull(MethodTree method,
-          int mutatedInstruction) {
-        return method.realInstructionBefore(mutatedInstruction).getOpcode() == Opcodes.ACONST_NULL;
-      }
-    };
-  }
-
-  @Override
-  public void end() {
-    this.currentClass = null;
-  }
-
-}
