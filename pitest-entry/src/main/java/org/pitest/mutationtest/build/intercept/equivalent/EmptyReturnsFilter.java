@@ -33,13 +33,9 @@ import static org.pitest.bytecode.analysis.OpcodeMatchers.ALOAD;
 import static org.pitest.bytecode.analysis.OpcodeMatchers.ASTORE;
 import static org.pitest.sequence.Result.result;
 
-/**
- * Handles methods already returning a 0 value, and also
- * those returning Boolean.FALSE
- */
 class EmptyReturnsFilter extends RegionInterceptor {
 
-    private static final Slot<AbstractInsnNode> MUTATED_INSTRUCTION = Slot.create(AbstractInsnNode.class);
+    private static final Slot<AbstractInsnNode> AVOID = Slot.create(AbstractInsnNode.class);
     private static final Slot<Integer> LOCAL_VAR = Slot.create(Integer.class);
 
     private final SequenceQuery<AbstractInsnNode> matches;
@@ -66,7 +62,7 @@ class EmptyReturnsFilter extends RegionInterceptor {
                 .any(AbstractInsnNode.class)
                 .zeroOrMore(QueryStart.match(anyInstruction()))
                 .then(matches)
-                .then(returnMatch.and(store(MUTATED_INSTRUCTION.write())))
+                .then(returnMatch.and(store(AVOID.write())))
                 .zeroOrMore(QueryStart.match(anyInstruction()));
     }
 
@@ -81,7 +77,7 @@ class EmptyReturnsFilter extends RegionInterceptor {
                 // to get to the point that the empty value is returned.
                 .zeroOrMore(QueryStart.match(ASTORE.and(variableMatches(LOCAL_VAR.read())).negate()))
                 .then(ALOAD.and(variableMatches(LOCAL_VAR.read())))
-                .then(returnMatch.and(store(MUTATED_INSTRUCTION.write())))
+                .then(returnMatch.and(store(AVOID.write())))
                 .zeroOrMore(QueryStart.match(anyInstruction()));
     }
 
@@ -94,7 +90,7 @@ class EmptyReturnsFilter extends RegionInterceptor {
     protected List<Region> computeRegions(MethodTree method) {
         Context context = Context.start();
         return zeroValues.contextMatches(method.instructions(), context).stream()
-                .map(c -> new Region(c.retrieve(MUTATED_INSTRUCTION.read()).get(), c.retrieve(MUTATED_INSTRUCTION.read()).get()))
+                .map(c -> new Region(c.retrieve(AVOID.read()).get(), c.retrieve(AVOID.read()).get()))
                 .collect(Collectors.toList());
     }
 
