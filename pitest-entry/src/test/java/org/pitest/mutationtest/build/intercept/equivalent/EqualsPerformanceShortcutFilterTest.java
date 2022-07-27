@@ -16,7 +16,8 @@ import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.GregorMutater;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
-import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanFalseReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.PrimitiveReturnsMutator;
 
 public class EqualsPerformanceShortcutFilterTest {
 
@@ -40,7 +41,7 @@ public class EqualsPerformanceShortcutFilterTest {
   @Test
   public void shouldNotFilterGeneralMutantsInEqualMethods() {
     final GregorMutater mutator = createMutator(
-        ReturnValsMutator.RETURN_VALS);
+            BooleanFalseReturnValsMutator.FALSE_RETURNS);
     final List<MutationDetails> mutations = mutator
         .findMutations(ClassName.fromClass(HasNonShortCutEquals.class));
     assertThat(mutations).hasSize(1);

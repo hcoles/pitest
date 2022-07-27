@@ -20,7 +20,7 @@ import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.returns.PrimitiveReturnsMutator;
 import org.pitest.util.ResourceFolderByteArraySource;
 import org.pitest.verifier.mutants.MutatorVerifierStart;
 
@@ -37,7 +37,7 @@ public class TestGregorMutater {
     public void shouldFindMutationsFromAllSuppliedMutators() {
 
         MutatorVerifierStart v = MutatorVerifierStart.forMutator(MathMutator.MATH,
-                ReturnValsMutator.RETURN_VALS,
+                PrimitiveReturnsMutator.PRIMITIVE_RETURNS,
                 InvertNegsMutator.INVERT_NEGS,
                 IncrementsMutator.INCREMENTS);
 
@@ -46,7 +46,7 @@ public class TestGregorMutater {
 
         assertThat(actualDetails.stream()).anyMatch(descriptionContaining("Replaced Shift Left with Shift Right"));
         assertThat(actualDetails.stream())
-                .anyMatch(descriptionContaining("replaced return of integer"));
+                .anyMatch(descriptionContaining("replaced int return"));
         assertThat(actualDetails.stream())
                 .anyMatch(descriptionContaining("Changed increment"));
         assertThat(actualDetails.stream())
@@ -156,7 +156,7 @@ public class TestGregorMutater {
 
     @Test
     public void shouldScopeMutationIndexesByInstructionCounter() {
-        List<MutationDetails> actualDetails = MutatorVerifierStart.forMutator(ReturnValsMutator.RETURN_VALS)
+        List<MutationDetails> actualDetails = MutatorVerifierStart.forMutator(PrimitiveReturnsMutator.PRIMITIVE_RETURNS)
                 .forClass(HasTwoMutableMethods.class)
                 .findMutations();
 

@@ -35,11 +35,6 @@ public class MutatorTest {
   }
 
   @Test
-  public void providesRETURN_VALS() {
-    assertProvides("RETURN_VALS");
-  }
-
-  @Test
   public void providesINLINE_CONSTS() {
     assertProvides("INLINE_CONSTS");
   }
@@ -136,11 +131,6 @@ public class MutatorTest {
   @Test
   public void providesDefaultsGroup() {
     assertGroupHasSize("DEFAULTS", 12);
-  }
-
-  @Test
-  public void providesOldDefaultsGroup() {
-    assertGroupHasSize("OLD_DEFAULTS", 7);
   }
 
   @Test

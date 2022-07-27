@@ -109,26 +109,26 @@ public class TestMutationTesting {
   @Test
   public void shouldKillAllCoveredMutations() {
     run(OneMutationOnly.class, OneMutationFullTest.class,
-        "RETURN_VALS");
+        "PRIMITIVE_RETURNS");
     verifyResults(KILLED);
   }
 
   @Test
   public void shouldDetectedMixOfSurvivingAndKilledMutations() {
     run(ThreeMutations.class, ThreeMutationsTwoMeaningfullTests.class,
-        "RETURN_VALS");
+        "PRIMITIVE_RETURNS");
     verifyResults(SURVIVED, KILLED, KILLED);
   }
 
   @Test
   public void shouldReportNoResultsIfNoMutationsPossible() {
-    run(NoMutations.class, NoMutationsTest.class, "RETURN_VALS");
+    run(NoMutations.class, NoMutationsTest.class, "PRIMITIVE_RETURNS");
     verifyResults();
   }
 
   @Test
   public void shouldReportStatusOfNoCoverageWhenNoTestsAvailable() {
-    run(ThreeMutations.class, NoTests.class, "RETURN_VALS");
+    run(ThreeMutations.class, NoTests.class, "PRIMITIVE_RETURNS");
     verifyResults(NO_COVERAGE, NO_COVERAGE, NO_COVERAGE);
   }
 
@@ -152,7 +152,7 @@ public class TestMutationTesting {
     // note surefire is configured to launch this test with -Dfoo=foo
     run(OneMutationOnly.class,
         OneMutationFullTestWithSystemPropertyDependency.class,
-        "RETURN_VALS");
+        "PRIMITIVE_RETURNS");
     verifyResults(KILLED);
   }
 
@@ -193,7 +193,7 @@ public class TestMutationTesting {
     // see http://code.google.com/p/pitestrunner/issues/detail?id=17 for full
     // description of this issue
     run(MutationsInNestedClasses.class, MutationsInNestedClassesTest.class,
-        "RETURN_VALS");
+        "FALSE_RETURNS");
     verifyResults(SURVIVED, SURVIVED);
   }
 
@@ -201,7 +201,7 @@ public class TestMutationTesting {
   @Ignore("too brittle")
   public void shouldRecordCorrectLineNumberForMutations() {
     run(OneMutationOnly.class, OneMutationFullTest.class,
-        "RETURN_VALS");
+        "PRIMITIVE_RETURNS");
     verifyLineNumbers(111);
   }
 

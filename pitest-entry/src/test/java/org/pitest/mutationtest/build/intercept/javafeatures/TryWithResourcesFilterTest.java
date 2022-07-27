@@ -13,7 +13,7 @@ public class TryWithResourcesFilterTest {
 
   TryWithResourcesFilter testee = new TryWithResourcesFilter();
 
-  FilterTester verifier = new FilterTester(PATH, this.testee, Mutator.oldDefaults());
+  FilterTester verifier = new FilterTester(PATH, this.testee, Mutator.newDefaults());
 
   @Test
   public void shouldDeclareTypeAsFilter() {

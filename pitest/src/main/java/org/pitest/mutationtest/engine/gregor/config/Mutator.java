@@ -24,7 +24,6 @@ import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.NegateConditionalsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanFalseReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanTrueReturnValsMutator;
@@ -74,19 +73,6 @@ public final class Mutator {
     final List<MethodMutatorFactory> l = new ArrayList<>(a);
     l.addAll(b);
     return l;
-  }
-
-  /**
-   * Default set of mutators - designed to provide balance between strength and
-   * performance
-   */
-  public static Collection<MethodMutatorFactory> oldDefaults() {
-    return group(InvertNegsMutator.INVERT_NEGS,
-        ReturnValsMutator.RETURN_VALS, MathMutator.MATH,
-        VoidMethodCallMutator.VOID_METHOD_CALLS,
-        NegateConditionalsMutator.NEGATE_CONDITIONALS,
-        ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY,
-        IncrementsMutator.INCREMENTS);
   }
 
   /**
