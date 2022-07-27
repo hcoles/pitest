@@ -1,7 +1,6 @@
 package org.pitest.mutationtest.build.intercept.equivalent;
 
 import com.example.emptyreturns.AlreadyReturnsEmptyOptionalInTryWithResourcesBlock;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
@@ -40,6 +39,16 @@ public class EquivalentReturnMutationFilterTest {
   @Test
   public void doesNotFilterNonEquivalents() {
     this.verifier.assertFiltersNMutationFromClass(0, ReturnsWidget.class);
+  }
+
+  @Test
+  public void doesNotFilterNonEquivalentsWhenEquivalentMutantAlsoPresent() {
+    this.verifier.assertFiltersNMutationFromClass(1, ReturnsNullAndWidget.class);
+  }
+
+  @Test
+  public void filtersIndirectEquivalentNullReturns() {
+    this.verifier.assertFiltersNMutationFromClass(1, ReturnsNullFromVariable.class);
   }
 
   @Test
@@ -222,9 +231,30 @@ class ReturnsWidget {
   }
 }
 
+class ReturnsNullAndWidget {
+  public Widget a(boolean b) {
+    if (b) {
+      return null;
+    }
+    return new Widget();
+  }
+}
+
 class ReturnsNull {
   public Widget a() {
     return null;
+  }
+}
+
+class ReturnsNullFromVariable {
+  public Widget a(boolean b) {
+    Widget w = null;
+    if (b) {
+      return w;
+    } else {
+      w = new Widget();
+    }
+    return w;
   }
 }
 
