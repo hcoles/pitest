@@ -8,6 +8,10 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.9.4 (unreleased)
+
+* #1063 - Improve filtering of equivalent return mutants
+
 ### 1.9.3
 
 * #1052 - Support maven argLine property and single string argLines

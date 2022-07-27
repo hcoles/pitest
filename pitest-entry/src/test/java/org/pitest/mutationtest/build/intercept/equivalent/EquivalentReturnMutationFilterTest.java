@@ -1,7 +1,6 @@
 package org.pitest.mutationtest.build.intercept.equivalent;
 
 import com.example.emptyreturns.AlreadyReturnsEmptyOptionalInTryWithResourcesBlock;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptor;
@@ -9,7 +8,6 @@ import org.pitest.mutationtest.build.intercept.javafeatures.FilterTester;
 import org.pitest.mutationtest.engine.gregor.mutators.returns.EmptyObjectReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnValsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.returns.PrimitiveReturnsMutator;
-import org.pitest.util.CurrentRuntime;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +18,6 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assume.assumeTrue;
 import static org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanFalseReturnValsMutator.FALSE_RETURNS;
 import static org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanTrueReturnValsMutator.TRUE_RETURNS;
 
@@ -42,6 +39,16 @@ public class EquivalentReturnMutationFilterTest {
   @Test
   public void doesNotFilterNonEquivalents() {
     this.verifier.assertFiltersNMutationFromClass(0, ReturnsWidget.class);
+  }
+
+  @Test
+  public void doesNotFilterNonEquivalentsWhenEquivalentMutantAlsoPresent() {
+    this.verifier.assertFiltersNMutationFromClass(1, ReturnsNullAndWidget.class);
+  }
+
+  @Test
+  public void filtersIndirectEquivalentNullReturns() {
+    this.verifier.assertFiltersNMutationFromClass(1, ReturnsNullFromVariable.class);
   }
 
   @Test
@@ -201,14 +208,10 @@ public class EquivalentReturnMutationFilterTest {
 
   @Test
   public void filtersEquivalentOptionalMutantsInTryWithResourcesBlocks() {
-    // skip test if we are running/compiling with java 8 as out analysis can't yet
-    // handle the bytecode
-    assumeTrue(CurrentRuntime.version() >= 9);
     verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyOptionalInTryWithResourcesBlock.class);
   }
 
   @Test
-  @Ignore("need more complex analysis")
   public void filtersEquivalentOptionalMutantsInTryWithResourcesBlocksForOtherCompilers() {
     // javac sample is for java 8
     verifier.assertFiltersNMutationFromSample(1, "AlreadyReturnsEmptyOptionalInTryWithResourcesBlock");
@@ -228,9 +231,30 @@ class ReturnsWidget {
   }
 }
 
+class ReturnsNullAndWidget {
+  public Widget a(boolean b) {
+    if (b) {
+      return null;
+    }
+    return new Widget();
+  }
+}
+
 class ReturnsNull {
   public Widget a() {
     return null;
+  }
+}
+
+class ReturnsNullFromVariable {
+  public Widget a(boolean b) {
+    Widget w = null;
+    if (b) {
+      return w;
+    } else {
+      w = new Widget();
+    }
+    return w;
   }
 }
 
