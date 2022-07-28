@@ -9,14 +9,6 @@ public class StandardMutatorGroups implements MutatorGroup {
     @Override
     public void register(Map<String, List<MethodMutatorFactory>> mutators) {
 
-        mutators.put("OLD_DEFAULTS", gather(mutators,"INVERT_NEGS",
-                "RETURN_VALS",
-                "MATH",
-                "VOID_METHOD_CALLS",
-                "NEGATE_CONDITIONALS",
-                "CONDITIONALS_BOUNDARY",
-                "INCREMENTS"));
-
         mutators.put("DEFAULTS", gather(mutators,"INVERT_NEGS",
                 "MATH",
                 "VOID_METHOD_CALLS",

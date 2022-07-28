@@ -29,7 +29,7 @@ public class MutantExportInterceptorTest {
 
   @Before
   public void setUp() {
-    final Collection<MethodMutatorFactory> mutators = Mutator.oldDefaults();
+    final Collection<MethodMutatorFactory> mutators = Mutator.newDefaults();
     this.mutator = new GregorMutater(this.source, m -> true, mutators);
     this.testee = new MutantExportInterceptor(this.fileSystem, this.source, "target");
   }
