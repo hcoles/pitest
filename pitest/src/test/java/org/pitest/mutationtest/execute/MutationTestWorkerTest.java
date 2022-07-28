@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.F3;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.Mutant;
@@ -43,7 +42,7 @@ public class MutationTestWorkerTest {
   private Mutater                                     mutater;
 
   @Mock
-  private F3<ClassName, ClassLoader, byte[], Boolean> hotswapper;
+  private HotSwap                                     hotswapper;
 
   @Mock
   private TimeOutDecoratedTestSource                  testSource;
@@ -88,7 +87,7 @@ public class MutationTestWorkerTest {
     when(this.testSource.translateTests(any(List.class))).thenReturn(
         Collections.singletonList(tu));
     when(
-        this.hotswapper.apply(any(ClassName.class), any(ClassLoader.class),
+        this.hotswapper.insertClass(any(ClassName.class), any(ClassLoader.class),
             any(byte[].class))).thenReturn(true);
     this.testee.run(range, this.reporter, this.testSource);
     verify(this.reporter).report(mutantOne.getId(),
@@ -104,7 +103,7 @@ public class MutationTestWorkerTest {
     when(this.testSource.translateTests(any(List.class))).thenReturn(
         Collections.singletonList(tu));
     when(
-        this.hotswapper.apply(any(ClassName.class), any(ClassLoader.class),
+        this.hotswapper.insertClass(any(ClassName.class), any(ClassLoader.class),
             any(byte[].class))).thenReturn(false);
     this.testee.run(range, this.reporter, this.testSource);
     verify(this.reporter).report(mutantOne.getId(),
@@ -119,7 +118,7 @@ public class MutationTestWorkerTest {
     when(this.testSource.translateTests(any(List.class))).thenReturn(
         Collections.singletonList(tu));
     when(
-        this.hotswapper.apply(any(ClassName.class), any(ClassLoader.class),
+        this.hotswapper.insertClass(any(ClassName.class), any(ClassLoader.class),
             any(byte[].class))).thenReturn(true);
     this.testee.run(range, this.reporter, this.testSource);
     verify(this.reporter).report(
