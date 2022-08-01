@@ -1,6 +1,7 @@
 package org.pitest.mutationtest.build.intercept.staticinitializers;
 
 import com.example.staticinitializers.BrokenChain;
+import com.example.staticinitializers.MethodsCallsEachOtherInLoop;
 import com.example.staticinitializers.SecondLevelPrivateMethods;
 import com.example.staticinitializers.SingletonWithWorkInInitializer;
 import com.example.staticinitializers.ThirdLevelPrivateMethods;
@@ -121,6 +122,14 @@ public class StaticInitializerInterceptorTest {
                 .verify();
     }
 
+    @Test
+    public void analysisDoesNotGetStuckInInfiniteLoop() {
+        v.forClass(MethodsCallsEachOtherInLoop.class)
+                .forMutantsMatching(inMethodStartingWith("a"))
+                .mutantsAreGenerated()
+                .allMutantsAreFiltered()
+                .verify();
+    }
 
     private Predicate<MutationDetails> inMethod(String name, String desc) {
         return m -> m.getMethod().equals(name) && m.getId().getLocation().getMethodDesc().equals(desc);

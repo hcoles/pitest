@@ -95,6 +95,11 @@ class StaticInitializerInterceptor implements MutationInterceptor {
   }
 
   private void visit(Map<Location, List<Call>> callTree, Set<Location> visited, Location l) {
+    // avoid stack overflow if methods call each other in a cycle
+    if (visited.contains(l)) {
+      return;
+    }
+
     visited.add(l);
     for (Call each : callTree.getOrDefault(l, Collections.emptyList())) {
       visit(callTree, visited, each.to());
