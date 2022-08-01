@@ -51,8 +51,7 @@ public class CatchNewClassLoadersTransformer implements ClassFileTransformer {
                             final Class<?> classBeingRedefined,
                             final ProtectionDomain protectionDomain, final byte[] classfileBuffer) {
 
-
-        if (className.equals(targetClass)) {
+        if (className.equals(targetClass) && shouldTransform(loader)) {
             CLASS_LOADERS.put(loader, null);
             // we might be mid-mutation so return the mutated bytes
             return currentMutant;
@@ -76,6 +75,12 @@ public class CatchNewClassLoadersTransformer implements ClassFileTransformer {
             return null;
         }
 
+    }
+
+    private boolean shouldTransform(ClassLoader loader) {
+        // Only gwtmockito has been identified so far as a loader not to transform
+        // but there will be others
+        return !loader.getClass().getName().startsWith("com.google.gwtmockito.");
     }
 
 }
