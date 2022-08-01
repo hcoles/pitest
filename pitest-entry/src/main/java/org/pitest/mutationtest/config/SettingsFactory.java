@@ -87,9 +87,11 @@ public class SettingsFactory {
   }
 
   public MutationGrouperFactory getMutationGrouper() {
-    final Collection<? extends MutationGrouperFactory> groupers = this.plugins
-        .findGroupers();
-    return firstOrDefault(groupers, new DefaultMutationGrouperFactory());
+    // Grouping behaviour is important. We cannot have more than 1 class mutated within
+    // a JVM or else the last mutation will poison the next. This restriction can only
+    // be removed if the hotswap functionality is reworked.
+    // Grouping behaviour is therefore hard coded for now.
+    return new DefaultMutationGrouperFactory();
   }
 
   public void describeFeatures(Consumer<Feature> enabled, Consumer<Feature> disabled) {
