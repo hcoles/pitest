@@ -389,7 +389,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   }
 
   @Test
-  public void willMutatePriveMethodsCalledInChainFromInitializer() {
+  public void doesNotMutatePrivateMethodsCalledInChainFromInitializer() {
     setMutators("VOID_METHOD_CALLS");
 
     this.data
@@ -397,8 +397,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
 
     createAndRun();
 
-    // would prefer removed here
-    verifyResults(NO_COVERAGE);
+    verifyResults();
   }
 
   @Test
