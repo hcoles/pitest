@@ -85,13 +85,23 @@ public class WrappingProcess {
 
     // IBM jdk adds this, thereby breaking everything
     removeClassPathProperties(cmd);
+    
+    removeJacocoAgent(cmd);
 
     return new ProcessBuilder(cmd);
   }
 
+  private void removeJacocoAgent(List<String> cmd) {
+    removeFromClassPath(cmd, line -> line.startsWith("-javaagent") && line.contains("jacoco"));
+  }
+
   private static void removeClassPathProperties(List<String> cmd) {
+    removeFromClassPath(cmd, s -> s.startsWith("-Djava.class.path"));
+  }
+
+  private static void removeFromClassPath(List<String> cmd, Predicate<String> match) {
     for (int i = cmd.size() - 1; i >= 0; i--) {
-      if (cmd.get(i).startsWith("-Djava.class.path")) {
+      if (match.test(cmd.get(i))) {
         cmd.remove(i);
       }
     }
@@ -106,9 +116,9 @@ public class WrappingProcess {
 
     createClasspathJar(classPath, cmd);
 
-    cmd.addAll(args);
-
     addPITJavaAgent(agentJarLocator, cmd);
+
+    cmd.addAll(args);
 
     addLaunchJavaAgents(cmd);
 
