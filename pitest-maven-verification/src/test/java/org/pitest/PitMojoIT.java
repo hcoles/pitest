@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeFalse;
@@ -445,6 +446,14 @@ public class PitMojoIT {
     }
   }
 
+  @Test
+  public void shouldDisableJacoco() throws IOException, VerificationException {
+    File testDir = prepare("/pit-jacoco");
+    verifier.executeGoals(asList("test-compile", "org.pitest:pitest-maven:mutationCoverage"));
+
+    String actual = readResults(testDir);
+    assertThat(actual).doesNotContain("RUN_ERROR");
+  }
 
   private void skipIfJavaVersionNotSupportByThirdParty() {
     String javaVersion = System.getProperty("java.version");
@@ -474,6 +483,7 @@ public class PitMojoIT {
     verifier = new Verifier(path);
     verifier.setAutoclean(false);
     verifier.setDebug(true);
+    verifier.getCliOptions().add("-Dverbose=true");
     verifier.getCliOptions().add("-Dpit.version=" + VERSION);
     verifier.getCliOptions().add(
             "-Dthreads=" + (Runtime.getRuntime().availableProcessors()));

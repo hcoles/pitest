@@ -12,6 +12,7 @@ Read all about it at http://pitest.org
 
 * #1063 - Improve filtering of equivalent return mutants
 * #1066 - Expand static initializer filtering
+* #1070 - Remove jacoco agent if present on argline
 
 ### 1.9.3
 
