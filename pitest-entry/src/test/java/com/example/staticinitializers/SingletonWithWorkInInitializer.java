@@ -6,6 +6,7 @@ public class SingletonWithWorkInInitializer {
     private static final SingletonWithWorkInInitializer INSTANCE = new SingletonWithWorkInInitializer();
 
     private SingletonWithWorkInInitializer() {
+        doNotMutateMethodCalledFromConstructor();
     }
 
     public static SingletonWithWorkInInitializer getInstance() {
@@ -14,5 +15,9 @@ public class SingletonWithWorkInInitializer {
 
     public boolean isMember6() {
         return 6 == num;
+    }
+
+    private void doNotMutateMethodCalledFromConstructor() {
+        System.out.println("do not mutate");
     }
 }

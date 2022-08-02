@@ -1,25 +1,27 @@
 package org.pitest.mutationtest.build.intercept.staticinitializers;
 
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.pitest.bytecode.analysis.ClassTree;
+import org.pitest.bytecode.analysis.MethodTree;
+import org.pitest.classinfo.ClassName;
+import org.pitest.mutationtest.build.InterceptorType;
+import org.pitest.mutationtest.build.MutationInterceptor;
+import org.pitest.mutationtest.engine.Location;
+import org.pitest.mutationtest.engine.Mutater;
+import org.pitest.mutationtest.engine.MutationDetails;
+
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.pitest.bytecode.analysis.AnalysisFunctions;
-import org.pitest.bytecode.analysis.ClassTree;
-import org.pitest.bytecode.analysis.MethodTree;
-import org.pitest.classinfo.ClassName;
-import org.pitest.functional.prelude.Prelude;
-import org.pitest.mutationtest.build.InterceptorType;
-import org.pitest.mutationtest.build.MutationInterceptor;
-import org.pitest.mutationtest.engine.Mutater;
-import org.pitest.mutationtest.engine.MutationDetails;
 
 /**
  * Identifies and marks mutations in code that is active during class
@@ -29,10 +31,8 @@ import org.pitest.mutationtest.engine.MutationDetails;
  * for static initialisation if it is
  *
  * 1. In a static initializer (i.e <clinit>)
- * 2. In a private static method or constructor called directly from <clinit>
+ * 2. In a private method or constructor called from <clinit> or another private method in the call tree
  *
- * TODO A better analysis would include private static methods called indirectly from <clinit>
- * and would exclude methods called from location other than <clinit>.
  *
  */
 class StaticInitializerInterceptor implements MutationInterceptor {
@@ -64,42 +64,50 @@ class StaticInitializerInterceptor implements MutationInterceptor {
     final Optional<MethodTree> clinit = tree.methods().stream().filter(nameEquals("<clinit>")).findFirst();
 
     if (clinit.isPresent()) {
-      final List<Predicate<MethodTree>> selfCalls =
-          clinit.get().instructions().stream()
-        .flatMap(is(MethodInsnNode.class))
-        .filter(calls(tree.name()))
-        .map(StaticInitializerInterceptor::matchesCall)
-        .collect(Collectors.toList());
 
-      final Predicate<MethodTree> matchingCalls = Prelude.or(selfCalls);
+      // We can't see if a method *call* is private from the call site
+      // so collect a set of private methods within the class first
+      Set<Location> privateMethods = tree.methods().stream()
+              .filter(m -> m.isPrivate())
+              .map(MethodTree::asLocation)
+              .collect(Collectors.toSet());
 
-      final Predicate<MutationDetails> initOnlyMethods = Prelude.or(tree.methods().stream()
-      .filter(isPrivateStatic().or(isConstructor()))
-      .filter(matchingCalls)
-      .map(AnalysisFunctions.matchMutationsInMethod())
-      .collect(Collectors.toList())
-      );
+      Map<Location, List<Call>> callTree = tree.methods().stream()
+              .filter(m -> m.isPrivate() || m.rawNode().name.equals("<clinit>"))
+              .flatMap(m -> callsFor(tree, m).stream().map(c -> new Call(m.asLocation(), c)))
+              .filter(c -> privateMethods.contains(c.to()))
+              .collect(Collectors.groupingBy(Call::from));
 
-      this.isStaticInitCode = Prelude.or(isInStaticInitializer(), initOnlyMethods);
+      Set<Location> visited = new HashSet<>();
+
+      visit(callTree, visited, clinit.get().asLocation());
+
+      this.isStaticInitCode = m -> visited.contains(m.getId().getLocation());
     }
   }
 
-  private static Predicate<MutationDetails> isInStaticInitializer() {
-    return a -> a.getId().getLocation().getMethodName().equals("<clinit>");
+  private List<Location> callsFor(ClassTree tree, MethodTree m) {
+    return m.instructions().stream()
+            .flatMap(is(MethodInsnNode.class))
+            .filter(calls(tree.name()))
+            .map(this::asLocation)
+            .collect(Collectors.toList());
   }
 
-  private static Predicate<MethodTree> isPrivateStatic() {
-    return a -> ((a.rawNode().access & Opcodes.ACC_STATIC) != 0)
-        && ((a.rawNode().access & Opcodes.ACC_PRIVATE) != 0);
+  private void visit(Map<Location, List<Call>> callTree, Set<Location> visited, Location l) {
+    // avoid stack overflow if methods call each other in a cycle
+    if (visited.contains(l)) {
+      return;
+    }
+
+    visited.add(l);
+    for (Call each : callTree.getOrDefault(l, Collections.emptyList())) {
+      visit(callTree, visited, each.to());
+    }
   }
 
-  private Predicate<MethodTree> isConstructor() {
-    return a -> a.rawNode().name.equals("<init>");
-  }
-
-  private static Predicate<MethodTree> matchesCall(final MethodInsnNode call) {
-    return a -> a.rawNode().name.equals(call.name)
-        && a.rawNode().desc.equals(call.desc);
+  private Location asLocation(MethodInsnNode call) {
+    return Location.location(ClassName.fromString(call.owner), call.name, call.desc);
   }
 
   private Predicate<MethodInsnNode> calls(final ClassName self) {
@@ -124,4 +132,22 @@ class StaticInitializerInterceptor implements MutationInterceptor {
     return InterceptorType.FILTER;
   }
 
+}
+
+class Call {
+  private final Location from;
+  private final Location to;
+
+  Call(Location from, Location to) {
+    this.from = from;
+    this.to = to;
+  }
+
+  Location from() {
+    return from;
+  }
+
+  Location to() {
+    return to;
+  }
 }

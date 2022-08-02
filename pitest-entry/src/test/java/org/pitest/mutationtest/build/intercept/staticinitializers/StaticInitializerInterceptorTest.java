@@ -1,6 +1,10 @@
 package org.pitest.mutationtest.build.intercept.staticinitializers;
 
+import com.example.staticinitializers.BrokenChain;
+import com.example.staticinitializers.MethodsCallsEachOtherInLoop;
+import com.example.staticinitializers.SecondLevelPrivateMethods;
 import com.example.staticinitializers.SingletonWithWorkInInitializer;
+import com.example.staticinitializers.ThirdLevelPrivateMethods;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.mutators.NullMutateEverything;
@@ -9,7 +13,6 @@ import org.pitest.verifier.interceptors.VerifierStart;
 
 import java.util.function.Predicate;
 
-
 public class StaticInitializerInterceptorTest {
 
     InterceptorVerifier v = VerifierStart.forInterceptorFactory(new StaticInitializerInterceptorFactory())
@@ -17,8 +20,8 @@ public class StaticInitializerInterceptorTest {
 
 
     @Test
-    public void shouldNotFilterMutationsInClassWithoutStaticInitializer() {
-        v.forClass(NoStaticInializer.class)
+    public void doesNotFilterMutationsInClassWithoutStaticInitializer() {
+        v.forClass(NoStaticInitializer.class)
                 .forAnyCode()
                 .mutantsAreGenerated()
                 .noMutantsAreFiltered()
@@ -26,8 +29,8 @@ public class StaticInitializerInterceptorTest {
     }
 
     @Test
-    public void shouldFilterMutationsInStaticInitializer() {
-      v.forClass(HasStaticInializer.class)
+    public void filtersMutationsInStaticInitializer() {
+      v.forClass(HasStaticInitializer.class)
               .forMethod("<clinit>")
               .forAnyCode()
               .mutantsAreGenerated()
@@ -36,7 +39,7 @@ public class StaticInitializerInterceptorTest {
     }
 
     @Test
-    public void shouldMarkMutationsInPrivateMethodsCalledFromStaticInitializer() {
+    public void filtersMutationsInPrivateMethodsCalledFromStaticInitializer() {
       v.forClass(HasPrivateCallsFromStaticInializer.class)
               .forMethod("a")
               .forAnyCode()
@@ -46,8 +49,8 @@ public class StaticInitializerInterceptorTest {
     }
 
     @Test
-    public void shouldNotMarkMutationsInPackageDefaultMethodsCalledFromStaticInitializer() {
-      v.forClass(HasDefaultCallsFromStaticInializer.class)
+    public void doesNotFilterMutationsInPackageDefaultMethodsCalledFromStaticInitializer() {
+      v.forClass(HasDefaultCallsFromStaticInitializer.class)
               .forMethod("a")
               .forAnyCode()
               .mutantsAreGenerated()
@@ -55,9 +58,8 @@ public class StaticInitializerInterceptorTest {
               .verify();
     }
 
-
     @Test
-    public void shouldNotMarkMutationsInPrivateStaticMethodsNotInvolvedInInit() {
+    public void doesNotFilterMutationsInPrivateStaticMethodsNotInvolvedInInit() {
       v.forClass(HasOtherPrivateStaticMethods.class)
               .forMethod("b")
               .forAnyCode()
@@ -67,7 +69,7 @@ public class StaticInitializerInterceptorTest {
     }
 
     @Test
-    public void shouldNotMarkMutationsInOverriddenMethodsNotInvolvedInStaticInit() {
+    public void doesNotFilterMutationsInOverriddenMethodsNotInvolvedInStaticInit() {
       v.forClass(HasOverloadedMethodsThatAreNotUsedInStaticInitialization.class)
               .forMutantsMatching(inMethod("a", "(I)V"))
               .mutantsAreGenerated()
@@ -84,19 +86,69 @@ public class StaticInitializerInterceptorTest {
             .verify();
   }
 
+    @Test
+    public void filtersMutantsCalledFromPrivateSingletonConstructor() {
+        v.forClass(SingletonWithWorkInInitializer.class)
+                .forMutantsMatching(inMethodStartingWith("doNotMutate"))
+                .mutantsAreGenerated()
+                .allMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void filtersPrivateMethodsCalledIndirectly() {
+        v.forClass(SecondLevelPrivateMethods.class)
+                .forMutantsMatching(inMethodStartingWith("dontMutate"))
+                .mutantsAreGenerated()
+                .allMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void filtersPrivateMethodsCalledIndirectlyInLongChain() {
+        v.forClass(ThirdLevelPrivateMethods.class)
+                .forMutantsMatching(inMethodStartingWith("dontMutate"))
+                .mutantsAreGenerated()
+                .allMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void doesNotFilterPrivateMethodsWhenChainBrokenByPublicMethod() {
+        v.forClass(BrokenChain.class)
+                .forMutantsMatching(inMethodStartingWith("mutateMe"))
+                .mutantsAreGenerated()
+                .noMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void analysisDoesNotGetStuckInInfiniteLoop() {
+        v.forClass(MethodsCallsEachOtherInLoop.class)
+                .forMutantsMatching(inMethodStartingWith("a"))
+                .mutantsAreGenerated()
+                .allMutantsAreFiltered()
+                .verify();
+    }
+
     private Predicate<MutationDetails> inMethod(String name, String desc) {
         return m -> m.getMethod().equals(name) && m.getId().getLocation().getMethodDesc().equals(desc);
     }
 
+    private Predicate<MutationDetails> inMethodStartingWith(String stub) {
+        return m -> m.getMethod().startsWith(stub);
+    }
+
+
 }
 
-class NoStaticInializer {
+class NoStaticInitializer {
     {
         System.out.println("NOT static code");
     }
 }
 
-class HasStaticInializer {
+class HasStaticInitializer {
     static {
         System.out.println("static code");
     }
@@ -112,7 +164,7 @@ class HasPrivateCallsFromStaticInializer {
     }
 }
 
-class HasDefaultCallsFromStaticInializer {
+class HasDefaultCallsFromStaticInitializer {
     static {
         a();
     }
