@@ -8,7 +8,7 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.9.4 (unreleased)
+### 1.9.4
 
 * #1063 - Improve filtering of equivalent return mutants
 * #1066 - Expand static initializer filtering
