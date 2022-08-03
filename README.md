@@ -11,8 +11,10 @@ Read all about it at http://pitest.org
 ### 1.9.4
 
 * #1063 - Improve filtering of equivalent return mutants
+* #1064 - Remove legacy return val mutators and old defaults group
 * #1066 - Expand static initializer filtering
 * #1070 - Remove jacoco agent if present on argline
+
 
 ### 1.9.3
 
