@@ -51,17 +51,23 @@ public final class ReportAggregator {
     this.outputCharset = outputCharset;
   }
 
-  public void aggregateReport() throws ReportAggregationException {
+  public AggregationResult aggregateReport() throws ReportAggregationException {
     final MutationMetaData mutationMetaData = new MutationMetaData(new ArrayList<>(this.mutationLoader.loadData()));
 
     final MutationResultListener mutationResultListener = createResultListener(mutationMetaData);
+    final ReportAggregatorResultListener reportAggregatorResultListener = new ReportAggregatorResultListener();
 
+    reportAggregatorResultListener.runStart();
     mutationResultListener.runStart();
 
     for (final ClassMutationResults mutationResults : mutationMetaData.toClassResults()) {
+      reportAggregatorResultListener.handleMutationResult(mutationResults);
       mutationResultListener.handleMutationResult(mutationResults);
     }
+    reportAggregatorResultListener.runEnd();
     mutationResultListener.runEnd();
+
+    return reportAggregatorResultListener.result();
   }
 
   private MutationResultListener createResultListener(final MutationMetaData mutationMetaData) throws ReportAggregationException {
