@@ -144,7 +144,7 @@ public class EntryPoint {
   }
 
   private void updateData(ReportOptions data, SettingsFactory settings) {
-    settings.createUpdater().updateConfig(data);
+    settings.createUpdater().updateConfig(null, data);
 
   }
 

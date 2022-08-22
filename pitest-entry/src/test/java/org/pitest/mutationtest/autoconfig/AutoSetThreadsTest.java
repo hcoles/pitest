@@ -2,6 +2,7 @@ package org.pitest.mutationtest.autoconfig;
 
 import org.junit.Test;
 import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.plugin.FeatureSetting;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,7 +27,7 @@ public class AutoSetThreadsTest {
         ReportOptions data = new ReportOptions();
         reportedCores = 1;
         data.setNumberOfThreads(1);
-        underTest.updateConfig(data);
+        underTest.updateConfig(unused(), data);
         assertThat(data.getNumberOfThreads()).isEqualTo(1);
     }
 
@@ -35,7 +36,7 @@ public class AutoSetThreadsTest {
         ReportOptions data = new ReportOptions();
         reportedCores = 4;
         data.setNumberOfThreads(1);
-        underTest.updateConfig(data);
+        underTest.updateConfig(unused(), data);
         assertThat(data.getNumberOfThreads()).isEqualTo(3);
     }
 
@@ -44,7 +45,7 @@ public class AutoSetThreadsTest {
         ReportOptions data = new ReportOptions();
         reportedCores = 8;
         data.setNumberOfThreads(1);
-        underTest.updateConfig(data);
+        underTest.updateConfig(unused(), data);
         assertThat(data.getNumberOfThreads()).isEqualTo(5);
     }
 
@@ -53,8 +54,12 @@ public class AutoSetThreadsTest {
         ReportOptions data = new ReportOptions();
         reportedCores = 12;
         data.setNumberOfThreads(1);
-        underTest.updateConfig(data);
+        underTest.updateConfig(unused(), data);
         assertThat(data.getNumberOfThreads()).isEqualTo(8);
     }
 
+
+    private FeatureSetting unused() {
+        return null;
+    }
 }

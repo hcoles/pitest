@@ -3,6 +3,7 @@ package org.pitest.mutationtest.autoconfig;
 import org.pitest.mutationtest.config.ConfigurationUpdater;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.plugin.Feature;
+import org.pitest.plugin.FeatureSetting;
 import org.pitest.util.Log;
 
 import java.util.logging.Logger;
@@ -23,7 +24,7 @@ public class AutoSetThreads implements ConfigurationUpdater {
     private static final Logger LOG = Log.getLogger();
 
     @Override
-    public void updateConfig(ReportOptions toModify) {
+    public void updateConfig(FeatureSetting conf, ReportOptions toModify) {
         // this will be wrong in some environments, feature best used
         // only for local dev
         int cores = getCores();
@@ -58,4 +59,5 @@ public class AutoSetThreads implements ConfigurationUpdater {
     int getCores() {
         return Runtime.getRuntime().availableProcessors();
     }
+
 }
