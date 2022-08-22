@@ -65,14 +65,20 @@ public class FeatureParserTest {
   @Test
   public void shouldParseSingleConfigValues() {
     final FeatureSetting actual = parse("+BAR(name[hello])");
-    assertThat(actual.getString("name")).isEqualTo(Optional.ofNullable("hello"));
+    assertThat(actual.getString("name")).contains("hello");
+  }
+
+  @Test
+  public void shouldParseSingleIntegerConfigValues() {
+    final FeatureSetting actual = parse("+BAR(size[42])");
+    assertThat(actual.getInteger("size")).contains(42);
   }
 
   @Test
   public void shouldParseMultipleConfigValues() {
     final FeatureSetting actual = parse("+BAR(name[hello]size[42])");
-    assertThat(actual.getString("name")).isEqualTo(Optional.ofNullable("hello"));
-    assertThat(actual.getString("size")).isEqualTo(Optional.ofNullable("42"));
+    assertThat(actual.getString("name")).contains("hello");
+    assertThat(actual.getString("size")).contains("42");
   }
 
 

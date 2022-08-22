@@ -2,6 +2,7 @@ package org.pitest.mutationtest.autoconfig;
 
 import org.junit.Test;
 import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.plugin.FeatureSetting;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,7 +13,7 @@ public class KeepMacOsFocusTest {
     public void addsHeadlessTrueToJvmArgs() {
         ReportOptions data = new ReportOptions();
 
-        underTest.updateConfig(data);
+        underTest.updateConfig(null, data);
         assertThat(data.getJvmArgs()).contains("-Djava.awt.headless=true");
     }
 

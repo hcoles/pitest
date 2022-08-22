@@ -3,6 +3,7 @@ package org.pitest.mutationtest.autoconfig;
 import org.pitest.mutationtest.config.ConfigurationUpdater;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.plugin.Feature;
+import org.pitest.plugin.FeatureSetting;
 
 import static java.util.Collections.singletonList;
 
@@ -13,7 +14,7 @@ import static java.util.Collections.singletonList;
 public class KeepMacOsFocus implements ConfigurationUpdater {
 
     @Override
-    public void updateConfig(ReportOptions toModify) {
+    public void updateConfig(FeatureSetting conf, ReportOptions toModify) {
         toModify.addChildJVMArgs(singletonList("-Djava.awt.headless=true"));
     }
 

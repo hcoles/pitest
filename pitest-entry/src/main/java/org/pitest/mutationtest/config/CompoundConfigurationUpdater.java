@@ -16,9 +16,9 @@ public class CompoundConfigurationUpdater implements ConfigurationUpdater {
     }
 
     @Override
-    public void updateConfig(ReportOptions toModify) {
+    public void updateConfig(FeatureSetting unused, ReportOptions toModify) {
         for (ConfigurationUpdater each : features.getActiveFeatures() ) {
-            each.updateConfig(toModify);
+            each.updateConfig(features.getSettingForFeature(each.provides().name()), toModify);
         }
     }
 

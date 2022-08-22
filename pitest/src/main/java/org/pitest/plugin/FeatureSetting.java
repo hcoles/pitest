@@ -50,4 +50,9 @@ public final class FeatureSetting {
     return this.settings.get(key);
   }
 
+  public Optional<Integer> getInteger(String key) {
+    Optional<String> val = this.getString(key);
+    return val.map(Integer::parseInt);
+  }
+
 }
