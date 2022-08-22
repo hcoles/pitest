@@ -243,6 +243,12 @@ public class OptionsParserTest {
   }
 
   @Test
+  public void shouldAvoidJBossLoggingByDefault() {
+    final ReportOptions actual = parseAddingRequiredArgs();
+    assertThat(actual.getLoggingClasses()).contains("org.jboss.logging");
+  }
+
+  @Test
   public void shouldParseCommaSeparatedListOfClassesToAvoidCallTo() {
     final ReportOptions actual = parseAddingRequiredArgs("--avoidCallsTo",
         "foo,bar,foo.bar");
