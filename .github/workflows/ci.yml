@@ -20,6 +20,8 @@ jobs:
             java: 11
           - title: "JDK 18"
             java: "18"
+          - title: "JDK 19"
+            java: "19-ea"
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout from Git'
