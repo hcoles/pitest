@@ -8,6 +8,14 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.9.5
+
+* #1078 - Alter Config Updater interface
+* #1079 - Avoid JBoss logging by default
+
+1078 is a breaking interface change, but is included in a point release as it is believed there are
+currently no external clients.
+
 ### 1.9.4
 
 * #1063 - Improve filtering of equivalent return mutants
