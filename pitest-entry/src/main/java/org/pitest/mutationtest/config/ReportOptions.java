@@ -70,7 +70,8 @@ public class ReportOptions {
           "org.apache.log4j",
           "org.apache.logging.log4j",
           "org.slf4j",
-          "org.apache.commons.logging");
+          "org.apache.commons.logging",
+          "org.jboss.logging");
 
   private Collection<String>             targetClasses;
   private Collection<String>             excludedMethods                = Collections
