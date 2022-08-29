@@ -70,6 +70,7 @@ abstract class AbstractPitAggregationReportMojo extends PitReportMojo {
           .build();
 
       reportAggregator.aggregateReport();
+      reportAggregator.aggregateXmlReport(false);
     } catch (final Exception e) {
       throw new MavenReportException(e.getMessage(), e);
     }
