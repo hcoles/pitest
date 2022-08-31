@@ -119,7 +119,7 @@ public class MutationTestWorker {
       final List<TestUnit> relevantTests) {
     final MutationStatusTestPair mutationDetected;
     if ((relevantTests == null) || relevantTests.isEmpty()) {
-      LOG.info(() -> "No test coverage for mutation  " + mutationId + " in "
+      LOG.info(() -> "No test coverage for mutation " + mutationId + " in "
           + mutatedClass.getDetails().getMethod());
       mutationDetected =  MutationStatusTestPair.notAnalysed(0, DetectionStatus.RUN_ERROR);
     } else {

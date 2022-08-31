@@ -125,7 +125,7 @@ public class MutationCoverage {
     final MutationEngine engine = this.strategies.factory().createEngine(args);
 
     List<MutationAnalysisUnit> preScanMutations = findMutations(engine, args);
-    LOG.info("Created  " + preScanMutations.size() + " mutation test units in pre scan");
+    LOG.info("Created " + preScanMutations.size() + " mutation test units in pre scan");
 
     // throw error if configured to do so
     checkMutationsFound(preScanMutations);
@@ -162,7 +162,7 @@ public class MutationCoverage {
             engine, args, allInterceptors());
     this.timings.registerEnd(Timings.Stage.BUILD_MUTATION_TESTS);
 
-    LOG.info("Created  " + tus.size() + " mutation test units" );
+    LOG.info("Created " + tus.size() + " mutation test units" );
 
     recordClassPath(history, coverageData);
 
