@@ -167,7 +167,7 @@ public class CoverageMinion {
         .findTestUnitsForAllSuppliedClasses(classes.stream()
                 .flatMap(ClassName.nameToClass())
                 .collect(Collectors.toList()));
-    LOG.info(() -> "Found  " + tus.size() + " tests");
+    LOG.info(() -> "Found " + tus.size() + " tests");
     return tus;
   }
 
