@@ -147,14 +147,14 @@ public class OptionsParserTest {
   }
 
   @Test
-  public void shouldCreateTimestampedReportsByDefault() {
+  public void shouldNotCreateTimestampedReportsByDefault() {
     final ReportOptions actual = parseAddingRequiredArgs();
-    assertTrue(actual.shouldCreateTimeStampedReports());
+    assertFalse(actual.shouldCreateTimeStampedReports());
   }
 
   @Test
   public void shouldDetermineIfSuppressTimestampedReportsFlagIsSet() {
-    final ReportOptions actual = parseAddingRequiredArgs("--timestampedReports");
+    final ReportOptions actual = parseAddingRequiredArgs("--timestampedReports=true");
     assertTrue(actual.shouldCreateTimeStampedReports());
   }
 

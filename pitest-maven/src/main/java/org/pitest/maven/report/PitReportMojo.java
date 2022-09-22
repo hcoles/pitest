@@ -92,7 +92,7 @@ public class PitReportMojo extends AbstractMavenReport {
    * 
    */
   @Parameter(property = "pit.report.outputdir", defaultValue = "pit-reports")
-  private String                  siteReportDirectory;
+  private String siteReportDirectory;
 
   @Parameter(property = "pit.inputEncoding", defaultValue = "${project.build.sourceEncoding}")
   private String inputEncoding;

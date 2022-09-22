@@ -44,7 +44,6 @@
 				<configuration>
 					<verbose>true</verbose>
 				    <outputFormats><value>XML</value></outputFormats>
-				    <timestampedReports>false</timestampedReports>
 					<exportLineCoverage>true</exportLineCoverage>
 					<mutators>
 						<mutator>VOID_METHOD_CALLS</mutator>

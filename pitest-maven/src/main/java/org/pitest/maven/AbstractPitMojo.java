@@ -192,7 +192,7 @@ public class AbstractPitMojo extends AbstractMojo {
   /**
    * Create timestamped subdirectory for report
    */
-  @Parameter(defaultValue = "true", property = "timestampedReports")
+  @Parameter(defaultValue = "false", property = "timestampedReports")
   private boolean                     timestampedReports;
 
   /**

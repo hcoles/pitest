@@ -221,7 +221,7 @@ public class OptionsParser {
             "whether or not to try and detect code inlined from finally blocks");
 
     this.timestampedReportsSpec = parserAccepts(TIME_STAMPED_REPORTS)
-        .withOptionalArg().ofType(Boolean.class).defaultsTo(true)
+        .withOptionalArg().ofType(Boolean.class).defaultsTo(false)
         .describedAs("whether or not to generated timestamped directories");
 
     this.timeoutFactorSpec = parserAccepts(TIMEOUT_FACTOR).withOptionalArg()
