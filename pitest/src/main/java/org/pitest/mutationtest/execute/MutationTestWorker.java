@@ -205,6 +205,12 @@ public class MutationTestWorker {
 
   private MutationStatusTestPair createStatusTestPair(
       final CheckTestHasFailedResultListener listener) {
+
+    System.out.println("printing throwables!");
+    for (String t : listener.throwables) {
+      System.out.println(t);
+    }
+
     List<String> failingTests = listener.getFailingTests().stream()
         .map(Description::getQualifiedName).collect(Collectors.toList());
     List<String> succeedingTests = listener.getSucceedingTests().stream()
