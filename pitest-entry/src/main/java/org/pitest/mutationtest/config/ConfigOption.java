@@ -62,7 +62,7 @@ public enum ConfigOption {
   /**
    * Do/don't create timestamped folders for reports
    */
-  TIME_STAMPED_REPORTS("timestampedReports", true),
+  TIME_STAMPED_REPORTS("timestampedReports", false),
 
   /**
    * Number of threads to use
