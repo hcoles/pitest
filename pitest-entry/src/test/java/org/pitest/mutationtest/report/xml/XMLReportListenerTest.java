@@ -78,7 +78,7 @@ public class XMLReportListenerTest {
     final MutationResult mr = createdKilledMutationWithKillingTestOf("<foo>");
     this.testee
         .handleMutationResult(MutationTestResultMother.createClassResults(mr));
-    assertThat(this.out.toString()).contains("&#60;foo&#62;");
+    assertThat(this.out.toString()).contains("&lt;foo&gt;");
   }
 
   @Test
@@ -86,7 +86,7 @@ public class XMLReportListenerTest {
     final MutationResult mr = createdKilledMutationWithKillingTestOf("\0 Null-Byte");
     this.testee
             .handleMutationResult(MutationTestResultMother.createClassResults(mr));
-    assertThat(this.out.toString()).contains("\\0 Null-Byte");
+    assertThat(this.out.toString()).contains(" Null-Byte");
   }
 
   private MutationResult createdKilledMutationWithKillingTestOf(

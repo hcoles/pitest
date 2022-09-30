@@ -129,6 +129,13 @@
 			<artifactId>asm-util</artifactId>
 			<version>${asm.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-text</artifactId>
+			<version>1.10.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.pitest</groupId>
 			<artifactId>pitest</artifactId>
