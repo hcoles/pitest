@@ -7,11 +7,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.pitest.coverage.BlockCoverage;
 import org.pitest.coverage.CoverageExporter;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.util.ResultOutputStrategy;
-import org.pitest.util.StringUtil;
 import org.pitest.util.Unchecked;
 
 /**
@@ -48,14 +48,14 @@ public class DefaultCoverageExporter implements CoverageExporter {
         out,
         "<block classname='" + l.getClassName().asJavaName() + "'"
             + " method='"
-            + StringUtil.escapeBasicHtmlChars(l.getMethodName()) + StringUtil.escapeBasicHtmlChars(l.getMethodDesc())
+            + StringEscapeUtils.escapeXml11(l.getMethodName()) + StringEscapeUtils.escapeXml11(l.getMethodDesc())
             + "' number='" + each.getBlock().getBlock()
             + "'>");
     write(out, "<tests>\n");
     final List<String> ts = new ArrayList<>(each.getTests());
     Collections.sort(ts);
     for (final String test : ts) {
-      write(out, "<test name='" + StringUtil.escapeBasicHtmlChars(test) + "'/>\n");
+      write(out, "<test name='" + StringEscapeUtils.escapeXml11(test) + "'/>\n");
     }
     write(out, "</tests>\n");
     write(out, "</block>\n");

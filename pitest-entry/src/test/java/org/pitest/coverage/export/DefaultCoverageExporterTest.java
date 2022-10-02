@@ -83,9 +83,26 @@ public class DefaultCoverageExporterTest {
 
     final String actual = this.out.toString();
     assertThat(actual).contains(
-        "<tests>\n<test name='ParameterizedTest[case=&#39;Not so simple quotes&#39;]'/>\n</tests>");
+        "<tests>\n<test name='ParameterizedTest[case=&apos;Not so simple quotes&apos;]'/>\n</tests>");
     assertThat(actual).contains(
-        "<tests>\n<test name='ParameterizedTest[case=\\0 Null-Byte]'/>\n</tests>");
+        "<tests>\n<test name='ParameterizedTest[case= Null-Byte]'/>\n</tests>");
+  }
+
+  @Test
+  public void escapesQuotesBackTicks() {
+    final LocationBuilder loc = aLocation().withMethod("method");
+    final BlockLocationBuilder block = aBlockLocation().withBlock(42);
+    final Collection<BlockCoverage> coverage = Arrays.asList(
+            new BlockCoverage(
+                    block.withLocation(loc.withClass(ClassName.fromString("Foo"))).build(),
+                    Collections.singletonList("`escape this ' quote`"))
+    );
+
+    testee.recordCoverage(coverage);
+
+    final String actual = this.out.toString();
+    assertThat(actual).contains(
+            "<tests>\n<test name='`escape this &apos; quote`'/>\n</tests>");
   }
 
 }
