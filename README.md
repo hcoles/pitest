@@ -8,6 +8,15 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.9.6
+
+* #1092 - Upgrade to ASM 9.4
+* #1091 - Properly escape coverage XML
+* #1088 - Remove unused dependency distance param
+* #1085 - Do not produce timestamp reports by default
+
+Note that #1085 changes the default behaviour so reports are no longer written to timestamped directories by default. If you require this behaviour you will need to explicitly enable it.
+
 ### 1.9.5
 
 * #1078 - Alter Config Updater interface
