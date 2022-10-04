@@ -89,7 +89,7 @@ public class DefaultCoverageExporterTest {
   }
 
   @Test
-  public void escapesQuotesBackTicks() {
+  public void escapesBackTicksInMethodNames() {
     final LocationBuilder loc = aLocation().withMethod("method");
     final BlockLocationBuilder block = aBlockLocation().withBlock(42);
     final Collection<BlockCoverage> coverage = Arrays.asList(
@@ -103,6 +103,22 @@ public class DefaultCoverageExporterTest {
     final String actual = this.out.toString();
     assertThat(actual).contains(
             "<tests>\n<test name='`escape this &apos; quote`'/>\n</tests>");
+  }
+
+  @Test
+  public void escapesSpecialCharsInClassNames() {
+    final LocationBuilder loc = aLocation().withMethod("method");
+    final BlockLocationBuilder block = aBlockLocation().withBlock(42);
+    final Collection<BlockCoverage> coverage = Arrays.asList(
+            new BlockCoverage(
+                    block.withLocation(loc.withClass(ClassName.fromString("\" ' < >"))).build(),
+                    Collections.singletonList("weird class"))
+    );
+
+    testee.recordCoverage(coverage);
+
+    final String actual = this.out.toString();
+    assertThat(actual).contains("classname='&quot; &apos; &lt; &gt;'");
   }
 
 }
