@@ -8,6 +8,10 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.9.7
+
+* #1091 - Escape class names in coverage XML
+
 ### 1.9.6
 
 * #1092 - Upgrade to ASM 9.4
