@@ -20,6 +20,8 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.Reader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.function.Function;
 
@@ -32,33 +34,32 @@ import java.util.Optional;
 public class DirectorySourceLocatorTest {
 
   private DirectorySourceLocator testee;
-  private File                   root;
+  private Path root;
 
   @Mock
-  Function<File, Optional<Reader>>        locator;
+  Function<Path, Optional<Reader>>        locator;
 
   @Before
   public void setUp() {
     MockitoAnnotations.openMocks(this);
-    this.root = new File(".");
+    this.root = Paths.get(".");
     this.testee = new DirectorySourceLocator(this.root, this.locator);
-    when(this.locator.apply(any(File.class)))
+    when(this.locator.apply(any(Path.class)))
     .thenReturn(Optional.<Reader> empty());
   }
 
   @Test
   public void shouldLocateSourceForClassesInDefaultPackage() {
     this.testee.locate(Collections.singletonList("Foo"), "Foo.java");
-    final File expected = new File(this.root + File.separator + "Foo.java");
+    Path expected = root.resolve("Foo.java");
     verify(this.locator).apply(expected);
   }
 
   @Test
-  public void shouldLocateSourceForClassesInNamedPacakges() {
+  public void shouldLocateSourceForClassesInNamedPackages() {
     this.testee
     .locate(Collections.singletonList("com.example.Foo"), "Foo.java");
-    final File expected = new File(this.root + File.separator + "com"
-        + File.separator + "example" + File.separator + "Foo.java");
+    Path expected = root.resolve("com").resolve("example").resolve("Foo.java");
     verify(this.locator).apply(expected);
   }
 }

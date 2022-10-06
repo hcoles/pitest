@@ -51,6 +51,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.StringJoiner;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static org.pitest.functional.prelude.Prelude.not;
 import static org.pitest.functional.prelude.Prelude.or;
@@ -169,8 +170,15 @@ public class ReportOptions {
   /**
    * @return the sourceDirs
    */
-  public Collection<Path> getSourceDirs() {
+  public Collection<Path> getSourcePaths() {
     return this.sourceDirs;
+  }
+
+  @Deprecated
+  public Collection<File> getSourceDirs() {
+    return sourceDirs.stream()
+            .map(Path::toFile)
+            .collect(Collectors.toList());
   }
 
   public Collection<String> getClassPathElements() {

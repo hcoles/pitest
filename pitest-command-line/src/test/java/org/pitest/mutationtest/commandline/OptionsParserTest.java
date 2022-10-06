@@ -93,7 +93,7 @@ public class OptionsParserTest {
   public void shouldParseCommaSeparatedListOfSourceDirectories() {
     final ReportOptions actual = parseAddingRequiredArgs("--sourceDirs",
         "foo/bar,bar/far");
-    assertThat(actual.getSourceDirs()).containsExactly(Paths.get("foo/bar"), Paths.get(("bar/far")));
+    assertThat(actual.getSourcePaths()).containsExactly(Paths.get("foo/bar"), Paths.get(("bar/far")));
   }
 
   @Test

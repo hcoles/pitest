@@ -71,7 +71,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 
@@ -240,7 +239,7 @@ public class MutationCoverage {
 
     final ListenerArguments args = new ListenerArguments(
         this.strategies.output(), coverageData, new SmartSourceLocator(
-            asFiles(), this.data.getInputEncoding()), engine, t0, this.data.isFullMutationMatrix(), data);
+            data.getSourcePaths(), this.data.getInputEncoding()), engine, t0, this.data.isFullMutationMatrix(), data);
     
     final MutationResultListener mutationReportListener = this.strategies
         .listenerFactory().getListener(this.data.getFreeFormProperties(), args);
@@ -252,12 +251,6 @@ public class MutationCoverage {
       ls.add(new SpinnerListener(System.out));
     }
     return ls;
-  }
-
-  private Collection<File> asFiles() {
-    return this.data.getSourceDirs().stream()
-            .map(f -> f.toFile())
-            .collect(Collectors.toList());
   }
 
   private void recordClassPath(HistoryStore history, CoverageDatabase coverageData) {

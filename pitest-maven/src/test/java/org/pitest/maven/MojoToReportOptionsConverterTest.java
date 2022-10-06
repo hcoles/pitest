@@ -27,7 +27,6 @@ import org.pitest.util.Unchecked;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,7 +91,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     when(this.project.getTestCompileSourceRoots()).thenReturn(
         Arrays.asList("tst"));
     final ReportOptions actual = parseConfig("");
-    assertThat(actual.getSourceDirs()).containsExactly(Paths.get("src"), Paths.get("tst"));
+    assertThat(actual.getSourcePaths()).containsExactly(Paths.get("src"), Paths.get("tst"));
   }
 
   public void testParsesExcludedRunners() {
