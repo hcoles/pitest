@@ -51,6 +51,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.StringJoiner;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static org.pitest.functional.prelude.Prelude.not;
 import static org.pitest.functional.prelude.Prelude.or;
@@ -90,7 +91,7 @@ public class ReportOptions {
   private File                           historyInputLocation;
   private File                           historyOutputLocation;
 
-  private Collection<File>               sourceDirs;
+  private Collection<Path>               sourceDirs;
   private Collection<String>             classPathElements;
   private Collection<String>             mutators;
   private Collection<String>             features;
@@ -169,8 +170,15 @@ public class ReportOptions {
   /**
    * @return the sourceDirs
    */
-  public Collection<File> getSourceDirs() {
+  public Collection<Path> getSourcePaths() {
     return this.sourceDirs;
+  }
+
+  @Deprecated
+  public Collection<File> getSourceDirs() {
+    return sourceDirs.stream()
+            .map(Path::toFile)
+            .collect(Collectors.toList());
   }
 
   public Collection<String> getClassPathElements() {
@@ -185,7 +193,7 @@ public class ReportOptions {
    * @param sourceDirs
    *          the sourceDirs to set
    */
-  public void setSourceDirs(final Collection<File> sourceDirs) {
+  public void setSourceDirs(final Collection<Path> sourceDirs) {
     this.sourceDirs = sourceDirs;
   }
 

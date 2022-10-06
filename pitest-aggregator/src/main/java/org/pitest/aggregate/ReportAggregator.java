@@ -19,6 +19,7 @@ import org.pitest.util.ResultOutputStrategy;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -64,13 +65,19 @@ public final class ReportAggregator {
   }
 
   private MutationResultListener createResultListener(final MutationMetaData mutationMetaData) throws ReportAggregationException {
-    final SourceLocator sourceLocator = new SmartSourceLocator(this.sourceCodeDirectories, inputCharset);
+    final SourceLocator sourceLocator = new SmartSourceLocator(asPaths(this.sourceCodeDirectories), inputCharset);
 
     final CodeSource codeSource = this.codeSourceAggregator.createCodeSource();
     final ReportCoverage coverageDatabase = calculateCoverage(codeSource);
     final Collection<String> mutatorNames = new HashSet<>(FCollection.flatMap(mutationMetaData.getMutations(), resultToMutatorName()));
 
     return new MutationHtmlReportListener(outputCharset, coverageDatabase, this.resultOutputStrategy, mutatorNames, sourceLocator);
+  }
+
+  private Collection<Path> asPaths(Collection<File> files) {
+    return files.stream()
+            .map(File::toPath)
+            .collect(Collectors.toList());
   }
 
   private static Function<MutationResult, List<String>> resultToMutatorName() {

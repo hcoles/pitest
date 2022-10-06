@@ -30,6 +30,8 @@ import org.pitest.util.Verbosity;
 
 import java.io.File;
 import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,6 +42,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class MojoToReportOptionsConverter {
 
@@ -132,7 +135,7 @@ public class MojoToReportOptionsConverter {
     sourceRoots.addAll(this.mojo.getProject().getCompileSourceRoots());
     sourceRoots.addAll(this.mojo.getProject().getTestCompileSourceRoots());
 
-    data.setSourceDirs(stringsTofiles(sourceRoots));
+    data.setSourceDirs(stringsToPaths(sourceRoots));
 
     data.addOutputFormats(determineOutputFormats());
 
@@ -341,8 +344,10 @@ public class MojoToReportOptionsConverter {
     return a -> ClassName.fromString(a).getPackage().asJavaName() + ".*";
   }
 
-  private Collection<File> stringsTofiles(final List<String> sourceRoots) {
-    return FCollection.map(sourceRoots, File::new);
+  private Collection<Path> stringsToPaths(final List<String> sourceRoots) {
+    return sourceRoots.stream()
+                    .map(Paths::get)
+                            .collect(Collectors.toList());
   }
 
   private Collection<String> determineOutputFormats() {

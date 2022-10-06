@@ -16,25 +16,29 @@ package org.pitest.mutationtest.tooling;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.pitest.classinfo.ClassName;
 import org.pitest.functional.Streams;
 import org.pitest.mutationtest.SourceLocator;
+import org.pitest.util.Unchecked;
 
 public class DirectorySourceLocator implements SourceLocator {
 
-  private final File                    root;
-  private final Function<File, Optional<Reader>> fileToReader;
+  private final Path root;
+  private final Function<Path, Optional<Reader>> fileToReader;
 
-  private static final class FileToReader implements Function<File, Optional<Reader>> {
+  private static final class FileToReader implements Function<Path, Optional<Reader>> {
 
     private final Charset inputCharset;
 
@@ -43,13 +47,15 @@ public class DirectorySourceLocator implements SourceLocator {
     }
 
     @Override
-    public Optional<Reader> apply(final File f) {
-      if (f.exists()) {
+    public Optional<Reader> apply(final Path f) {
+      if (Files.exists(f)) {
         try {
-          return Optional.of(new InputStreamReader(new BufferedInputStream(new FileInputStream(f)),
+          return Optional.of(new InputStreamReader(new BufferedInputStream(Files.newInputStream(f)),
                   inputCharset));
         } catch (final FileNotFoundException e) {
           return Optional.empty();
+        } catch (IOException ex) {
+          throw Unchecked.translateCheckedException(ex);
         }
       }
       return Optional.empty();
@@ -57,19 +63,17 @@ public class DirectorySourceLocator implements SourceLocator {
 
   }
 
-  DirectorySourceLocator(final File root,
-      final Function<File, Optional<Reader>> fileToReader) {
+  DirectorySourceLocator(Path root, Function<Path, Optional<Reader>> fileToReader) {
     this.root = root;
     this.fileToReader = fileToReader;
   }
 
-  public DirectorySourceLocator(final File root, final Charset inputCharset) {
+  public DirectorySourceLocator(Path root, Charset inputCharset) {
     this(root, new FileToReader(inputCharset));
   }
 
   @Override
-  public Optional<Reader> locate(final Collection<String> classes,
-      final String fileName) {
+  public Optional<Reader> locate(Collection<String> classes, String fileName) {
     final Stream<Reader> matches = classes.stream().flatMap(classNameToSourceFileReader(fileName));
     return matches.findFirst();
   }
@@ -78,8 +82,9 @@ public class DirectorySourceLocator implements SourceLocator {
       final String fileName) {
     return className -> {
       if (className.contains(".")) {
-        final File f = new File(className.replace(".", File.separator));
-        return locate(f.getParent() + File.separator + fileName);
+        ClassName classPackage = ClassName.fromString(className).getPackage();
+        String path = classPackage.asJavaName().replace(".", File.separator);
+        return locate(path + File.separator + fileName);
       } else {
         return locate(fileName);
       }
@@ -87,8 +92,7 @@ public class DirectorySourceLocator implements SourceLocator {
   }
 
   private Stream<Reader> locate(final String fileName) {
-    final File f = new File(this.root + File.separator + fileName);
-    return Streams.fromOptional(this.fileToReader.apply(f));
+    return Streams.fromOptional(this.fileToReader.apply(root.resolve(fileName)));
   }
 
 }
