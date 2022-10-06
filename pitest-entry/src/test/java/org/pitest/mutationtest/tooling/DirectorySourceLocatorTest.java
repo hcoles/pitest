@@ -14,52 +14,115 @@
  */
 package org.pitest.mutationtest.tooling;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
-import java.io.File;
+import java.io.IOException;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.function.Function;
+import java.util.Optional;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import java.util.Optional;
+import org.junit.rules.TemporaryFolder;
 
 public class DirectorySourceLocatorTest {
 
-  private DirectorySourceLocator testee;
-  private Path root;
+  @Rule
+  public TemporaryFolder folder = new TemporaryFolder();
+  Path root;
 
-  @Mock
-  Function<Path, Optional<Reader>>        locator;
+  private DirectorySourceLocator testee;
 
   @Before
   public void setUp() {
-    MockitoAnnotations.openMocks(this);
-    this.root = Paths.get(".");
-    this.testee = new DirectorySourceLocator(this.root, this.locator);
-    when(this.locator.apply(any(Path.class)))
-    .thenReturn(Optional.<Reader> empty());
+    root = folder.getRoot().toPath();
+    this.testee = new DirectorySourceLocator(this.root, StandardCharsets.UTF_8);
   }
 
   @Test
-  public void shouldLocateSourceForClassesInDefaultPackage() {
-    this.testee.locate(Collections.singletonList("Foo"), "Foo.java");
-    Path expected = root.resolve("Foo.java");
-    verify(this.locator).apply(expected);
+  public void locatesSourceForClassesInDefaultPackage() throws Exception {
+    createFile(root.resolve("Foo.java"), "foo");
+    createFile(root.resolve("Bar.java"), "bar");
+    Optional<Reader> actual = testee.locate(singletonList("Foo"), "Foo.java");
+    assertThat(actual).isPresent();
+    assertThat(content(actual)).isEqualTo("foo");
   }
 
   @Test
-  public void shouldLocateSourceForClassesInNamedPackages() {
-    this.testee
-    .locate(Collections.singletonList("com.example.Foo"), "Foo.java");
-    Path expected = root.resolve("com").resolve("example").resolve("Foo.java");
-    verify(this.locator).apply(expected);
+  public void locatesSourceForClassesInNamedPackages()  throws Exception  {
+    createFile(root.resolve("com/example/Foo.java"), "foo");
+    createFile(root.resolve("com/example/Bar.java"), "bar");
+    Optional<Reader> actual = testee.locate(singletonList("com.example.Foo"), "Foo.java");
+    assertThat(content(actual)).isEqualTo("foo");
+  }
+
+  @Test
+  public void findsFileInPackageBeforeOneAtRoot()  throws Exception  {
+    createFile(root.resolve("com/example/Foo.java"), "this one");
+    createFile(root.resolve("Foo.java"), "not this one");
+    Optional<Reader> actual = testee.locate(singletonList("com.example.Foo"), "Foo.java");
+    assertThat(content(actual)).isEqualTo("this one");
+  }
+
+  @Test
+  public void findsFileInRootBeforeOneInWrongPackage()  throws Exception  {
+    createFile(root.resolve("com/example/other/Foo.java"), "not this one");
+    createFile(root.resolve("Foo.java"), "this one");
+    Optional<Reader> actual = testee.locate(singletonList("com.example.Foo"), "Foo.java");
+    assertThat(content(actual)).isEqualTo("this one");
+  }
+
+  @Test
+  public void usesFileInRightPAckage()  throws Exception  {
+    createFile(root.resolve("com/example/other/Foo.java"), "not this one");
+    createFile(root.resolve("com/example/correct/Foo.java"), "this one");
+    Optional<Reader> actual = testee.locate(singletonList("com.example.correct.Foo"), "Foo.java");
+    assertThat(content(actual)).isEqualTo("this one");
+  }
+
+  @Test
+  public void doesNotTryToReadDirectories()  throws Exception  {
+    Files.createDirectories(root.resolve("com/example/Foo.java"));
+    createFile(root.resolve("Foo.java"), "this one");
+    Optional<Reader> actual = testee.locate(singletonList("com.example.Foo"), "Foo.java");
+    assertThat(content(actual)).isEqualTo("this one");
+  }
+
+  @Test
+  public void doesNotErrorWhenRootDoesNotExist() {
+    testee = new DirectorySourceLocator(this.root.resolve("doesNotExist"), StandardCharsets.UTF_8);
+    assertThatCode(() -> testee.locate(singletonList("com"), "Bar.java"))
+            .doesNotThrowAnyException();
+  }
+
+  private void createFile(Path file, String content) throws IOException {
+    if (file.getParent() != null) {
+      Files.createDirectories(file.getParent());
+    }
+
+    Files.write(file, content.getBytes(StandardCharsets.UTF_8));
+  }
+
+  private String content(Optional<Reader> reader) throws Exception {
+    if (reader.isPresent()) {
+      return content(reader.get());
+    }
+    return "";
+  }
+
+  private String content(Reader reader) throws Exception {
+    String s = "";
+    int ch;
+    while ((ch = reader.read()) != -1) {
+      s += (char) ch;
+    }
+    reader.close();
+    return s;
   }
 }
