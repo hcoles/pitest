@@ -90,7 +90,7 @@ public class ReportOptions {
   private File                           historyInputLocation;
   private File                           historyOutputLocation;
 
-  private Collection<File>               sourceDirs;
+  private Collection<Path>               sourceDirs;
   private Collection<String>             classPathElements;
   private Collection<String>             mutators;
   private Collection<String>             features;
@@ -169,7 +169,7 @@ public class ReportOptions {
   /**
    * @return the sourceDirs
    */
-  public Collection<File> getSourceDirs() {
+  public Collection<Path> getSourceDirs() {
     return this.sourceDirs;
   }
 
@@ -185,7 +185,7 @@ public class ReportOptions {
    * @param sourceDirs
    *          the sourceDirs to set
    */
-  public void setSourceDirs(final Collection<File> sourceDirs) {
+  public void setSourceDirs(final Collection<Path> sourceDirs) {
     this.sourceDirs = sourceDirs;
   }
 

@@ -36,12 +36,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static org.pitest.mutationtest.config.ConfigOption.ARG_LINE;
 import static org.pitest.mutationtest.config.ConfigOption.AVOID_CALLS;
@@ -417,7 +420,7 @@ public class OptionsParser {
     data.setTargetClasses(this.targetClassesSpec.values(userArgs));
     data.setTargetTests(FCollection.map(this.targetTestsSpec.values(userArgs),
         Glob.toGlobPredicate()));
-    data.setSourceDirs(this.sourceDirSpec.values(userArgs));
+    data.setSourceDirs(asPaths(this.sourceDirSpec.values(userArgs)));
     data.setMutators(this.mutators.values(userArgs));
     data.setFeatures(this.features.values(userArgs));
 
@@ -543,6 +546,12 @@ public class OptionsParser {
     return p;
   }
 
+  private Collection<Path> asPaths(List<File> values) {
+    return values.stream()
+            .map(File::toPath)
+            .collect(Collectors.toList());
+  }
+
   public void printHelp() {
     try {
       this.parser.printHelpOn(System.out);
@@ -550,5 +559,6 @@ public class OptionsParser {
       throw Unchecked.translateCheckedException(ex);
     }
   }
+
 
 }
