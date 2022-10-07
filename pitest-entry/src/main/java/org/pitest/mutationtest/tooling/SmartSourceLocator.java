@@ -20,11 +20,13 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Function;
 
 import org.pitest.functional.FCollection;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.pitest.mutationtest.SourceLocator;
 import org.pitest.util.Unchecked;
@@ -50,8 +52,13 @@ public class SmartSourceLocator implements SourceLocator {
 
   private Collection<Path> collectDirectories(Path root, int depth) {
     try {
-      return Files.find(root, depth, (unused, attributes) -> attributes.isDirectory())
-              .collect(Collectors.toList());
+      if (!Files.exists(root)) {
+        return Collections.emptyList();
+      }
+
+      try (Stream<Path> matches = Files.find(root, depth, (unused, attributes) -> attributes.isDirectory())) {
+        return matches.collect(Collectors.toList());
+      }
 
     } catch (IOException ex) {
       throw Unchecked.translateCheckedException(ex);
@@ -60,8 +67,7 @@ public class SmartSourceLocator implements SourceLocator {
   }
 
   @Override
-  public Optional<Reader> locate(final Collection<String> classes,
-      final String fileName) {
+  public Optional<Reader> locate(Collection<String> classes, String fileName) {
     for (final SourceLocator each : this.children) {
       final Optional<Reader> reader = each.locate(classes, fileName);
       if (reader.isPresent()) {

@@ -16,7 +16,6 @@ package org.pitest.mutationtest.tooling;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -25,74 +24,78 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.Streams;
 import org.pitest.mutationtest.SourceLocator;
 import org.pitest.util.Unchecked;
 
 public class DirectorySourceLocator implements SourceLocator {
 
-  private final Path root;
-  private final Function<Path, Optional<Reader>> fileToReader;
-
-  private static final class FileToReader implements Function<Path, Optional<Reader>> {
-
+    private final Path root;
     private final Charset inputCharset;
 
-    private FileToReader(Charset inputCharset) {
-      this.inputCharset = inputCharset;
+    public DirectorySourceLocator(Path root, Charset inputCharset) {
+        this.root = root;
+        this.inputCharset = inputCharset;
     }
 
     @Override
-    public Optional<Reader> apply(final Path f) {
-      if (Files.exists(f)) {
-        try {
-          return Optional.of(new InputStreamReader(new BufferedInputStream(Files.newInputStream(f)),
-                  inputCharset));
-        } catch (final FileNotFoundException e) {
-          return Optional.empty();
-        } catch (IOException ex) {
-          throw Unchecked.translateCheckedException(ex);
+    public Optional<Reader> locate(Collection<String> classes, String fileName) {
+
+        if (!Files.exists(root)) {
+            return Optional.empty();
         }
-      }
-      return Optional.empty();
+
+        // look for matching filename in directories matching its package.
+        Optional<Path> path = classes.stream()
+                .map(ClassName::fromString)
+                .map(ClassName::getPackage)
+                .distinct()
+                .map(c -> toFileName(c, fileName))
+                .map(file -> root.resolve(file))
+                .filter(Files::exists)
+                .filter(Files::isRegularFile)
+                .findFirst();
+
+        // If there is no file in the expected location (kotlin file?), search from the root, but
+        // in this case we cannot know if we have the right file if the same name occurs more than once in the file tree
+        // (cannot do this as an or as only introduced in java 9)
+        if (path.isPresent()) {
+            return path
+                    .map(this::toReader);
+        } else {
+            return searchFromRoot(fileName)
+                    .map(this::toReader);
+        }
     }
 
-  }
+    private String toFileName(ClassName packge, String fileName) {
+        if (packge.asJavaName().equals("")) {
+            return fileName;
+        }
+        return packge.asJavaName().replace(".", File.separator) + File.separator + fileName;
+    }
 
-  DirectorySourceLocator(Path root, Function<Path, Optional<Reader>> fileToReader) {
-    this.root = root;
-    this.fileToReader = fileToReader;
-  }
+    private Reader toReader(Path path) {
+        try {
+            return new InputStreamReader(new BufferedInputStream(Files.newInputStream(path)),
+                    inputCharset);
+        } catch (IOException e) {
+            throw Unchecked.translateCheckedException(e);
+        }
+    }
 
-  public DirectorySourceLocator(Path root, Charset inputCharset) {
-    this(root, new FileToReader(inputCharset));
-  }
+    private Optional<Path> searchFromRoot(String fileName) {
+        try {
+            try (Stream<Path> matches = Files.find(root, 100,
+                            (path, attributes) -> path.getFileName().toString().equals(fileName) && attributes.isRegularFile())) {
+                return matches.findFirst();
+            }
 
-  @Override
-  public Optional<Reader> locate(Collection<String> classes, String fileName) {
-    final Stream<Reader> matches = classes.stream().flatMap(classNameToSourceFileReader(fileName));
-    return matches.findFirst();
-  }
-
-  private Function<String, Stream<Reader>> classNameToSourceFileReader(
-      final String fileName) {
-    return className -> {
-      if (className.contains(".")) {
-        ClassName classPackage = ClassName.fromString(className).getPackage();
-        String path = classPackage.asJavaName().replace(".", File.separator);
-        return locate(path + File.separator + fileName);
-      } else {
-        return locate(fileName);
-      }
-    };
-  }
-
-  private Stream<Reader> locate(final String fileName) {
-    return Streams.fromOptional(this.fileToReader.apply(root.resolve(fileName)));
-  }
+        } catch (IOException e) {
+            throw Unchecked.translateCheckedException(e);
+        }
+    }
 
 }
