@@ -26,6 +26,7 @@ import java.util.function.Function;
 import org.pitest.functional.FCollection;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.pitest.mutationtest.SourceLocator;
 import org.pitest.util.Unchecked;
@@ -55,8 +56,9 @@ public class SmartSourceLocator implements SourceLocator {
         return Collections.emptyList();
       }
 
-      return Files.find(root, depth, (unused, attributes) -> attributes.isDirectory())
-              .collect(Collectors.toList());
+      try (Stream<Path> matches = Files.find(root, depth, (unused, attributes) -> attributes.isDirectory())) {
+        return matches.collect(Collectors.toList());
+      }
 
     } catch (IOException ex) {
       throw Unchecked.translateCheckedException(ex);

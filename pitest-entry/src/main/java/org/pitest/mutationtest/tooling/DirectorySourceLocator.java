@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.SourceLocator;
@@ -80,9 +81,11 @@ public class DirectorySourceLocator implements SourceLocator {
 
     private Optional<Path> searchFromRoot(String fileName) {
         try {
-            return Files.find(root, 100,
-                            (path, attributes) -> path.getFileName().toString().equals(fileName) && attributes.isRegularFile())
-                    .findFirst();
+            try (Stream<Path> matches = Files.find(root, 100,
+                            (path, attributes) -> path.getFileName().toString().equals(fileName) && attributes.isRegularFile())) {
+                return matches.findFirst();
+            }
+
         } catch (IOException e) {
             throw Unchecked.translateCheckedException(e);
         }
