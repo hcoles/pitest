@@ -23,9 +23,11 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Optional;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -71,19 +73,26 @@ public class DirectorySourceLocatorTest {
 
   @Test
   public void findsFileInCorrectPackageBeforeWronglyPackagedOnes()  throws Exception  {
-    createFile(root.resolve("com/example/correct/Foo.java"), "this one");
-    createFile(root.resolve("Foo.java"), "not this one");
-    createFile(root.resolve("com/example/Foo.java"), "not this one");
+    createFile(root.resolve("com/example/correct/Foo.java"), "correct");
+    createFile(root.resolve("Foo.java"), "in package default");
+    createFile(root.resolve("com/example/Foo.java"), "example");
     createFile(root.resolve("com/example/wrong/Foo.java"), "not this one");
     createFile(root.resolve("com/example/correct/wrong/Foo.java"), "not this one");
-    Optional<Reader> actual = testee.locate(singletonList("com.example.correct.Foo"), "Foo.java");
-    assertThat(content(actual)).isEqualTo("this one");
+
+    assertThat(findFor("com.example.correct.Foo", "Foo.java")).isEqualTo("correct");
+    assertThat(findFor("Foo", "Foo.java")).isEqualTo("in package default");
+    assertThat(findFor("com.example.Foo", "Foo.java")).isEqualTo("example");
   }
 
   @Test
-  public void findsFileInRootBeforeOneInWrongPackage()  throws Exception  {
-    createFile(root.resolve("com/example/other/Foo.java"), "not this one");
-    createFile(root.resolve("Foo.java"), "this one");
+  @Ignore
+  // Docs suggest that Files.walk/find should search depth first, but behaviour seems
+  // to be OS dependent in practice. Windows ci on azure looks to search depth first, linux
+  // and mac find the root file. Fortunately we don't actually care about the behaviour in this case
+  // either file might be the one the user intended
+  public void findsFileInWrongPackageBeforeRoot()  throws Exception  {
+    createFile(root.resolve("com/example/other/Foo.java"), "this one");
+    createFile(root.resolve("Foo.java"), "not this one");
     Optional<Reader> actual = testee.locate(singletonList("com.example.Foo"), "Foo.java");
     assertThat(content(actual)).isEqualTo("this one");
   }
@@ -110,6 +119,16 @@ public class DirectorySourceLocatorTest {
     assertThatCode(() -> testee.locate(singletonList("com"), "Bar.java"))
             .doesNotThrowAnyException();
   }
+
+  private String findFor(String clazz, String file) throws Exception {
+    return findFor(singletonList(clazz), file);
+  }
+
+  private String findFor(Collection<String> classes, String file) throws Exception {
+    Optional<Reader> actual = testee.locate(classes, file);
+    return content(actual);
+  }
+
 
   private void createFile(Path file, String content) throws IOException {
     if (file.getParent() != null) {

@@ -52,7 +52,7 @@ public class DirectorySourceLocator implements SourceLocator {
                 .map(ClassName::fromString)
                 .map(ClassName::getPackage)
                 .distinct()
-                .map(c -> c.asJavaName().replace(".", File.separator) + File.separator + fileName)
+                .map(c -> toFileName(c, fileName))
                 .map(file -> root.resolve(file))
                 .filter(Files::exists)
                 .filter(Files::isRegularFile)
@@ -68,6 +68,13 @@ public class DirectorySourceLocator implements SourceLocator {
             return searchFromRoot(fileName)
                     .map(this::toReader);
         }
+    }
+
+    private String toFileName(ClassName packge, String fileName) {
+        if (packge.equals("")) {
+            return fileName;
+        }
+        return packge.asJavaName().replace(".", File.separator) + File.separator + fileName;
     }
 
     private Reader toReader(Path path) {
