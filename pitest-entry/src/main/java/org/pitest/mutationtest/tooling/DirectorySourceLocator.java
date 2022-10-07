@@ -80,7 +80,8 @@ public class DirectorySourceLocator implements SourceLocator {
 
     private Optional<Path> searchFromRoot(String fileName) {
         try {
-            return Files.find(root, 100, (path, attributes) -> path.getFileName().toString().equals(fileName))
+            return Files.find(root, 100,
+                            (path, attributes) -> path.getFileName().toString().equals(fileName) && attributes.isRegularFile())
                     .findFirst();
         } catch (IOException e) {
             throw Unchecked.translateCheckedException(e);
