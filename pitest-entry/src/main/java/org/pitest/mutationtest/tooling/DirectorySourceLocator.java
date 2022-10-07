@@ -71,7 +71,7 @@ public class DirectorySourceLocator implements SourceLocator {
     }
 
     private String toFileName(ClassName packge, String fileName) {
-        if (packge.equals("")) {
+        if (packge.asJavaName().equals("")) {
             return fileName;
         }
         return packge.asJavaName().replace(".", File.separator) + File.separator + fileName;
