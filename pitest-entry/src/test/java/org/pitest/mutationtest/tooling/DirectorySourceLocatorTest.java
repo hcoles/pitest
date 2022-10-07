@@ -23,7 +23,6 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -67,6 +66,17 @@ public class DirectorySourceLocatorTest {
     createFile(root.resolve("com/example/Foo.java"), "this one");
     createFile(root.resolve("Foo.java"), "not this one");
     Optional<Reader> actual = testee.locate(singletonList("com.example.Foo"), "Foo.java");
+    assertThat(content(actual)).isEqualTo("this one");
+  }
+
+  @Test
+  public void findsFileInCorrectPackageBeforeWronglyPackagedOnes()  throws Exception  {
+    createFile(root.resolve("com/example/correct/Foo.java"), "this one");
+    createFile(root.resolve("Foo.java"), "not this one");
+    createFile(root.resolve("com/example/Foo.java"), "not this one");
+    createFile(root.resolve("com/example/wrong/Foo.java"), "not this one");
+    createFile(root.resolve("com/example/correct/wrong/Foo.java"), "not this one");
+    Optional<Reader> actual = testee.locate(singletonList("com.example.correct.Foo"), "Foo.java");
     assertThat(content(actual)).isEqualTo("this one");
   }
 
