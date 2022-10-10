@@ -8,6 +8,12 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.9.8
+
+* #1094 Search for source files outside of package directories
+
+Adds support for languages such as Kotlin where source files may not be within a directory structure which matches their package. Note that if the same filename occurs in more than one location, pitest cannot guarantee to resolve the correct file.
+
 ### 1.9.7
 
 * #1091 - Escape class names in coverage XML
