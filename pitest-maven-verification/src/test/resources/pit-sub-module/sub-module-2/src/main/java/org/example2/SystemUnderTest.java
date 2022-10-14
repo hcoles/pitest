@@ -15,10 +15,16 @@ public class SystemUnderTest {
       aNumber = -25;
     }
   }
+
+  public int getNumber() {
+    return aNumber;
+  }
   
   public String toString() {
     return "SystemUnderTest";
   }
   
-  
+  public boolean isActive() {
+    return false;
+  }
 }

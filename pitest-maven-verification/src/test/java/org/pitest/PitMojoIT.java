@@ -253,7 +253,7 @@ public class PitMojoIT {
 
     assertTrue("coverage included",
             projectReportsHtmlContents
-                    .contains("89%"));
+                    .contains("85%"));
   }
 
   /*

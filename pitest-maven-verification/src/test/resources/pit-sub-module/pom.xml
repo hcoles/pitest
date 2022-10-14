@@ -41,6 +41,9 @@
 						</outputFormats>
 						<!-- exportLineCoverage is used by the report aggregate -->
 						<exportLineCoverage>true</exportLineCoverage>
+						<aggregatedTestStrengthThreshold>26</aggregatedTestStrengthThreshold>
+						<aggregatedMutationThreshold>20</aggregatedMutationThreshold>
+						<aggregatedMaxSurviving>6</aggregatedMaxSurviving>
 					</configuration>
 				</plugin>
 			</plugins>
