@@ -68,6 +68,22 @@ public class RemoveSwitchMutatorTest {
     }
   }
 
+  private static class HasContinuousIntSwitchWithDefault implements IntFunction<Integer> {
+    @Override
+    public Integer apply(int value) {
+      switch (value) {
+        case 10:
+          return 0;
+        case 11:
+          return 1;
+        case 12:
+          return 2;
+        default:
+          return -1;
+      }
+    }
+  }
+
   @Test
   public void shouldChangeLabelInt() {
     IntMutantVerifier<Integer> v2 = v.forIntFunctionClass(HasIntSwitchWithDefault.class);
@@ -76,6 +92,20 @@ public class RemoveSwitchMutatorTest {
     v2.firstMutantShouldReturn(1, 1);
     v2.firstMutantShouldReturn(2, -1);
     v2.firstMutantShouldReturn(3, -1);
+  }
+
+  @Test
+  public void includesValuesInDescriptionForTableSwitchMutations() {
+    MutatorVerifierStart.forMutator(new RemoveSwitchMutator(0))
+            .forIntFunctionClass(HasContinuousIntSwitchWithDefault.class)
+            .firstMutantDescription()
+            .isEqualTo("RemoveSwitch 0 (case value 10)");
+
+    MutatorVerifierStart.forMutator(new RemoveSwitchMutator(2))
+            .forIntFunctionClass(HasContinuousIntSwitchWithDefault.class)
+            .firstMutantDescription()
+            .isEqualTo("RemoveSwitch 2 (case value 12)");
+
   }
 
   private static class HasCharSwitchWithDefault implements Function<Character,Character> {
@@ -164,6 +194,12 @@ public class RemoveSwitchMutatorTest {
         0);
     v2.firstMutantShouldReturn(800000,
         8);
+  }
+
+  @Test
+  public void includesValueInLookupSwitchDescription() {
+      IntMutantVerifier<Integer> v2 = v.forIntFunctionClass(HasMultipleArmIntSwitchWithDefault.class);
+      v2.firstMutantDescription().isEqualTo("RemoveSwitch 2 (case value 4000)");
   }
 
   private static class HasMultipleArmIntSwitchWithoutDefault implements IntFunction<Integer> {

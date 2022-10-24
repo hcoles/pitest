@@ -67,21 +67,21 @@ public class RemoveSwitchMutator implements MethodMutatorFactory {
     }
 
     @Override
-    public void visitTableSwitchInsn(final int i, final int i1,
+    public void visitTableSwitchInsn(final int min, final int max,
         final Label defaultLabel, final Label... labels) {
-      if ((labels.length > RemoveSwitchMutator.this.key) && shouldMutate()) {
+      if ((labels.length > RemoveSwitchMutator.this.key) && shouldMutate(value(min,max))) {
         final Label[] newLabels = labels.clone();
         newLabels[RemoveSwitchMutator.this.key] = defaultLabel;
-        super.visitTableSwitchInsn(i, i1, defaultLabel, newLabels);
+        super.visitTableSwitchInsn(min, max, defaultLabel, newLabels);
       } else {
-        super.visitTableSwitchInsn(i, i1, defaultLabel, labels);
+        super.visitTableSwitchInsn(min, max, defaultLabel, labels);
       }
     }
 
     @Override
     public void visitLookupSwitchInsn(final Label defaultLabel,
         final int[] ints, final Label[] labels) {
-      if ((labels.length > RemoveSwitchMutator.this.key) && shouldMutate()) {
+      if ((labels.length > RemoveSwitchMutator.this.key) && shouldMutate(ints[key])) {
         final Label[] newLabels = labels.clone();
         newLabels[RemoveSwitchMutator.this.key] = defaultLabel;
         super.visitLookupSwitchInsn(defaultLabel, ints, newLabels);
@@ -90,11 +90,15 @@ public class RemoveSwitchMutator implements MethodMutatorFactory {
       }
     }
 
-    private boolean shouldMutate() {
+    private boolean shouldMutate(int value) {
       final MutationIdentifier mutationId = this.context.registerMutation(
           RemoveSwitchMutator.this, "RemoveSwitch "
-              + RemoveSwitchMutator.this.key + " mutation");
+              + RemoveSwitchMutator.this.key + " (case value " + value + ")");
       return this.context.shouldMutate(mutationId);
+    }
+
+    private int value(int min, int max) {
+      return min + key;
     }
 
   }
