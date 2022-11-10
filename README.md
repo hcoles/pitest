@@ -8,6 +8,10 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.9.9
+
+* #1098 Include case values in switch mutation descriptions
+
 ### 1.9.8
 
 * #1094 Search for source files outside of package directories
