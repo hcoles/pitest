@@ -111,6 +111,7 @@ public class EquivalentReturnMutationFilter implements MutationInterceptorFactor
             .or(noArgsCall("java/util/Collections", "emptyList"))
             .or(noArgsCall("java/util/Collections", "emptyMap"))
             .or(noArgsCall("java/util/Collections", "emptySet"))
+            .or(noArgsCall("java/util/Map", "of"))
             .or(noArgsCall("java/util/List", "of"))
             .or(noArgsCall("java/util/Set", "of"));
   }

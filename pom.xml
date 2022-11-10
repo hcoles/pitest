@@ -100,9 +100,21 @@
 			</activation>
 			<modules>
 				<module>pitest-java8-verification</module>
-				<module>pitest-maven-verification</module>
+                <module>pitest-maven-verification</module>
 				<!-- disabled until working with java 9+ -->
 				<!-- <module>pitest-groovy-verification</module> -->
+			</modules>
+		</profile>
+		<profile>
+			<id>verification-modern</id>
+			<activation>
+				<jdk>[17,18,19]</jdk>
+				<property>
+					<name>!skipTests</name>
+				</property>
+			</activation>
+			<modules>
+				<module>pitest-modern-verification</module>
 			</modules>
 		</profile>
 		<profile>
@@ -259,7 +271,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.8.1</version>
+					<version>3.10.1</version>
 					<configuration>
 						<source>1.8</source>
 						<target>1.8</target>
