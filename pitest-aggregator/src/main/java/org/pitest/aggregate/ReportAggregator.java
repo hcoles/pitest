@@ -6,7 +6,6 @@ import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.CoverageData;
 import org.pitest.coverage.ReportCoverage;
 import org.pitest.coverage.analysis.LineMapper;
-import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
@@ -30,10 +29,12 @@ import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
+
 public final class ReportAggregator {
   private final ResultOutputStrategy       resultOutputStrategy;
   private final DataLoader<BlockCoverage>  blockCoverageLoader;
-  private final DataLoader<MutationResult> mutationLoader;
+  private final Set<File> mutationFiles;
 
   private final Collection<File>           sourceCodeDirectories;
   private final CodeSourceAggregator       codeSourceAggregator;
@@ -44,7 +45,7 @@ public final class ReportAggregator {
                            final Set<File> sourceCodeDirs, final Set<File> compiledCodeDirs, Charset inputCharset, Charset outputCharset) {
     this.resultOutputStrategy = resultOutputStrategy;
     this.blockCoverageLoader = new BlockCoverageDataLoader(lineCoverageFiles);
-    this.mutationLoader = new MutationResultDataLoader(mutationFiles);
+    this.mutationFiles = mutationFiles;
     this.sourceCodeDirectories = Collections.unmodifiableCollection(new HashSet<>(sourceCodeDirs));
     this.codeSourceAggregator = new CodeSourceAggregator(new HashSet<>(compiledCodeDirs));
     this.inputCharset = inputCharset;
@@ -52,17 +53,20 @@ public final class ReportAggregator {
   }
 
   public AggregationResult aggregateReport() throws ReportAggregationException {
-    final MutationMetaData mutationMetaData = new MutationMetaData(new ArrayList<>(this.mutationLoader.loadData()));
-
-    final MutationResultListener mutationResultListener = createResultListener(mutationMetaData);
+    final MutationResultListener mutationResultListener = createResultListener(Collections.emptySet());
     final ReportAggregatorResultListener reportAggregatorResultListener = new ReportAggregatorResultListener();
 
     reportAggregatorResultListener.runStart();
     mutationResultListener.runStart();
 
-    for (final ClassMutationResults mutationResults : mutationMetaData.toClassResults()) {
-      reportAggregatorResultListener.handleMutationResult(mutationResults);
-      mutationResultListener.handleMutationResult(mutationResults);
+    for (File file : mutationFiles) {
+      MutationResultDataLoader loader = new MutationResultDataLoader(asList(file));
+      MutationMetaData mutationMetaData = new MutationMetaData(new ArrayList<>(loader.loadData()));
+      for (ClassMutationResults classResult : mutationMetaData.toClassResults()) {
+        reportAggregatorResultListener.handleMutationResult(classResult);
+        mutationResultListener.handleMutationResult(classResult);
+      }
+
     }
     reportAggregatorResultListener.runEnd();
     mutationResultListener.runEnd();
@@ -70,12 +74,12 @@ public final class ReportAggregator {
     return reportAggregatorResultListener.result();
   }
 
-  private MutationResultListener createResultListener(final MutationMetaData mutationMetaData) throws ReportAggregationException {
+  private MutationResultListener createResultListener(Collection<String> mutatorNames) throws ReportAggregationException {
     final SourceLocator sourceLocator = new SmartSourceLocator(asPaths(this.sourceCodeDirectories), inputCharset);
 
     final CodeSource codeSource = this.codeSourceAggregator.createCodeSource();
     final ReportCoverage coverageDatabase = calculateCoverage(codeSource);
-    final Collection<String> mutatorNames = new HashSet<>(FCollection.flatMap(mutationMetaData.getMutations(), resultToMutatorName()));
+    //final Collection<String> mutatorNames = new HashSet<>(FCollection.flatMap(mutationMetaData.getMutations(), resultToMutatorName()));
 
     return new MutationHtmlReportListener(outputCharset, coverageDatabase, this.resultOutputStrategy, mutatorNames, sourceLocator);
   }
