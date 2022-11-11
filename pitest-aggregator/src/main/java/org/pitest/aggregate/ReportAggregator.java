@@ -64,9 +64,7 @@ public final class ReportAggregator {
     for (File file : mutationFiles) {
 
       // hack so only source files from within a given module are resolved
-      // 3 calls to getParentFile navigates from target/pit-reports/mutations.xml to root of a module
-      // (unless we are running from gradle, in which case this gives us the build dir)
-      sourceLocator.sourceRootHint(file.getParentFile().getParentFile().getParentFile().toPath());
+      sourceLocator.sourceRootHint(file.getParentFile().toPath());
 
       MutationResultDataLoader loader = new MutationResultDataLoader(asList(file));
       MutationMetaData mutationMetaData = new MutationMetaData(new ArrayList<>(loader.loadData()));

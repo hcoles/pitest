@@ -56,4 +56,20 @@ public class PathComparatorTest {
 
     }
 
+    @Test
+    public void worksWithBackSlashSeparator() {
+        PathComparator underTest = new PathComparator("a\\b", "\\");
+        List<String> paths = asList("a\\z", "a\\b", "a\\b\\c");
+        paths.sort(underTest);
+        assertThat(paths).containsExactly("a\\b", "a\\b\\c", "a\\z");
+    }
+
+    @Test
+    public void worksWithLeadingSlashSeparator() {
+        PathComparator underTest = new PathComparator("\\a\\b", "\\");
+        List<String> paths = asList("\\a\\z", "\\a\\b", "\\a\\b\\c");
+        paths.sort(underTest);
+        assertThat(paths).containsExactly("\\a\\b", "\\a\\b\\c", "\\a\\z");
+    }
+
 }

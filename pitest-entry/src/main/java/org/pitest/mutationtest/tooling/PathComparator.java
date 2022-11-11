@@ -14,8 +14,8 @@ class PathComparator implements Comparator<Object> {
     private final String separator;
 
     PathComparator(Object base, String separator) {
-        this.baseParts = base.toString().split(separator.replace("\\", "\\\\"));
-        this.separator = separator;
+        this.separator = separator.replace("\\", "\\\\");
+        this.baseParts = base.toString().split(this.separator);
     }
 
     @Override
