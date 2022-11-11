@@ -8,6 +8,11 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.9.10
+
+* #1106 Do not replace Map.of with Collections.emptyMap
+* #1109 Relax source file debug check
+
 ### 1.9.9
 
 * #1098 Include case values in switch mutation descriptions
