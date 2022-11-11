@@ -15,6 +15,7 @@
 
 package org.pitest.mutationtest.verify;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
@@ -103,6 +104,12 @@ public class DefaultBuildVerifierTest {
     } catch (final PitHelpError e) {
       fail();
     }
+  }
+
+  @Test
+  public void doesNotErrorWhenNoClassesProvided() {
+    when(this.code.getCode()).thenReturn(Collections.emptyList());
+    assertThatCode(() -> this.testee.verify(this.code)).doesNotThrowAnyException();
   }
 
   private void setupClassPath(final Class<?> clazz) {
