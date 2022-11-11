@@ -16,7 +16,7 @@ package org.pitest.mutationtest.verify;
  */
 
 import java.util.Collection;
-import java.util.function.Consumer;
+import java.util.List;
 import java.util.function.Predicate;
 
 import org.pitest.classinfo.ClassInfo;
@@ -29,11 +29,11 @@ public class DefaultBuildVerifier implements BuildVerifier {
 
   @Override
   public void verify(final CodeSource code) {
-    final Collection<ClassInfo> codeClasses = FCollection.filter(code.getCode(), isNotSynthetic());
+    final List<ClassInfo> codeClasses = FCollection.filter(code.getCode(), isNotSynthetic());
 
     if (hasMutableCode(codeClasses)) {
       checkAtLeastOneClassHasLineNumbers(codeClasses);
-      codeClasses.forEach(throwErrorIfHasNoSourceFile());
+      checkAtLeastOneClassHasSourceFile(codeClasses);
     }
   }
 
@@ -54,20 +54,20 @@ public class DefaultBuildVerifier implements BuildVerifier {
     }
   }
 
+  private void checkAtLeastOneClassHasSourceFile(List<ClassInfo> codeClasses) {
+    // perform only a weak check for line numbers as
+    // some jvm languages are not guaranteed to include a source file for all classes
+    if (!FCollection.contains(codeClasses, a -> a.getSourceFileName() != null)) {
+      throw new PitHelpError(Help.NO_SOURCE_FILE, codeClasses.get(0).getName().asJavaName());
+    }
+  }
+
   private static Predicate<ClassInfo> aConcreteClass() {
     return a -> !a.isInterface();
   }
 
   private static Predicate<ClassInfo> aClassWithLineNumbers() {
     return a -> a.getNumberOfCodeLines() != 0;
-  }
-
-  private Consumer<ClassInfo> throwErrorIfHasNoSourceFile() {
-    return a -> {
-      if (a.getSourceFileName() == null) {
-        throw new PitHelpError(Help.NO_SOURCE_FILE, a.getName().asJavaName());
-      }
-    };
   }
 
   private static Predicate<ClassInfo> isNotSynthetic() {
