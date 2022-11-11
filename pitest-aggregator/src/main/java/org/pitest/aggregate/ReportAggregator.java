@@ -53,13 +53,21 @@ public final class ReportAggregator {
   }
 
   public AggregationResult aggregateReport() throws ReportAggregationException {
-    final MutationResultListener mutationResultListener = createResultListener(Collections.emptySet());
+    SmartSourceLocator sourceLocator = new SmartSourceLocator(asPaths(this.sourceCodeDirectories), inputCharset);
+
+    final MutationResultListener mutationResultListener = createResultListener(sourceLocator, Collections.emptySet());
     final ReportAggregatorResultListener reportAggregatorResultListener = new ReportAggregatorResultListener();
 
     reportAggregatorResultListener.runStart();
     mutationResultListener.runStart();
 
     for (File file : mutationFiles) {
+
+      // hack so only source files from within a given module are resolved
+      // 3 calls to getParentFile navigates from target/pit-reports/mutations.xml to root of a module
+      // (unless we are running from gradle, in which case this gives us the build dir)
+      sourceLocator.sourceRootHint(file.getParentFile().getParentFile().getParentFile().toPath());
+
       MutationResultDataLoader loader = new MutationResultDataLoader(asList(file));
       MutationMetaData mutationMetaData = new MutationMetaData(new ArrayList<>(loader.loadData()));
       for (ClassMutationResults classResult : mutationMetaData.toClassResults()) {
@@ -74,9 +82,7 @@ public final class ReportAggregator {
     return reportAggregatorResultListener.result();
   }
 
-  private MutationResultListener createResultListener(Collection<String> mutatorNames) throws ReportAggregationException {
-    final SourceLocator sourceLocator = new SmartSourceLocator(asPaths(this.sourceCodeDirectories), inputCharset);
-
+  private MutationResultListener createResultListener(SourceLocator sourceLocator, Collection<String> mutatorNames) throws ReportAggregationException {
     final CodeSource codeSource = this.codeSourceAggregator.createCodeSource();
     final ReportCoverage coverageDatabase = calculateCoverage(codeSource);
     //final Collection<String> mutatorNames = new HashSet<>(FCollection.flatMap(mutationMetaData.getMutations(), resultToMutatorName()));
