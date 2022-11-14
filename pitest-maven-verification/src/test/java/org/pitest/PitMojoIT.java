@@ -455,6 +455,30 @@ public class PitMojoIT {
     assertThat(actual).doesNotContain("RUN_ERROR");
   }
 
+  @Test
+  public void resolvesCorrectFilesForKotlinMultiModules() throws Exception {
+    // if the same filename is used for files outside of their declared package
+    // ensure the correct source file is use for annotation
+    File testDir = prepare("/pit-kotlin-multi-module");
+
+    verifier.executeGoals(asList("test-compile", "org.pitest:pitest-maven:mutationCoverage", "org.pitest:pitest-maven:report-aggregate-module"));
+
+    String moduleOneSource = FileUtils
+            .readFileToString(buildFilePath(testDir, "target", "pit-reports", "com.example.one",
+                    "DefaultArguments.kt.html"));
+    String moduleTwoSource = FileUtils
+            .readFileToString(buildFilePath(testDir, "target", "pit-reports", "com.example.two",
+                    "DefaultArguments.kt.html"));
+    String moduleThreeSource = FileUtils
+            .readFileToString(buildFilePath(testDir, "target", "pit-reports", "com.example.three",
+                    "DefaultArguments.kt.html"));
+
+    assertThat(moduleOneSource).contains("package com.example.one");
+    assertThat(moduleTwoSource).contains("package com.example.two");
+    assertThat(moduleThreeSource).contains("package com.example.three");
+
+  }
+
   private void skipIfJavaVersionNotSupportByThirdParty() {
     String javaVersion = System.getProperty("java.version");
     assumeFalse(javaVersion.startsWith("9") || javaVersion.startsWith("10") || javaVersion.startsWith("11"));

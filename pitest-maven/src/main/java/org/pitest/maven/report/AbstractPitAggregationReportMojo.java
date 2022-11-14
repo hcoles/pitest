@@ -104,22 +104,28 @@ abstract class AbstractPitAggregationReportMojo extends PitReportMojo {
       final ReportAggregator.Builder reportAggregationBuilder,
       final MavenProject proj) throws Exception {
     final File projectBaseDir = proj.getBasedir();
-    List<File> files = getProjectFilesByFilter(projectBaseDir,
-        MUTATION_RESULT_FILTER);
-    for (final File file : files) {
+    for (final File file : getProjectFilesByFilter(projectBaseDir,
+            MUTATION_RESULT_FILTER)) {
       reportAggregationBuilder.addMutationResultsFile(file);
     }
-    files = getProjectFilesByFilter(projectBaseDir, LINECOVERAGE_FILTER);
-    for (final File file : files) {
+
+    for (final File file : getProjectFilesByFilter(projectBaseDir, LINECOVERAGE_FILTER)) {
       reportAggregationBuilder.addLineCoverageFile(file);
     }
-    files = convertToRootDirs(proj.getCompileSourceRoots(),
-        proj.getTestCompileSourceRoots());
-    for (final File file : files) {
+
+    for (final File file : convertToRootDirs(proj.getCompileSourceRoots(),
+            proj.getTestCompileSourceRoots())) {
       reportAggregationBuilder.addSourceCodeDirectory(file);
     }
-    files = getCompiledDirs(proj);
-    for (final File file : files) {
+
+    // The kotlin plugin does not add the source dirs to the maven model. Build helper plugin
+    // won't trigger if goals called directly. Easiest way to plug this is this hack to
+    // always attempt to add the kotlin source dir on its standard location
+    reportAggregationBuilder.addSourceCodeDirectory(proj.getBasedir().toPath()
+            .resolve("src").resolve("main").resolve("kotlin").toFile());
+
+
+    for (final File file : getCompiledDirs(proj)) {
       reportAggregationBuilder.addCompiledCodeDirectory(file);
     }
   }

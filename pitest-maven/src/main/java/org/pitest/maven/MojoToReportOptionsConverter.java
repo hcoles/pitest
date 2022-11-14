@@ -346,8 +346,8 @@ public class MojoToReportOptionsConverter {
 
   private Collection<Path> stringsToPaths(final List<String> sourceRoots) {
     return sourceRoots.stream()
-                    .map(Paths::get)
-                            .collect(Collectors.toList());
+            .map(Paths::get)
+            .collect(Collectors.toList());
   }
 
   private Collection<String> determineOutputFormats() {

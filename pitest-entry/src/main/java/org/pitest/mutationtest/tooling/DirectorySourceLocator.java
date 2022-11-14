@@ -70,6 +70,13 @@ public class DirectorySourceLocator implements SourceLocator {
         }
     }
 
+    @Override
+    // String value of path is used to select order to check
+    // roots when locating files across multiple modules
+    public String toString() {
+        return root.toString();
+    }
+
     private String toFileName(ClassName packge, String fileName) {
         if (packge.asJavaName().equals("")) {
             return fileName;

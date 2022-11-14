@@ -120,6 +120,13 @@ public class DirectorySourceLocatorTest {
             .doesNotThrowAnyException();
   }
 
+  @Test
+  public void toStringGivesRootsPath() {
+    Path path =  this.root.resolve("some/path");
+    testee = new DirectorySourceLocator(path, StandardCharsets.UTF_8);
+    assertThat(testee.toString()).isEqualTo(path.toString());
+  }
+
   private String findFor(String clazz, String file) throws Exception {
     return findFor(singletonList(clazz), file);
   }
