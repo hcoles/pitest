@@ -21,6 +21,14 @@ public class PathComparatorTest {
     }
 
     @Test
+    public void shortSubPathsAreWeightedAboveLongPathsThatDoNotMatchBase() {
+        String base = "a/b/more";
+        PathComparator underTest = new PathComparator(base, "/");
+
+        assertThat(underTest.compare("a/b", "a/b/c/d/e/f")).isLessThan(underTest.compare("a/b/c/d/e", "a/b/c/d/e/f/g/h/i"));
+    }
+
+    @Test
     public void identicalPathsCompareAsZeroWhenNotUnderBase() {
         PathComparator underTest = new PathComparator(new File("different/path"), File.separator);
         File a = new File("start/end");
@@ -33,8 +41,7 @@ public class PathComparatorTest {
         PathComparator underTest = new PathComparator(base, File.separator);
         File sameRoot = new File("start/end/leaf");
         File differentRoot = new File("start/different/leaf");
-        assertThat(underTest.compare(differentRoot, sameRoot)).isEqualTo(1);
-        assertThat(underTest.compare(sameRoot, differentRoot)).isEqualTo(-1);
+        assertThat(underTest.compare(differentRoot, sameRoot)).isGreaterThan(underTest.compare(sameRoot, differentRoot));
     }
 
     @Test
@@ -86,6 +93,14 @@ public class PathComparatorTest {
         paths.sort(underTest);
         assertThat(paths.get(0)).isEqualTo("a/b/c/d/");
         assertThat(paths.get(1)).isEqualTo("a/b/c/d/e");
+    }
+
+    @Test
+    public void sortsByLengthWhenAllEquallyUnderRoot() {
+        PathComparator underTest = new PathComparator("a/b/c/irrelevant", "/");
+        List<String> paths = asList("a/b/x", "a/b/x/x", "a/b/x/x/x", "a/b/x/x/x/x", "a/b");
+        paths.sort(underTest);
+        assertThat(paths).containsExactly("a/b", "a/b/x",  "a/b/x/x", "a/b/x/x/x", "a/b/x/x/x/x");
     }
 
     @Test
