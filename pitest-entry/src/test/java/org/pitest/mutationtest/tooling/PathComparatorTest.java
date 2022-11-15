@@ -7,6 +7,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 
 public class PathComparatorTest {
@@ -70,6 +71,27 @@ public class PathComparatorTest {
         List<String> paths = asList("\\a\\z", "\\a\\b", "\\a\\b\\c");
         paths.sort(underTest);
         assertThat(paths).containsExactly("\\a\\b", "\\a\\b\\c", "\\a\\z");
+    }
+
+    @Test
+    public void modulesUnderRootAlwaysSortedFirst() {
+        PathComparator underTest = new PathComparator("a/b/c/irrelevant", "/");
+        List<String> paths = asList("a/z", "a/b/c/d/", "a/b/c/d/e", "a/b/e", "a/b/cc");
+        paths.sort(underTest);
+        assertThat(paths.get(0)).isEqualTo("a/b/c/d/");
+        assertThat(paths.get(1)).isEqualTo("a/b/c/d/e");
+
+        paths = asList("a/b/cc", "a/b/e", "a/z", "a/b/c/d/", "a/b/c/d/e", "a/b/irrelevant" );
+
+        paths.sort(underTest);
+        assertThat(paths.get(0)).isEqualTo("a/b/c/d/");
+        assertThat(paths.get(1)).isEqualTo("a/b/c/d/e");
+    }
+
+    @Test
+    public void handlesBaseIndexLongerThanSuppliedPath() {
+        PathComparator underTest = new PathComparator("/a/b/c/irrelevant", "/");
+        assertThatCode(() -> underTest.compare("a/z", "/a/b/c")).doesNotThrowAnyException();
     }
 
 }

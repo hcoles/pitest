@@ -5,7 +5,7 @@ import java.util.Comparator;
 /**
  * Comparator to allow ordering of Objects by their closeness to a
  * given root, assuming their toString provides a path like hierarchy.
- *
+ * <p>
  * Allows paths in same module as a file to be examined before those in other modules
  */
 class PathComparator implements Comparator<Object> {
@@ -30,9 +30,14 @@ class PathComparator implements Comparator<Object> {
         String[] a = s1.split(separator);
 
         for (int i = 0; i != baseParts.length; i++) {
+            if (a.length == i) {
+                return i - 1;
+            }
+
             if (!a[i].equals(baseParts[i])) {
                 return i;
             }
+
         }
 
         return baseParts.length;
