@@ -7,6 +7,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 
 public class PathComparatorTest {
@@ -17,6 +18,14 @@ public class PathComparatorTest {
         PathComparator underTest = new PathComparator(base, File.separator);
 
         assertThat(underTest.compare(base,base)).isEqualTo(0);
+    }
+
+    @Test
+    public void shortSubPathsAreWeightedAboveLongPathsThatDoNotMatchBase() {
+        String base = "a/b/more";
+        PathComparator underTest = new PathComparator(base, "/");
+
+        assertThat(underTest.compare("a/b", "a/b/c/d/e/f")).isLessThan(underTest.compare("a/b/c/d/e", "a/b/c/d/e/f/g/h/i"));
     }
 
     @Test
@@ -32,8 +41,7 @@ public class PathComparatorTest {
         PathComparator underTest = new PathComparator(base, File.separator);
         File sameRoot = new File("start/end/leaf");
         File differentRoot = new File("start/different/leaf");
-        assertThat(underTest.compare(differentRoot, sameRoot)).isEqualTo(1);
-        assertThat(underTest.compare(sameRoot, differentRoot)).isEqualTo(-1);
+        assertThat(underTest.compare(differentRoot, sameRoot)).isGreaterThan(underTest.compare(sameRoot, differentRoot));
     }
 
     @Test
@@ -70,6 +78,35 @@ public class PathComparatorTest {
         List<String> paths = asList("\\a\\z", "\\a\\b", "\\a\\b\\c");
         paths.sort(underTest);
         assertThat(paths).containsExactly("\\a\\b", "\\a\\b\\c", "\\a\\z");
+    }
+
+    @Test
+    public void modulesUnderRootAlwaysSortedFirst() {
+        PathComparator underTest = new PathComparator("a/b/c/irrelevant", "/");
+        List<String> paths = asList("a/z", "a/b/c/d/", "a/b/c/d/e", "a/b/e", "a/b/cc");
+        paths.sort(underTest);
+        assertThat(paths.get(0)).isEqualTo("a/b/c/d/");
+        assertThat(paths.get(1)).isEqualTo("a/b/c/d/e");
+
+        paths = asList("a/b/cc", "a/b/e", "a/z", "a/b/c/d/", "a/b/c/d/e", "a/b/irrelevant" );
+
+        paths.sort(underTest);
+        assertThat(paths.get(0)).isEqualTo("a/b/c/d/");
+        assertThat(paths.get(1)).isEqualTo("a/b/c/d/e");
+    }
+
+    @Test
+    public void sortsByLengthWhenAllEquallyUnderRoot() {
+        PathComparator underTest = new PathComparator("a/b/c/irrelevant", "/");
+        List<String> paths = asList("a/b/x", "a/b/x/x", "a/b/x/x/x", "a/b/x/x/x/x", "a/b");
+        paths.sort(underTest);
+        assertThat(paths).containsExactly("a/b", "a/b/x",  "a/b/x/x", "a/b/x/x/x", "a/b/x/x/x/x");
+    }
+
+    @Test
+    public void handlesBaseIndexLongerThanSuppliedPath() {
+        PathComparator underTest = new PathComparator("/a/b/c/irrelevant", "/");
+        assertThatCode(() -> underTest.compare("a/z", "/a/b/c")).doesNotThrowAnyException();
     }
 
 }
