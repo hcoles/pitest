@@ -94,12 +94,23 @@ public class CatchNewClassLoadersTransformer implements ClassFileTransformer {
             // Not clear if this situation is possible, but check left in
             // out of fear.
             if (!Arrays.equals(classfileBuffer, currentMutant)) {
-                ORIGINAL_LOADER_CLASSES.put(loader, classfileBuffer);
+                if (accessClass(classBeingRedefined) ) {
+                    ORIGINAL_LOADER_CLASSES.put(loader, classfileBuffer);
+                }
             }
 
             return currentMutant;
         }
         return null;
+    }
+
+    // Very strange workaround found by accident.
+    // The null check and boolean return here are just to ensure nothing optimises this
+    // code away. The purpose of the method is to trigger an (as yet) not understood
+    // side effect of calling class.getName(). Without this call we get class redefinition errors
+    // when the class is later restored in Quarkus projects.
+    private boolean accessClass(Class<?> classBeingRedefined) {
+        return classBeingRedefined.getName() != null;
     }
 
     private static Class<?> checkClassForLoader(ClassLoader loader, String className) {
