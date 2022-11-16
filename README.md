@@ -8,6 +8,11 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+### 1.9.11
+
+* #1105 Aggregator resolves wrong file for out of package kotlin files with same name
+* #1111 Fix log typo (thanks @wangbo15)
+
 ### 1.9.10
 
 * #1106 Do not replace Map.of with Collections.emptyMap
