@@ -142,7 +142,7 @@ public abstract class ReportTestBase {
         configuration, this.data.getVerbosity());
   }
 
-  protected void setMutators(final String mutator) {
+  protected void setMutators(final String... mutator) {
     this.data.setMutators(Arrays.asList(mutator));
   }
 

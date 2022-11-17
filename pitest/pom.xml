@@ -206,6 +206,8 @@
 			<artifactId>equalsverifier</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+
 	</dependencies>
 
 </project>

@@ -33,6 +33,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import com.example.classloaders.MuteeInOtherClassloader;
+import com.example.classloaders.MuteeInOtherClassloaderPooledTest;
+import com.example.classloaders.MuteeInOtherClassloaderTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -425,6 +428,34 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     createAndRun();
 
     // just running without a hang then erroring is success
+  }
+
+  @Test
+  public void handlesMutantsInOtherClassLoaders() {
+    setMutators("PRIMITIVE_RETURNS", "VOID_METHOD_CALLS");
+
+    this.data
+            .setTargetClasses(asGlobs(MuteeInOtherClassloader.class));
+    this.data
+            .setTargetTests(predicateFor(MuteeInOtherClassloaderTest.class));
+
+    createAndRun();
+
+    verifyResults(KILLED, SURVIVED, SURVIVED, SURVIVED);
+  }
+
+  @Test
+  public void handlesMutantsInPooledClassLoaders() {
+    setMutators("PRIMITIVE_RETURNS", "VOID_METHOD_CALLS");
+
+    this.data
+            .setTargetClasses(asGlobs(MuteeInOtherClassloader.class));
+    this.data
+            .setTargetTests(predicateFor(MuteeInOtherClassloaderPooledTest.class));
+
+    createAndRun();
+
+    verifyResults(KILLED, SURVIVED, SURVIVED, SURVIVED);
   }
 
   @Generated

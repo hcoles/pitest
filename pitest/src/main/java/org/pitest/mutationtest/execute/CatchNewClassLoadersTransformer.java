@@ -5,9 +5,9 @@ import org.pitest.classinfo.ClassName;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.security.ProtectionDomain;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.WeakHashMap;
 
 /**
  * Pitest mainly inserts mutants by calling Instrumentation.redefineClasses using
@@ -22,83 +22,41 @@ import java.util.concurrent.ConcurrentHashMap;
  * the byte array (modifying by rerunning the mutator might result in a different mutant for
  * the same id if the input has changed).
  *
- * So, sometimes we want to transform the class, sometimes we don't.
- *
- * Not found a way to reliably work out which we need to do, so need to maintain
- * a list. As mutants unexpectedly surviving are far more likely to be reported than
- * ones unexpectedly killed, we list the loaders we should mutate for (currently just
- * quarkus, but others likely exist).
+ * This transformer identifies loaders that try to load the target class, and stores
+ * a weak reference to them to ensure that all copies of the class are mutated.
  *
  */
 public class CatchNewClassLoadersTransformer implements ClassFileTransformer {
 
+    private static String targetClass;
     private static byte[] currentMutant;
-    private static String currentClass;
 
-    // The context classloader at the point pitest started.
-    // we do not want to transform classes from this as they are already handled
-    // by the primary mechanism
-    private static ClassLoader ignore;
-
-    // Map of loaders we have transformed the current class in, so we can restore them
-    static final Map<ClassLoader, byte[]> ORIGINAL_LOADER_CLASSES = new ConcurrentHashMap<>();
-
-    public static synchronized void setLoader(ClassLoader loader) {
-        ignore = loader;
-    }
+    // What we want is a ConcurrentWeakHasSet, since that doesn't exist without writing one ourselves
+    // we'll abuse a WeakHashMap and live with the synchronization
+    static final Map<ClassLoader, Object> CLASS_LOADERS = Collections.synchronizedMap(new WeakHashMap<>());
 
     public static synchronized void setMutant(String className, byte[] mutant) {
-        String toRestore = currentClass;
+        targetClass = className;
         currentMutant = mutant;
-
-        // prevent transforming again when we restore if the same class is mutated twice
-        currentClass = null;
-
-        restoreClasses(toRestore);
-
-        currentClass = className;
-    }
-
-    private static void restoreClasses(String toRestore) {
-        for (Map.Entry<ClassLoader, byte[]> each : ORIGINAL_LOADER_CLASSES.entrySet()) {
-            final Class<?> clazz = checkClassForLoader(each.getKey(), toRestore);
+        for (ClassLoader each : CLASS_LOADERS.keySet()) {
+            final Class<?> clazz = checkClassForLoader(each, className);
             if (clazz != null) {
-                HotSwapAgent.hotSwap(clazz, each.getValue());
+                HotSwapAgent.hotSwap(clazz, mutant);
             }
         }
-        ORIGINAL_LOADER_CLASSES.clear();
     }
 
     @Override
     public byte[] transform(final ClassLoader loader, final String className,
                             final Class<?> classBeingRedefined,
                             final ProtectionDomain protectionDomain, final byte[] classfileBuffer) {
-        if (loader == null || ignore == loader) {
-            return null;
-        }
 
-        // Only loader identified so far where mutants must be inserted is Quarkus, but
-        // others likely exist. At least one loader (gwtmockito) results incorrectly
-        // killed mutants if we insert.
-        if (!loader.getClass().getName().startsWith("io.quarkus.bootstrap.classloading")) {
-            return null;
-        }
-
-        if (className.equals(currentClass)) {
-            // skip if class already loaded
-            if (classBeingRedefined != null) {
-                return null;
-            }
-
-            // avoid restoring an already mutated class
-            // Not clear if this situation is possible, but check left in
-            // out of fear.
-            if (!Arrays.equals(classfileBuffer, currentMutant)) {
-                ORIGINAL_LOADER_CLASSES.put(loader, classfileBuffer);
-            }
-
+        if (className.equals(targetClass) && shouldTransform(loader)) {
+            CLASS_LOADERS.put(loader, null);
+            // we might be mid-mutation so return the mutated bytes
             return currentMutant;
         }
+
         return null;
     }
 
@@ -117,6 +75,12 @@ public class CatchNewClassLoadersTransformer implements ClassFileTransformer {
             return null;
         }
 
+    }
+
+    private boolean shouldTransform(ClassLoader loader) {
+        // Only gwtmockito has been identified so far as a loader not to transform
+        // but there will be others
+        return !loader.getClass().getName().startsWith("com.google.gwtmockito.");
     }
 
 }

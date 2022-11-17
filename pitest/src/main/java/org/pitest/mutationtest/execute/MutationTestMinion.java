@@ -14,24 +14,11 @@
  */
 package org.pitest.mutationtest.execute;
 
-import java.io.IOException;
-import java.lang.management.MemoryNotificationInfo;
-import java.net.Socket;
-import java.util.Collection;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
-import javax.management.NotificationListener;
-import javax.management.openmbean.CompositeData;
-
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.classinfo.CachingByteArraySource;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import org.pitest.functional.F3;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.EngineArguments;
 import org.pitest.mutationtest.config.ClientPluginServices;
@@ -49,6 +36,17 @@ import org.pitest.util.Glob;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
 import org.pitest.util.SafeDataInputStream;
+
+import javax.management.NotificationListener;
+import javax.management.openmbean.CompositeData;
+import java.io.IOException;
+import java.lang.management.MemoryNotificationInfo;
+import java.net.Socket;
+import java.util.Collection;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class MutationTestMinion {
 
@@ -79,13 +77,10 @@ public class MutationTestMinion {
 
       final ClassLoader loader = IsolationUtils.getContextClassLoader();
 
-      CatchNewClassLoadersTransformer.setLoader(loader);
-
       final ClassByteArraySource byteSource = new CachingByteArraySource(new ClassloaderByteArraySource(
           loader), CACHE_SIZE);
 
-      final F3<ClassName, ClassLoader, byte[], Boolean> hotswap = new HotSwap(
-          byteSource);
+      final HotSwap hotswap = new HotSwap();
 
       final MutationEngine engine = createEngine(paramsFromParent.engine, paramsFromParent.engineArgs);
 

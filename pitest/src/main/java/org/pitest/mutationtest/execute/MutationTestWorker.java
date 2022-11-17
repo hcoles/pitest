@@ -14,8 +14,6 @@
  */
 package org.pitest.mutationtest.execute;
 
-import org.pitest.classinfo.ClassName;
-import org.pitest.functional.F3;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.Mutant;
@@ -56,11 +54,11 @@ public class MutationTestWorker {
 
   private final Mutater                                     mutater;
   private final ClassLoader                                 loader;
-  private final F3<ClassName, ClassLoader, byte[], Boolean> hotswap;
+  private final HotSwap                                     hotswap;
   private final boolean                                     fullMutationMatrix;
 
   public MutationTestWorker(
-      final F3<ClassName, ClassLoader, byte[], Boolean> hotswap,
+      final HotSwap hotswap,
       final Mutater mutater, final ClassLoader loader, final boolean fullMutationMatrix) {
     this.loader = loader;
     this.mutater = mutater;
@@ -142,11 +140,7 @@ public class MutationTestWorker {
     final Container c = createNewContainer();
     final long t0 = System.currentTimeMillis();
 
-    // Some frameworks (eg quarkus) run tests in non delegating
-    // classloaders. Need to make sure these are transformed too
-    CatchNewClassLoadersTransformer.setMutant(mutatedClass.getDetails().getClassName().asInternalName(), mutatedClass.getBytes());
-
-    if (this.hotswap.apply(mutationId.getClassName(), this.loader,
+    if (this.hotswap.insertClass(mutationId.getClassName(), this.loader,
         mutatedClass.getBytes())) {
       if (DEBUG) {
         LOG.fine("replaced class with mutant in "

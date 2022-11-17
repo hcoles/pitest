@@ -403,7 +403,7 @@ public class PitMojoIT {
     //assertThat(actual)
     //        .contains(
     //                "<mutation detected='false' status='SURVIVED' numberOfTestsRun='2'>" +
-     //                       "<sourceFile>ExampleController.java</sourceFile>");
+    //                        "<sourceFile>ExampleController.java</sourceFile>");
 
     assertThat(actual)
             .contains(
