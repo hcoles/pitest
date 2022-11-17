@@ -8,6 +8,12 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+## 1.10.0 (unreleased)
+
+* #1067 Improved Quarkus and Roboelectric support
+
+As a result of #1067 it is important that mutations are only created for a single class for each JVM. The `MutationGrouper` extension point has therefore been removed as this allowed this constraint to be violated. Any third party plugins using this extension are no longer supported.  
+
 ### 1.9.11
 
 * #1105 Aggregator resolves wrong file for out of package kotlin files with same name
