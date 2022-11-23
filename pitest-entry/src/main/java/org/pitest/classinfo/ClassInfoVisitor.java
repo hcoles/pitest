@@ -24,26 +24,25 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import org.pitest.bytecode.ASMVersion;
-import org.pitest.bytecode.NullVisitor;
+import org.pitest.functional.F5;
 
-public final class ClassInfoVisitor extends MethodFilteringAdapter {
+public final class ClassInfoVisitor extends ClassVisitor {
 
+  private final F5<Integer, String, String, String, String[], Boolean> filter = BridgeMethodFilter.INSTANCE;
   private final ClassInfoBuilder classInfo;
 
   private ClassInfoVisitor(final ClassInfoBuilder classInfo,
       final ClassVisitor writer) {
-    super(writer, BridgeMethodFilter.INSTANCE);
+    super(ASMVersion.ASM_VERSION, writer);
     this.classInfo = classInfo;
   }
 
   public static ClassInfoBuilder getClassInfo(final ClassName name,
       final byte[] bytes, final long hash) {
     final ClassReader reader = new ClassReader(bytes);
-    final ClassVisitor writer = new NullVisitor();
-
     final ClassInfoBuilder info = new ClassInfoBuilder();
     info.id = new ClassIdentifier(hash, name);
-    reader.accept(new ClassInfoVisitor(info, writer), 0);
+    reader.accept(new ClassInfoVisitor(info, null), 0);
     return info;
   }
 
@@ -79,6 +78,16 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
   }
 
   @Override
+  public MethodVisitor visitMethod(final int access, final String name,
+                                         final String desc, final String signature, final String[] exceptions) {
+    if (shouldInstrument(access, name, desc, signature, exceptions)) {
+      return visitMethodIfRequired(access, name, desc, signature, exceptions);
+    } else {
+      return super.visitMethod(access, name, desc, signature, exceptions);
+    }
+  }
+
+  @Override
   public AnnotationVisitor visitAnnotation(final String desc,
       final boolean visible) {
     final String type = desc.substring(1, desc.length() - 1);
@@ -86,14 +95,19 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
     return new ClassAnnotationValueVisitor(this.classInfo, ClassName.fromString(type));
   }
 
-  @Override
   public MethodVisitor visitMethodIfRequired(final int access,
       final String name, final String desc, final String signature,
-      final String[] exceptions, final MethodVisitor methodVisitor) {
+      final String[] exceptions) {
 
-    return new InfoMethodVisitor(this.classInfo, methodVisitor);
+    return new InfoMethodVisitor(this.classInfo);
 
   }
+
+  private boolean shouldInstrument(final int access, final String name,
+                                   final String desc, final String signature, final String[] exceptions) {
+    return this.filter.apply(access, name, desc, signature, exceptions);
+  }
+
 
   private static class ClassAnnotationValueVisitor extends AnnotationVisitor {
     private final ClassInfoBuilder classInfo;
@@ -152,9 +166,8 @@ public final class ClassInfoVisitor extends MethodFilteringAdapter {
 class InfoMethodVisitor extends MethodVisitor {
   private final ClassInfoBuilder classInfo;
 
-  InfoMethodVisitor(final ClassInfoBuilder classInfo,
-      final MethodVisitor writer) {
-    super(ASMVersion.ASM_VERSION, writer);
+  InfoMethodVisitor(final ClassInfoBuilder classInfo) {
+    super(ASMVersion.ASM_VERSION, null);
     this.classInfo = classInfo;
   }
 
