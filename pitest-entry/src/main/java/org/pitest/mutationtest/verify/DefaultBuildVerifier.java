@@ -27,8 +27,14 @@ import org.pitest.help.PitHelpError;
 
 public class DefaultBuildVerifier implements BuildVerifier {
 
+  private final CodeSource code;
+
+  public DefaultBuildVerifier(CodeSource code) {
+    this.code = code;
+  }
+
   @Override
-  public void verify(final CodeSource code) {
+  public void verify() {
     final List<ClassInfo> codeClasses = FCollection.filter(code.getCode(), isNotSynthetic());
 
     if (hasMutableCode(codeClasses)) {

@@ -272,7 +272,7 @@ public class MutationCoverage {
   }
 
   private void verifyBuildSuitableForMutationTesting() {
-    this.strategies.buildVerifier().verify(this.code);
+    this.strategies.buildVerifier().verify();
   }
 
   private void printStats(CombinedStatistics combinedStatistics) {

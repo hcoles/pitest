@@ -120,7 +120,7 @@ public class EntryPoint {
 
     final MutationStrategies strategies = new MutationStrategies(
         settings.createEngine(), history, coverageDatabase, reportFactory,
-        reportOutput);
+        reportOutput, settings.createVerifier().create(code));
 
     final MutationCoverage report = new MutationCoverage(strategies, baseDir,
         code, data, settings, timings);

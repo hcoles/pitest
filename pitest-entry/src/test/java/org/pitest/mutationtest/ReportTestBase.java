@@ -29,6 +29,7 @@ import org.pitest.mutationtest.incremental.NullHistoryStore;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.mutationtest.tooling.MutationCoverage;
 import org.pitest.mutationtest.tooling.MutationStrategies;
+import org.pitest.mutationtest.verify.NoVerification;
 import org.pitest.process.DefaultJavaExecutableLocator;
 import org.pitest.process.JavaAgent;
 import org.pitest.process.LaunchOptions;
@@ -123,7 +124,7 @@ public abstract class ReportTestBase {
 
       final MutationStrategies strategies = new MutationStrategies(
           new GregorEngineFactory(), history, coverageDatabase,
-          listenerFactory(), null);
+          listenerFactory(), null, new NoVerification());
 
       final MutationCoverage testee = new MutationCoverage(strategies, null,
           code, this.data, new SettingsFactory(this.data, this.plugins),

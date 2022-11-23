@@ -6,6 +6,7 @@ import org.pitest.mutationtest.build.MutationGrouperFactory;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.mutationtest.build.TestPrioritiserFactory;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.verify.BuildVerifierFactory;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.plugin.Feature;
 import org.pitest.plugin.ProvidesFeature;
@@ -99,6 +100,10 @@ public class PluginServices {
 
   public Collection<MutationInterceptorFactory> findInterceptors() {
     return adjustMissingFeatures(load(MutationInterceptorFactory.class));
+  }
+
+  List<BuildVerifierFactory> findVerifiers() {
+    return new ArrayList<>(load(BuildVerifierFactory.class));
   }
 
   public Collection<ProvidesFeature> findFeatures() {

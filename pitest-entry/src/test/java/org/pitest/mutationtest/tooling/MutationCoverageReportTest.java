@@ -167,7 +167,7 @@ public class MutationCoverageReportTest {
   @Test
   public void shouldCheckBuildSuitableForMutationTesting() {
     createAndRunTestee();
-    verify(this.verifier).verify(any(CodeSource.class));
+    verify(this.verifier).verify();
   }
 
   @Test
@@ -215,8 +215,7 @@ public class MutationCoverageReportTest {
   private CombinedStatistics createAndRunTestee() {
     final MutationStrategies strategies = new MutationStrategies(
         new GregorEngineFactory(), this.history, this.coverage,
-        this.listenerFactory, this.output).with(this.mutationFactory).with(
-            this.verifier);
+        this.listenerFactory, this.output, this.verifier).with(this.mutationFactory);
 
     this.testee = new MutationCoverage(strategies, null, this.code, this.data,
         new SettingsFactory(this.data, PluginServices.makeForContextLoader()),

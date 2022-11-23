@@ -45,7 +45,7 @@ public class DefaultBuildVerifierTest {
   @Before
   public void setUp() {
     MockitoAnnotations.openMocks(this);
-    this.testee = new DefaultBuildVerifier();
+    this.testee = new DefaultBuildVerifier(code);
   }
 
   private static class AClass {
@@ -60,21 +60,21 @@ public class DefaultBuildVerifierTest {
   @Test
   public void shouldNotThrowErrorForClassCompiledWithDebugInfo() {
     setupClassPath(AClass.class);
-    this.testee.verify(this.code);
+    this.testee.verify();
     // pass
   }
 
   @Test(expected = PitHelpError.class)
   public void shouldThrowErrorForClassCompiledWithoutSourceFileDebugInfo() {
     setupClassPath(new ResourceFolderByteArraySource(), "FooNoSource");
-    this.testee.verify(this.code);
+    this.testee.verify();
   }
 
   @Test
   public void shouldNotThrowErrorForSyntheticClassCompiledWithoutSourceFileDebugInfo() {
     setupClassPath(new ResourceFolderByteArraySource(), "SyntheticNoSourceDebug");
     try {
-      this.testee.verify(this.code);
+      this.testee.verify();
     } catch (final PitHelpError ex) {
       fail();
     }
@@ -83,14 +83,14 @@ public class DefaultBuildVerifierTest {
   @Test(expected = PitHelpError.class)
   public void shouldThrowErrorForClassCompiledWithoutLineNumberDebugInfo() {
     setupClassPath(new ResourceFolderByteArraySource(), "FooNoLines");
-    this.testee.verify(this.code);
+    this.testee.verify();
   }
 
   @Test
   public void shouldNotThrowAnErrorWhenNoClassesFound() {
     when(this.code.getCode()).thenReturn(Collections.<ClassInfo> emptyList());
     try {
-      this.testee.verify(this.code);
+      this.testee.verify();
     } catch (final PitHelpError e) {
       fail();
     }
@@ -100,7 +100,7 @@ public class DefaultBuildVerifierTest {
   public void shouldNotThrowAnErrorWhenOnlyInterfacesPresent() {
     setupClassPath(AnInterface.class);
     try {
-      this.testee.verify(this.code);
+      this.testee.verify();
     } catch (final PitHelpError e) {
       fail();
     }
@@ -109,7 +109,7 @@ public class DefaultBuildVerifierTest {
   @Test
   public void doesNotErrorWhenNoClassesProvided() {
     when(this.code.getCode()).thenReturn(Collections.emptyList());
-    assertThatCode(() -> this.testee.verify(this.code)).doesNotThrowAnyException();
+    assertThatCode(() -> this.testee.verify()).doesNotThrowAnyException();
   }
 
   private void setupClassPath(final Class<?> clazz) {
