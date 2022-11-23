@@ -79,10 +79,6 @@ public class ClassInfo {
     return (this.access & Opcodes.ACC_SYNTHETIC) != 0;
   }
 
-  public boolean isTopLevelClass() {
-    return !getOuterClass().isPresent();
-  }
-
   public Optional<ClassInfo> getOuterClass() {
     return this.outerClass.fetch();
   }

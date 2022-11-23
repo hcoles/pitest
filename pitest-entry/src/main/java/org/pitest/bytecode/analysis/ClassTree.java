@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -79,6 +80,9 @@ public class ClassTree {
     return this.rawNode;
   }
 
+  public boolean isAbstract() {
+    return (this.rawNode.access & Opcodes.ACC_ABSTRACT) != 0;
+  }
 
   @Override
   public String toString() {

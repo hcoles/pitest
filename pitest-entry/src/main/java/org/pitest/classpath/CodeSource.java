@@ -2,7 +2,6 @@ package org.pitest.classpath;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -58,11 +57,12 @@ public class CodeSource implements ClassInfoSource, ClassByteArraySource {
     return codeClasses;
   }
 
-  public List<ClassInfo> getTests() {
+  public Stream<ClassTree> testTrees() {
     return this.classPath.test().stream()
-        .flatMap(nameToClassInfo())
-        .filter(ClassInfo.matchIfAbstract().negate())
-        .collect(Collectors.toList());
+            .map(c -> this.getBytes(c.asJavaName()))
+            .filter(Optional::isPresent)
+            .map(maybe -> ClassTree.fromBytes(maybe.get()))
+            .filter(t -> !t.isAbstract());
   }
 
   public ClassPath getClassPath() {

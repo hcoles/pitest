@@ -18,21 +18,21 @@ package org.pitest.coverage.execute;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassInfo;
+import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageData;
 import org.pitest.coverage.CoverageExporter;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.CoverageResult;
 import org.pitest.coverage.analysis.LineMapper;
-import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
@@ -80,7 +80,11 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
       final long t0 = System.currentTimeMillis();
 
       this.timings.registerStart(Timings.Stage.SCAN_CLASS_PATH);
-      final Collection<ClassInfo> tests = this.code.getTests();
+      List<String> tests = this.code.testTrees()
+              .map(ClassTree::name)
+              .map(ClassName::asInternalName)
+              .collect(Collectors.toList());
+
       this.timings.registerEnd(Timings.Stage.SCAN_CLASS_PATH);
 
       final CoverageData coverage = new CoverageData(this.code, new LineMapper(
@@ -116,11 +120,8 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     }
   }
 
-  private void gatherCoverageData(final Collection<ClassInfo> tests,
+  private void gatherCoverageData(List<String> tests,
       final CoverageData coverage) throws IOException, InterruptedException {
-
-    final List<String> filteredTests = FCollection
-        .map(tests, classInfoToName());
 
     final Consumer<CoverageResult> handler = resultProcessor(coverage);
 
@@ -131,7 +132,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
         .withClassPath(this.code.getClassPath()).andBaseDir(this.workingDir)
         .andLaunchOptions(this.launchOptions).andStderr(logInfo())
         .andStdout(captureStandardOutIfVerbose()), this.coverageOptions,
-        socket, filteredTests, handler);
+        socket, tests, handler);
 
     process.start();
 
