@@ -20,15 +20,15 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassInfo;
-import org.pitest.classinfo.ClassName;
-import org.pitest.classinfo.Repository;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.CodeSource;
 import org.pitest.help.PitHelpError;
@@ -55,7 +55,6 @@ public class DefaultBuildVerifierTest {
   private static interface AnInterface {
 
   }
-
 
   @Test
   public void shouldNotThrowErrorForClassCompiledWithDebugInfo() {
@@ -120,10 +119,9 @@ public class DefaultBuildVerifierTest {
 
   private void setupClassPath(final ClassByteArraySource source,
       final String clazz) {
-    final Repository repository = new Repository(source);
-    final ClassInfo ci = repository.fetchClass(ClassName.fromString(clazz))
-        .get();
-    when(this.code.getCode()).thenReturn(Collections.singletonList(ci));
+    ClassTree ct = ClassTree.fromBytes(source.getBytes(clazz).get());
+    // doesn't seem to be a way to pass mockito a Supplier so specify each call
+    when(this.code.codeTrees()).thenReturn(Stream.of(ct), Stream.of(ct), Stream.of(ct), Stream.of(ct));
   }
 
 }

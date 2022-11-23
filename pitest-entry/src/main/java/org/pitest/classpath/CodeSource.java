@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoSource;
@@ -42,6 +43,13 @@ public class CodeSource implements ClassInfoSource, ClassByteArraySource {
     return this.classPath.code().stream()
         .flatMap(nameToClassInfo())
         .collect(Collectors.toList());
+  }
+
+  public Stream<ClassTree> codeTrees() {
+    return this.classPath.code().stream()
+            .map(c -> this.getBytes(c.asJavaName()))
+            .filter(Optional::isPresent)
+            .map(maybe -> ClassTree.fromBytes(maybe.get()));
   }
 
   public Set<ClassName> getCodeUnderTestNames() {
