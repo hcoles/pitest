@@ -34,7 +34,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -172,16 +171,12 @@ public class CoverageData implements CoverageDatabase {
   }
 
   private int numberOfLines() {
-    return FCollection.fold(numberLines(), 0,
+    return FCollection.fold( (a, clazz) -> a + clazz.getNumberOfCodeLines(), 0,
         this.code.getClassInfo(allClasses()));
   }
 
   private int coveredLines() {
     return getNumberOfCoveredLines(allClasses());
-  }
-
-  private BiFunction<Integer, ClassInfo, Integer> numberLines() {
-    return (a, clazz) -> a + clazz.getNumberOfCodeLines();
   }
 
   private void checkForFailedTest(final CoverageResult cr) {

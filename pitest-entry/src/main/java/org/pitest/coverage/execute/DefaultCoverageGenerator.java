@@ -15,15 +15,6 @@
 
 package org.pitest.coverage.execute;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
@@ -48,6 +39,15 @@ import org.pitest.util.StringUtil;
 import org.pitest.util.Timings;
 import org.pitest.util.Unchecked;
 import org.pitest.util.Verbosity;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class DefaultCoverageGenerator implements CoverageGenerator {
 

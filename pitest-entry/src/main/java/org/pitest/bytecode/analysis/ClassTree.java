@@ -84,6 +84,14 @@ public class ClassTree {
     return (this.rawNode.access & Opcodes.ACC_ABSTRACT) != 0;
   }
 
+  public boolean isInterface() {
+    return (this.rawNode.access & Opcodes.ACC_INTERFACE) != 0;
+  }
+
+  public boolean isSynthetic() {
+    return (this.rawNode.access & Opcodes.ACC_SYNTHETIC) != 0;
+  }
+
   @Override
   public String toString() {
     final StringWriter writer = new StringWriter();

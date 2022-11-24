@@ -15,7 +15,6 @@ package org.pitest.mutationtest.verify;
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.LineNumberNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classpath.CodeSource;
@@ -70,7 +69,7 @@ public class DefaultBuildVerifier implements BuildVerifier {
   }
 
   private boolean isMutable(ClassTree classTree) {
-    return (classTree.rawNode().access & Opcodes.ACC_INTERFACE) == 0 && (classTree.rawNode().access & Opcodes.ACC_SYNTHETIC) == 0;
+    return !classTree.isInterface() && !classTree.isSynthetic();
   }
 
   private boolean hasLineNumbers(ClassTree classTree) {

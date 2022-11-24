@@ -14,15 +14,10 @@
  */
 package org.pitest.classinfo;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Type;
 import org.pitest.bytecode.ASMVersion;
 import org.pitest.functional.F5;
 
@@ -56,7 +51,6 @@ public final class ClassInfoVisitor extends ClassVisitor {
   public void visit(final int version, final int access, final String name,
       final String signature, final String superName, final String[] interfaces) {
     super.visit(version, access, name, signature, superName, interfaces);
-    this.classInfo.access = access;
     this.classInfo.superClass = superName;
   }
 
@@ -87,14 +81,6 @@ public final class ClassInfoVisitor extends ClassVisitor {
     }
   }
 
-  @Override
-  public AnnotationVisitor visitAnnotation(final String desc,
-      final boolean visible) {
-    final String type = desc.substring(1, desc.length() - 1);
-    this.classInfo.registerAnnotation(type);
-    return new ClassAnnotationValueVisitor(this.classInfo, ClassName.fromString(type));
-  }
-
   public MethodVisitor visitMethodIfRequired(final int access,
       final String name, final String desc, final String signature,
       final String[] exceptions) {
@@ -108,59 +94,6 @@ public final class ClassInfoVisitor extends ClassVisitor {
     return this.filter.apply(access, name, desc, signature, exceptions);
   }
 
-
-  private static class ClassAnnotationValueVisitor extends AnnotationVisitor {
-    private final ClassInfoBuilder classInfo;
-    private final ClassName        annotation;
-
-    ClassAnnotationValueVisitor(ClassInfoBuilder classInfo,
-        ClassName annotation) {
-      super(ASMVersion.ASM_VERSION, null);
-      this.classInfo = classInfo;
-      this.annotation = annotation;
-    }
-
-    @Override
-    public void visit(String name, Object value) {
-      if (name.equals("value")) {
-        this.classInfo.registerClassAnnotationValue(this.annotation,
-            simplify(value));
-      }
-      super.visit(name, value);
-    }
-
-    @Override
-    public AnnotationVisitor visitArray(String name) {
-      if (name.equals("value")) {
-        final List<Object> arrayValue = new ArrayList<>();
-
-        return new AnnotationVisitor(ASMVersion.ASM_VERSION, null) {
-          @Override
-          public void visit(String name, Object value) {
-            arrayValue.add(simplify(value));
-            super.visit(name, value);
-          }
-
-          @Override
-          public void visitEnd() {
-            ClassAnnotationValueVisitor.this.classInfo
-                .registerClassAnnotationValue(
-                    ClassAnnotationValueVisitor.this.annotation,
-                    arrayValue.toArray());
-          }
-        };
-      }
-      return super.visitArray(name);
-    }
-
-    private static Object simplify(Object value) {
-      Object newValue = value;
-      if (value instanceof Type) {
-        newValue = ((Type) value).getClassName();
-      }
-      return newValue;
-    }
-  }
 }
 
 class InfoMethodVisitor extends MethodVisitor {
@@ -177,13 +110,4 @@ class InfoMethodVisitor extends MethodVisitor {
     this.classInfo.registerCodeLine(line);
 
   }
-
-  @Override
-  public AnnotationVisitor visitAnnotation(final String desc,
-      final boolean visible) {
-    final String type = desc.substring(1, desc.length() - 1);
-    this.classInfo.registerAnnotation(type);
-    return super.visitAnnotation(desc, visible);
-  }
-
 }

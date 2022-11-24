@@ -23,10 +23,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.Serializable;
-
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -110,32 +107,6 @@ public class RepositoryTest {
     verify(this.source, times(1)).getBytes("foo");
   }
 
-  @Test
-  public void shouldDetectInterfacesAsInterfaces() {
-    final Optional<ClassInfo> anInterface = this.testee
-        .fetchClass(Serializable.class);
-    assertTrue(anInterface.get().isInterface());
-  }
-
-  @Test
-  public void shouldDetectInterfacesAsAbstract() {
-    final Optional<ClassInfo> anInterface = this.testee
-        .fetchClass(Serializable.class);
-    assertTrue(anInterface.get().isAbstract());
-  }
-
-  @Test
-  public void shouldDetectConcreteClassesAsNotInterfaces() {
-    final Optional<ClassInfo> aClass = this.testee.fetchClass(String.class);
-    assertFalse(aClass.get().isInterface());
-  }
-
-  @Test
-  public void shouldDetectConcreteClassesAsNotAbstract() {
-    final Optional<ClassInfo> aClass = this.testee.fetchClass(String.class);
-    assertFalse(aClass.get().isAbstract());
-  }
-
   public static class SimpleInnerClass {
 
   }
@@ -215,32 +186,8 @@ public class RepositoryTest {
     aClass.get().isCodeLine(139); // flakey
   }
 
-  @Ignore
-  static class Annotated {
 
-  }
-
-  @Test
-  public void shouldRecordClassLevelAnnotations() {
-    final Optional<ClassInfo> aClass = this.testee.fetchClass(Annotated.class);
-    assertTrue(aClass.get().hasAnnotation(Ignore.class));
-  }
-
-  static class HasAnnotatedMethod {
-    @Test
-    public void foo() {
-
-    }
-  }
-
-  @Test
-  public void shouldRecordMethodLevelAnnotations() {
-    final Optional<ClassInfo> aClass = this.testee
-        .fetchClass(HasAnnotatedMethod.class);
-    assertTrue(aClass.get().hasAnnotation(Test.class));
-  }
-
-  static interface ITop {
+  interface ITop {
 
   }
 
