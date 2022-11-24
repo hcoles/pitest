@@ -76,6 +76,8 @@ public class Repository implements ClassInfoSource {
   }
 
   public Optional<byte[]> querySource(final ClassName name) {
+    // cost of scanning the entire classpath is high, so avoid repeatedly
+    // looking for the same unresolvable classes
     if (this.unknownClasses.contains(name)) {
       return Optional.empty();
     }

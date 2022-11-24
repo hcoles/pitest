@@ -3,11 +3,11 @@ package org.pitest.coverage;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
-import org.pitest.functional.FCollection;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class LegacyClassCoverage implements ReportCoverage {
 
     private final CodeSource code;
-    private final Map<String, Collection<ClassTree>> classesForFile;
+    private final Map<String, List<ClassLines>> classesForFile;
     private final Map<ClassName, Map<ClassLine, Set<TestInfo>>> lineCoverage  = new LinkedHashMap<>();
     private final Map<BlockLocation, Set<Integer>> blocksToLines = new LinkedHashMap<>();
     private final LineMap lm;
@@ -31,8 +31,8 @@ public class LegacyClassCoverage implements ReportCoverage {
     public LegacyClassCoverage(CodeSource code, LineMap lm) {
         this.code = code;
         this.lm = lm;
-        this.classesForFile = FCollection.bucket(code.codeTrees().collect(Collectors.toList()),
-                keyFromClassInfo());
+        this.classesForFile = code.codeTrees()
+                .collect(Collectors.groupingBy(keyFromClassInfo(), Collectors.mapping(tree -> new ClassLines(tree.name(), tree.codeLineNumbers()), Collectors.toList())));
     }
 
     public void loadBlockDataOnly(Collection<BlockLocation> coverageData) {
@@ -69,15 +69,7 @@ public class LegacyClassCoverage implements ReportCoverage {
     @Override
     public Collection<ClassLines> getClassesForFile(String sourceFile,
                                                    String packageName) {
-        final Collection<ClassTree> value = classesForFile.get(
-                keyFromSourceAndPackage(sourceFile, packageName));
-        if (value == null) {
-            return Collections.emptyList();
-        } else {
-            return value.stream()
-                    .map(ClassLines::fromTree)
-                    .collect(Collectors.toList());
-        }
+        return classesForFile.getOrDefault(keyFromSourceAndPackage(sourceFile, packageName), Collections.emptyList());
     }
 
     public Collection<TestInfo> getTestsForClass(ClassName clazz) {
