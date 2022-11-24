@@ -17,18 +17,21 @@ package org.pitest.classinfo;
 import java.math.BigInteger;
 import java.util.Optional;
 
+/**
+ * Captures information about a class, its position within a hierarchy. Changes to
+ * a class between runs are tracked by calculating the hash of its bytecode and the
+ * bytecode of classes it has a strong relationship to.
+ */
 public final class ClassInfo {
 
   private final ClassIdentifier        id;
   private final ClassPointer           outerClass;
   private final ClassPointer           superClass;
-  private final String                 sourceFile;
 
   public ClassInfo(ClassPointer superClass, ClassPointer outerClass, ClassInfoBuilder builder) {
     this.superClass = superClass;
     this.outerClass = outerClass;
     this.id = builder.id;
-    this.sourceFile = builder.sourceFile;
   }
   public ClassIdentifier getId() {
     return this.id;
@@ -44,10 +47,6 @@ public final class ClassInfo {
 
   public Optional<ClassInfo> getSuperClass() {
     return getParent();
-  }
-
-  public String getSourceFileName() {
-    return this.sourceFile;
   }
 
   public boolean descendsFrom(final Class<?> clazz) {

@@ -19,5 +19,4 @@ class ClassInfoBuilder {
   ClassIdentifier              id;
   String                       outerClass;
   String                       superClass;
-  String                       sourceFile;
 }

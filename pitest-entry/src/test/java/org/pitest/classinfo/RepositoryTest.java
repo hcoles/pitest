@@ -196,7 +196,7 @@ public class RepositoryTest {
   }
 
   @Test
-  public void shouldCorrectlyNegotiateClassHierachies() {
+  public void shouldCorrectlyNegotiateClassHierarchies() {
     final Optional<ClassInfo> aClass = this.testee.fetchClass(Bottom.class);
     assertTrue(aClass.get().descendsFrom(Middle.class));
     assertTrue(aClass.get().descendsFrom(Top.class));
@@ -205,15 +205,9 @@ public class RepositoryTest {
   }
 
   @Test
-  public void doesNotTreatInterfacesAsPartOfClassHierachy() {
+  public void doesNotTreatInterfacesAsPartOfClassHierarchy() {
     final Optional<ClassInfo> aClass = this.testee.fetchClass(Bottom.class);
     assertFalse(aClass.get().descendsFrom(ITop.class));
-  }
-
-  @Test
-  public void shouldRecordSourceFile() {
-    final Optional<ClassInfo> aClass = this.testee.fetchClass(String.class);
-    assertEquals("String.java", aClass.get().getSourceFileName());
   }
 
   @Test

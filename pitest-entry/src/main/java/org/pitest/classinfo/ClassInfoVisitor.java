@@ -43,7 +43,6 @@ public final class ClassInfoVisitor extends ClassVisitor {
   @Override
   public void visitSource(final String source, final String debug) {
     super.visitSource(source, debug);
-    this.classInfo.sourceFile = source;
   }
 
   @Override

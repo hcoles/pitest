@@ -14,18 +14,20 @@
  */
 package org.pitest.classinfo;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 import org.pitest.coverage.codeassist.ClassUtils;
 
 public class ClassInfoVisitorTest {
   @Test
-  public void shouldRecordSourceFile() throws ClassNotFoundException {
+  public void shouldRecordSuperClass() throws ClassNotFoundException {
     final String sampleName = String.class.getName();
     final ClassInfoBuilder actual = getClassInfo(sampleName,
         ClassUtils.classAsBytes(sampleName));
-    assertEquals("String.java", actual.sourceFile);
+
+    assertThat(actual.superClass).isEqualTo("java/lang/Object");
+
   }
 
   private ClassInfoBuilder getClassInfo(final String name, final byte[] bytes) {
