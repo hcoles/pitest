@@ -1,6 +1,6 @@
 package org.pitest.coverage;
 
-import org.pitest.classinfo.ClassInfo;
+import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
 import org.pitest.functional.FCollection;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class LegacyClassCoverage implements ReportCoverage {
 
     private final CodeSource code;
-    private final Map<String, Collection<ClassInfo>> classesForFile;
+    private final Map<String, Collection<ClassTree>> classesForFile;
     private final Map<ClassName, Map<ClassLine, Set<TestInfo>>> lineCoverage  = new LinkedHashMap<>();
     private final Map<BlockLocation, Set<Integer>> blocksToLines = new LinkedHashMap<>();
     private final LineMap lm;
@@ -31,7 +31,7 @@ public class LegacyClassCoverage implements ReportCoverage {
     public LegacyClassCoverage(CodeSource code, LineMap lm) {
         this.code = code;
         this.lm = lm;
-        this.classesForFile = FCollection.bucket(code.getCode(),
+        this.classesForFile = FCollection.bucket(code.codeTrees().collect(Collectors.toList()),
                 keyFromClassInfo());
     }
 
@@ -41,8 +41,12 @@ public class LegacyClassCoverage implements ReportCoverage {
     }
 
     @Override
-    public Collection<ClassInfo> getClassInfo(final Collection<ClassName> classes) {
-        return this.code.getClassInfo(classes);
+    public Collection<ClassTree> getClassInfo(final Collection<ClassName> classes) {
+        return classes.stream()
+                .map(c -> code.fetchClassBytes(c))
+                .filter(c -> c.isPresent())
+                .map(c -> ClassTree.fromBytes(c.get()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -65,14 +69,16 @@ public class LegacyClassCoverage implements ReportCoverage {
     }
 
     @Override
-    public Collection<ClassInfo> getClassesForFile(final String sourceFile,
+    public Collection<ClassLines> getClassesForFile(String sourceFile,
                                                    String packageName) {
-        final Collection<ClassInfo> value = classesForFile.get(
+        final Collection<ClassTree> value = classesForFile.get(
                 keyFromSourceAndPackage(sourceFile, packageName));
         if (value == null) {
             return Collections.emptyList();
         } else {
-            return value;
+            return value.stream()
+                    .map(ClassLines::fromTree)
+                    .collect(Collectors.toList());
         }
     }
 
@@ -108,8 +114,8 @@ public class LegacyClassCoverage implements ReportCoverage {
         return this.lineCoverage.getOrDefault(clazz, Collections.emptyMap());
     }
 
-    private static Function<ClassInfo, String> keyFromClassInfo() {
-        return c -> keyFromSourceAndPackage(c.getSourceFileName(), c.getName()
+    private static Function<ClassTree, String> keyFromClassInfo() {
+        return c -> keyFromSourceAndPackage(c.rawNode().sourceFile, c.name()
                 .getPackage().asJavaName());
     }
 

@@ -3,6 +3,8 @@ package org.pitest.mutationtest.report.html;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.pitest.classinfo.ClassInfo;
+import org.pitest.classinfo.ClassName;
+import org.pitest.coverage.ClassLines;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
@@ -14,7 +16,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -26,23 +30,23 @@ public class MutationTestSummaryDataTest {
 
   @Test
   public void shouldReturnCorrectNumberOfFilesWhenAnalysedInOneUnit() {
-    final ClassInfo clazz = makeClass();
+    final ClassLines clazz = makeClass();
     this.testee = buildSummaryData(clazz);
     assertEquals(1, this.testee.getTotals().getNumberOfFiles());
   }
 
   @Test
   public void shouldReturnCorrectNumberOfLinesWhenAnalysedInOneUnit() {
-    final int lines = 100;
-    final ClassInfo clazz = makeClass(lines);
+    final int lines = 4;
+    final ClassLines clazz = makeClass(lines);
     this.testee = buildSummaryData(clazz);
-    assertEquals(lines, this.testee.getTotals().getNumberOfLines());
+    assertThat(this.testee.getTotals().getNumberOfLines()).isEqualTo(lines);
   }
 
   @Test
   public void shouldReturnCorrectNumberOfCoveredLinesWhenAnalysedInOneUnit() {
     final int linesCovered = 100;
-    final ClassInfo clazz = makeClass(200);
+    final ClassLines clazz = makeClass(200);
     this.testee = buildSummaryData(clazz, linesCovered);
     assertEquals(linesCovered, this.testee.getTotals()
         .getNumberOfLinesCovered());
@@ -50,7 +54,7 @@ public class MutationTestSummaryDataTest {
 
   @Test
   public void shouldReturnCorrectNumberOfFilesWhenOneClassAnalysedInTwoUnits() {
-    final ClassInfo clazz = makeClass();
+    final ClassLines clazz = makeClass();
     this.testee = buildSummaryData(clazz);
     final MutationTestSummaryData additonalDataForSameClass = buildSummaryData(clazz);
     this.testee.add(additonalDataForSameClass);
@@ -60,7 +64,7 @@ public class MutationTestSummaryDataTest {
   @Test
   public void shouldReturnCorrectNumberOfLinesWhenAnalysedInTwoUnit() {
     final int lines = 100;
-    final ClassInfo clazz = makeClass(lines);
+    final ClassLines clazz = makeClass(lines);
     this.testee = buildSummaryData(clazz);
     final MutationTestSummaryData additonalDataForSameClass = buildSummaryData(clazz);
     this.testee.add(additonalDataForSameClass);
@@ -70,7 +74,7 @@ public class MutationTestSummaryDataTest {
   @Test
   public void shouldReturnCorrectNumberOfCoveredLinesWhenAnalysedInTwoUnits() {
     final int linesCovered = 100;
-    final ClassInfo clazz = makeClass(200);
+    final ClassLines clazz = makeClass(200);
     this.testee = buildSummaryData(clazz, linesCovered);
     final MutationTestSummaryData additonalDataForSameClass = buildSummaryData(
         clazz, linesCovered);
@@ -81,19 +85,19 @@ public class MutationTestSummaryDataTest {
 
   @Test
   public void shouldReturnCorrectNumberOfLinesWhenCombiningResultsForDifferentClasses() {
-    this.testee = buildSummaryData(makeClass(100));
-    final MutationTestSummaryData addiitonalDataForSameClass = buildSummaryData(makeClass(200));
-    this.testee.add(addiitonalDataForSameClass);
-    assertEquals(100 + 200, this.testee.getTotals().getNumberOfLines());
+    this.testee = buildSummaryData(makeClass("foo",100));
+    final MutationTestSummaryData additionalDataForSameClass = buildSummaryData(makeClass("bar", 200));
+    this.testee.add(additionalDataForSameClass);
+    assertThat(this.testee.getTotals().getNumberOfLines()).isEqualTo(100 + 200);
   }
 
   @Test
   public void shouldReturnCorrectNumberOfLinesCoveredWhenCombiningResultsForDifferentClasses() {
-    this.testee = buildSummaryData(makeClass(100), 300);
-    final MutationTestSummaryData addiitonalDataForSameClass = buildSummaryData(
-        makeClass(200), 100);
-    this.testee.add(addiitonalDataForSameClass);
-    assertEquals(300 + 100, this.testee.getTotals().getNumberOfLinesCovered());
+    this.testee = buildSummaryData(makeClass("foo",100), 20);
+    final MutationTestSummaryData additionalDataForSameClass = buildSummaryData(
+        makeClass("bar",200), 100);
+    this.testee.add(additionalDataForSameClass);
+    assertEquals(20 + 100, this.testee.getTotals().getNumberOfLinesCovered());
   }
 
   @Test
@@ -108,7 +112,7 @@ public class MutationTestSummaryDataTest {
 
   @Test
   public void shouldReturnCorrectTestStrengthWhenAnalysedInTwoUnits() {
-    ClassInfo clazz = makeClass();
+    ClassLines clazz = makeClass();
     this.testee = buildSummaryDataWithMutationResults(clazz,
             aMutationResult(DetectionStatus.NO_COVERAGE),
             aMutationResult(DetectionStatus.KILLED),
@@ -148,31 +152,33 @@ public class MutationTestSummaryDataTest {
     assertEquals(sortedSet, this.testee.getMutators());
   }
 
-  private ClassInfo makeClass() {
+  private ClassLines makeClass() {
     return makeClass(100);
   }
 
-  private ClassInfo makeClass(final int numberOfLines) {
-    final ClassInfo clazz = Mockito.mock(ClassInfo.class);
-    when(clazz.getNumberOfCodeLines()).thenReturn(numberOfLines);
-    return clazz;
+  private ClassLines makeClass(final int numberOfLines) {
+    return makeClass("foo", numberOfLines);
   }
 
-  private MutationTestSummaryData buildSummaryData(final ClassInfo clazz) {
+  private ClassLines makeClass(String name, int numberOfLines) {
+    return new ClassLines(ClassName.fromString(name), IntStream.range(1, numberOfLines + 1).boxed().collect(Collectors.toSet()));
+  }
+
+  private MutationTestSummaryData buildSummaryData(final ClassLines clazz) {
     return buildSummaryData(clazz, 0);
   }
 
-  private MutationTestSummaryData buildSummaryData(final ClassInfo clazz,
+  private MutationTestSummaryData buildSummaryData(ClassLines clazz,
       final int linesCovered) {
-    final Collection<ClassInfo> classes = Arrays.asList(clazz);
+    final Collection<ClassLines> classes = Arrays.asList(clazz);
     final Collection<MutationResult> results = Collections.emptyList();
     final Collection<String> mutators = Collections.emptyList();
     return new MutationTestSummaryData(FILE_NAME, results, mutators, classes,
         linesCovered);
   }
 
-  private MutationTestSummaryData buildSummaryDataWithMutationResults(final ClassInfo clazz, final MutationResult... mutationResults) {
-    final Collection<ClassInfo> classes = Arrays.asList(clazz);
+  private MutationTestSummaryData buildSummaryDataWithMutationResults(ClassLines clazz, final MutationResult... mutationResults) {
+    final Collection<ClassLines> classes = Arrays.asList(clazz);
     final Collection<String> mutators = Collections.emptyList();
     return new MutationTestSummaryData(FILE_NAME, Arrays.asList(mutationResults), mutators, classes,
             100);
@@ -183,7 +189,7 @@ public class MutationTestSummaryDataTest {
   }
 
   private MutationTestSummaryData buildSummaryDataMutators() {
-    final Collection<ClassInfo> classes = Collections.emptyList();
+    final Collection<ClassLines> classes = Collections.emptyList();
     final Collection<MutationResult> results = Collections.emptyList();
     final Collection<String> mutators = Mutator.all().stream()
             .map(MethodMutatorFactory::getName)

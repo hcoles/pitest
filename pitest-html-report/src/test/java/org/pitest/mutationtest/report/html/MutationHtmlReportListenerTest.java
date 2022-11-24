@@ -29,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.CoverageDatabase;
@@ -57,7 +58,7 @@ public class MutationHtmlReportListenerTest {
   private Writer                     writer;
 
   @Mock
-  private ClassInfo                  classInfo;
+  private ClassTree classInfo;
 
   @Before
   public void setUp() {
@@ -65,7 +66,7 @@ public class MutationHtmlReportListenerTest {
 
     when(this.outputStrategy.createWriterForFile(any(String.class)))
         .thenReturn(this.writer);
-    when(this.classInfo.getName()).thenReturn(ClassName.fromString("foo"));
+    when(this.classInfo.name()).thenReturn(ClassName.fromString("foo"));
     when(this.coverageDb.getClassInfo(any(Collection.class))).thenReturn(
         Collections.singleton(this.classInfo));
 

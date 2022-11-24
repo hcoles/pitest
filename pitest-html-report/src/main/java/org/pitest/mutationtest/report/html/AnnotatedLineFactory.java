@@ -14,8 +14,8 @@
  */
 package org.pitest.mutationtest.report.html;
 
-import org.pitest.classinfo.ClassInfo;
 import org.pitest.coverage.ClassLine;
+import org.pitest.coverage.ClassLines;
 import org.pitest.coverage.ReportCoverage;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.MutationResult;
@@ -33,11 +33,11 @@ public class AnnotatedLineFactory {
 
   private final Collection<MutationResult>         mutations;
   private final ReportCoverage                     statistics;
-  private final Collection<ClassInfo>              classesInFile;
+  private final Collection<ClassLines>             classesInFile;
 
   public AnnotatedLineFactory(
       final Collection<MutationResult> mutations,
-      final ReportCoverage statistics, final Collection<ClassInfo> classes) {
+      final ReportCoverage statistics, final Collection<ClassLines> classes) {
     this.mutations = mutations;
     this.statistics = statistics;
     this.classesInFile = classes;
@@ -97,8 +97,8 @@ public class AnnotatedLineFactory {
   }
 
   private boolean isLineCovered(final int line) {
-    final Predicate<ClassInfo> predicate = a -> !AnnotatedLineFactory.this.statistics.getTestsForClassLine(
-        new ClassLine(a.getName().asInternalName(), line)).isEmpty();
+    final Predicate<ClassLines> predicate = a -> !AnnotatedLineFactory.this.statistics.getTestsForClassLine(
+        new ClassLine(a.name().asInternalName(), line)).isEmpty();
     return FCollection.contains(this.classesInFile, predicate);
 
   }

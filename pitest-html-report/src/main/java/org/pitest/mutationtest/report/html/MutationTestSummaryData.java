@@ -24,7 +24,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.logging.Level;
 
-import org.pitest.classinfo.ClassInfo;
+import org.pitest.coverage.ClassLines;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.MutationResult;
@@ -35,13 +35,13 @@ public class MutationTestSummaryData {
   private final String                     fileName;
   private final Set<String>                mutators  = new TreeSet<>();
   private final Collection<MutationResult> mutations = new ArrayList<>();
-  private final Set<ClassInfo>             classes   = new HashSet<>();
+  private final Set<ClassLines>             classes   = new HashSet<>();
 
   private long                             numberOfCoveredLines;
 
   public MutationTestSummaryData(final String fileName,
       final Collection<MutationResult> results,
-      final Collection<String> mutators, final Collection<ClassInfo> classes,
+      final Collection<String> mutators, final Collection<ClassLines> classes,
       final long numberOfCoveredLines) {
     this.fileName = fileName;
     this.mutations.addAll(results);
@@ -68,7 +68,7 @@ public class MutationTestSummaryData {
   }
 
   public String getPackageName() {
-    Iterator<ClassInfo> iterator = getMutatedClasses().iterator();
+    Iterator<ClassLines> iterator = getMutatedClasses().iterator();
     if (!iterator.hasNext()) {
       Log.getLogger().log(Level.WARNING, "Can't get package name for " + fileName + "."
         + "There is no mutated classes. It may happen if you are using report-aggregate "
@@ -76,7 +76,7 @@ public class MutationTestSummaryData {
         + "and the dependency that contains the mutated code is missing");
       return "default";
     }
-    final String packageName = iterator.next().getName()
+    final String packageName = iterator.next().name()
       .asJavaName();
     final int lastDot = packageName.lastIndexOf('.');
     return lastDot > 0 ? packageName.substring(0, lastDot) : "default";
@@ -103,7 +103,7 @@ public class MutationTestSummaryData {
     return this.fileName;
   }
 
-  public Collection<ClassInfo> getMutatedClasses() {
+  public Collection<ClassLines> getMutatedClasses() {
     return this.classes;
   }
 
@@ -115,7 +115,7 @@ public class MutationTestSummaryData {
     return new MutationResultList(this.mutations);
   }
 
-  public Collection<ClassInfo> getClasses() {
+  public Collection<ClassLines> getClasses() {
     return this.classes;
   }
 
@@ -123,7 +123,7 @@ public class MutationTestSummaryData {
     return FCollection.fold(accumulateCodeLines(), 0, this.classes);
   }
 
-  private BiFunction<Integer, ClassInfo, Integer> accumulateCodeLines() {
+  private BiFunction<Integer, ClassLines, Integer> accumulateCodeLines() {
     return (a, b) -> a + b.getNumberOfCodeLines();
   }
 

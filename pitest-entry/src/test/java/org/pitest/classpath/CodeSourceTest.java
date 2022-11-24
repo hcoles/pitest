@@ -46,7 +46,7 @@ public class CodeSourceTest {
         Arrays.asList(this.foo.getName(), this.bar.getName()));
     assertEquals(Arrays.asList(this.foo, this.bar), this.testee.getCode());
   }
-  
+
   @Test
   public void shouldProvideNamesOfCodeClasses() {
     final ClassInfo foo = makeClassInfo("Foo");
