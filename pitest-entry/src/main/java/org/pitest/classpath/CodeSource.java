@@ -1,7 +1,6 @@
 package org.pitest.classpath;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -16,7 +15,6 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.NameToClassInfo;
 import org.pitest.classinfo.Repository;
 import org.pitest.classinfo.TestToClassMapper;
-import org.pitest.functional.FCollection;
 import org.pitest.functional.Streams;
 
 /**
@@ -52,9 +50,7 @@ public class CodeSource implements ClassInfoSource, ClassByteArraySource {
   }
 
   public Set<ClassName> getCodeUnderTestNames() {
-    final Set<ClassName> codeClasses = new HashSet<>();
-    FCollection.mapTo(getCode(), ClassInfo.toClassName(), codeClasses);
-    return codeClasses;
+    return this.classPath.code().stream().collect(Collectors.toSet());
   }
 
   public Stream<ClassTree> testTrees() {

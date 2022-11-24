@@ -1,14 +1,12 @@
 package org.pitest.coverage;
 
-import org.objectweb.asm.tree.LineNumberNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassName;
 
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-public class ClassLines {
+public final class ClassLines {
     private final ClassName name;
     private final Set<Integer> codeLines;
 
@@ -18,12 +16,7 @@ public class ClassLines {
     }
 
     public static ClassLines fromTree(ClassTree classTree) {
-        Set<Integer> lines = classTree.methods().stream()
-                .flatMap(m -> m.instructions().stream()
-                        .filter(n -> n instanceof LineNumberNode)
-                        .map(n -> ((LineNumberNode) n).line))
-                .collect(Collectors.toSet());
-        return new ClassLines(classTree.name(), lines);
+        return new ClassLines(classTree.name(), classTree.codeLineNumbers());
     }
 
     public ClassName name() {

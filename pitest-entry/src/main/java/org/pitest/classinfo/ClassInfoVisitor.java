@@ -16,7 +16,6 @@ package org.pitest.classinfo;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.pitest.bytecode.ASMVersion;
 import org.pitest.functional.F5;
@@ -104,10 +103,4 @@ class InfoMethodVisitor extends MethodVisitor {
     this.classInfo = classInfo;
   }
 
-  @Override
-  public void visitLineNumber(final int line, final Label start) {
-
-    this.classInfo.registerCodeLine(line);
-
-  }
 }

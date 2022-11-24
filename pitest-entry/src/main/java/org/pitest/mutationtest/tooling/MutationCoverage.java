@@ -256,7 +256,7 @@ public class MutationCoverage {
   private void recordClassPath(HistoryStore history, CoverageDatabase coverageData) {
     final Set<ClassName> allClassNames = getAllClassesAndTests(coverageData);
     final Collection<HierarchicalClassId> ids = FCollection.map(
-        this.code.getClassInfo(allClassNames), ClassInfo.toFullClassId());
+        this.code.getClassInfo(allClassNames), ClassInfo::getHierarchicalId);
     history.recordClassPath(ids, coverageData);
   }
 

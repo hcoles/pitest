@@ -15,59 +15,11 @@
 package org.pitest.classinfo;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.pitest.coverage.codeassist.ClassUtils;
-import org.pitest.coverage.codeassist.samples.Bridge.HasBridgeMethod;
-import org.pitest.coverage.codeassist.samples.HasDefaultConstructor;
-import org.pitest.coverage.codeassist.samples.NoDefaultConstructor;
 
 public class ClassInfoVisitorTest {
-
-  @Test
-  public void shouldDetectStandardCodeLines() throws Exception {
-    final String sampleName = NoDefaultConstructor.class.getName();
-    final ClassInfoBuilder actual = getClassInfo(sampleName,
-        ClassUtils.classAsBytes(sampleName));
-
-    assertTrue(actual.codeLines.contains(25));
-  }
-
-  @Test
-  public void shouldDetectCodeLineAtClassDeclarationsWhenClassHasDefaultConstructor()
-      throws Exception {
-    final String sampleName = HasDefaultConstructor.class.getName();
-    final ClassInfoBuilder actual = getClassInfo(sampleName,
-        ClassUtils.classAsBytes(sampleName));
-    assertTrue(
-        "first line of class with default constructor should be a code line",
-        actual.codeLines.contains(17));
-    assertFalse("line before should not be a code line",
-        actual.codeLines.contains(16));
-  }
-
-  @Test
-  public void shouldNotDetectCodeLineAtClassDeclarationsWhenClassHasNoDefaultConstructor()
-      throws Exception {
-    final String sampleName = NoDefaultConstructor.class.getName();
-    final ClassInfoBuilder actual = getClassInfo(sampleName,
-        ClassUtils.classAsBytes(sampleName));
-    assertFalse(
-        "first line of class without default constructor should not be a code line",
-        actual.codeLines.contains(17));
-  }
-
-  @Test
-  public void shouldNotRecordLineNumbersFromSyntheticBridgeMethods()
-      throws Exception {
-    final String sampleName = HasBridgeMethod.class.getName();
-    final ClassInfoBuilder actual = getClassInfo(sampleName,
-        ClassUtils.classAsBytes(sampleName));
-    assertFalse(actual.codeLines.contains(1));
-  }
-
   @Test
   public void shouldRecordSourceFile() throws ClassNotFoundException {
     final String sampleName = String.class.getName();

@@ -253,7 +253,7 @@ public class CoverageDataTest {
     this.testee.calculateClassCoverage(cr.build());
 
     final CoverageSummary actual = this.testee.createSummary();
-    assertEquals(4, actual.getNumberOfCoveredLines());
+    assertThat(actual.getNumberOfCoveredLines()).isEqualTo(4);
   }
 
   private CoverageResult makeCoverageResult(final String clazz,

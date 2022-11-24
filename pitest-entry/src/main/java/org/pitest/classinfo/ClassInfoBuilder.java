@@ -14,19 +14,10 @@
  */
 package org.pitest.classinfo;
 
-import java.util.HashSet;
-import java.util.Set;
-
 class ClassInfoBuilder {
 
   ClassIdentifier              id;
   String                       outerClass;
   String                       superClass;
   String                       sourceFile;
-  final Set<Integer>           codeLines             = new HashSet<>();
-
-  public void registerCodeLine(final int line) {
-    this.codeLines.add(line);
-  }
-
 }

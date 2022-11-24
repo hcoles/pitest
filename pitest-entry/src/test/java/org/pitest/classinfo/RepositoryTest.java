@@ -179,14 +179,6 @@ public class RepositoryTest {
     assertEquals(Optional.empty(), aClass.get().getSuperClass());
   }
 
-  @Test
-  public void shouldReportCodeLines() {
-    final Optional<ClassInfo> aClass = this.testee
-        .fetchClass(RepositoryTest.class);
-    aClass.get().isCodeLine(139); // flakey
-  }
-
-
   interface ITop {
 
   }

@@ -253,8 +253,7 @@ public class TestMutationTesting {
 
     final CoverageDatabase coverageData = coverageGenerator.calculateCoverage();
 
-    final Collection<ClassName> codeClasses = FCollection.map(code.getCode(),
-        ClassInfo.toClassName());
+    final Collection<ClassName> codeClasses = FCollection.map(code.getCode(), ClassInfo::getName);
 
     final EngineArguments arguments = EngineArguments.arguments()
         .withMutators(mutators);

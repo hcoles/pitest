@@ -15,14 +15,11 @@
 package org.pitest.classinfo;
 
 import java.math.BigInteger;
-import java.util.Set;
-import java.util.function.Function;
 import java.util.Optional;
 
-public class ClassInfo {
+public final class ClassInfo {
 
   private final ClassIdentifier        id;
-  private final Set<Integer>           codeLines;
   private final ClassPointer           outerClass;
   private final ClassPointer           superClass;
   private final String                 sourceFile;
@@ -31,18 +28,8 @@ public class ClassInfo {
     this.superClass = superClass;
     this.outerClass = outerClass;
     this.id = builder.id;
-    this.codeLines = builder.codeLines;
     this.sourceFile = builder.sourceFile;
   }
-
-  public int getNumberOfCodeLines() {
-    return this.codeLines.size();
-  }
-
-  public boolean isCodeLine(final int line) {
-    return this.codeLines.contains(line);
-  }
-
   public ClassIdentifier getId() {
     return this.id;
   }
@@ -113,11 +100,4 @@ public class ClassInfo {
     return this.id.getName().asJavaName();
   }
 
-  public static Function<ClassInfo, ClassName> toClassName() {
-    return ClassInfo::getName;
-  }
-
-  public static Function<ClassInfo, HierarchicalClassId> toFullClassId() {
-    return ClassInfo::getHierarchicalId;
-  }
 }

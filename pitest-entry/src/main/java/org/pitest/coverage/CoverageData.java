@@ -15,6 +15,7 @@
 
 package org.pitest.coverage;
 
+import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
@@ -166,8 +167,9 @@ public class CoverageData implements CoverageDatabase {
   }
 
   private int numberOfLines() {
-    return FCollection.fold( (a, clazz) -> a + clazz.getNumberOfCodeLines(), 0,
-        this.code.getClassInfo(allClasses()));
+    return this.code.codeTrees()
+            .map(ClassTree::numberOfCodeLines)
+            .reduce(0, Integer::sum);
   }
 
   private int coveredLines() {
