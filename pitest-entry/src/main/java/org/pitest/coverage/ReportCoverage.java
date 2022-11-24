@@ -1,15 +1,15 @@
 package org.pitest.coverage;
 
-import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassName;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Subset of coverage interface used by legacy html report
  */
 public interface ReportCoverage {
-    Collection<ClassTree> getClassInfo(Collection<ClassName> classes);
+    Optional<ClassLines> getCoveredLinesForClass(ClassName clazz);
 
     int getNumberOfCoveredLines(Collection<ClassName> clazz);
 

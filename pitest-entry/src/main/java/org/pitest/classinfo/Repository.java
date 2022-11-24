@@ -69,7 +69,7 @@ public class Repository implements ClassInfoSource {
     if (bytes.isPresent()) {
       final ClassInfoBuilder classData = ClassInfoVisitor.getClassInfo(name,
           bytes.get(), this.hashFunction.hash(bytes.get()));
-      return contructClassInfo(classData);
+      return constructClassInfo(classData);
     } else {
       return Optional.empty();
     }
@@ -88,7 +88,7 @@ public class Repository implements ClassInfoSource {
     return option;
   }
 
-  private Optional<ClassInfo> contructClassInfo(final ClassInfoBuilder classData) {
+  private Optional<ClassInfo> constructClassInfo(final ClassInfoBuilder classData) {
     return Optional.ofNullable(new ClassInfo(resolveClass(classData.superClass),
         resolveClass(classData.outerClass), classData));
   }

@@ -35,8 +35,7 @@ public class ClassTree {
     cr.accept(classNode, ClassReader.EXPAND_FRAMES);
     return new ClassTree(classNode);
   }
-
-
+  
   public List<MethodTree> methods() {
     if (this.lazyMethods != null) {
       return this.lazyMethods;

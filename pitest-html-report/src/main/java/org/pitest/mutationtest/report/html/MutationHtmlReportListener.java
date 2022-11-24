@@ -42,7 +42,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 public class MutationHtmlReportListener implements MutationResultListener {
 
@@ -121,11 +120,10 @@ public class MutationHtmlReportListener implements MutationResultListener {
   public MutationTestSummaryData createSummaryData(
       final ReportCoverage coverage, final ClassMutationResults data) {
 
-    final Collection<ClassLines> lines = this.coverage.getClassInfo(
-                    Collections.singleton(data
-                            .getMutatedClass())).stream()
-            .map(ClassLines::fromTree)
-            .collect(Collectors.toList());
+    final List<ClassLines> lines = this.coverage.getCoveredLinesForClass(data
+                    .getMutatedClass())
+            .map(l -> Collections.singletonList(l))
+            .orElse(Collections.emptyList());
 
     return new MutationTestSummaryData(data.getFileName(), data.getMutations(),
         this.mutatorNames, lines, coverage.getNumberOfCoveredLines(Collections

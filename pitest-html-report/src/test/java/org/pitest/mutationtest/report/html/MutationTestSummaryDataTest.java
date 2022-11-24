@@ -1,8 +1,6 @@
 package org.pitest.mutationtest.report.html;
 
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.ClassLines;
 import org.pitest.mutationtest.DetectionStatus;
@@ -20,7 +18,6 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 
 public class MutationTestSummaryDataTest {
 

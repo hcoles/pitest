@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.pitest.classinfo.ClassInfo;
 import org.pitest.mutationtest.MutationResult;
 
 public class MutationTestSummaryDataFileNameComparatorTest {

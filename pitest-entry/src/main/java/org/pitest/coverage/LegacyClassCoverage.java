@@ -41,12 +41,10 @@ public class LegacyClassCoverage implements ReportCoverage {
     }
 
     @Override
-    public Collection<ClassTree> getClassInfo(final Collection<ClassName> classes) {
-        return classes.stream()
-                .map(c -> code.fetchClassBytes(c))
-                .filter(c -> c.isPresent())
-                .map(c -> ClassTree.fromBytes(c.get()))
-                .collect(Collectors.toList());
+    public Optional<ClassLines> getCoveredLinesForClass(final ClassName clazz) {
+        return code.fetchClassBytes(clazz)
+                .map(ClassTree::fromBytes)
+                .map(ClassLines::fromTree);
     }
 
     @Override

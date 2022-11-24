@@ -28,7 +28,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.classinfo.ClassInfo;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.CodeSource;
 import org.pitest.help.PitHelpError;
@@ -52,7 +51,7 @@ public class DefaultBuildVerifierTest {
 
   }
 
-  private static interface AnInterface {
+  private interface AnInterface {
 
   }
 
@@ -87,7 +86,7 @@ public class DefaultBuildVerifierTest {
 
   @Test
   public void shouldNotThrowAnErrorWhenNoClassesFound() {
-    when(this.code.getCode()).thenReturn(Collections.<ClassInfo> emptyList());
+    when(this.code.codeTrees()).thenReturn(Stream.empty());
     try {
       this.testee.verify();
     } catch (final PitHelpError e) {

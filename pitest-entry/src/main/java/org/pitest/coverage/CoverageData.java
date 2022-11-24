@@ -15,7 +15,6 @@
 
 package org.pitest.coverage;
 
-import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
@@ -96,12 +95,8 @@ public class CoverageData implements CoverageDatabase {
   }
 
   @Override
-  public Collection<ClassTree> getClassInfo(final Collection<ClassName> classes) {
-    return classes.stream()
-            .map(c -> code.fetchClassBytes(c))
-            .filter(m -> m.isPresent())
-            .map(maybe -> ClassTree.fromBytes(maybe.get()))
-            .collect(Collectors.toList());
+  public Optional<ClassLines> getCoveredLinesForClass(ClassName clazz) {
+    return legacyClassCoverage.getCoveredLinesForClass(clazz);
   }
 
   @Override

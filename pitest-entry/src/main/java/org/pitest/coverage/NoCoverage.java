@@ -1,16 +1,16 @@
 package org.pitest.coverage;
 
-import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassName;
 
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 public class NoCoverage implements CoverageDatabase {
     @Override
-    public Collection<ClassTree> getClassInfo(Collection<ClassName> classes) {
-        return Collections.emptyList();
+    public Optional<ClassLines> getCoveredLinesForClass(ClassName clazz) {
+        return Optional.empty();
     }
 
     @Override

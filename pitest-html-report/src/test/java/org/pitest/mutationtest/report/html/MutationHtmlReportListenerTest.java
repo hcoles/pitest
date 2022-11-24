@@ -29,9 +29,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.bytecode.analysis.ClassTree;
-import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
+import org.pitest.coverage.ClassLines;
 import org.pitest.coverage.CoverageDatabase;
 import java.util.Optional;
 import org.pitest.mutationtest.DetectionStatus;
@@ -57,8 +56,7 @@ public class MutationHtmlReportListenerTest {
   @Mock
   private Writer                     writer;
 
-  @Mock
-  private ClassTree classInfo;
+  private ClassLines classInfo = new ClassLines(ClassName.fromString("foo"), Collections.emptySet());
 
   @Before
   public void setUp() {
@@ -66,9 +64,9 @@ public class MutationHtmlReportListenerTest {
 
     when(this.outputStrategy.createWriterForFile(any(String.class)))
         .thenReturn(this.writer);
-    when(this.classInfo.name()).thenReturn(ClassName.fromString("foo"));
-    when(this.coverageDb.getClassInfo(any(Collection.class))).thenReturn(
-        Collections.singleton(this.classInfo));
+
+    when(this.coverageDb.getCoveredLinesForClass(any(ClassName.class))).thenReturn(
+        Optional.of(this.classInfo));
 
     this.testee = new MutationHtmlReportListener(StandardCharsets.UTF_8, this.coverageDb,
         this.outputStrategy, Collections.<String>emptyList(), this.sourceLocator);
