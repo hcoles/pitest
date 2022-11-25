@@ -64,6 +64,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -115,7 +116,7 @@ public class MutationCoverage {
 
     final long t0 = System.currentTimeMillis();
 
-    verifyBuildSuitableForMutationTesting();
+    List<String> issues = verifyBuildSuitableForMutationTesting();
 
     checkExcludedRunners();
 
@@ -135,16 +136,16 @@ public class MutationCoverage {
       return emptyStatistics();
     }
 
-    return runAnalysis(runtime, t0, args, engine);
+    return runAnalysis(runtime, t0, args, engine, issues);
 
   }
 
   private CombinedStatistics emptyStatistics() {
     MutationStatistics mutationStatistics = new MutationStatistics(emptyList(),0,0,0,0);
-    return new CombinedStatistics(mutationStatistics, new CoverageSummary(0,0));
+    return new CombinedStatistics(mutationStatistics, new CoverageSummary(0,0), Collections.emptyList());
   }
 
-  private CombinedStatistics runAnalysis(Runtime runtime, long t0, EngineArguments args, MutationEngine engine) {
+  private CombinedStatistics runAnalysis(Runtime runtime, long t0, EngineArguments args, MutationEngine engine, List<String> issues) {
     CoverageDatabase coverageData = coverage().calculateCoverage();
     HistoryStore history =  this.strategies.history();
 
@@ -182,7 +183,7 @@ public class MutationCoverage {
     LOG.info("Completed in " + timeSpan(t0));
 
     CombinedStatistics combined = new CombinedStatistics(stats.getStatistics(),
-            coverageData.createSummary());
+            coverageData.createSummary(), issues);
 
     printStats(combined);
 
@@ -271,8 +272,8 @@ public class MutationCoverage {
     return names;
   }
 
-  private void verifyBuildSuitableForMutationTesting() {
-    this.strategies.buildVerifier().verify();
+  private List<String> verifyBuildSuitableForMutationTesting() {
+    return this.strategies.buildVerifier().verify();
   }
 
   private void printStats(CombinedStatistics combinedStatistics) {
@@ -303,6 +304,12 @@ public class MutationCoverage {
     }
 
     stats.report(ps);
+
+    if (!combinedStatistics.getIssues().isEmpty()) {
+      ps.println();
+      ps.println("!! The following issues were detected during the run !!");
+      combinedStatistics.getIssues().forEach(ps::println);
+    }
   }
 
   private List<MutationAnalysisUnit> buildMutationTests(CoverageDatabase coverageData,

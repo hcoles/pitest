@@ -36,12 +36,6 @@ public class CodeSource implements ClassInfoSource, ClassByteArraySource {
     this.classRepository = classRepository;
   }
 
-  public Collection<ClassInfo> getCode() {
-    return this.classPath.code().stream()
-        .flatMap(nameToClassInfo())
-        .collect(Collectors.toList());
-  }
-
   public Stream<ClassTree> codeTrees() {
     return this.classPath.code().stream()
             .map(c -> this.getBytes(c.asJavaName()))

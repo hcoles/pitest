@@ -52,14 +52,14 @@ public class ClassTree {
   }
 
   public List<AnnotationNode> annotations() {
-    final List<AnnotationNode> annotaions = new ArrayList<>();
+    final List<AnnotationNode> annotations = new ArrayList<>();
     if (this.rawNode.invisibleAnnotations != null) {
-      annotaions.addAll(this.rawNode.invisibleAnnotations);
+      annotations.addAll(this.rawNode.invisibleAnnotations);
     }
     if (this.rawNode.visibleAnnotations != null) {
-      annotaions.addAll(this.rawNode.visibleAnnotations);
+      annotations.addAll(this.rawNode.visibleAnnotations);
     }
-    return annotaions;
+    return annotations;
   }
 
   public List<RecordComponentNode> recordComponents() {

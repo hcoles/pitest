@@ -21,6 +21,9 @@ import org.pitest.classpath.CodeSource;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 
+import java.util.Collections;
+import java.util.List;
+
 public class DefaultBuildVerifier implements BuildVerifier {
 
   private final CodeSource code;
@@ -30,7 +33,7 @@ public class DefaultBuildVerifier implements BuildVerifier {
   }
 
   @Override
-  public void verify() {
+  public List<String> verify() {
 
     // check we have at least one class that is not an interface
     // otherwise our checks will fire on an empty project
@@ -38,13 +41,14 @@ public class DefaultBuildVerifier implements BuildVerifier {
             .anyMatch(this::isMutable);
 
     if (!hasMutableCode) {
-      return;
+      return Collections.emptyList();
     }
 
     checkForLineNumbers();
 
     checkForDebugSourceFile();
 
+    return Collections.emptyList();
   }
 
   private void checkForDebugSourceFile() {

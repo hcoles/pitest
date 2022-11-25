@@ -19,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
 import java.util.stream.Stream;
 
 import org.junit.Before;
@@ -106,7 +105,7 @@ public class DefaultBuildVerifierTest {
 
   @Test
   public void doesNotErrorWhenNoClassesProvided() {
-    when(this.code.getCode()).thenReturn(Collections.emptyList());
+    when(this.code.codeTrees()).thenReturn(Stream.empty());
     assertThatCode(() -> this.testee.verify()).doesNotThrowAnyException();
   }
 

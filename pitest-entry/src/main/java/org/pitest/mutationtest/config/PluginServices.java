@@ -50,6 +50,7 @@ public class PluginServices {
     l.addAll(findTestPrioritisers());
     l.addAll(findInterceptors());
     l.addAll(findConfigurationUpdaters());
+    l.addAll(findVerifiers());
     return l;
   }
 
@@ -102,7 +103,7 @@ public class PluginServices {
     return adjustMissingFeatures(load(MutationInterceptorFactory.class));
   }
 
-  List<BuildVerifierFactory> findVerifiers() {
+  public List<BuildVerifierFactory> findVerifiers() {
     return new ArrayList<>(load(BuildVerifierFactory.class));
   }
 

@@ -398,7 +398,7 @@ public class PitMojoTest extends BasePitMojoTest {
     Iterable<Score> scores = Collections.<Score>emptyList();
     final MutationStatistics stats = new MutationStatistics(scores, 100, mutationScore, 100, 0);
     CoverageSummary sum = new CoverageSummary(lines, linesCovered);
-    final CombinedStatistics cs = new CombinedStatistics(stats, sum);
+    final CombinedStatistics cs = new CombinedStatistics(stats, sum, Collections.emptyList());
     when(
         this.executionStrategy.execute(any(File.class),
             any(ReportOptions.class), any(PluginServices.class), anyMap()))
@@ -410,7 +410,7 @@ public class PitMojoTest extends BasePitMojoTest {
     Iterable<Score> scores = Collections.<Score>emptyList();
     final MutationStatistics stats = new MutationStatistics(scores, totalMutations, mutationDetected, mutationsWithCoverage, 0);
     CoverageSummary sum = new CoverageSummary(0, 0);
-    final CombinedStatistics cs = new CombinedStatistics(stats, sum);
+    final CombinedStatistics cs = new CombinedStatistics(stats, sum, Collections.emptyList());
     when(
             this.executionStrategy.execute(any(File.class),
                     any(ReportOptions.class), any(PluginServices.class), anyMap()))
@@ -423,7 +423,7 @@ public class PitMojoTest extends BasePitMojoTest {
     int detected = 100;
     final MutationStatistics stats = new MutationStatistics(scores, detected + survivors, detected, detected + survivors, 0);
     CoverageSummary sum = new CoverageSummary(0, 0);
-    final CombinedStatistics cs = new CombinedStatistics(stats, sum);
+    final CombinedStatistics cs = new CombinedStatistics(stats, sum, Collections.emptyList());
     when(
         this.executionStrategy.execute(any(File.class),
             any(ReportOptions.class), any(PluginServices.class), anyMap()))

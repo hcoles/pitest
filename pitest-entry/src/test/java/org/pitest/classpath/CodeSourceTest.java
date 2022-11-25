@@ -11,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoMother;
 import org.pitest.classinfo.ClassName;
@@ -44,7 +43,7 @@ public class CodeSourceTest {
   public void shouldIdentifyAllNonTestCodeOnClassPathWhenNoTestsPresent() {
     when(this.classPath.code()).thenReturn(
         Arrays.asList(this.foo.getName(), this.bar.getName()));
-    assertEquals(Arrays.asList(this.foo, this.bar), this.testee.getCode());
+    assertThat(testee.getCodeUnderTestNames()).containsExactlyInAnyOrder(this.foo.getName(), this.bar.getName());
   }
 
   @Test
