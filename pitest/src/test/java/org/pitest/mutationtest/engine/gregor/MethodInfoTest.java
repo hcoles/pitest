@@ -31,10 +31,9 @@ public class MethodInfoTest {
   private static final String    NO_PARAMETERS          = "()V";
   private static final String    ONE_PARAMETER          = "(Ljava/lang/String;)V";
   private static final int       SYNTHETIC_MODIFIER     = Opcodes.ACC_SYNTHETIC;
-  private static final ClassInfo ENUMERATION_CLASS      = new ClassInfo(0, 0,
-      "", "",
-      "java/lang/Enum",
-      new String[0]);
+  private static final ClassInfo ENUMERATION_CLASS      = new ClassInfo(0,
+      "",
+      "java/lang/Enum");
   private final MethodInfo       methodInfo             = new MethodInfo();
 
   @Test
@@ -117,8 +116,8 @@ public class MethodInfoTest {
   @Test
   public void getDescriptionReturnsQualifiedMethodName() {
     final String EXAMPLE_CLASS_NAME = "org.pitest.Example";
-    final ClassInfo EXAMPLE_CLASS_INFO = new ClassInfo(0, 0,
-        EXAMPLE_CLASS_NAME, "", "", new String[0]);
+    final ClassInfo EXAMPLE_CLASS_INFO = new ClassInfo(0,
+        EXAMPLE_CLASS_NAME, "");
     final String EXAMPLE_METHOD_NAME = "myMethod";
     final String QUALIFIED_METHOD_NAME = EXAMPLE_CLASS_NAME + "::"
         + EXAMPLE_METHOD_NAME;
@@ -165,8 +164,8 @@ public class MethodInfoTest {
 
   @Test
   public void isGeneratedEnumMethodReturnsFalseForNonEnumClasses() {
-    final ClassInfo EXAMPLE_CLASS_INFO = new ClassInfo(0, 0,
-        "org/pitest/Example", "", "java/lang/Object", new String[0]);
+    final ClassInfo EXAMPLE_CLASS_INFO = new ClassInfo(0,
+        "org/pitest/Example", "java/lang/Object");
     final MethodInfo testee = this.methodInfo.withOwner(EXAMPLE_CLASS_INFO)
         .withAccess(STATIC_MODIFIER).withMethodName("values")
         .withMethodDescriptor(NO_PARAMETERS);

@@ -25,7 +25,7 @@ public class MethodInfo {
   private final String    methodDescriptor;
 
   public MethodInfo() {
-    this(new ClassInfo(0, 0, "", "", "", new String[0]), 0, "", "()V");
+    this(new ClassInfo( 0, "", ""), 0, "", "()V");
   }
 
   private MethodInfo(final ClassInfo owningClass, final int access,

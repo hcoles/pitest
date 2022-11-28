@@ -22,8 +22,7 @@ public class ClassInfoTest {
 
   @Test
   public void shouldIdentifyEnumsFromSuperClass() {
-    final ClassInfo testee = new ClassInfo(0, 0, "foo", "", "java/lang/Enum",
-        null);
+    final ClassInfo testee = new ClassInfo(0, "foo", "java/lang/Enum");
     assertTrue(testee.isEnum());
   }
 
