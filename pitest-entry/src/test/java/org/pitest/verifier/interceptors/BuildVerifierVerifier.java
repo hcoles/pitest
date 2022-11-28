@@ -1,10 +1,13 @@
 package org.pitest.verifier.interceptors;
 
 import org.assertj.core.api.ListAssert;
+import org.objectweb.asm.ClassWriter;
+import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassFilter;
 import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassPathRoot;
+import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.CodeSource;
 import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
@@ -12,16 +15,13 @@ import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.verify.BuildVerifierFactory;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -64,14 +64,25 @@ public class BuildVerifierVerifier {
     }
 
 
-   public static CodeSource codeSourceReturning(ClassName clazz, ClassName ... classes) {
+    public static CodeSource codeSourceForClasses(ClassTree... trees) {
+        List<Sample> samples = Arrays.stream(trees)
+                .map(t -> new Sample(t.name(), t))
+                .collect(Collectors.toList());
+        return codeSourceReturning(new SampleClassRoot(samples));
+    }
+
+
+    public static CodeSource codeSourceReturning(ClassName clazz, ClassName... classes) {
         List<ClassName> cs = new ArrayList<>();
         cs.add(clazz);
         cs.addAll(Arrays.stream(classes).collect(Collectors.toList()));
-       return codeSourceReturning(new NameOnlyClassPathRoot(cs.stream()
-               .map(ClassName::asJavaName)
-               .collect(Collectors.toSet())));
-   }
+
+        List<Sample> samples = cs.stream()
+                .map(c -> new Sample(c,aValidClass().rename(c)))
+                .collect(Collectors.toList());
+
+        return codeSourceReturning(new SampleClassRoot(samples));
+    }
 
     public static CodeSource codeSourceReturning(ClassPathRoot root) {
         final PathFilter pf = new PathFilter(p -> true, p -> true);
@@ -80,24 +91,31 @@ public class BuildVerifierVerifier {
         return new CodeSource(pcp);
     }
 
+    public static ClassTree aValidClass() {
+        return ClassTree.fromBytes(ClassloaderByteArraySource.fromContext()
+                .getBytes(EmptyClass.class.getName()).get());
+    }
+
     private static CodeSource emptyCodeSource() {
         final PathFilter pf = new PathFilter(p -> true, p -> true);
         final ProjectClassPaths pcp = new ProjectClassPaths(
                 new ClassPath(), new ClassFilter(c -> true, c -> true), pf);
         return new CodeSource(pcp);
     }
+}
 
+class EmptyClass {
 
 }
 
-class NameOnlyClassPathRoot implements ClassPathRoot {
+class SampleClassRoot implements ClassPathRoot {
 
-    private final Set<String> names;
+    private final Collection<Sample> samples;
 
-    NameOnlyClassPathRoot(Set<String> names) {
-        this.names = names;
+    SampleClassRoot(Collection<Sample> samples) {
+        this.samples = samples;
     }
-    
+
     @Override
     public URL getResource(String name) {
         throw new UnsupportedOperationException();
@@ -105,19 +123,33 @@ class NameOnlyClassPathRoot implements ClassPathRoot {
 
     @Override
     public InputStream getData(String name) {
-        if (names.contains(name)) {
-            return new ByteArrayInputStream(new byte[0]);
-        }
-        return null;
+        return samples.stream()
+                .filter(s -> s.className.equals(ClassName.fromString(name)))
+                .map(s -> s.clazz)
+                .filter(t -> t != null)
+                .map(this::asBytes)
+                .map(b -> new ByteArrayInputStream(b))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
     public Collection<String> classNames() {
-        return names;
+        return samples.stream()
+                .map(s -> s.className.asJavaName())
+                .collect(Collectors.toSet());
     }
 
     @Override
     public Optional<String> cacheLocation() {
         return Optional.empty();
     }
+
+
+    private byte[] asBytes(ClassTree tree) {
+        ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+        tree.rawNode().accept(classWriter);
+        return classWriter.toByteArray();
+    }
+
 }

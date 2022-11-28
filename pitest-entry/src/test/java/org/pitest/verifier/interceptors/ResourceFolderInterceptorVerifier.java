@@ -36,10 +36,7 @@ public class ResourceFolderInterceptorVerifier {
         final String clazz = makeClassName(sample, "kotlin");
         final Optional<byte[]> bs = source.getBytes(clazz);
         if (bs.isPresent()) {
-            final Sample p = new Sample();
-            p.className = ClassName.fromString(clazz);
-            p.clazz = ClassTree.fromBytes(bs.get());
-            return p;
+            return new Sample(ClassName.fromString(clazz), ClassTree.fromBytes(bs.get()));
         }
         throw new RuntimeException("Could not find" + sample);
 

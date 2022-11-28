@@ -38,7 +38,7 @@ public class ProjectClassPaths {
         this.classPath.getComponent(this.pathFilter.getCodeFilter())
         .findClasses(this.classFilter.getCode()),
         this.classFilter.getCode()).stream()
-        .map(ClassName.stringToClassName())
+        .map(ClassName::fromString)
         .collect(Collectors.toList());
   }
 
@@ -47,7 +47,7 @@ public class ProjectClassPaths {
         this.classPath.getComponent(this.pathFilter.getTestFilter())
         .findClasses(this.classFilter.getTest()),
         this.classFilter.getTest()).stream()
-        .map(ClassName.stringToClassName())
+        .map(ClassName::fromString)
         .collect(Collectors.toList());
   }
 

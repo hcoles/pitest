@@ -109,6 +109,11 @@ public class ClassTree {
     return (this.rawNode.access & Opcodes.ACC_SYNTHETIC) != 0;
   }
 
+  public ClassTree rename(ClassName name) {
+    this.rawNode.name = name.asInternalName();
+    return this;
+  }
+
   @Override
   public String toString() {
     final StringWriter writer = new StringWriter();
