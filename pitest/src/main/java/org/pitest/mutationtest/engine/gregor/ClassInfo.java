@@ -2,8 +2,6 @@ package org.pitest.mutationtest.engine.gregor;
 
 import java.util.function.Predicate;
 
-import org.pitest.functional.FArray;
-
 public class ClassInfo {
 
   private final int      version;
@@ -25,10 +23,6 @@ public class ClassInfo {
 
   public boolean isEnum() {
     return this.superName.equals("java/lang/Enum");
-  }
-
-  public boolean isGroovyClass() {
-    return FArray.contains(this.interfaces, isAGroovyClass());
   }
 
   private static Predicate<String> isAGroovyClass() {

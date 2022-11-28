@@ -119,11 +119,7 @@ public class GregorMutater implements Mutater {
 
   private Predicate<MethodInfo> filterMethods() {
     return and(this.filter, filterSyntheticMethods(),
-        isGeneratedEnumMethod().negate(), isGroovyClass().negate());
-  }
-
-  private static Predicate<MethodInfo> isGroovyClass() {
-    return MethodInfo::isInGroovyClass;
+        isGeneratedEnumMethod().negate());
   }
 
   private static Predicate<MethodInfo> filterSyntheticMethods() {

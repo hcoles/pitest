@@ -27,19 +27,4 @@ public class ClassInfoTest {
     assertTrue(testee.isEnum());
   }
 
-  @Test
-  public void shouldIdentifyGroovyObjects() {
-    final ClassInfo testee = new ClassInfo(0, 0, "foo", "", "foo",
-        new String[] { "groovy/lang/GroovyObject" });
-    assertTrue(testee.isGroovyClass());
-  }
-
-  @Test
-  public void shouldIdentifyGroovyClosures() {
-    final ClassInfo testee = new ClassInfo(0, 0, "foo", "",
-        "groovy.lang.Closure",
-        new String[] { "org/codehaus/groovy/runtime/GeneratedClosure" });
-    assertTrue(testee.isGroovyClass());
-  }
-
 }

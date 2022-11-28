@@ -21,7 +21,6 @@ import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.returns.PrimitiveReturnsMutator;
-import org.pitest.util.ResourceFolderByteArraySource;
 import org.pitest.verifier.mutants.MutatorVerifierStart;
 
 import java.util.Collection;
@@ -86,22 +85,6 @@ public class TestGregorMutater {
         assertThat(actualDetails).isNotEmpty();
     }
 
-
-    @Test
-    public void shouldNotMutateGroovyClasses() {
-        MutatorVerifierStart.forMutator(Mutator.all())
-                .withByteArraySource(new ResourceFolderByteArraySource())
-                .forClass("groovy/SomeGroovyCode")
-                .noMutantsCreated();
-    }
-
-    @Test
-    public void shouldNotMutateGroovyClosures() {
-        MutatorVerifierStart.forMutator(Mutator.all())
-                .withByteArraySource(new ResourceFolderByteArraySource())
-                .forClass("groovy/SomeGroovyCode$_mapToString_closure2")
-                .noMutantsCreated();
-    }
 
     @Test
     public void shouldRecordMutationsAsInSameBlockWhenForAStraightThroughMethod() {
