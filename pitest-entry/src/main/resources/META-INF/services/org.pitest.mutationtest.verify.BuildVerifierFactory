@@ -1,0 +1,4 @@
+org.pitest.mutationtest.verify.DefaultBuildVerifierFactory
+org.pitest.mutationtest.verify.MissingJUnit5PluginVerifierFactory
+org.pitest.mutationtest.verify.MissingTestNGPluginVerifierFactory
+org.pitest.mutationtest.verify.KotlinVerifierFactory

@@ -15,6 +15,7 @@
 
 package org.pitest.coverage;
 
+import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
@@ -33,7 +34,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -96,8 +96,8 @@ public class CoverageData implements CoverageDatabase {
   }
 
   @Override
-  public Collection<ClassInfo> getClassInfo(final Collection<ClassName> classes) {
-    return this.code.getClassInfo(classes);
+  public Optional<ClassLines> getCoveredLinesForClass(ClassName clazz) {
+    return legacyClassCoverage.getCoveredLinesForClass(clazz);
   }
 
   @Override
@@ -139,7 +139,7 @@ public class CoverageData implements CoverageDatabase {
   }
 
   @Override
-  public Collection<ClassInfo> getClassesForFile(final String sourceFile,
+  public Collection<ClassLines> getClassesForFile(final String sourceFile,
       String packageName) {
     return legacyClassCoverage.getClassesForFile(sourceFile, packageName);
   }
@@ -167,16 +167,13 @@ public class CoverageData implements CoverageDatabase {
   }
 
   private int numberOfLines() {
-    return FCollection.fold(numberLines(), 0,
-        this.code.getClassInfo(allClasses()));
+    return this.code.codeTrees()
+            .map(ClassTree::numberOfCodeLines)
+            .reduce(0, Integer::sum);
   }
 
   private int coveredLines() {
     return getNumberOfCoveredLines(allClasses());
-  }
-
-  private BiFunction<Integer, ClassInfo, Integer> numberLines() {
-    return (a, clazz) -> a + clazz.getNumberOfCodeLines();
   }
 
   private void checkForFailedTest(final CoverageResult cr) {

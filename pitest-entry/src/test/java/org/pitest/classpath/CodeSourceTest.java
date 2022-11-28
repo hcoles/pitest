@@ -43,14 +43,7 @@ public class CodeSourceTest {
   public void shouldIdentifyAllNonTestCodeOnClassPathWhenNoTestsPresent() {
     when(this.classPath.code()).thenReturn(
         Arrays.asList(this.foo.getName(), this.bar.getName()));
-    assertEquals(Arrays.asList(this.foo, this.bar), this.testee.getCode());
-  }
-
-  @Test
-  public void shouldIdentifyTestClassesOnTestPath() {
-    when(this.classPath.test()).thenReturn(
-        Arrays.asList(this.foo.getName(), this.bar.getName()));
-    assertThat(this.testee.getTests()).containsExactly(this.foo, this.bar);
+    assertThat(testee.getCodeUnderTestNames()).containsExactlyInAnyOrder(this.foo.getName(), this.bar.getName());
   }
 
   @Test

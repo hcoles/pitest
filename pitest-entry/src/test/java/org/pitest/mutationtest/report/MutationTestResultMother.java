@@ -19,7 +19,6 @@ import static org.pitest.mutationtest.LocationMother.aMutationId;
 import java.util.Arrays;
 
 import org.pitest.mutationtest.ClassMutationResults;
-import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.engine.MutationDetails;
 
@@ -31,10 +30,6 @@ public class MutationTestResultMother {
 
   public static MutationDetails createDetails(final String sourceFile) {
     return new MutationDetails(aMutationId().build(), sourceFile, "desc", 42, 0);
-  }
-
-  public static MutationMetaData createMetaData(final MutationResult... mrs) {
-    return new MutationMetaData(Arrays.asList(mrs));
   }
 
   public static ClassMutationResults createClassResults(

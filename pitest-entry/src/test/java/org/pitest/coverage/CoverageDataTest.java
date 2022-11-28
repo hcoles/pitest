@@ -20,9 +20,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoMother;
 import org.pitest.classinfo.ClassName;
+import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageMother.BlockLocationBuilder;
 import org.pitest.coverage.CoverageMother.CoverageResultBuilder;
@@ -38,14 +40,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.pitest.coverage.CoverageMother.aBlockLocation;
 import static org.pitest.coverage.CoverageMother.aCoverageResult;
@@ -62,7 +63,6 @@ public class CoverageDataTest {
   private LineMap         lm;
 
   private final ClassName foo = ClassName.fromString("foo");
-  private final ClassName bar = ClassName.fromString("bar");
 
   @Before
   public void setUp() {
@@ -99,8 +99,7 @@ public class CoverageDataTest {
     this.testee.calculateClassCoverage(cr.build());
 
     assertEquals(Arrays.asList(42), FCollection.map(
-        this.testee.getTestsForClassLine(new ClassLine(this.foo, line)),
-        testInfoToExecutionTime()));
+        this.testee.getTestsForClassLine(new ClassLine(this.foo, line)), TestInfo::getTime));
   }
 
   @Test
@@ -141,7 +140,7 @@ public class CoverageDataTest {
     this.testee.calculateClassCoverage(makeCoverageResult("foo", "fooTest2", 0,
         2));
 
-    List<String> actual = FCollection.map(this.testee.getTestsForClass(this.foo), testInfoToString());
+    List<String> actual = FCollection.map(this.testee.getTestsForClass(this.foo), TestInfo::getName);
 
     assertThat(actual).containsExactlyInAnyOrder("fooTest", "fooTest2");
   }
@@ -158,14 +157,6 @@ public class CoverageDataTest {
     this.testee.calculateClassCoverage(makeCoverageResult("foo",
         new Description("fooTest"), 42, 1, false));
     assertFalse(this.testee.allTestsGreen());
-  }
-
-  @Test
-  public void shouldProvideAccessToClassData() {
-    final Collection<ClassName> classes = Arrays.asList(ClassName
-        .fromString("foo"));
-    this.testee.getClassInfo(classes);
-    verify(this.code).getClassInfo(classes);
   }
 
   @Test
@@ -222,30 +213,29 @@ public class CoverageDataTest {
   @Test
   public void shouldProvideListOfClassesForSourceFile() {
 
-    final ClassInfo fooClass = ClassInfoMother.make(this.foo, "foo.java");
-    final ClassInfo barClass = ClassInfoMother.make(this.bar, "bar.java");
-    final Collection<ClassInfo> classes = Arrays.asList(fooClass, barClass);
-    when(this.code.getCode()).thenReturn(classes);
+    ClassTree fooClass = treeFor(com.example.a.b.c.Foo.class);
+    ClassTree barClass = treeFor(com.example.a.b.c.Bar.class);
+    when(this.code.codeTrees()).thenReturn(Stream.of(fooClass, barClass));
 
     this.testee = new CoverageData(this.code, this.lm);
 
-    assertEquals(Arrays.asList(barClass),
-        this.testee.getClassesForFile("bar.java", ""));
+    assertThat(this.testee.getClassesForFile("Bar.java", "com.example.a.b.c"))
+            .containsExactly(new ClassLines(barClass.name(), Collections.emptySet()));
   }
 
   @Test
   public void shouldMatchPackageWhenFindingSources() {
-    final ClassName foo1 = ClassName.fromString("a.b.c.foo");
-    final ClassName foo2 = ClassName.fromString("d.e.f.foo");
-    final ClassInfo foo1Class = ClassInfoMother.make(foo1, "foo.java");
-    final ClassInfo foo2Class = ClassInfoMother.make(foo2, "foo.java");
-    final Collection<ClassInfo> classes = Arrays.asList(foo1Class, foo2Class);
-    when(this.code.getCode()).thenReturn(classes);
+    final ClassTree foo1Class = treeFor(com.example.a.b.c.Foo.class);
+    final ClassTree foo2Class = treeFor(com.example.d.e.f.Foo.class);
+    final Collection<ClassTree> classes = Arrays.asList(foo1Class, foo2Class);
+
+    when(this.code.codeTrees()).thenReturn(classes.stream());
 
     this.testee = new CoverageData(this.code, this.lm);
 
-    assertEquals(Arrays.asList(foo1Class),
-        this.testee.getClassesForFile("foo.java", "a.b.c"));
+    assertThat(this.testee.getClassesForFile("Foo.java", "com.example.a.b.c"))
+            .containsExactly(new ClassLines(foo1Class.name(), Collections.emptySet()));
+
   }
 
   @Test
@@ -263,15 +253,7 @@ public class CoverageDataTest {
     this.testee.calculateClassCoverage(cr.build());
 
     final CoverageSummary actual = this.testee.createSummary();
-    assertEquals(4, actual.getNumberOfCoveredLines());
-  }
-
-  private static Function<TestInfo, Integer> testInfoToExecutionTime() {
-    return a -> a.getTime();
-  }
-
-  private static Function<TestInfo, String> testInfoToString() {
-    return a -> a.getName();
+    assertThat(actual.getNumberOfCoveredLines()).isEqualTo(4);
   }
 
   private CoverageResult makeCoverageResult(final String clazz,
@@ -302,6 +284,12 @@ public class CoverageDataTest {
     s.addAll(Arrays.asList(lines));
     map.put(blocks.build(), s);
     return map;
+  }
+
+
+  ClassTree treeFor(Class<?> clazz) {
+    return ClassTree.fromBytes(ClassloaderByteArraySource.fromContext()
+            .getBytes(ClassName.fromClass(clazz).asJavaName()).get());
   }
 
 }

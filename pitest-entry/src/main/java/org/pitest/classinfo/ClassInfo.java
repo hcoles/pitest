@@ -14,51 +14,25 @@
  */
 package org.pitest.classinfo;
 
-import java.lang.annotation.Annotation;
 import java.math.BigInteger;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import org.objectweb.asm.Opcodes;
-import org.pitest.functional.FCollection;
 import java.util.Optional;
 
-public class ClassInfo {
+/**
+ * Captures information about a class, its position within a hierarchy. Changes to
+ * a class between runs are tracked by calculating the hash of its bytecode and the
+ * bytecode of classes it has a strong relationship to.
+ */
+public final class ClassInfo {
 
   private final ClassIdentifier        id;
-
-  private final int                    access;
-  private final Set<Integer>           codeLines;
   private final ClassPointer           outerClass;
   private final ClassPointer           superClass;
-  private final Collection<ClassName>  annotations;
-  private final String                 sourceFile;
-  private final Map<ClassName, Object> classAnnotationValues;
 
-  public ClassInfo(final ClassPointer superClass,
-      final ClassPointer outerClass, final ClassInfoBuilder builder) {
+  public ClassInfo(ClassPointer superClass, ClassPointer outerClass, ClassInfoBuilder builder) {
     this.superClass = superClass;
     this.outerClass = outerClass;
     this.id = builder.id;
-    this.access = builder.access;
-    this.codeLines = builder.codeLines;
-    this.annotations = FCollection.map(builder.annotations,
-        ClassName.stringToClassName());
-    this.sourceFile = builder.sourceFile;
-    this.classAnnotationValues = builder.classAnnotationValues;
   }
-
-  public int getNumberOfCodeLines() {
-    return this.codeLines.size();
-  }
-
-  public boolean isCodeLine(final int line) {
-    return this.codeLines.contains(line);
-  }
-
   public ClassIdentifier getId() {
     return this.id;
   }
@@ -67,44 +41,12 @@ public class ClassInfo {
     return this.id.getName();
   }
 
-  public boolean isInterface() {
-    return (this.access & Opcodes.ACC_INTERFACE) != 0;
-  }
-
-  public boolean isAbstract() {
-    return (this.access & Opcodes.ACC_ABSTRACT) != 0;
-  }
-
-  public boolean isSynthetic() {
-    return (this.access & Opcodes.ACC_SYNTHETIC) != 0;
-  }
-
-  public boolean isTopLevelClass() {
-    return !getOuterClass().isPresent();
-  }
-
   public Optional<ClassInfo> getOuterClass() {
     return this.outerClass.fetch();
   }
 
   public Optional<ClassInfo> getSuperClass() {
     return getParent();
-  }
-
-  public String getSourceFileName() {
-    return this.sourceFile;
-  }
-
-  public boolean hasAnnotation(final Class<? extends Annotation> annotation) {
-    return hasAnnotation(ClassName.fromClass(annotation));
-  }
-
-  public boolean hasAnnotation(final ClassName annotation) {
-    return this.annotations.contains(annotation);
-  }
-
-  public Object getClassAnnotationValue(final ClassName annotation) {
-    return this.classAnnotationValues.get(annotation);
   }
 
   public boolean descendsFrom(final Class<?> clazz) {
@@ -152,20 +94,9 @@ public class ClassInfo {
     return getSuperClass().get().descendsFrom(clazz);
   }
 
-  public static Predicate<ClassInfo> matchIfAbstract() {
-    return ClassInfo::isAbstract;
-  }
-
   @Override
   public String toString() {
     return this.id.getName().asJavaName();
   }
 
-  public static Function<ClassInfo, ClassName> toClassName() {
-    return ClassInfo::getName;
-  }
-
-  public static Function<ClassInfo, HierarchicalClassId> toFullClassId() {
-    return ClassInfo::getHierarchicalId;
-  }
 }

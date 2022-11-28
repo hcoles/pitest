@@ -16,7 +16,7 @@ package org.pitest.mutationtest.report.html;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
-import org.pitest.classinfo.ClassInfo;
+import org.pitest.coverage.ClassLines;
 import org.pitest.coverage.ReportCoverage;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.ClassMutationResults;
@@ -119,9 +119,14 @@ public class MutationHtmlReportListener implements MutationResultListener {
 
   public MutationTestSummaryData createSummaryData(
       final ReportCoverage coverage, final ClassMutationResults data) {
+
+    final List<ClassLines> lines = this.coverage.getCoveredLinesForClass(data
+                    .getMutatedClass())
+            .map(l -> Collections.singletonList(l))
+            .orElse(Collections.emptyList());
+
     return new MutationTestSummaryData(data.getFileName(), data.getMutations(),
-        this.mutatorNames, coverage.getClassInfo(Collections.singleton(data
-            .getMutatedClass())), coverage.getNumberOfCoveredLines(Collections
+        this.mutatorNames, lines, coverage.getNumberOfCoveredLines(Collections
             .singleton(data.getMutatedClass())));
   }
 
@@ -144,8 +149,9 @@ public class MutationHtmlReportListener implements MutationResultListener {
   private List<Line> createAnnotatedSourceCodeLines(final String sourceFile,
       final String packageName, final MutationResultList mutationsForThisFile)
           throws IOException {
-    final Collection<ClassInfo> classes = this.coverage.getClassesForFile(
+    final Collection<ClassLines> classes = this.coverage.getClassesForFile(
         sourceFile, packageName);
+
     final Optional<Reader> reader = findSourceFile(classInfoToNames(classes),
         sourceFile);
     if (reader.isPresent()) {
@@ -157,12 +163,12 @@ public class MutationHtmlReportListener implements MutationResultListener {
   }
 
   private Collection<String> classInfoToNames(
-      final Collection<ClassInfo> classes) {
+      final Collection<ClassLines> classes) {
     return FCollection.map(classes, classInfoToJavaName());
   }
 
-  private Function<ClassInfo, String> classInfoToJavaName() {
-    return a -> a.getName().asJavaName();
+  private Function<ClassLines, String> classInfoToJavaName() {
+    return a -> a.name().asJavaName();
   }
 
   private Optional<Reader> findSourceFile(final Collection<String> classes,

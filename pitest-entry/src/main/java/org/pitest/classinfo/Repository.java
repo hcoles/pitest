@@ -69,13 +69,15 @@ public class Repository implements ClassInfoSource {
     if (bytes.isPresent()) {
       final ClassInfoBuilder classData = ClassInfoVisitor.getClassInfo(name,
           bytes.get(), this.hashFunction.hash(bytes.get()));
-      return contructClassInfo(classData);
+      return constructClassInfo(classData);
     } else {
       return Optional.empty();
     }
   }
 
   public Optional<byte[]> querySource(final ClassName name) {
+    // cost of scanning the entire classpath is high, so avoid repeatedly
+    // looking for the same unresolvable classes
     if (this.unknownClasses.contains(name)) {
       return Optional.empty();
     }
@@ -88,7 +90,7 @@ public class Repository implements ClassInfoSource {
     return option;
   }
 
-  private Optional<ClassInfo> contructClassInfo(final ClassInfoBuilder classData) {
+  private Optional<ClassInfo> constructClassInfo(final ClassInfoBuilder classData) {
     return Optional.ofNullable(new ClassInfo(resolveClass(classData.superClass),
         resolveClass(classData.outerClass), classData));
   }

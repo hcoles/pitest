@@ -37,10 +37,8 @@ public class InterceptorVerifier {
 
     private Sample makeSampleForCurrentCompiler(Class<?> clazz) {
         final ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
-        final Sample s = new Sample();
-        s.className = ClassName.fromClass(clazz);
-        s.clazz = ClassTree.fromBytes(source.getBytes(clazz.getName()).get());
-        return s;
+        return new Sample(ClassName.fromClass(clazz),
+                ClassTree.fromBytes(source.getBytes(clazz.getName()).get()));
     }
 
     private GregorMutater mutateFromClassLoader() {

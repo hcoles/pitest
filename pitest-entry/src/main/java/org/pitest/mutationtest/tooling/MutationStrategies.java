@@ -5,7 +5,6 @@ import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.verify.BuildVerifier;
-import org.pitest.mutationtest.verify.DefaultBuildVerifier;
 import org.pitest.util.ResultOutputStrategy;
 
 public class MutationStrategies {
@@ -18,14 +17,6 @@ public class MutationStrategies {
   private final ResultOutputStrategy          output;
 
   public MutationStrategies(final MutationEngineFactory factory,
-      final HistoryStore history, final CoverageGenerator coverage,
-      final MutationResultListenerFactory listenerFactory,
-      final ResultOutputStrategy output) {
-    this(factory, history, coverage, listenerFactory, output,
-        new DefaultBuildVerifier());
-  }
-
-  private MutationStrategies(final MutationEngineFactory factory,
       final HistoryStore history, final CoverageGenerator coverage,
       final MutationResultListenerFactory listenerFactory,
       final ResultOutputStrategy output, final BuildVerifier buildVerifier) {

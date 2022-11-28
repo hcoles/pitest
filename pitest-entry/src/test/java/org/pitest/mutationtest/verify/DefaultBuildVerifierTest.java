@@ -19,16 +19,14 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
+import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.classinfo.ClassInfo;
-import org.pitest.classinfo.ClassName;
-import org.pitest.classinfo.Repository;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.CodeSource;
 import org.pitest.help.PitHelpError;
@@ -45,36 +43,35 @@ public class DefaultBuildVerifierTest {
   @Before
   public void setUp() {
     MockitoAnnotations.openMocks(this);
-    this.testee = new DefaultBuildVerifier();
+    this.testee = new DefaultBuildVerifier(code);
   }
 
   private static class AClass {
 
   }
 
-  private static interface AnInterface {
+  private interface AnInterface {
 
   }
-
 
   @Test
   public void shouldNotThrowErrorForClassCompiledWithDebugInfo() {
     setupClassPath(AClass.class);
-    this.testee.verify(this.code);
+    this.testee.verify();
     // pass
   }
 
   @Test(expected = PitHelpError.class)
   public void shouldThrowErrorForClassCompiledWithoutSourceFileDebugInfo() {
     setupClassPath(new ResourceFolderByteArraySource(), "FooNoSource");
-    this.testee.verify(this.code);
+    this.testee.verify();
   }
 
   @Test
   public void shouldNotThrowErrorForSyntheticClassCompiledWithoutSourceFileDebugInfo() {
     setupClassPath(new ResourceFolderByteArraySource(), "SyntheticNoSourceDebug");
     try {
-      this.testee.verify(this.code);
+      this.testee.verify();
     } catch (final PitHelpError ex) {
       fail();
     }
@@ -83,14 +80,14 @@ public class DefaultBuildVerifierTest {
   @Test(expected = PitHelpError.class)
   public void shouldThrowErrorForClassCompiledWithoutLineNumberDebugInfo() {
     setupClassPath(new ResourceFolderByteArraySource(), "FooNoLines");
-    this.testee.verify(this.code);
+    this.testee.verify();
   }
 
   @Test
   public void shouldNotThrowAnErrorWhenNoClassesFound() {
-    when(this.code.getCode()).thenReturn(Collections.<ClassInfo> emptyList());
+    when(this.code.codeTrees()).thenReturn(Stream.empty());
     try {
-      this.testee.verify(this.code);
+      this.testee.verify();
     } catch (final PitHelpError e) {
       fail();
     }
@@ -100,7 +97,7 @@ public class DefaultBuildVerifierTest {
   public void shouldNotThrowAnErrorWhenOnlyInterfacesPresent() {
     setupClassPath(AnInterface.class);
     try {
-      this.testee.verify(this.code);
+      this.testee.verify();
     } catch (final PitHelpError e) {
       fail();
     }
@@ -108,8 +105,8 @@ public class DefaultBuildVerifierTest {
 
   @Test
   public void doesNotErrorWhenNoClassesProvided() {
-    when(this.code.getCode()).thenReturn(Collections.emptyList());
-    assertThatCode(() -> this.testee.verify(this.code)).doesNotThrowAnyException();
+    when(this.code.codeTrees()).thenReturn(Stream.empty());
+    assertThatCode(() -> this.testee.verify()).doesNotThrowAnyException();
   }
 
   private void setupClassPath(final Class<?> clazz) {
@@ -120,10 +117,9 @@ public class DefaultBuildVerifierTest {
 
   private void setupClassPath(final ClassByteArraySource source,
       final String clazz) {
-    final Repository repository = new Repository(source);
-    final ClassInfo ci = repository.fetchClass(ClassName.fromString(clazz))
-        .get();
-    when(this.code.getCode()).thenReturn(Collections.singletonList(ci));
+    ClassTree ct = ClassTree.fromBytes(source.getBytes(clazz).get());
+    // doesn't seem to be a way to pass mockito a Supplier so specify each call
+    when(this.code.codeTrees()).thenReturn(Stream.of(ct), Stream.of(ct), Stream.of(ct), Stream.of(ct));
   }
 
 }

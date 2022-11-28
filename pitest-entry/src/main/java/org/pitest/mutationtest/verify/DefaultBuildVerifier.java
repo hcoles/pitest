@@ -15,63 +15,74 @@ package org.pitest.mutationtest.verify;
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Predicate;
-
-import org.pitest.classinfo.ClassInfo;
+import org.objectweb.asm.tree.LineNumberNode;
+import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classpath.CodeSource;
-import org.pitest.functional.FCollection;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 
+import java.util.Collections;
+import java.util.List;
+
 public class DefaultBuildVerifier implements BuildVerifier {
 
-  @Override
-  public void verify(final CodeSource code) {
-    final List<ClassInfo> codeClasses = FCollection.filter(code.getCode(), isNotSynthetic());
+  private final CodeSource code;
 
-    if (hasMutableCode(codeClasses)) {
-      checkAtLeastOneClassHasLineNumbers(codeClasses);
-      checkAtLeastOneClassHasSourceFile(codeClasses);
+  public DefaultBuildVerifier(CodeSource code) {
+    this.code = code;
+  }
+
+  @Override
+  public List<String> verify() {
+
+    // check we have at least one class that is not an interface
+    // otherwise our checks will fire on an empty project
+    boolean hasMutableCode = code.codeTrees()
+            .anyMatch(this::isMutable);
+
+    if (!hasMutableCode) {
+      return Collections.emptyList();
+    }
+
+    checkForLineNumbers();
+
+    checkForDebugSourceFile();
+
+    return Collections.emptyList();
+  }
+
+  private void checkForDebugSourceFile() {
+    // perform only a weak "any exist" check for source file as
+    // some jvm languages are not guaranteed to include a source file for all classes
+    boolean sourceFile = code.codeTrees()
+            .anyMatch(this::hasSourceFile);
+
+    if (!sourceFile) {
+      throw new PitHelpError(Help.NO_SOURCE_FILE, code.codeTrees().findFirst().get().name().asJavaName());
     }
   }
 
-  private boolean hasMutableCode(Collection<ClassInfo> codeClasses ) {
-    return !codeClasses.isEmpty() && hasAtLeastOneClass(codeClasses);
-  }
-
-  private boolean hasAtLeastOneClass(final Collection<ClassInfo> codeClasses) {
-    return FCollection.contains(codeClasses, aConcreteClass());
-  }
-
-  private void checkAtLeastOneClassHasLineNumbers(
-      final Collection<ClassInfo> codeClasses) {
-    // perform only a weak check for line numbers as
+  private void checkForLineNumbers() {
+    // perform only a weak "any exist" check for line numbers as
     // some jvm languages are not guaranteed to produce them for all classes
-    if (!FCollection.contains(codeClasses, aClassWithLineNumbers())) {
+    boolean lineNumbers = code.codeTrees()
+            .anyMatch(this::hasLineNumbers);
+    if (!lineNumbers) {
       throw new PitHelpError(Help.NO_LINE_NUMBERS);
     }
   }
 
-  private void checkAtLeastOneClassHasSourceFile(List<ClassInfo> codeClasses) {
-    // perform only a weak check for line numbers as
-    // some jvm languages are not guaranteed to include a source file for all classes
-    if (!FCollection.contains(codeClasses, a -> a.getSourceFileName() != null)) {
-      throw new PitHelpError(Help.NO_SOURCE_FILE, codeClasses.get(0).getName().asJavaName());
-    }
+  private boolean isMutable(ClassTree classTree) {
+    return !classTree.isInterface() && !classTree.isSynthetic();
   }
 
-  private static Predicate<ClassInfo> aConcreteClass() {
-    return a -> !a.isInterface();
+  private boolean hasLineNumbers(ClassTree classTree) {
+    return classTree.methods().stream()
+            .anyMatch(m -> m.instructions().stream().anyMatch(n -> n instanceof LineNumberNode));
   }
 
-  private static Predicate<ClassInfo> aClassWithLineNumbers() {
-    return a -> a.getNumberOfCodeLines() != 0;
-  }
-
-  private static Predicate<ClassInfo> isNotSynthetic() {
-    return a -> !a.isSynthetic();
+  private boolean hasSourceFile(ClassTree classTree) {
+    return classTree.rawNode().sourceFile != null;
   }
 
 }

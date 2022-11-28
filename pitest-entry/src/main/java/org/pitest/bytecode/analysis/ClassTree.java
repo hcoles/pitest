@@ -6,11 +6,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.RecordComponentNode;
 import org.objectweb.asm.util.Textifier;
@@ -35,7 +39,6 @@ public class ClassTree {
     return new ClassTree(classNode);
   }
 
-
   public List<MethodTree> methods() {
     if (this.lazyMethods != null) {
       return this.lazyMethods;
@@ -49,14 +52,14 @@ public class ClassTree {
   }
 
   public List<AnnotationNode> annotations() {
-    final List<AnnotationNode> annotaions = new ArrayList<>();
+    final List<AnnotationNode> annotations = new ArrayList<>();
     if (this.rawNode.invisibleAnnotations != null) {
-      annotaions.addAll(this.rawNode.invisibleAnnotations);
+      annotations.addAll(this.rawNode.invisibleAnnotations);
     }
     if (this.rawNode.visibleAnnotations != null) {
-      annotaions.addAll(this.rawNode.visibleAnnotations);
+      annotations.addAll(this.rawNode.visibleAnnotations);
     }
-    return annotaions;
+    return annotations;
   }
 
   public List<RecordComponentNode> recordComponents() {
@@ -79,6 +82,37 @@ public class ClassTree {
     return this.rawNode;
   }
 
+  public Set<Integer> codeLineNumbers() {
+    return methods().stream()
+            .flatMap(m -> m.instructions().stream()
+                    .filter(n -> n instanceof LineNumberNode)
+                    .map(n -> ((LineNumberNode) n).line))
+            .collect(Collectors.toSet());
+  }
+
+  public int numberOfCodeLines() {
+    return (int) methods().stream()
+            .flatMap(m -> m.instructions().stream()
+                    .filter(n -> n instanceof LineNumberNode))
+            .count();
+  }
+
+  public boolean isAbstract() {
+    return (this.rawNode.access & Opcodes.ACC_ABSTRACT) != 0;
+  }
+
+  public boolean isInterface() {
+    return (this.rawNode.access & Opcodes.ACC_INTERFACE) != 0;
+  }
+
+  public boolean isSynthetic() {
+    return (this.rawNode.access & Opcodes.ACC_SYNTHETIC) != 0;
+  }
+
+  public ClassTree rename(ClassName name) {
+    this.rawNode.name = name.asInternalName();
+    return this;
+  }
 
   @Override
   public String toString() {

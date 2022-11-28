@@ -1,16 +1,16 @@
 package org.pitest.coverage;
 
-import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 public class NoCoverage implements CoverageDatabase {
     @Override
-    public Collection<ClassInfo> getClassInfo(Collection<ClassName> classes) {
-        return Collections.emptyList();
+    public Optional<ClassLines> getCoveredLinesForClass(ClassName clazz) {
+        return Optional.empty();
     }
 
     @Override
@@ -39,7 +39,7 @@ public class NoCoverage implements CoverageDatabase {
     }
 
     @Override
-    public Collection<ClassInfo> getClassesForFile(String sourceFile, String packageName) {
+    public Collection<ClassLines> getClassesForFile(String sourceFile, String packageName) {
         return Collections.emptyList();
     }
 

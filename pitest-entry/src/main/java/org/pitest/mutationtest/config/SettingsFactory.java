@@ -13,6 +13,8 @@ import org.pitest.mutationtest.build.DefaultTestPrioritiserFactory;
 import org.pitest.mutationtest.build.MutationGrouperFactory;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.mutationtest.build.TestPrioritiserFactory;
+import org.pitest.mutationtest.verify.BuildVerifierFactory;
+import org.pitest.mutationtest.verify.CompoundBuildVerifierFactory;
 import org.pitest.plugin.Feature;
 import org.pitest.plugin.FeatureParser;
 import org.pitest.plugin.FeatureSelector;
@@ -152,6 +154,10 @@ public class SettingsFactory {
     return new CompoundInterceptorFactory(parser.parseFeatures(this.options.getFeatures()), new ArrayList<>(interceptors));
   }
 
+  public BuildVerifierFactory createVerifier() {
+    return new CompoundBuildVerifierFactory(this.plugins.findVerifiers());
+  }
+
   private Collection<MutationResultListenerFactory> findListeners() {
     final Iterable<? extends MutationResultListenerFactory> listeners = this.plugins
         .findListeners();
@@ -197,4 +203,5 @@ public class SettingsFactory {
   private Comparator<Feature> byName() {
     return Comparator.comparing(Feature::name);
   }
+
 }

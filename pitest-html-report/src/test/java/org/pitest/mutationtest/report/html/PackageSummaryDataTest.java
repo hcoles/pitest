@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.pitest.classinfo.ClassInfo;
 import org.pitest.mutationtest.MutationResult;
 
 public class PackageSummaryDataTest {
@@ -36,7 +35,7 @@ public class PackageSummaryDataTest {
   private MutationTestSummaryData makeSummaryData(final String fileName) {
     return new MutationTestSummaryData(fileName,
         Collections.<MutationResult> emptyList(),
-        Collections.<String> emptyList(), Collections.<ClassInfo> emptyList(),
+        Collections.<String> emptyList(), Collections.emptyList(),
         0);
   }
 

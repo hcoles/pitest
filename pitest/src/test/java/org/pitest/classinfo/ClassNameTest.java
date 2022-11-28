@@ -116,12 +116,6 @@ public class ClassNameTest {
   }
 
   @Test
-  public void shouldConvertStringToClassName() {
-    assertEquals(ClassName.fromString("foo"), ClassName.stringToClassName()
-        .apply("foo"));
-  }
-
-  @Test
   public void shouldProduceSameHashCodeForSameClass() {
     assertEquals(ClassName.fromString("org/example/Foo").hashCode(), ClassName
         .fromString("org.example.Foo").hashCode());

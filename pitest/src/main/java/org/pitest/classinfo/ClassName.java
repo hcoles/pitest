@@ -116,10 +116,6 @@ public final class ClassName implements Comparable<ClassName>, Serializable {
             - suffixLength));
   }
 
-  public static Function<String, ClassName> stringToClassName() {
-    return ClassName::fromString;
-  }
-
   public static Function<ClassName, Stream<Class<?>>> nameToClass() {
     return nameToClass(IsolationUtils.getContextClassLoader());
   }

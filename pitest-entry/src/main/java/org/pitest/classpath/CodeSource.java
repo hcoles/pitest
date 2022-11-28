@@ -1,14 +1,13 @@
 package org.pitest.classpath;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoSource;
@@ -16,7 +15,6 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.NameToClassInfo;
 import org.pitest.classinfo.Repository;
 import org.pitest.classinfo.TestToClassMapper;
-import org.pitest.functional.FCollection;
 import org.pitest.functional.Streams;
 
 /**
@@ -38,23 +36,23 @@ public class CodeSource implements ClassInfoSource, ClassByteArraySource {
     this.classRepository = classRepository;
   }
 
-  public Collection<ClassInfo> getCode() {
+  public Stream<ClassTree> codeTrees() {
     return this.classPath.code().stream()
-        .flatMap(nameToClassInfo())
-        .collect(Collectors.toList());
+            .map(c -> this.getBytes(c.asJavaName()))
+            .filter(Optional::isPresent)
+            .map(maybe -> ClassTree.fromBytes(maybe.get()));
   }
 
   public Set<ClassName> getCodeUnderTestNames() {
-    final Set<ClassName> codeClasses = new HashSet<>();
-    FCollection.mapTo(getCode(), ClassInfo.toClassName(), codeClasses);
-    return codeClasses;
+    return this.classPath.code().stream().collect(Collectors.toSet());
   }
 
-  public List<ClassInfo> getTests() {
+  public Stream<ClassTree> testTrees() {
     return this.classPath.test().stream()
-        .flatMap(nameToClassInfo())
-        .filter(ClassInfo.matchIfAbstract().negate())
-        .collect(Collectors.toList());
+            .map(c -> this.getBytes(c.asJavaName()))
+            .filter(Optional::isPresent)
+            .map(maybe -> ClassTree.fromBytes(maybe.get()))
+            .filter(t -> !t.isAbstract());
   }
 
   public ClassPath getClassPath() {
