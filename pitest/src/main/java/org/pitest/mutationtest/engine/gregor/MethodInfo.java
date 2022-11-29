@@ -61,7 +61,6 @@ public class MethodInfo {
   public boolean isStatic() {
     return ((this.access & Opcodes.ACC_STATIC) != 0);
   }
-
   public boolean isSynthetic() {
     return ((this.access & Opcodes.ACC_SYNTHETIC) != 0);
   }
@@ -69,7 +68,6 @@ public class MethodInfo {
   public boolean isConstructor() {
     return isConstructor(this.methodName);
   }
-
   public static boolean isConstructor(final String methodName) {
     return "<init>".equals(methodName);
   }
@@ -77,36 +75,12 @@ public class MethodInfo {
   public Type getReturnType() {
     return Type.getReturnType(this.methodDescriptor);
   }
-
   public static boolean isVoid(final String desc) {
     return Type.getReturnType(desc).equals(Type.VOID_TYPE);
   }
 
-  public boolean isStaticInitializer() {
-    return "<clinit>".equals(this.methodName);
-  }
-
   public boolean isVoid() {
     return isVoid(this.methodDescriptor);
-  }
-
-  public boolean takesNoParameters() {
-    return this.methodDescriptor.startsWith("()");
-  }
-
-  public boolean isGeneratedEnumMethod() {
-    return this.owningClass.isEnum()
-        && (isValuesMethod() || isValueOfMethod() || isStaticInitializer());
-  }
-
-  private boolean isValuesMethod() {
-    return this.getName().equals("values") && takesNoParameters() && isStatic();
-  }
-
-  private boolean isValueOfMethod() {
-    return this.getName().equals("valueOf")
-        && this.methodDescriptor.startsWith("(Ljava/lang/String;)")
-        && isStatic();
   }
 
   public MethodInfo withMethodDescriptor(final String newDescriptor) {

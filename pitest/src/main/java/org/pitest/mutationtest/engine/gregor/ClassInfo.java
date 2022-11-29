@@ -1,5 +1,9 @@
 package org.pitest.mutationtest.engine.gregor;
 
+/**
+ * Largely deprecated context info about current class. Retained to allow
+ * easy access to information about super class.
+ */
 public class ClassInfo {
 
   private final int      access;
@@ -10,10 +14,6 @@ public class ClassInfo {
     this.access = access;
     this.name = name;
     this.superName = superName;
-  }
-
-  public boolean isEnum() {
-    return this.superName.equals("java/lang/Enum");
   }
 
   public int getAccess() {

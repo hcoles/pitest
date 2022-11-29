@@ -118,16 +118,11 @@ public class GregorMutater implements Mutater {
   }
 
   private Predicate<MethodInfo> filterMethods() {
-    return and(this.filter, filterSyntheticMethods(),
-        isGeneratedEnumMethod().negate());
+    return and(this.filter, filterSyntheticMethods());
   }
 
   private static Predicate<MethodInfo> filterSyntheticMethods() {
     return a -> !a.isSynthetic() || a.getName().startsWith("lambda$");
-  }
-
-  private static Predicate<MethodInfo> isGeneratedEnumMethod() {
-    return MethodInfo::isGeneratedEnumMethod;
   }
 
   private List<MethodMutatorFactory> orderAndDeDuplicate(Collection<MethodMutatorFactory> mutators) {

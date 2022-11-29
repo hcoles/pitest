@@ -70,13 +70,6 @@ public class TestGregorMutater {
     }
 
     @Test
-    public void shouldNotMutateCodeGeneratedByCompilerToImplementEnums() {
-        MutatorVerifierStart.forMutator(Mutator.all())
-                .forClass(AnEnum.class)
-                .noMutantsCreated();
-    }
-
-    @Test
     public void shouldMutateCustomConstructorsAddedToEnums() {
         Collection<MutationDetails> actualDetails = MutatorVerifierStart.forMutator(Mutator.all())
                 .forClass(EnumWithCustomConstructor.class)
@@ -84,7 +77,6 @@ public class TestGregorMutater {
 
         assertThat(actualDetails).isNotEmpty();
     }
-
 
     @Test
     public void shouldRecordMutationsAsInSameBlockWhenForAStraightThroughMethod() {

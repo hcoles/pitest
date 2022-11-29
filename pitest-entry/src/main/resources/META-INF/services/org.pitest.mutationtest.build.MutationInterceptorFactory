@@ -7,7 +7,7 @@ org.pitest.mutationtest.build.intercept.javafeatures.InlinedFinallyBlockFilterFa
 org.pitest.mutationtest.build.intercept.javafeatures.ImplicitNullCheckFilterFactory
 org.pitest.mutationtest.build.intercept.javafeatures.MethodReferenceNullCheckFilterFactory
 org.pitest.mutationtest.build.intercept.javafeatures.ForEachLoopFilterFactory
-org.pitest.mutationtest.build.intercept.javafeatures.EnumConstructorFilterFactory
+org.pitest.mutationtest.build.intercept.javafeatures.EnumFilterFactory
 org.pitest.mutationtest.build.intercept.javafeatures.RecordFilterFactory
 org.pitest.mutationtest.build.intercept.javafeatures.StringSwitchFilterFactory
 org.pitest.mutationtest.build.intercept.javafeatures.AssertionsFilterFactory

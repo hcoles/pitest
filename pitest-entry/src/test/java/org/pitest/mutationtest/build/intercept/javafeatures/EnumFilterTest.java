@@ -2,19 +2,29 @@ package org.pitest.mutationtest.build.intercept.javafeatures;
 
 import org.junit.Test;
 import org.pitest.mutationtest.engine.MutationDetails;
+import org.pitest.mutationtest.engine.gregor.mutators.NullMutateEverything;
 import java.util.function.Predicate;
 
-import static org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator.VOID_METHOD_CALLS;
+public class EnumFilterTest {
 
-public class EnumConstructorTest {
+    EnumFilter testee = new EnumFilter();
 
-    EnumConstructorFilter testee = new EnumConstructorFilter();
+    FilterTester verifier = new FilterTester("unused", this.testee, new NullMutateEverything());
 
-    FilterTester verifier = new FilterTester("unused", this.testee, VOID_METHOD_CALLS);
 
     @Test
     public void filtersMutantsFromEnumConstructor() {
         this.verifier.assertFiltersMutationsMatching(inMethodNamed("<init>"), AnEnum.class);
+    }
+
+    @Test
+    public void filtersMutantsInValueOfMethod() {
+        this.verifier.assertFiltersMutationsMatching(inMethodNamed("valueOf"), AnEnum.class);
+    }
+
+    @Test
+    public void filtersMutantsInValuesMethod() {
+        this.verifier.assertFiltersMutationsMatching(inMethodNamed("values"), AnEnum.class);
     }
 
     @Test
@@ -23,9 +33,15 @@ public class EnumConstructorTest {
     }
 
     @Test
+    public void filterMutantsInCustomEnumConstructors() {
+        this.verifier.assertFiltersMutationsMatching(inMethodNamed("<init>"), EnumWithCustomConstructor.class);
+    }
+
+    @Test
     public void doesNotFilterMutantsInNonEnumConstructors() {
         this.verifier.assertFiltersNoMutationsMatching(inMethodNamed("<init>"), AClass.class);
     }
+
 
     private Predicate<MutationDetails> inMethodNamed(String name) {
         return m -> m.getMethod().equals(name);
@@ -36,4 +52,15 @@ class AClass {
     AClass(String s) {
         System.out.println(s);
     }
+}
+
+enum EnumWithCustomConstructor {
+    Foo, Bar;
+
+    int i;
+
+    EnumWithCustomConstructor() {
+        this.i++;
+    }
+
 }
