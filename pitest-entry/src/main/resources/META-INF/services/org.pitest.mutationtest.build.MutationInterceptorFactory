@@ -7,7 +7,7 @@ org.pitest.mutationtest.build.intercept.javafeatures.InlinedFinallyBlockFilterFa
 org.pitest.mutationtest.build.intercept.javafeatures.ImplicitNullCheckFilterFactory
 org.pitest.mutationtest.build.intercept.javafeatures.MethodReferenceNullCheckFilterFactory
 org.pitest.mutationtest.build.intercept.javafeatures.ForEachLoopFilterFactory
-org.pitest.mutationtest.build.intercept.javafeatures.EnumConstructorFilterFactory
+org.pitest.mutationtest.build.intercept.javafeatures.EnumFilterFactory
 org.pitest.mutationtest.build.intercept.javafeatures.RecordFilterFactory
 org.pitest.mutationtest.build.intercept.javafeatures.StringSwitchFilterFactory
 org.pitest.mutationtest.build.intercept.javafeatures.AssertionsFilterFactory
@@ -17,6 +17,7 @@ org.pitest.mutationtest.build.intercept.timeout.InfiniteForLoopFilterFactory
 org.pitest.mutationtest.build.intercept.timeout.InfiniteIteratorLoopFilterFactory
 org.pitest.mutationtest.build.intercept.timeout.AvoidForLoopCountersFilterFactory
 org.pitest.mutationtest.build.intercept.kotlin.KotlinFilterFactory
+ org.pitest.mutationtest.build.intercept.groovy.GroovyFilterFactory
 org.pitest.mutationtest.filter.LimitNumberOfMutationsPerClassFilterFactory
 org.pitest.mutationtest.build.intercept.equivalent.EqualsPerformanceShortcutFilterFactory
 org.pitest.mutationtest.build.intercept.equivalent.EquivalentReturnMutationFilter

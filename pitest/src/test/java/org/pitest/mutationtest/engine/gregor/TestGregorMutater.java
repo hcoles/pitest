@@ -21,7 +21,6 @@ import org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.InvertNegsMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.MathMutator;
 import org.pitest.mutationtest.engine.gregor.mutators.returns.PrimitiveReturnsMutator;
-import org.pitest.util.ResourceFolderByteArraySource;
 import org.pitest.verifier.mutants.MutatorVerifierStart;
 
 import java.util.Collection;
@@ -71,36 +70,12 @@ public class TestGregorMutater {
     }
 
     @Test
-    public void shouldNotMutateCodeGeneratedByCompilerToImplementEnums() {
-        MutatorVerifierStart.forMutator(Mutator.all())
-                .forClass(AnEnum.class)
-                .noMutantsCreated();
-    }
-
-    @Test
     public void shouldMutateCustomConstructorsAddedToEnums() {
         Collection<MutationDetails> actualDetails = MutatorVerifierStart.forMutator(Mutator.all())
                 .forClass(EnumWithCustomConstructor.class)
                 .findMutations();
 
         assertThat(actualDetails).isNotEmpty();
-    }
-
-
-    @Test
-    public void shouldNotMutateGroovyClasses() {
-        MutatorVerifierStart.forMutator(Mutator.all())
-                .withByteArraySource(new ResourceFolderByteArraySource())
-                .forClass("groovy/SomeGroovyCode")
-                .noMutantsCreated();
-    }
-
-    @Test
-    public void shouldNotMutateGroovyClosures() {
-        MutatorVerifierStart.forMutator(Mutator.all())
-                .withByteArraySource(new ResourceFolderByteArraySource())
-                .forClass("groovy/SomeGroovyCode$_mapToString_closure2")
-                .noMutantsCreated();
     }
 
     @Test

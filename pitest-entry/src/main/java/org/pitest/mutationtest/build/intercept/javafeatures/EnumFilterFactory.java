@@ -5,23 +5,23 @@ import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.plugin.Feature;
 
-public class EnumConstructorFilterFactory implements MutationInterceptorFactory {
+public class EnumFilterFactory implements MutationInterceptorFactory {
 
     @Override
     public String description() {
-        return "Enum constructor filter";
+        return "Enum junk filter";
     }
 
     @Override
     public MutationInterceptor createInterceptor(InterceptorParameters params) {
-        return new EnumConstructorFilter();
+        return new EnumFilter();
     }
 
     @Override
     public Feature provides() {
         return Feature.named("FENUM")
                 .withOnByDefault(true)
-                .withDescription("Filters mutations in enum constructors");
+                .withDescription("Filters junk mutations in enums");
     }
 
 }

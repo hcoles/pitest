@@ -33,17 +33,17 @@ public class ResourceFolderInterceptorVerifier {
     }
 
     private Sample makeSample(String sample) {
-        final String clazz = makeClassName(sample, "kotlin");
+        final String clazz = makeClassName(sample);
         final Optional<byte[]> bs = source.getBytes(clazz);
         if (bs.isPresent()) {
             return new Sample(ClassName.fromString(clazz), ClassTree.fromBytes(bs.get()));
         }
-        throw new RuntimeException("Could not find" + sample);
+        throw new RuntimeException("Could not find " + sample);
 
     }
 
-    private String makeClassName(String sample, String compiler) {
-        return MessageFormat.format(this.path, sample, compiler);
+    private String makeClassName(String sample) {
+        return this.path + "/" + sample;
     }
 
     private GregorMutater mutateFromResourceDir() {
