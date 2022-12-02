@@ -58,6 +58,10 @@ public class MethodTree {
     return (this.rawNode.access & Opcodes.ACC_SYNTHETIC) != 0;
   }
 
+  public boolean isBridge() {
+    return (this.rawNode.access & Opcodes.ACC_BRIDGE) != 0;
+  }
+
   public boolean isPrivate() {
     return (this.rawNode.access & Opcodes.ACC_PRIVATE) != 0;
   }

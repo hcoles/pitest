@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
@@ -83,7 +84,7 @@ public class ClassTree {
   }
 
   public Set<Integer> codeLineNumbers() {
-    return methods().stream()
+    return realMethods()
             .flatMap(m -> m.instructions().stream()
                     .filter(n -> n instanceof LineNumberNode)
                     .map(n -> ((LineNumberNode) n).line))
@@ -91,10 +92,18 @@ public class ClassTree {
   }
 
   public int numberOfCodeLines() {
-    return (int) methods().stream()
+    return (int) realMethods()
             .flatMap(m -> m.instructions().stream()
                     .filter(n -> n instanceof LineNumberNode))
             .count();
+  }
+
+  /**
+   * Methods, excluding bridges and synthetics
+   */
+  public Stream<MethodTree> realMethods() {
+      return methods().stream()
+              .filter(m -> !m.isSynthetic() && !m.isBridge());
   }
 
   public boolean isAbstract() {
