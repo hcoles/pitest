@@ -1,8 +1,7 @@
 package org.pitest.bytecode.analysis;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.function.Function;
+import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 
 import org.junit.Test;
 import org.pitest.classinfo.ClassByteArraySource;
@@ -57,7 +56,27 @@ public class ClassTreeTest {
   @Test
   public void shouldNotRecordLineNumbersFromSyntheticBridgeMethods() {
     ClassTree underTest = ClassTree.fromBytes(bytesFor(Bridge.HasBridgeMethod.class));
-    assertThat(underTest.codeLineNumbers()).doesNotContain(1);
+    assertThat(underTest.codeLineNumbers()).doesNotContain(24);
+  }
+
+  @Test
+  public void shouldNotIncludeBridgeMethodsInCodeLineCount() {
+    ClassTree underTest = ClassTree.fromBytes(bytesFor(Bridge.HasBridgeMethod.class));
+    assertThat(underTest.numberOfCodeLines()).isEqualTo(3);
+  }
+
+  @Test
+  public void realMethodsDoesNotIncludeBridgeMethods() {
+    ClassTree underTest = ClassTree.fromBytes(bytesFor(Bridge.HasBridgeMethod.class));
+    assertThat(underTest.realMethods()).hasSize(underTest.methods().size() - 1);
+  }
+
+  @Test
+  public void realMethodsDoesNotIncludeSynthetics() {
+    ClassTree underTest = ClassTree.fromBytes(bytesFor(ParseMe.class));
+    MethodTree method = underTest.methods().get(0);
+    method.rawNode().access |= ACC_SYNTHETIC;
+    assertThat(underTest.realMethods()).doesNotContain(method);
   }
 
   byte[] bytesFor(Class<?> clazz) {
