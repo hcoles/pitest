@@ -8,7 +8,7 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-## 1.10.1 (unreleased)
+## 1.10.1
 
 * #1124 Fix bug introduced in 1.10.0 where bridge methods treated as valid lines of code
 
