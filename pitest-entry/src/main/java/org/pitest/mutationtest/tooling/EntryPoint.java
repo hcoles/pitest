@@ -72,7 +72,7 @@ public class EntryPoint {
       SettingsFactory settings, Map<String, String> environmentVariables) {
 
     updateData(data, settings);
-
+Log.getLogger().info("breakpoint1");
     if (data.getVerbosity() == VERBOSE) {
       Log.getLogger().info("Project base directory is " + data.getProjectBase());
       Log.getLogger().info("---------------------------------------------------------------------------");

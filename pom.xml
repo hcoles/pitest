@@ -80,10 +80,10 @@
 		<module>pitest</module>
         <module>pitest-entry</module>
         <module>pitest-maven</module>
-		<module>pitest-ant</module>
-		<module>pitest-command-line</module>
+		<!-- <module>pitest-ant</module> -->
+		<!-- <module>pitest-command-line</module> -->
 		<module>pitest-html-report</module>
-		<module>pitest-aggregator</module>
+		<!-- <module>pitest-aggregator</module> -->
 	</modules>
 
 	<profiles>
@@ -99,8 +99,8 @@
 				</property>
 			</activation>
 			<modules>
-				<module>pitest-java8-verification</module>
-				<module>pitest-maven-verification</module>
+				<!-- <module>pitest-java8-verification</module> -->
+				<!-- <module>pitest-maven-verification</module> -->
 				<!-- disabled until working with java 9+ -->
 				<!-- <module>pitest-groovy-verification</module> -->
 			</modules>
@@ -217,7 +217,7 @@
 							<id>checkstyle</id>
 							<phase>validate</phase>
 							<goals>
-								<goal>check</goal>
+								<!-- <goal>check</goal> -->
 							</goals>
 							<configuration>
 								<failOnViolation>true</failOnViolation>
