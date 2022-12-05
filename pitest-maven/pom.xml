@@ -37,8 +37,8 @@
 				<executions>
 					<execution>
 						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
+							<!-- <goal>integration-test</goal> -->
+							<!-- <goal>verify</goal> -->
 						</goals>
 						<configuration>
 							<includes>
@@ -60,7 +60,7 @@
 					<execution>
 						<id>help-goal</id>
 						<goals>
-							<goal>helpmojo</goal>
+							<!-- <goal>helpmojo</goal> -->
 						</goals>
 					</execution>
 				</executions>
