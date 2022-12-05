@@ -39,6 +39,12 @@ public class ClassTreeTest {
   }
 
   @Test
+  public void lineCountIsCorrectWhenLineNumbersRepeated() {
+    ClassTree underTest = ClassTree.fromBytes(bytesFor(RepeatedLineNumbersInByteCode.class));
+    assertThat(underTest.numberOfCodeLines()).isEqualTo(5);
+  }
+
+  @Test
   public void shouldDetectCodeLineAtClassDeclarationsWhenClassHasDefaultConstructor() {
     ClassTree underTest = ClassTree.fromBytes(bytesFor(HasDefaultConstructor.class));
     assertThat(underTest.codeLineNumbers()).contains(17);
@@ -100,5 +106,17 @@ class ParseMe {
 
   private int b() {
     return 0;
+  }
+}
+
+class RepeatedLineNumbersInByteCode {
+  public boolean a(int b) {
+    try {
+      Integer.valueOf("" + b);
+      System.out.println(b);
+    } finally {
+      System.out.println(b + 1);
+      return b > 10;
+    }
   }
 }
