@@ -79,6 +79,14 @@ public class ClassTreeTest {
     assertThat(underTest.realMethods()).doesNotContain(method);
   }
 
+  @Test
+  public void realMethodsIncludesSyntheticsGeneratedForLambdas() {
+    ClassTree underTest = ClassTree.fromBytes(bytesFor(ParseMe.class));
+    MethodTree method = underTest.methods().get(0);
+    method.rawNode().access |= ACC_SYNTHETIC;
+    method.rawNode().name = "lambda$something";
+    assertThat(underTest.realMethods()).contains(method);
+  }
   byte[] bytesFor(Class<?> clazz) {
     return this.source.getBytes(clazz.getName()).get();
   }

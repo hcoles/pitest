@@ -103,9 +103,8 @@ public class ClassTree {
    */
   public Stream<MethodTree> realMethods() {
       return methods().stream()
-              .filter(m -> !m.isSynthetic() && !m.isBridge());
+              .filter(m -> (!m.isBridge() && !m.isSynthetic()) || m.isGeneratedLambdaMethod());
   }
-
   public boolean isAbstract() {
     return (this.rawNode.access & Opcodes.ACC_ABSTRACT) != 0;
   }
