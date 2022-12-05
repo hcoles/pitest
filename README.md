@@ -8,6 +8,10 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+## 1.10.3
+
+* #1128 Bug fix - lines with repeated debug entries double counted
+
 ## 1.10.2
 
 * #1125 Bug fix - synthetic lambda methods not treated as code lines
