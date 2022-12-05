@@ -92,10 +92,7 @@ public class ClassTree {
   }
 
   public int numberOfCodeLines() {
-    return (int) realMethods()
-            .flatMap(m -> m.instructions().stream()
-                    .filter(n -> n instanceof LineNumberNode))
-            .count();
+    return codeLineNumbers().size();
   }
 
   /**
