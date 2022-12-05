@@ -58,6 +58,10 @@ public class MethodTree {
     return (this.rawNode.access & Opcodes.ACC_SYNTHETIC) != 0;
   }
 
+  public boolean isGeneratedLambdaMethod() {
+   return isSynthetic() && this.rawNode.name.startsWith("lambda$");
+  }
+
   public boolean isBridge() {
     return (this.rawNode.access & Opcodes.ACC_BRIDGE) != 0;
   }
