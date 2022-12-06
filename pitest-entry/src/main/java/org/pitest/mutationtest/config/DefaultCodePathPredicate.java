@@ -33,6 +33,7 @@ public class DefaultCodePathPredicate implements Predicate<ClassPathRoot> {
   }
 
   private boolean isATestPath(final String path) {
+    final String lowerCasePath = path.toLowerCase();
     return path.endsWith("test-classes") || path.endsWith("bin-test");
   }
 

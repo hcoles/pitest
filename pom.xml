@@ -31,7 +31,7 @@
 		<junit.version>4.11</junit.version>
 		<surefire.version>2.18.1</surefire.version> <!-- [2.19, 3.0.0-M7] seem to cause ASM-related test failures -->
 		<slf4j.version>1.7.12</slf4j.version>
-
+		
 		<maven.failsafe-plugin.version>${surefire.version}</maven.failsafe-plugin.version>
 		<maven.surefire-plugin.version>${surefire.version}</maven.surefire-plugin.version>
 	</properties>
@@ -76,13 +76,13 @@
 	</contributors>
 
 	<modules>
-		<module>pitest-build-config</module>
+		<!-- <module>pitest-build-config</module> -->
 		<module>pitest</module>
         <module>pitest-entry</module>
-        <module>pitest-maven</module>
+        <!-- <module>pitest-maven</module> -->
 		<!-- <module>pitest-ant</module> -->
 		<!-- <module>pitest-command-line</module> -->
-		<module>pitest-html-report</module>
+		<!-- <module>pitest-html-report</module> -->
 		<!-- <module>pitest-aggregator</module> -->
 	</modules>
 

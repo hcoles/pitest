@@ -59,4 +59,8 @@ public class ProjectClassPaths {
     return this.classFilter;
   }
 
+  public PathFilter getPathFilter() {
+    return this.pathFilter;
+  }
+
 }
