@@ -25,7 +25,7 @@ import org.pitest.util.Log;
 import org.pitest.util.PitError;
 import org.pitest.util.ResultOutputStrategy;
 import org.pitest.util.Timings;
-
+import org.pitest.mutationtest.config.TestClassPathPredicate;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.Collection;
+import org.pitest.mutationtest.tdg.Tdgimpl;
 
 import static org.pitest.util.Verbosity.VERBOSE;
 
@@ -105,7 +107,10 @@ Log.getLogger().info("breakpoint1");
         settings.getJavaExecutable(), createJvmArgs(data), environmentVariables)
         .usingClassPathJar(data.useClasspathJar());
     final ProjectClassPaths cps = data.getMutationClassPaths();
-
+    Tdgimpl tdg = new Tdgimpl(cps);
+    // Log.getLogger().info("tdg.getDepsMap()" + tdg.getDepsMap());
+    tdg.init();
+    
     final CodeSource code = new CodeSource(cps);
 
     final Timings timings = new Timings();
