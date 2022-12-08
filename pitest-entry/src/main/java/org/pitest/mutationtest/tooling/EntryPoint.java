@@ -32,13 +32,15 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.Collection;
 import org.pitest.mutationtest.tdg.Tdgimpl;
-
+import org.pitest.mutationtest.tdg.execute.TdgTestMethodNamesGenerator;
 import static org.pitest.util.Verbosity.VERBOSE;
-
+import java.util.stream.Collectors;
+import org.pitest.classinfo.ClassName;
 public class EntryPoint {
 
   /**
@@ -107,12 +109,23 @@ Log.getLogger().info("breakpoint1");
         settings.getJavaExecutable(), createJvmArgs(data), environmentVariables)
         .usingClassPathJar(data.useClasspathJar());
     final ProjectClassPaths cps = data.getMutationClassPaths();
-    Tdgimpl tdg = new Tdgimpl(cps);
-    // Log.getLogger().info("tdg.getDepsMap()" + tdg.getDepsMap());
-    tdg.init();
+    // Tdgimpl tdg = new Tdgimpl(cps);
+    // // Log.getLogger().info("tdg.getDepsMap()" + tdg.getDepsMap());
+    // tdg.init();
+    // for (ClassName tar : cps.code().stream().collect(Collectors.toList())) {
+    //   tdg.getTests(tar);
+    // }
     
+      
     final CodeSource code = new CodeSource(cps);
-
+    
+    TdgTestMethodNamesGenerator classTestMethodNamesGen = 
+    new TdgTestMethodNamesGenerator(launchOptions, code, baseDir);
+    Map<String, Set<String>> classTestMethodNames = classTestMethodNamesGen.getClassMethodNames();
+    Tdgimpl tdg = new Tdgimpl(cps, classTestMethodNames);
+    // tdg.init();
+    // System.out.println(classTestMethodNames);
+    // System.out.println(tdg.getTests(ClassName.fromString("org.zipeng.B")));
     final Timings timings = new Timings();
     final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
         baseDir, coverageOptions, launchOptions, code,
@@ -125,7 +138,7 @@ Log.getLogger().info("breakpoint1");
 
     final MutationStrategies strategies = new MutationStrategies(
         settings.createEngine(), history, coverageDatabase, reportFactory,
-        reportOutput);
+        reportOutput, tdg);
 
     final MutationCoverage report = new MutationCoverage(strategies, baseDir,
         code, data, settings, timings);

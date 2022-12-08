@@ -128,7 +128,7 @@ public class JarCreatingJarFinder implements JavaAgent {
   public void close() {
     if (this.location.isPresent()) {
       final File f = new File(this.location.get());
-      f.delete();
+      // f.delete();
     }
   }
 

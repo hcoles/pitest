@@ -20,6 +20,10 @@ import edu.illinois.yasgl.DirectedGraphBuilder;
 import org.pitest.util.YSGLhelper;
 import java.util.stream.Collectors;
 import org.pitest.classinfo.ClassName;
+import java.lang.reflect.Method;
+import java.util.stream.Stream;
+import org.junit.Test;
+import java.util.Optional;
 public class Tdgimpl implements Tdg{
     private ProjectClassPaths classPath;
     String pathToUse;
@@ -27,7 +31,12 @@ public class Tdgimpl implements Tdg{
     String testClassPath;
     private Map<String, Set<String>> tc;
     private Map<String, Set<String>> target2Tests;
-    public Tdgimpl(ProjectClassPaths cps) {
+    private Map<String, Set<String>> classMethodNames;
+    public Tdgimpl(ProjectClassPaths cps,  Map<String, Set<String>> classMethodNames) {
+        if (classMethodNames == null) {
+            System.out.println("init classMethodNames null");
+        }
+        this.classMethodNames = classMethodNames;
         this.classPath = cps;
         pathToUse =  cps.getClassPath().getComponent(cps.getPathFilter().getTestFilter()).getLocalClassPath();
         targetClassPath = cps.getClassPath().getComponent(cps.getPathFilter().getCodeFilter()).getLocalClassPath();
@@ -66,10 +75,28 @@ public class Tdgimpl implements Tdg{
         this.target2Tests = target2Tests;
         Log.getLogger().info("after filtered  this.target2Tests  : " + target2Tests);
     }
+
     @Override
     public Collection<TestInfo> getTests(ClassName name) {
+        System.out.println("findTests for " + name );
+        if (target2Tests == null || classMethodNames == null) {
+            System.out.println("target2Tests or classMethodNames null, error!!");
+            return new ArrayList<TestInfo>();
+        }
 
-        return new ArrayList<TestInfo>();
+        List<TestInfo> tf = new ArrayList<>();
+        for (String testClass : target2Tests.get(name.toString())) {
+            List<TestInfo> res = new ArrayList<>();
+            for (String methodNames : classMethodNames.get(testClass) ) {
+                res.add(this.createFromMethodName(name.toString(), methodNames));
+            }
+            tf.addAll(res);
+        }
+        return tf;
+    }
+
+    private TestInfo createFromMethodName(String className, String methodName) {
+        return new TestInfo(className, className+"."+methodName+"("+className+")", 1, Optional.<ClassName> empty(), 1);
     }
 
     @Override

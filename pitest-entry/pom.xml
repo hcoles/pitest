@@ -112,6 +112,12 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<!-- <scope>compile</scope> -->
+		</dependency>
+		<dependency>
 			<groupId>edu.illinois</groupId>
 			<artifactId>yasgl</artifactId>
 			<version>1.2</version>

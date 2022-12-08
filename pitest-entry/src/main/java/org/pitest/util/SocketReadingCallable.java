@@ -7,7 +7,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
-
+/**
+ * 
+ * Future<T> 和 Callable 和可以获取线程的执行结果，以往的Runnable不行。
+ * T就为执行结果，FutureTask()类就是Future<T> 和 Callable的组合
+ */
 class SocketReadingCallable implements Callable<ExitCode> {
 
   private final Consumer<SafeDataOutputStream> sendInitialData;

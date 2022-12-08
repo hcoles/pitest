@@ -71,7 +71,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import org.pitest.mutationtest.tdg.Tdgimpl;
 import static java.util.Collections.emptyList;
 
 public class MutationCoverage {
@@ -156,10 +156,10 @@ public class MutationCoverage {
     final MutationStatisticsListener stats = new MutationStatisticsListener();
 
     history.initialize();
-
+    this.strategies.tdg().init();
     this.timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
     final List<MutationAnalysisUnit> tus = buildMutationTests(coverageData, history,
-            engine, args, allInterceptors());
+            engine, args, allInterceptors(), this.strategies.tdg());
     this.timings.registerEnd(Timings.Stage.BUILD_MUTATION_TESTS);
 
     LOG.info("Created " + tus.size() + " mutation test units" );
@@ -201,7 +201,7 @@ public class MutationCoverage {
     // an initial run here we are able to skip coverage generation when no mutants
     // are found, e.g if pitest is being run against diffs.
     this.timings.registerStart(Timings.Stage.MUTATION_PRE_SCAN);
-    List<MutationAnalysisUnit> mutants = buildMutationTests(new NoCoverage(), new NullHistoryStore(), engine, args, noReportsOrFilters());
+    List<MutationAnalysisUnit> mutants = buildMutationTests(new NoCoverage(), new NullHistoryStore(), engine, args, noReportsOrFilters(),this.strategies.tdg());
     this.timings.registerEnd(Timings.Stage.MUTATION_PRE_SCAN);
     return mutants;
   }
@@ -309,7 +309,7 @@ public class MutationCoverage {
                                                         HistoryStore history,
                                                         MutationEngine engine,
                                                         EngineArguments args,
-                                                        Predicate<MutationInterceptor> interceptorFilter) {
+                                                        Predicate<MutationInterceptor> interceptorFilter, Tdgimpl tdg) {
 
     final MutationConfig mutationConfig = new MutationConfig(engine, coverage()
         .getLaunchOptions());
@@ -317,9 +317,12 @@ public class MutationCoverage {
     final ClassByteArraySource bas = new CachingByteArraySource(fallbackToClassLoader(new ClassPathByteArraySource(
         this.data.getClassPath())), 200);
 
+    // final TestPrioritiser testPrioritiser = this.settings.getTestPrioritiser()
+    //     .makeTestPrioritiser(this.data.getFreeFormProperties(), this.code,
+    //         coverageData);
     final TestPrioritiser testPrioritiser = this.settings.getTestPrioritiser()
-        .makeTestPrioritiser(this.data.getFreeFormProperties(), this.code,
-            coverageData);
+    .makeTestPrioritiser(this.data.getFreeFormProperties(), this.code,
+    tdg);
 
     final MutationInterceptor interceptor = this.settings.getInterceptor()
             .createInterceptor(this.data, coverageData, bas)

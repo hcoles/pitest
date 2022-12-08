@@ -48,6 +48,7 @@ import java.util.stream.Collectors;
 
 import static org.pitest.util.Unchecked.translateCheckedException;
 
+import org.pitest.mutationtest.config.PrioritisingTestConfiguration;
 public class CoverageMinion {
 
   private static final Logger LOG = Log.getLogger();
@@ -77,7 +78,7 @@ public class CoverageMinion {
           s.getOutputStream()));
 
       CodeCoverageStore.init(invokeQueue);
-
+      // 动态插装  CodeCoverageStore中CLASS_HITS是总结果
       HotSwapAgent.addTransformer(new CoverageTransformer(
           convertToJVMClassFilter(paramsFromParent.getFilter())));
 
@@ -146,8 +147,10 @@ public class CoverageMinion {
           final SafeDataInputStream dis, final CoverageOptions paramsFromParent, CoveragePipe invokeQueue) {
     final List<ClassName> classes = receiveTestClassesFromParent(dis);
     Collections.sort(classes); // ensure classes loaded in a consistent order
-
+    //JUnitCompatibleConfiguration pluginService初始化了这个
     final Configuration testPlugin = createTestPlugin(paramsFromParent);
+  // System.out.println();
+  LOG.warning("lzp log isinstance of :" + (testPlugin instanceof PrioritisingTestConfiguration));
     verifyEnvironment(testPlugin);
 
     final List<TestUnit> tus = discoverTests(testPlugin, classes, invokeQueue);
