@@ -12,7 +12,7 @@ import java.security.ProtectionDomain;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
-
+// instrument是JVM对外暴露的动态修改JVM的classLoader加载的类的API
 public class CoverageTransformer implements ClassFileTransformer {
 
   private final Predicate<String>   filter;

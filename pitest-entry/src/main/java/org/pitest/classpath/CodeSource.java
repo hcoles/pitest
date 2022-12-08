@@ -60,6 +60,9 @@ public class CodeSource implements ClassInfoSource, ClassByteArraySource {
   public ClassPath getClassPath() {
     return this.classPath.getClassPath();
   }
+  public ProjectClassPaths getProjectClassPaths() {
+    return this.classPath;
+  }
 
   public Optional<ClassName> findTestee(final String className) {
     final TestToClassMapper mapper = new TestToClassMapper(this.classRepository);

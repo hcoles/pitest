@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-class PrioritisingTestConfiguration implements Configuration {
+public class PrioritisingTestConfiguration implements Configuration {
     private final List<Configuration> children;
     private final TestUnitFinder finder;
     private final TestSuiteFinder suiteFinder;

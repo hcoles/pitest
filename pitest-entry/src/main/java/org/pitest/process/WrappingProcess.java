@@ -82,12 +82,11 @@ public class WrappingProcess {
       JavaAgent javaAgent, String classPath) {
     final List<String> cmd = createLaunchArgs(javaProc, javaAgent, args, mainClass,
         programArgs, classPath);
-
+System.out.println("lzp lzp process cmd " + cmd);
     // IBM jdk adds this, thereby breaking everything
     removeClassPathProperties(cmd);
     
     removeJacocoAgent(cmd);
-
     return new ProcessBuilder(cmd);
   }
 

@@ -41,6 +41,7 @@ public final class TestInfo implements Serializable {
     this.time = time;
     this.testee = testee.orElse(null);
     this.blocks = blocksCovered;
+System.out.println("lzp  testinfo definingCLass + name +  time + testee + blocksCovered" + definingClass + ":" + name + ":" + time + ":" + testee + ":" + blocksCovered);
   }
 
   public String getName() {

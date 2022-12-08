@@ -83,6 +83,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
       final Collection<ClassInfo> tests = this.code.getTests();
       this.timings.registerEnd(Timings.Stage.SCAN_CLASS_PATH);
 
+      LOG.info("lzp coverageGenerator : " + tests);
       final CoverageData coverage = new CoverageData(this.code, new LineMapper(
           this.code));
 
@@ -121,7 +122,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
     final List<String> filteredTests = FCollection
         .map(tests, classInfoToName());
-
+System.out.println("lzp filteredTests" + filteredTests);
     final Consumer<CoverageResult> handler = resultProcessor(coverage);
 
     final SocketFinder sf = new SocketFinder();
