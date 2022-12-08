@@ -12,7 +12,6 @@ import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
-import org.pitest.plugin.MissingPlugin;
 import org.pitest.plugin.ToolClasspathPlugin;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
@@ -411,11 +410,7 @@ public class AbstractPitMojo extends AbstractMojo {
       this.getLog().info("Root dir is : " + projectBase);
       for (ToolClasspathPlugin each : this.plugins
           .findToolClasspathPlugins()) {
-        if (each instanceof MissingPlugin) {
-          this.getLog().info("Plugin available : " + each.description());
-        } else {
           this.getLog().info("Found plugin : " + each.description());
-        }
       }
 
       this.plugins.findClientClasspathPlugins().stream()
