@@ -88,15 +88,15 @@ public class Tdgimpl implements Tdg{
         for (String testClass : target2Tests.get(name.toString())) {
             List<TestInfo> res = new ArrayList<>();
             for (String methodNames : classMethodNames.get(testClass) ) {
-                res.add(this.createFromMethodName(name.toString(), methodNames));
+                res.add(this.createFromMethodName(name.toString(), methodNames, testClass));
             }
             tf.addAll(res);
         }
         return tf;
     }
 
-    private TestInfo createFromMethodName(String className, String methodName) {
-        return new TestInfo(className, className+"."+methodName+"("+className+")", 1, Optional.<ClassName> empty(), 1);
+    private TestInfo createFromMethodName(String className, String methodName, String testClass) {
+        return new TestInfo(testClass, testClass+"."+methodName+"("+testClass+")", 1, Optional.<ClassName> empty(), 1);
     }
 
     @Override
