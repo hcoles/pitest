@@ -100,9 +100,10 @@ public class MutationTestWorker {
     if (DEBUG) {
       LOG.fine("mutating method " + mutatedClass.getDetails().getMethod());
     }
+    // LOG.fine("lzp  PIT getTestInOrder is null ? " + mutationDetails.getTestsInOrder());
     final List<TestUnit> relevantTests = testSource
         .translateTests(mutationDetails.getTestsInOrder());
-
+    // LOG.fine("lzp  PIT relevantTests is null ? " + relevantTests);
     r.describe(mutationId);
 
     final MutationStatusTestPair mutationDetected = handleMutation(

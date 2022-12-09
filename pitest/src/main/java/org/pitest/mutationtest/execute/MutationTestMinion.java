@@ -95,7 +95,7 @@ public class MutationTestMinion {
 
       final List<TestUnit> tests = findTestsForTestClasses(loader,
           paramsFromParent.testClasses, createTestPlugin(paramsFromParent.pitConfig));
-
+// System.out.println("lzplzplzp log : List<TestUnit> tests null? " + tests);
       worker.run(paramsFromParent.mutations, this.reporter,
           new TimeOutDecoratedTestSource(paramsFromParent.timeoutStrategy,
               tests, this.reporter));
@@ -160,8 +160,11 @@ public class MutationTestMinion {
   private static List<TestUnit> findTestsForTestClasses(
       final ClassLoader loader, final Collection<ClassName> testClasses,
       final Configuration pitConfig) {
+// System.out.println("lzplzplzp findTestsForTestClasses testClasses : " + testClasses);
     final Collection<Class<?>> tcs = testClasses.stream().flatMap(ClassName.nameToClass(loader)).collect(Collectors.toList());
+// System.out.println("lzplzplzp findTestsForTestClasses Collection<Class<?>> tcs null ? : " + tcs);    
     final FindTestUnits finder = new FindTestUnits(pitConfig);
+    // System.out.println("lzplzplzp findTestsForTestClasses FindTestUnits finder null ? : " + finder);     
     return finder.findTestUnitsForAllSuppliedClasses(tcs);
   }
 
