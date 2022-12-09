@@ -10,15 +10,13 @@ public final class Feature {
 
   private final boolean onByDefault;
   private final boolean isInternal;
-  private final boolean missing;
   private final String  name;
   private final String  description;
   private final List<FeatureParameter> params;
 
-  private Feature(boolean onByDefault, boolean isInternal, boolean missing, String name, String description, List<FeatureParameter> params) {
+  private Feature(boolean onByDefault, boolean isInternal, String name, String description, List<FeatureParameter> params) {
     this.onByDefault = onByDefault;
     this.isInternal = isInternal;
-    this.missing = missing;
     this.name = name;
     this.description = description;
     this.params = params;
@@ -26,29 +24,25 @@ public final class Feature {
   }
 
   public static Feature named(String name) {
-    return new Feature(false, false, false, name.toLowerCase(Locale.ROOT), "", Collections.emptyList());
+    return new Feature(false, false, name.toLowerCase(Locale.ROOT), "", Collections.emptyList());
   }
 
   public Feature withOnByDefault(boolean onByDefault) {
-    return new Feature(onByDefault, this.isInternal, this.missing, this.name, this.description, this.params);
+    return new Feature(onByDefault, this.isInternal, this.name, this.description, this.params);
   }
 
   public Feature asInternalFeature() {
-    return new Feature(this.onByDefault, true, this.missing, this.name, this.description, this.params);
+    return new Feature(this.onByDefault, true, this.name, this.description, this.params);
   }
 
   public Feature withDescription(String description) {
-    return new Feature(this.onByDefault, this.isInternal, this.missing, this.name, description, this.params);
+    return new Feature(this.onByDefault, this.isInternal, this.name, description, this.params);
   }
 
   public Feature withParameter(FeatureParameter param) {
     final List<FeatureParameter> params = new ArrayList<>(this.params);
     params.add(param);
-    return new Feature(this.onByDefault, this.isInternal, this.missing, this.name, this.description, params);
-  }
-
-  public Feature markMissing() {
-    return new Feature(this.onByDefault, this.isInternal, true, this.name, description, this.params);
+    return new Feature(this.onByDefault, this.isInternal, this.name, this.description, params);
   }
 
   public String name() {
@@ -65,10 +59,6 @@ public final class Feature {
 
   public boolean isInternal() {
     return this.isInternal;
-  }
-
-  public boolean isMissing() {
-    return this.missing;
   }
 
   public List<FeatureParameter> params() {

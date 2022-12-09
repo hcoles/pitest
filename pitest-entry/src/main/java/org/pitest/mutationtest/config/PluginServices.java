@@ -8,7 +8,6 @@ import org.pitest.mutationtest.build.TestPrioritiserFactory;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.verify.BuildVerifierFactory;
 import org.pitest.plugin.ClientClasspathPlugin;
-import org.pitest.plugin.Feature;
 import org.pitest.plugin.ProvidesFeature;
 import org.pitest.plugin.ToolClasspathPlugin;
 import org.pitest.testapi.TestPluginFactory;
@@ -17,9 +16,8 @@ import org.pitest.util.IsolationUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 public class PluginServices {
 
@@ -84,7 +82,7 @@ public class PluginServices {
   }
 
   Collection<? extends MutationResultListenerFactory> findListeners() {
-    return adjustMissingFeatures(load(MutationResultListenerFactory.class));
+    return load(MutationResultListenerFactory.class);
   }
 
   Collection<? extends MutationEngineFactory> findMutationEngines() {
@@ -100,7 +98,7 @@ public class PluginServices {
   }
 
   public Collection<MutationInterceptorFactory> findInterceptors() {
-    return adjustMissingFeatures(load(MutationInterceptorFactory.class));
+    return load(MutationInterceptorFactory.class);
   }
 
   public List<BuildVerifierFactory> findVerifiers() {
@@ -111,29 +109,6 @@ public class PluginServices {
     return findToolClasspathPlugins().stream()
             .filter(p -> p instanceof ProvidesFeature)
             .map(ProvidesFeature.class::cast)
-            .collect(Collectors.toList());
-  }
-
-  private <T extends ProvidesFeature> Collection<T> adjustMissingFeatures(Collection<T> allPlugins) {
-    // Some features are 'missing', just placeholders to features that
-    // can be provided by an external plugin. We list them so it is
-    // clear that they are available. When the external plugin is present
-    // the missing feature it implements must be removed.
-
-    Map<Feature, List<T>> missing = allPlugins.stream()
-            .filter(f -> f.provides().isMissing())
-            .collect(Collectors.groupingBy(f -> f.provides()));
-
-    Map<Feature, List<T>> real = allPlugins.stream()
-            .filter(f -> !f.provides().isMissing())
-            .collect(Collectors.groupingBy(f -> f.provides()));
-
-    Stream<T> notImplemented = missing.entrySet().stream()
-            .filter(e -> real.get(e.getKey()) == null)
-            .flatMap(e -> e.getValue().stream());
-
-    return Stream.concat(real.values().stream()
-                    .flatMap(v -> v.stream()), notImplemented)
             .collect(Collectors.toList());
   }
 
