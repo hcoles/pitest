@@ -58,7 +58,7 @@ import org.pitest.mutationtest.statistics.Score;
 import org.pitest.util.Log;
 import org.pitest.util.StringUtil;
 import org.pitest.util.Timings;
-
+import org.pitest.mutationtest.tdghistory.TdgHistoryListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -232,7 +232,8 @@ public class MutationCoverage {
                                                     CoverageDatabase coverageData,
                                                     HistoryStore history,
                                                     MutationStatisticsListener stats,
-                                                    MutationEngine engine) {
+                                                    MutationEngine engine
+                                                    ) {
     final List<MutationResultListener> ls = new ArrayList<>();
 
     ls.add(stats);
@@ -246,6 +247,7 @@ public class MutationCoverage {
 
     ls.add(mutationReportListener);
     ls.add(new HistoryListener(history));
+    ls.add(new TdgHistoryListener(this.strategies.tdgHistoryStore()));
 
     if (this.data.getVerbosity().showSpinner()) {
       ls.add(new SpinnerListener(System.out));

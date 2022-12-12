@@ -97,6 +97,10 @@ public class AbstractPitMojo extends AbstractMojo {
   @Parameter(property = "historyInputFile")
   private File                        historyInputFile;
 
+  @Parameter(property = "tdgHistoryFile")
+  private File                        tdgHistoryFile;
+
+
   /**
    * Convenience flag to read and write history to a local temp file.
    * 
@@ -499,6 +503,7 @@ public class AbstractPitMojo extends AbstractMojo {
   protected Optional<CombinedStatistics> analyse() throws MojoExecutionException {
     final ReportOptions data = new MojoToReportOptionsConverter(this,
         new SurefireConfigConverter(), this.filter).convert();
+        System.out.println("tdgHistoryFile null? ? ? "+this.tdgHistoryFile);
     return Optional.ofNullable(this.goalStrategy.execute(detectBaseDir(), data,
         this.plugins, this.environmentVariables));
   }
@@ -647,6 +652,10 @@ public class AbstractPitMojo extends AbstractMojo {
 
   public File getHistoryInputFile() {
     return this.historyInputFile;
+  }
+
+  public File getTdgHistoryFile() {
+    return this.tdgHistoryFile;
   }
 
   public boolean isExportLineCoverage() {
