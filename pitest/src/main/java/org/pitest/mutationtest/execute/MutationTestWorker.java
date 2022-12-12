@@ -90,7 +90,7 @@ public class MutationTestWorker {
       final MutationDetails mutationDetails) {
 
     final MutationIdentifier mutationId = mutationDetails.getId();
-    final Mutant mutatedClass = this.mutater.getMutation(mutationId);
+    final Mutant mutatedClass = this.mutater.getMutation(mutationId);// 这里只是用greor变异引擎获得了变异了的class，并没有写入JVM中，需要使用Hotswap
 
     // For the benefit of mocking frameworks such as PowerMock
     // mess with the internals of Javassist so our mutated class
@@ -146,7 +146,7 @@ public class MutationTestWorker {
     // Some frameworks (eg quarkus) run tests in non delegating
     // classloaders. Need to make sure these are transformed too
     CatchNewClassLoadersTransformer.setMutant(mutatedClass.getDetails().getClassName().asInternalName(), mutatedClass.getBytes());
-
+      //这里才真正写入到JVM中
     if (this.hotswap.apply(mutationId.getClassName(), this.loader,
         mutatedClass.getBytes())) {
       if (DEBUG) {

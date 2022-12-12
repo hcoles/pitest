@@ -32,7 +32,7 @@ public class CommunicationThread {
   private final Consumer<SafeDataOutputStream> sendInitialData;
   private final ReceiveStrategy                   receive;
   private final ServerSocket                      socket;
-  private FutureTask<ExitCode>                    future;
+  private FutureTask<ExitCode>                    future; // FutureTask 就是callable接口和T submit(T)的组合
 
   public CommunicationThread(final ServerSocket socket,
       final Consumer<SafeDataOutputStream> sendInitialData,
