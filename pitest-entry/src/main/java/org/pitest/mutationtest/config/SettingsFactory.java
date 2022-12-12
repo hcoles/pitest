@@ -11,6 +11,7 @@ import org.pitest.mutationtest.build.CompoundInterceptorFactory;
 import org.pitest.mutationtest.build.DefaultMutationGrouperFactory;
 import org.pitest.mutationtest.build.DefaultTestPrioritiserFactory;
 import org.pitest.mutationtest.build.TdgTestPrioritiserFactory;
+import org.pitest.mutationtest.build.AllTestPrioritiserFactory;
 import org.pitest.mutationtest.build.MutationGrouperFactory;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.mutationtest.build.TestPrioritiserFactory;
@@ -137,6 +138,7 @@ public class SettingsFactory {
         .findTestPrioritisers();
     // return firstOrDefault(testPickers, new DefaultTestPrioritiserFactory());
     return firstOrDefault(testPickers, new TdgTestPrioritiserFactory());
+    // return firstOrDefault(testPickers, new AllTestPrioritiserFactory());
   }
 
   public CoverageOptions createCoverageOptions() {

@@ -33,7 +33,7 @@ class HotSwap implements F3<ClassName, ClassLoader, byte[], Boolean> {
     }
 
   }
-
+// 回复jvm中上次变异了的class，为未变异之前
   private void restoreLastClass(final ClassByteArraySource byteSource,
       final ClassName clazzName, final ClassLoader loader)
           throws ClassNotFoundException {

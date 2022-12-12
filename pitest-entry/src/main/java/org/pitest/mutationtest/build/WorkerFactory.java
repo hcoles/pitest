@@ -52,10 +52,12 @@ public class WorkerFactory {
   public MutationTestProcess createWorker(
       final Collection<MutationDetails> remainingMutations,
       final Collection<ClassName> testClasses) {
+        // 通讯线程要发送的内容是定制的
     final MinionArguments fileArgs = new MinionArguments(remainingMutations,
         testClasses, this.config.getEngine().getName(), this.args, this.timeoutStrategy,
         Log.verbosity(), this.fullMutationMatrix, this.pitConfig);
 
+        // 和coverage 的是一样的
     final ProcessArgs args = ProcessArgs.withClassPath(this.classPath)
         .andLaunchOptions(this.config.getLaunchOptions())
         .andBaseDir(this.baseDir).andStdout(captureStdOutIfVerbose())
@@ -63,7 +65,7 @@ public class WorkerFactory {
 
     final SocketFinder sf = new SocketFinder();
     return new MutationTestProcess(
-        sf.getNextAvailableServerSocket(), args, fileArgs);
+        sf.getNextAvailableServerSocket(), args, fileArgs);// args 为子jvm   ，  fileArgs 为通讯线程
   }
 
   private Consumer<String> captureStdOutIfVerbose() {

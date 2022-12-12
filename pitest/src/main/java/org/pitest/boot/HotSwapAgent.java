@@ -39,7 +39,7 @@ public class HotSwapAgent {
   }
 
   public static boolean hotSwap(final Class<?> mutateMe, final byte[] bytes) { // NO_UCD
-
+    // instrumentation在main之前已经赋值。 mutateMe 为需要变异的class对象， bytes为已经变异了的claas字节码
     final ClassDefinition[] definitions = { new ClassDefinition(mutateMe, bytes) };
 
     try {

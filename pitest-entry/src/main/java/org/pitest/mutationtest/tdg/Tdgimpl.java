@@ -78,9 +78,9 @@ public class Tdgimpl implements Tdg{
 
     @Override
     public Collection<TestInfo> getTests(ClassName name) {
-        System.out.println("findTests for " + name );
+        // System.out.println("findTests for " + name );
         if (target2Tests == null || classMethodNames == null) {
-            System.out.println("target2Tests or classMethodNames null, error!!");
+            // System.out.println("target2Tests or classMethodNames null, er!!");
             return new ArrayList<TestInfo>();
         }
 
@@ -88,14 +88,24 @@ public class Tdgimpl implements Tdg{
         for (String testClass : target2Tests.get(name.toString())) {
             List<TestInfo> res = new ArrayList<>();
             for (String methodNames : classMethodNames.get(testClass) ) {
-                res.add(this.createFromMethodName(name.toString(), methodNames, testClass));
+                res.add(this.createFromMethodName(methodNames, testClass));
             }
             tf.addAll(res);
         }
         return tf;
     }
 
-    private TestInfo createFromMethodName(String className, String methodName, String testClass) {
+    public Collection<TestInfo> getAllTests() {
+        List<TestInfo> tf = new ArrayList<>();
+        for (String key : this.classMethodNames.keySet()) {
+            for (String methodName : this.classMethodNames.get(key)) {
+                tf.add(createFromMethodName(methodName, key));
+            }
+        }
+        return tf;
+    }
+
+    private TestInfo createFromMethodName(String methodName, String testClass) {
         return new TestInfo(testClass, testClass+"."+methodName+"("+testClass+")", 1, Optional.<ClassName> empty(), 1);
     }
 

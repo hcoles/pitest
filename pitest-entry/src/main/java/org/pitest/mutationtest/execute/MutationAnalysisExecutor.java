@@ -63,7 +63,7 @@ public class MutationAnalysisExecutor {
     for (final Future<MutationMetaData> f : results) {
       final MutationMetaData r = f.get();
       for (final MutationResultListener l : this.listeners) {
-        for (final ClassMutationResults cr : r.toClassResults()) {
+        for (final ClassMutationResults cr : r.toClassResults()) { // MutationMetaData 一个metadata为一个group的变异体结果
           l.handleMutationResult(cr);
         }
       }
