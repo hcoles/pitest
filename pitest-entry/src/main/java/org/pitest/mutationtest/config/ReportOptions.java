@@ -90,7 +90,7 @@ public class ReportOptions {
 
   private File                           historyInputLocation;
   private File                           historyOutputLocation;
-
+  private File                           tdgHistoryLocation;
   private Collection<Path>               sourceDirs;
   private Collection<String>             classPathElements;
   private Collection<String>             mutators;
@@ -484,6 +484,31 @@ public class ReportOptions {
     return Optional.of(new FileWriterFactory(this.historyOutputLocation));
   }
 
+  public Optional<WriterFactory> createTdgHistoryWriter() {
+    if (this.tdgHistoryLocation == null) {
+      return Optional.empty();
+    }
+    return Optional.of(new FileWriterFactory(this.tdgHistoryLocation));
+  }
+
+  public Optional<Reader> createTdgHistoryReader() {
+    if (this.tdgHistoryLocation == null) {
+      return Optional.empty();
+    }
+    
+    try {
+      if (this.tdgHistoryLocation.exists()
+          && (this.tdgHistoryLocation.length() > 0)) {
+        return Optional.ofNullable(new InputStreamReader(new FileInputStream(
+            this.tdgHistoryLocation), StandardCharsets.UTF_8));
+      }
+      // System.out.println("Optional.empty();Optional.empty();Optional.empty();");
+      return Optional.empty();
+    } catch (final IOException ex) {
+      throw Unchecked.translateCheckedException(ex);
+    }
+  }
+
   public Optional<Reader> createHistoryReader() {
     if (this.historyInputLocation == null) {
       return Optional.empty();
@@ -515,6 +540,14 @@ public class ReportOptions {
 
   public File getHistoryOutputLocation() {
     return this.historyOutputLocation;
+  }
+
+  public void setTdgHistoryLocation(final File tdgHistoryLocation) {
+    this.tdgHistoryLocation = tdgHistoryLocation;
+  }
+
+  public File getTdgHistoryLocation() {
+    return this.tdgHistoryLocation;
   }
 
   public void setExportLineCoverage(final boolean value) {

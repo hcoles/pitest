@@ -22,7 +22,7 @@ public class FileWriterFactory implements WriterFactory {
   public PrintWriter create() {
     this.file.getParentFile().mkdirs();
     try {
-      if (this.writer == null) {
+      if (this.writer == null) { // 单例，同一个PrintWriter，不会覆盖文件
         this.writer = new PrintWriter(new OutputStreamWriter(
             new FileOutputStream(this.file), StandardCharsets.UTF_8));
       }

@@ -41,6 +41,9 @@ import org.pitest.mutationtest.tdg.execute.TdgTestMethodNamesGenerator;
 import static org.pitest.util.Verbosity.VERBOSE;
 import java.util.stream.Collectors;
 import org.pitest.classinfo.ClassName;
+import org.pitest.mutationtest.tdghistory.NullTdgHistoryStore;
+import org.pitest.mutationtest.tdghistory.TdgHistoryStore;
+import org.pitest.mutationtest.tdghistory.TdgHistoryStoreImpl;
 public class EntryPoint {
 
   /**
@@ -136,9 +139,15 @@ Log.getLogger().info("breakpoint1");
     WriterFactory historyWriter = maybeWriter.orElse(new NullWriterFactory());
     final HistoryStore history = makeHistoryStore(data, maybeWriter);
 
+
+    final Optional<WriterFactory> tdgmaybeWriter = data.createTdgHistoryWriter();
+    WriterFactory tdghistoryWriter = tdgmaybeWriter.orElse(new NullWriterFactory());
+    TdgHistoryStore tdgHistory = this.makeTdgHistory(data,tdgmaybeWriter, cps);
+    tdgHistory.init();
+    // System.out.println("getHistoricResultsgetHistoricResultsgetHistoricResults : "+tdgHistory.getHistoricResults());
     final MutationStrategies strategies = new MutationStrategies(
         settings.createEngine(), history, coverageDatabase, reportFactory,
-        reportOutput, tdg);
+        reportOutput, tdg, tdgHistory);
 
     final MutationCoverage report = new MutationCoverage(strategies, baseDir,
         code, data, settings, timings);
@@ -150,11 +159,20 @@ Log.getLogger().info("breakpoint1");
     } finally {
       jac.close();
       ja.close();
+      tdghistoryWriter.close();
       historyWriter.close();
     }
 
   }
-
+  public TdgHistoryStore makeTdgHistory (ReportOptions data, Optional<WriterFactory> historyWriter, ProjectClassPaths classPath) {
+    final Optional<Reader> reader = data.createTdgHistoryReader();
+    if (!reader.isPresent() && !historyWriter.isPresent()) {
+      System.out.println("tdg history file null");
+      return new NullTdgHistoryStore();
+    }
+    // System.out.println("new new tdg history file null");
+    return new TdgHistoryStoreImpl(historyWriter.orElse(new NullWriterFactory()), reader, classPath);
+  }
   private List<String> createJvmArgs(ReportOptions data) {
     List<String> args = new ArrayList<>(data.getJvmArgs());
     args.addAll(ArgLineParser.split(data.getArgLine()));

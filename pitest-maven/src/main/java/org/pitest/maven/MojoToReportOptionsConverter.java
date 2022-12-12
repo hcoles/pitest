@@ -148,7 +148,7 @@ public class MojoToReportOptionsConverter {
     data.setDetectInlinedCode(this.mojo.isDetectInlinedCode());
 
     determineHistory(data);
-    
+    data.setTdgHistoryLocation(this.mojo.getTdgHistoryFile());
     data.setExportLineCoverage(this.mojo.isExportLineCoverage());
     data.setMutationEngine(this.mojo.getMutationEngine());
     data.setJavaExecutable(this.mojo.getJavaExecutable());

@@ -49,7 +49,11 @@ public class DirectoryClassPathRoot implements ClassPathRoot, IOHeavyRoot {
   @Override
   public URL getResource(final String name) throws MalformedURLException {
     final File f = new File(this.root, name);
+    // if (f.exists()) {
+    //   System.out.println("................ exists ??" + name);
+    // }
     if (f.canRead()) {
+      // System.out.println(".............. .. can read? " + name);
       // magically work around encoding issues
       return f.toURI().toURL();
     } else {

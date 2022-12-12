@@ -112,6 +112,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.ekstazi</groupId>
+			<artifactId>org.ekstazi.core</artifactId>
+			<version>4.6.2</version>
+		  </dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
