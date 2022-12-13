@@ -45,7 +45,7 @@ public class TdgMinion {
             }
             LOG.fine(() -> "Tests classes received");
             LOG.fine(() -> "Tests classes received" + classes);
-            System.out.println("tdgminion receive classes : "  + classes);
+            // System.out.println("tdgminion receive classes : "  + classes);
             SafeDataOutputStream dos = new SafeDataOutputStream(s.getOutputStream());
             pipe = new TdgPipe(dos);
             for (ClassName n : classes) {
@@ -53,7 +53,7 @@ public class TdgMinion {
                     Method[] declaredMethods = Class.forName(n.toString()).getDeclaredMethods();
                     List<String> declaredMethodsList = Stream.of(declaredMethods).map(Method::getName).collect(Collectors.toList());
                     List<String> aMethods = Stream.of(declaredMethods).filter(m -> m.isAnnotationPresent(Test.class)).map(Method::getName).collect(Collectors.toList());
-                    System.out.println("tdgimpl getTests " + aMethods);
+                    // System.out.println("tdgimpl getTests " + aMethods);
                     pipe.recordTestUnitsName(n.toString() , aMethods);
                 } catch (Exception e) {
                     // TODO: handle exception

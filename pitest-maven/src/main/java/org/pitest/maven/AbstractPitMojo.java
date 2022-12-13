@@ -380,6 +380,10 @@ public class AbstractPitMojo extends AbstractMojo {
   @Parameter(property = "useClasspathJar", defaultValue = "false")
   private boolean                     useClasspathJar;
 
+
+
+  @Parameter(property = "revision")
+  public String revision;
   /**
    * Amount of debug information/noise to output. The boolean
    * verbose flag overrides this value when it is set to true.
@@ -503,7 +507,7 @@ public class AbstractPitMojo extends AbstractMojo {
   protected Optional<CombinedStatistics> analyse() throws MojoExecutionException {
     final ReportOptions data = new MojoToReportOptionsConverter(this,
         new SurefireConfigConverter(), this.filter).convert();
-        System.out.println("tdgHistoryFile null? ? ? "+this.tdgHistoryFile);
+        // System.out.println("tdgHistoryFile null? ? ? "+this.tdgHistoryFile);
     return Optional.ofNullable(this.goalStrategy.execute(detectBaseDir(), data,
         this.plugins, this.environmentVariables));
   }
@@ -628,6 +632,10 @@ public class AbstractPitMojo extends AbstractMojo {
 
   public boolean isFullMutationMatrix() {
     return fullMutationMatrix;
+  }
+
+  public String getRevision() {
+    return this.revision;
   }
 
   public int getMutationUnitSize() {

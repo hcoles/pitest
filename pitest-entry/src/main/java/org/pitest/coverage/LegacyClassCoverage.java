@@ -33,7 +33,7 @@ public class LegacyClassCoverage implements ReportCoverage {
         this.lm = lm;
         this.classesForFile = FCollection.bucket(code.getCode(),
                 keyFromClassInfo());
-        System.out.println("lzp classesForFile : " + classesForFile);
+        // System.out.println("lzp classesForFile : " + classesForFile);
     }
 
     public void loadBlockDataOnly(Collection<BlockLocation> coverageData) {

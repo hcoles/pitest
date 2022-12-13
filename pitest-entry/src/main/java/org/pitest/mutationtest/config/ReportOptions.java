@@ -148,6 +148,17 @@ public class ReportOptions {
   private Charset outputEncoding;
 
 
+  public String revision;
+
+  public void setRevision(String revision) {
+    // System.out.println("revision hahahhahahahhahah " + revision);
+    this.revision = revision;
+  }
+
+  public String getRevision() {
+    return this.revision;
+  }
+
   public Verbosity getVerbosity() {
     return this.verbosity;
   }

@@ -66,16 +66,16 @@ public class Tdgimpl implements Tdg{
         if (this.tc == null) {
             Log.getLogger().warning("getClosure failed");    
         }
-        Log.getLogger().info("this.classPath.test() : " + this.classPath.test());
+        // Log.getLogger().info("this.classPath.test() : " + this.classPath.test());
         Collection<ClassName> targets = this.classPath.code();
         Collection<String> tests = this.classPath.test().stream().filter(s -> !targets.contains(s)).map(ClassName::toString).collect(Collectors.toList());
-        Log.getLogger().info("this.classPath.tests : " + tests);
+        // Log.getLogger().info("this.classPath.tests : " + tests);
         Map<String, Set<String>> target2Tests = new HashMap<>();
         for (String key : this.tc.keySet()) {
             target2Tests.put(key,this.tc.get(key).stream().filter(s -> tests.contains(s)).collect(Collectors.toSet()));
         }
         this.target2Tests = target2Tests;
-        Log.getLogger().info("after filtered  this.target2Tests  : " + target2Tests);
+        // Log.getLogger().info("after filtered  this.target2Tests  : " + target2Tests);
     }
 
     @Override

@@ -41,7 +41,7 @@ public class TdgTestMethodNamesGenerator {
 
     public Map<String, Set<String>> getClassMethodNames() {
         try {
-            System.out.println("TdgTestMethodNamesGenerator getClassMethodNames 42");
+            // System.out.println("TdgTestMethodNamesGenerator getClassMethodNames 42");
             // 获取测试类全类名
             
             Collection<ClassName> targets = this.code.getProjectClassPaths().code();
@@ -61,7 +61,7 @@ public class TdgTestMethodNamesGenerator {
             process.start();
 
             final ExitCode exitCode = process.waitToDie();
-System.out.println("TdgTestMethodNamesGenerator getClassMethodNames 58");
+// System.out.println("TdgTestMethodNamesGenerator getClassMethodNames 58");
             if (exitCode == ExitCode.TEST_PLUGIN_ISSUE) {
                 LOG.severe("Pitest could not get any tests. Please check that you have installed the pitest plugin for your testing library (eg JUnit 5, TestNG). If your project uses JUnit 4 "
                         + "the plugin is automatically included, but a recent version of JUnit 4 must be on the classpath.");

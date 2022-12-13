@@ -143,7 +143,7 @@ Log.getLogger().info("breakpoint1");
     final Optional<WriterFactory> tdgmaybeWriter = data.createTdgHistoryWriter();
     WriterFactory tdghistoryWriter = tdgmaybeWriter.orElse(new NullWriterFactory());
     TdgHistoryStore tdgHistory = this.makeTdgHistory(data,tdgmaybeWriter, cps);
-    tdgHistory.init();
+    
     // System.out.println("getHistoricResultsgetHistoricResultsgetHistoricResults : "+tdgHistory.getHistoricResults());
     final MutationStrategies strategies = new MutationStrategies(
         settings.createEngine(), history, coverageDatabase, reportFactory,

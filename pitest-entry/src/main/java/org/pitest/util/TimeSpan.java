@@ -51,20 +51,21 @@ public class TimeSpan {
     final int minutes = (int) ((millis / (1000 * 60)) % 60);
     final int hours = (int) ((millis / (1000 * 60 * 60)) % 24);
 
-    if (hours != 0) {
-      return "" + hours + " hours, " + minutes + " minutes and " + seconds
-          + " seconds";
-    }
+    // if (hours != 0) {
+    //   return "" + hours + " hours, " + minutes + " minutes and " + seconds
+    //       + " seconds";
+    // }
 
-    if (minutes != 0) {
-      return "" + minutes + " minutes and " + seconds + " seconds";
-    }
+    // if (minutes != 0) {
+    //   return "" + minutes + " minutes and " + seconds + " seconds";
+    // }
 
-    if (seconds != 0) {
-      return "" + seconds + " seconds";
-    }
+    // if (seconds != 0) {
+    //   return "" + seconds + " seconds";
+    // }
 
-    return "< 1 second";
+    // return "< 1 second";
+    return "" + millis;
 
   }
 
