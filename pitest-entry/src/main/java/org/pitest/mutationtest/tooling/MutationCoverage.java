@@ -73,7 +73,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.pitest.mutationtest.tdg.Tdgimpl;
 import static java.util.Collections.emptyList;
-
+import org.pitest.mutationtest.tdghistory.TdgAnalyser;
+import org.pitest.mutationtest.tdghistory.TdgCodeHistory;
 public class MutationCoverage {
 
   private static final int         MB  = 1024 * 1024;
@@ -332,9 +333,11 @@ public class MutationCoverage {
 
     final MutationSource source = new MutationSource(mutationConfig, testPrioritiser, bas, interceptor);
 
-    final MutationAnalyser analyser = new IncrementalAnalyser(
-        new DefaultCodeHistory(this.code, history), coverageData);
-
+    // final MutationAnalyser analyser = new IncrementalAnalyser(
+    //     new DefaultCodeHistory(this.code, history), coverageData);
+        final MutationAnalyser tdganalyser = new TdgAnalyser(
+          new TdgCodeHistory(this.strategies.tdgHistoryStore(),this.strategies.tdg().getProjectClassPaths(), this.strategies.tdg())
+          ,this.strategies.tdg());
     final WorkerFactory wf = new WorkerFactory(this.baseDir, coverage()
         .getConfiguration(), mutationConfig, args,
         new PercentAndConstantTimeoutStrategy(this.data.getTimeoutFactor(),
@@ -344,7 +347,7 @@ public class MutationCoverage {
     final MutationGrouper grouper = this.settings.getMutationGrouper().makeFactory(
         this.data.getFreeFormProperties(), this.code,
         this.data.getNumberOfThreads(), this.data.getMutationUnitSize());
-    final MutationTestBuilder builder = new MutationTestBuilder(wf, analyser,
+    final MutationTestBuilder builder = new MutationTestBuilder(wf, tdganalyser,
         source, grouper);
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());

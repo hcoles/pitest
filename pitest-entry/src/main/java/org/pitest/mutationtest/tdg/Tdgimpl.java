@@ -49,7 +49,9 @@ public class Tdgimpl implements Tdg{
         Log.getLogger().info("targetClassPath : " + targetClassPath);
         Log.getLogger().info("testClassPath : " + testClassPath);
     }
-
+    public ProjectClassPaths getProjectClassPaths() {
+        return this.classPath;
+    }
     private DirectedGraphBuilder<String> getBuilderFromDeps(Map<String, Set<String>> deps) {
         DirectedGraphBuilder<String> builder = new DirectedGraphBuilder<>();
         for (String key : deps.keySet()) {
