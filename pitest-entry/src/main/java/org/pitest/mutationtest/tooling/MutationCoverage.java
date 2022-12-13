@@ -75,6 +75,11 @@ import org.pitest.mutationtest.tdg.Tdgimpl;
 import static java.util.Collections.emptyList;
 import org.pitest.mutationtest.tdghistory.TdgAnalyser;
 import org.pitest.mutationtest.tdghistory.TdgCodeHistory;
+import org.pitest.util.Timings.Stage;
+import java.io.OutputStream;
+import java.io.FileOutputStream;
+import org.pitest.util.TimeSpan;
+import java.util.Map.Entry;
 public class MutationCoverage {
 
   private static final int         MB  = 1024 * 1024;
@@ -158,6 +163,7 @@ public class MutationCoverage {
 
     history.initialize();
     this.strategies.tdg().init();
+    this.strategies.tdgHistoryStore().init();
     this.timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
     final List<MutationAnalysisUnit> tus = buildMutationTests(coverageData, history,
             engine, args, allInterceptors(), this.strategies.tdg());
@@ -303,6 +309,31 @@ public class MutationCoverage {
     if (coverage != null) {
       ps.println(String.format(">> Line Coverage: %d/%d (%d%%)", coverage.getNumberOfCoveredLines(),
               coverage.getNumberOfLines(), coverage.getCoverage()));
+    }
+
+     //写timeings的数据到文件，让python来统计
+     try {
+      String revistionNum = this.data.getRevision();
+      System.out.println("lzplzp " + revistionNum);
+      LOG.fine("persisting revisionNum is " + revistionNum);
+      File revDir = new File("./pitestStat");
+      if (!revDir.exists()) { // 创建pitestStat文件夹
+          LOG.fine("revDir does not exists");
+          revDir.mkdir();
+      }
+    //写时间数据
+    File revisionlogFile = new File(revDir, revistionNum + ".log");
+    OutputStream outputStream = new FileOutputStream(revisionlogFile);
+    long total = 0;
+    for (final Entry<Stage, TimeSpan> each : this.timings.timings.entrySet()) {
+      total = total + each.getValue().duration();
+      // ps.println("> " + each.getKey() + " : " + each.getValue());
+      outputStream.write((each.getValue().toString() + " ").getBytes());
+    }
+    outputStream.close();
+
+    } catch(Exception e) {
+      LOG.fine("python read file error");
     }
 
     stats.report(ps);

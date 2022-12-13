@@ -29,11 +29,19 @@ public class TdgCodeHistory {
         URL url = this.classPath.getClassPath().findResource(name.asInternalName() + ".class");
         String hashcode = this.checkSumUtil.getCheckSum(url);
         if (!this.previousHash.containsKey(url)) return true;
-        return this.previousHash.get(url) == hashcode;
+        // System.out.println("this.previousHash.get(url) : " + this.previousHash.get(url));
+        // System.out.println("current hashcode  : " + hashcode);
+        return   !(this.previousHash.get(url).equals(hashcode)); // != 的话说明改变了应该返回true
+        // if (flag)
+        //     System.out.println("class " + name.toString() + " changed" + "\n");
+        // else
+        //     System.out.println("class " + name.toString() + " not changed" + "\n");
+        // return flag;
     }
 
     public boolean hasTestsChanged(ClassName targetClassName) {
         Collection<TestInfo>  relatedTests = this.tdg.getTests(targetClassName);
+// System.out.println(targetClassName.toString() + "判断为survived " + "[" + relatedTests + "]" + "\n");
         for (TestInfo test : relatedTests) {
             if (this.hasClassChanged(TestInfo.toDefiningClassName().apply(test))) return true;
         }

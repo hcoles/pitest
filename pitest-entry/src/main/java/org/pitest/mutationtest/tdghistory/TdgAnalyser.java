@@ -35,12 +35,14 @@ public class TdgAnalyser implements MutationAnalyser {
         final List<MutationResult> mrs = new ArrayList<>(mutationsForClasses.size());
         for (final MutationDetails each : mutationsForClasses) {
             if (this.tdgCodeHistory.hasClassChanged(each.getClassName())) {
+              // System.out.println(each.getClassName().toString() + "class changed , 类改变了需要重启算变异体结果" + "\n");
                 mrs.add(analyseFromScratch(each));
                 continue;
             }
             final Optional<MutationStatusTestPair> maybeResult = this.tdgCodeHistory
                 .getPreviousResult(each.getId());
             if (maybeResult.isPresent()) {
+              // System.out.println(each.getClassName().toString() + "变异体 "+ each.getId() + "has history");
                 mrs.add(analyseFromHistory(each, maybeResult.get()));
             } else {
                 mrs.add(analyseFromScratch(each));
@@ -74,7 +76,7 @@ public class TdgAnalyser implements MutationAnalyser {
 
     if ((mutationStatusTestPair.getStatus() == DetectionStatus.KILLED)) {
       final List<String> killingTestNames = filterUnchangedKillingTests(each, mutationStatusTestPair);
-
+// System.out.println(each.getClassName().toString() + "历史信息是kill 杀死的test没变 判断为kill" + "[" + killingTestNames + "]" + "\n");
       if (!killingTestNames.isEmpty()) {
         return makeResult(
                 each,
@@ -86,6 +88,7 @@ public class TdgAnalyser implements MutationAnalyser {
 
     if ((mutationStatusTestPair.getStatus() == DetectionStatus.SURVIVED)
         && !this.tdgCodeHistory.hasTestsChanged(each.getClassName())) {
+// System.out.println(each.getClassName().toString() + "历史信息是suvived 所有的tests没变 判断为suvived" + "\n");
       return makeResult(each, DetectionStatus.SURVIVED);
     }
     return analyseFromScratch(each);

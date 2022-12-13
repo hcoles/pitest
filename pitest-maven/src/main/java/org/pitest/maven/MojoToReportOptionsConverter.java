@@ -111,6 +111,7 @@ public class MojoToReportOptionsConverter {
     data.setExcludedClasses(this.mojo.getExcludedClasses());
     data.setExcludedTestClasses(globStringsToPredicates(this.mojo
         .getExcludedTestClasses()));
+    data.setRevision(this.mojo.getRevision());
     data.setNumberOfThreads(this.mojo.getThreads());
     data.setExcludedRunners(this.mojo.getExcludedRunners());
 
