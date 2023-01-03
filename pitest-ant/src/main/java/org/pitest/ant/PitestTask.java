@@ -212,6 +212,10 @@ public class PitestTask extends Task { // NO_UCD (test only)
     this.setOption(ConfigOption.EXCLUDED_GROUPS, value);
   }
 
+  public void setExcludedRunners(final String value) {
+    this.setOption(ConfigOption.EXCLUDED_RUNNERS, value);
+  }
+
   public void setIncludedTestMethods(final String value) {
     this.setOption(ConfigOption.INCLUDED_TEST_METHODS, value);
   }

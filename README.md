@@ -8,6 +8,10 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+## 1.10.4 (unreleased)
+
+* #1134 Add `excludedRunners` parameter to command line interface and Ant
+
 ## 1.10.3
 
 * #1128 Bug fix - lines with repeated debug entries double counted
