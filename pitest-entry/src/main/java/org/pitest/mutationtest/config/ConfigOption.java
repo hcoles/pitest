@@ -153,9 +153,14 @@ public enum ConfigOption {
    */
   INCLUDED_TEST_METHODS("includedTestMethods"),
   /**
-   * TestNG groupsJUnit categories to exclude
+   * TestNG groups / JUnit categories to exclude
    */
   EXCLUDED_GROUPS("excludedGroups"),
+
+  /**
+   * JUnit4 runners to exclude
+   */
+  EXCLUDED_RUNNERS("excludedRunners"),
 
   /**
    * Whether to compute a full mutation matrix.

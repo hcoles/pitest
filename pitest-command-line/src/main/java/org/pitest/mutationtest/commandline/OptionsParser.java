@@ -56,6 +56,7 @@ import static org.pitest.mutationtest.config.ConfigOption.COVERAGE_THRESHOLD;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_GROUPS;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_METHOD;
+import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_RUNNERS;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_TEST_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.EXPORT_LINE_COVERAGE;
 import static org.pitest.mutationtest.config.ConfigOption.FAIL_WHEN_NOT_MUTATIONS;
@@ -127,6 +128,8 @@ public class OptionsParser {
   private final ArgumentAcceptingOptionSpec<Boolean> failWhenNoMutations;
   private final ArgumentAcceptingOptionSpec<Boolean> skipFailingTests;
   private final ArgumentAcceptingOptionSpec<String>  codePaths;
+
+  private final OptionSpec<String>                   excludedRunnersSpec;
   private final OptionSpec<String>                   excludedGroupsSpec;
   private final OptionSpec<String>                   includedGroupsSpec;
   private final OptionSpec<String>                   includedTestMethodsSpec;
@@ -311,6 +314,10 @@ public class OptionsParser {
         .describedAs(
             "Globs identifying classpath roots containing mutable code");
 
+    this.excludedRunnersSpec = parserAccepts(EXCLUDED_RUNNERS).withRequiredArg()
+            .ofType(String.class).withValuesSeparatedBy(',')
+            .describedAs("JUnit4 runners to exclude");
+
     this.includedGroupsSpec = parserAccepts(INCLUDED_GROUPS).withRequiredArg()
         .ofType(String.class).withValuesSeparatedBy(',')
         .describedAs("TestNG groups/JUnit categories to include");
@@ -473,6 +480,8 @@ public class OptionsParser {
     setClassPath(userArgs, data);
 
     setTestGroups(userArgs, data);
+
+    data.setExcludedRunners(this.excludedRunnersSpec.values(userArgs));
 
     data.setIncludedTestMethods(this.includedTestMethodsSpec.values(userArgs));
     data.setJavaExecutable(this.javaExecutable.value(userArgs));

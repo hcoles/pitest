@@ -383,6 +383,13 @@ public class OptionsParserTest {
   }
 
   @Test
+  public void shouldParseCommaSeparatedListOfExcludedTestRunners() {
+    final ReportOptions actual = parseAddingRequiredArgs("--excludedRunners",
+            "foo,bar");
+    assertThat(actual.getExcludedRunners()).containsExactly("foo", "bar");
+  }
+
+  @Test
   public void shouldParseMutationUnitSize() {
     final ReportOptions actual = parseAddingRequiredArgs("--mutationUnitSize",
         "50");

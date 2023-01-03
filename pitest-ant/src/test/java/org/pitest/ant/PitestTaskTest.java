@@ -233,6 +233,13 @@ public class PitestTaskTest {
   }
 
   @Test
+  public void shouldPassExcludedRunnersToJavaTask() {
+    this.pitestTask.setExcludedRunners("foo");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--excludedRunners=foo");
+  }
+  
+  @Test
   public void shouldPassIncludedTestMethodsOptionToJavaTask() {
     this.pitestTask.setIncludedTestMethods("footest");
     this.pitestTask.execute(this.java);
