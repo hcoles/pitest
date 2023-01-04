@@ -431,6 +431,19 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertThat(actual.getOutputEncoding()).isEqualTo(StandardCharsets.US_ASCII);
   }
 
+  public void testParsesArgline() {
+    ReportOptions actual = parseConfig("<argLine>foo</argLine>");
+    assertThat(actual.getArgLine()).isEqualTo("foo");
+  }
+
+  public void testEvaluatesArgLineProperties() {
+    properties.setProperty("FOO", "fooValue");
+    properties.setProperty("BAR", "barValue");
+    properties.setProperty("UNUSED", "unusedValue");
+    ReportOptions actual = parseConfig("<argLine>@{FOO} @{BAR}</argLine>");
+    assertThat(actual.getArgLine()).isEqualTo("fooValue barValue");
+  }
+
   private ReportOptions parseConfig(final String xml) {
     try {
       final String pom = createPomWithConfiguration(xml);
