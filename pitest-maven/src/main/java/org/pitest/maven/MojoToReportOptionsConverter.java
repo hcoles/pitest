@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -120,7 +121,7 @@ public class MojoToReportOptionsConverter {
       data.addChildJVMArgs(this.mojo.getJvmArgs());
     }
     if (this.mojo.getArgLine() != null) {
-      data.setArgLine(this.mojo.getArgLine());
+      data.setArgLine(replacePropertyExpressions(this.mojo.getArgLine()));
     }
 
     data.setMutators(determineMutators());
@@ -368,6 +369,28 @@ public class MojoToReportOptionsConverter {
       p.putAll(this.mojo.getPluginProperties());
     }
     return p;
+  }
+
+
+  /**
+   * This method taken from surefire under Apache 2 licence.
+   *
+   * Replaces expressions <pre>@{property-name}</pre> with the corresponding properties
+   * from the model. This allows late evaluation of property values when the plugin is executed (as compared
+   * to evaluation when the pom is parsed as is done with <pre>${property-name}</pre> expressions).
+   *
+   * This allows other plugins to modify or set properties with the changes getting picked up by surefire.
+   */
+  private String replacePropertyExpressions(String argLine) {
+    for (Enumeration<?> e = mojo.getProject().getProperties().propertyNames(); e.hasMoreElements();) {
+      String key = e.nextElement().toString();
+      String field = "@{" + key + "}";
+      if (argLine.contains(field))  {
+        argLine = argLine.replace(field, mojo.getProject().getProperties().getProperty(key, ""));
+      }
+    }
+
+    return argLine;
   }
 
 }
