@@ -100,23 +100,6 @@ public class PitMojoIT {
   }
 
   @Test
-  // debatable if this test should be here. Relies on external testng plugin
-  public void shouldWorkWithTestNG() throws Exception {
-    File testDir = prepare("/pit-testng");
-    verifier.executeGoal("test");
-    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
-
-    String actual = readResults(testDir);
-    assertThat(actual)
-        .contains(
-            "<mutation detected='true' status='KILLED' numberOfTestsRun='3'><sourceFile>Covered.java</sourceFile>");
-    assertThat(actual)
-        .contains(
-            "<mutation detected='false' status='NO_COVERAGE' numberOfTestsRun='0'><sourceFile>Covered.java</sourceFile>");
-    assertThat(actual).doesNotContain("status='RUN_ERROR'");
-  }
-
-  @Test
   public void shouldExcludeSpecifiedJUnitCategories() throws Exception {
     File testDir = prepare("/pit-junit-categories");
     verifier.executeGoal("test");
