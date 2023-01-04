@@ -94,8 +94,14 @@ public class RunnerSuiteFinderTest {
 
     public static junit.framework.Test suite() {
       final TestSuite suite = new TestSuite();
-      suite.addTest(new One());
-      suite.addTest(new Two());
+      One one = new One();
+      one.setName("testSomething");
+      suite.addTest(one);
+
+      Two two = new Two();
+      two.setName("testSomething");
+
+      suite.addTest(two);
       return suite;
     }
 
