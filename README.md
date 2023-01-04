@@ -11,6 +11,7 @@ Read all about it at http://pitest.org
 ## 1.10.4 (unreleased)
 
 * #1134 Add `excludedRunners` parameter to command line interface and Ant
+* #1131 Support surefire late property evaluation syntax for arglines
 
 ## 1.10.3
 
