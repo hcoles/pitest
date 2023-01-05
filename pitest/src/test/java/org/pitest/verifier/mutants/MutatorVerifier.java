@@ -51,7 +51,9 @@ public class MutatorVerifier {
     }
 
     public void noMutantsCreated() {
-        assertThat(findMutations()).isEmpty();
+        assertThat(findMutations())
+                .as(() -> "Expecting no mutants to be generated for " + printClass(clazz))
+                .isEmpty();
     }
 
     public final StringAssert firstMutantDescription() {

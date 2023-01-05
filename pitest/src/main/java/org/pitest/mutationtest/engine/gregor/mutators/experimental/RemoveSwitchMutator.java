@@ -16,7 +16,7 @@ import java.util.List;
  * default label. We change each label to the default label, thus removing it
  */
 public class RemoveSwitchMutator implements MethodMutatorFactory {
-  // EXPERIMENTAL_REMOVE_SWITCH_MUTATOR;
+
   private static final String REMOVE_SWITCH_MUTATOR_NAME = "EXPERIMENTAL_REMOVE_SWITCH_MUTATOR_";
   private static final int GENERATE_FROM_INCLUDING = 0;
   private static final int GENERATE_UPTO_EXCLUDING = 100;
@@ -69,7 +69,7 @@ public class RemoveSwitchMutator implements MethodMutatorFactory {
     @Override
     public void visitTableSwitchInsn(final int min, final int max,
         final Label defaultLabel, final Label... labels) {
-      if ((labels.length > RemoveSwitchMutator.this.key) && shouldMutate(value(min,max))) {
+      if ((labels.length > RemoveSwitchMutator.this.key) && labels[key] != defaultLabel && shouldMutate(value(min,max))) {
         final Label[] newLabels = labels.clone();
         newLabels[RemoveSwitchMutator.this.key] = defaultLabel;
         super.visitTableSwitchInsn(min, max, defaultLabel, newLabels);
@@ -81,7 +81,7 @@ public class RemoveSwitchMutator implements MethodMutatorFactory {
     @Override
     public void visitLookupSwitchInsn(final Label defaultLabel,
         final int[] ints, final Label[] labels) {
-      if ((labels.length > RemoveSwitchMutator.this.key) && shouldMutate(ints[key])) {
+      if ((labels.length > RemoveSwitchMutator.this.key) && labels[key] != defaultLabel && shouldMutate(ints[key])) {
         final Label[] newLabels = labels.clone();
         newLabels[RemoveSwitchMutator.this.key] = defaultLabel;
         super.visitLookupSwitchInsn(defaultLabel, ints, newLabels);

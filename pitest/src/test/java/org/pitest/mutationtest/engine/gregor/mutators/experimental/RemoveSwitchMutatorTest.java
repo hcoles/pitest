@@ -255,4 +255,59 @@ public class RemoveSwitchMutatorTest {
     v.forClass(HasFewerLabelsWithDefault.class)
                     .noMutantsCreated();
   }
+
+
+  private static class FallThroughLookupSwitch implements IntFunction<Integer> {
+
+    @Override
+    public Integer apply(int value) {
+      int i = 0;
+      switch (value) {
+        case 1:
+          i = 1;
+          break;
+        case 200:
+          i = 4;
+          break;
+        case 300:
+        case 400:
+        default:
+          i = 0;
+      }
+      return i;
+    }
+  }
+
+  @Test
+  public void doesNotReplaceLookupSwitchCasesThatFallThroughToDefault() {
+    v.forClass(FallThroughLookupSwitch.class)
+            .noMutantsCreated();
+  }
+
+  private static class FallThroughTableSwitch implements Function<TimeUnit,Integer> {
+
+    @Override
+    public Integer apply(TimeUnit value) {
+      switch (value) {
+        case NANOSECONDS:
+          return 1;
+        case MICROSECONDS:
+          return 2;
+        case MILLISECONDS:
+        case SECONDS:
+        default:
+          return -1;
+      }
+    }
+  }
+
+  @Test
+  public void doesNotReplaceTableSwitchCasesThatFallThroughToDefault() {
+    v.forClass(FallThroughTableSwitch.class)
+            .noMutantsCreated();
+  }
+
+
 }
+
+
