@@ -60,12 +60,20 @@ public class MutationAnalysisExecutor {
 
   private void processResult(List<Future<MutationMetaData>> results)
       throws InterruptedException, ExecutionException {
+    int countProcessedUnits = 0;
+
     for (final Future<MutationMetaData> f : results) {
       final MutationMetaData r = f.get();
       for (final MutationResultListener l : this.listeners) {
         for (final ClassMutationResults cr : r.toClassResults()) {
           l.handleMutationResult(cr);
         }
+      }
+
+      countProcessedUnits++;
+
+      if (countProcessedUnits % 100 == 0) {
+        LOG.info("Processed mutation unit " + countProcessedUnits + " of " + results.size() + ".");
       }
     }
   }
