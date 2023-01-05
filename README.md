@@ -8,6 +8,10 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+## 1.10.5 (unreleased)
+
+* #1138 Do not mutate redundant fall through to default switch cases
+
 ## 1.10.4
 
 * #1134 Add `excludedRunners` parameter to command line interface and Ant
