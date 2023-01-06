@@ -43,11 +43,11 @@ public final class Score {
       sb.append(each + " ");
       i++;
       if ((i % 4) == 0) {
-        out.println("> " + sb.toString());
+        out.println("> " + sb);
         sb = new StringBuilder();
       }
     }
-    out.println("> " + sb.toString());
+    out.println("> " + sb);
   }
 
   public String getMutatorName() {
