@@ -79,7 +79,7 @@ public class Log {
       if (throwable != null) {
         final StringWriter sink = new StringWriter();
         throwable.printStackTrace(new PrintWriter(sink, true));
-        buf.append(sink.toString());
+        buf.append(sink);
       }
 
       return buf.toString();
