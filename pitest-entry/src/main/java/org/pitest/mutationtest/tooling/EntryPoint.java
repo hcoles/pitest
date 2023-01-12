@@ -121,15 +121,17 @@ Log.getLogger().info("breakpoint1");
     
       
     final CodeSource code = new CodeSource(cps);
-    
+    final Timings timings = new Timings();
     TdgTestMethodNamesGenerator classTestMethodNamesGen = 
     new TdgTestMethodNamesGenerator(launchOptions, code, baseDir);
+    timings.registerStart(Timings.Stage.TDG_MINION);
     Map<String, Set<String>> classTestMethodNames = classTestMethodNamesGen.getClassMethodNames();
+    timings.registerEnd(Timings.Stage.TDG_MINION);
     Tdgimpl tdg = new Tdgimpl(cps, classTestMethodNames);
     // tdg.init();
     // System.out.println(classTestMethodNames);
     // System.out.println(tdg.getTests(ClassName.fromString("org.zipeng.B")));
-    final Timings timings = new Timings();
+    
     final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
         baseDir, coverageOptions, launchOptions, code,
         settings.createCoverageExporter(), timings, data.getVerbosity());

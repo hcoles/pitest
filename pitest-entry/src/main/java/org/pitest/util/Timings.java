@@ -26,7 +26,9 @@ public class Timings {
     BUILD_MUTATION_TESTS("build mutation tests"),
     RUN_MUTATION_TESTS("run mutation analysis"),
     SCAN_CLASS_PATH("scan classpath"),
-    COVERAGE("coverage and dependency analysis");
+    COVERAGE("coverage and dependency analysis"),
+    TDG_MINION("tdg minion"),
+    TDG_INIT("tdg Init");
 
     private final String description;
 

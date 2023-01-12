@@ -162,7 +162,9 @@ public class MutationCoverage {
     final MutationStatisticsListener stats = new MutationStatisticsListener();
 
     history.initialize();
+    this.timings.registerStart(Timings.Stage.TDG_INIT);
     this.strategies.tdg().init();
+    this.timings.registerEnd(Timings.Stage.TDG_INIT);
     this.strategies.tdgHistoryStore().init();
     this.timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
     final List<MutationAnalysisUnit> tus = buildMutationTests(coverageData, history,

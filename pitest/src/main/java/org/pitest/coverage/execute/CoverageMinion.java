@@ -46,6 +46,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import java.io.OutputStream;
+import java.io.FileOutputStream;
+import java.io.File;
+
 import static org.pitest.util.Unchecked.translateCheckedException;
 
 import org.pitest.mutationtest.config.PrioritisingTestConfiguration;
@@ -171,6 +175,24 @@ public class CoverageMinion {
                 .flatMap(ClassName.nameToClass())
                 .collect(Collectors.toList()));
     LOG.info(() -> "Found " + tus.size() + " tests");
+    
+    //写发现的test数量数据到文件，让python来统计
+    try {
+      File testDir = new File("./foundTest");
+      if (!testDir.exists()) { // 创建pitestStat文件夹
+          LOG.fine("foundTest does not exists");
+          testDir.mkdir();
+      }
+    //写时间数据
+    File testsslogFile = new File(testDir,  "testss.txt");
+    OutputStream outputStream = new FileOutputStream(testsslogFile);
+    outputStream.write((tus.size()+ "").getBytes());
+    outputStream.close();
+
+    } catch(Exception e) {
+      LOG.fine("python read file error");
+    }
+    
     return tus;
   }
 
