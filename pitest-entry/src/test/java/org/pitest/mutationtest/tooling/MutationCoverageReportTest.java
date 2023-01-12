@@ -215,7 +215,7 @@ public class MutationCoverageReportTest {
   private CombinedStatistics createAndRunTestee() {
     final MutationStrategies strategies = new MutationStrategies(
         new GregorEngineFactory(), this.history, this.coverage,
-        this.listenerFactory, this.output, this.verifier).with(this.mutationFactory);
+        this.listenerFactory, result -> result, cov -> cov, this.output, this.verifier).with(this.mutationFactory);
 
     this.testee = new MutationCoverage(strategies, null, this.code, this.data,
         new SettingsFactory(this.data, PluginServices.makeForContextLoader()),

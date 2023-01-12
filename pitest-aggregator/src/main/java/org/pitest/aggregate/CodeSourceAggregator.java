@@ -12,6 +12,7 @@ import org.pitest.classpath.ClassFilter;
 import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassPathRoot;
 import org.pitest.classpath.CodeSource;
+import org.pitest.classpath.DefaultCodeSource;
 import org.pitest.classpath.DirectoryClassPathRoot;
 import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
@@ -30,7 +31,7 @@ class CodeSourceAggregator {
   }
 
   public CodeSource createCodeSource() {
-    return new CodeSource(createProjectClassPaths());
+    return new DefaultCodeSource(createProjectClassPaths());
   }
 
   private ProjectClassPaths createProjectClassPaths() {

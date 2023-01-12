@@ -1,6 +1,9 @@
 package org.pitest.mutationtest.config;
 
+import org.pitest.classpath.CodeSourceFactory;
+import org.pitest.mutationtest.build.CoverageTransformerFactory;
 import org.pitest.mutationtest.MutationEngineFactory;
+import org.pitest.mutationtest.MutationResultInterceptor;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.build.MutationGrouperFactory;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
@@ -48,7 +51,10 @@ public class PluginServices {
     l.addAll(findTestPrioritisers());
     l.addAll(findInterceptors());
     l.addAll(findConfigurationUpdaters());
+    l.addAll(findMutationResultInterceptor());
+    l.addAll(findCoverageTransformers());
     l.addAll(findVerifiers());
+    l.addAll(findCodeSources());
     return l;
   }
 
@@ -103,6 +109,18 @@ public class PluginServices {
 
   public List<BuildVerifierFactory> findVerifiers() {
     return new ArrayList<>(load(BuildVerifierFactory.class));
+  }
+
+  public List<MutationResultInterceptor> findMutationResultInterceptor() {
+    return new ArrayList<>(load(MutationResultInterceptor.class));
+  }
+
+  public List<CoverageTransformerFactory> findCoverageTransformers() {
+    return new ArrayList<>(load(CoverageTransformerFactory.class));
+  }
+
+  public List<CodeSourceFactory> findCodeSources() {
+    return new ArrayList<>(load(CodeSourceFactory.class));
   }
 
   public Collection<ProvidesFeature> findFeatures() {

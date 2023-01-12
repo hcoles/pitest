@@ -17,7 +17,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.Repository;
 import java.util.Optional;
 
-public class CodeSourceTest {
+public class DefaultCodeSourceTest {
 
   private CodeSource          testee;
 
@@ -34,7 +34,7 @@ public class CodeSourceTest {
   @Before
   public void setUp() {
     MockitoAnnotations.openMocks(this);
-    this.testee = new CodeSource(this.classPath, this.repository);
+    this.testee = new DefaultCodeSource(this.classPath, this.repository);
     this.foo = makeClassInfo("Foo");
     this.bar = makeClassInfo("Bar");
   }

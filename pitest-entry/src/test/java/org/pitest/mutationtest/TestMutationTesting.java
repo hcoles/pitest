@@ -45,12 +45,11 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.mockito.MockitoAnnotations;
 import org.pitest.SystemTest;
-import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.CodeSource;
+import org.pitest.classpath.DefaultCodeSource;
 import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageDatabase;
@@ -58,7 +57,6 @@ import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
 import org.pitest.coverage.export.NullCoverageExporter;
-import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.CompoundMutationInterceptor;
 import org.pitest.mutationtest.build.DefaultGrouper;
@@ -79,7 +77,6 @@ import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.process.DefaultJavaExecutableLocator;
 import org.pitest.process.JavaAgent;
 import org.pitest.process.LaunchOptions;
-import org.pitest.simpletest.SimpleTestPlugin;
 import org.pitest.simpletest.TestAnnotationForTesting;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Timings;
@@ -98,10 +95,9 @@ public class TestMutationTesting {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.openMocks(this);
-    this.config = TestPluginArguments.defaults().withTestPlugin(SimpleTestPlugin.NAME);
+    this.config = TestPluginArguments.defaults();
     this.metaDataExtractor = new MetaDataExtractor();
-    this.mae = new MutationAnalysisExecutor(1,
+    this.mae = new MutationAnalysisExecutor(1, result -> result,
         Collections
             .<MutationResultListener> singletonList(this.metaDataExtractor));
   }
@@ -245,7 +241,7 @@ public class TestMutationTesting {
         data.createClassesFilter(), pf);
 
     final Timings timings = new Timings();
-    final CodeSource code = new CodeSource(cps);
+    final CodeSource code = new DefaultCodeSource(cps);
 
     final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(
         null, coverageOptions, launchOptions, code, new NullCoverageExporter(),

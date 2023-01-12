@@ -67,6 +67,7 @@ public enum DetectionStatus {
    */
   NO_COVERAGE(false);
 
+
   private final boolean detected;
 
   DetectionStatus(final boolean detected) {

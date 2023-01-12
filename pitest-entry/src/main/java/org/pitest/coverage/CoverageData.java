@@ -15,7 +15,6 @@
 
 package org.pitest.coverage;
 
-import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
@@ -78,11 +77,6 @@ public class CoverageData implements CoverageDatabase {
     return this.blockCoverage.getOrDefault(location, Collections.emptySet());
   }
 
-  @Override
-  public Collection<TestInfo> getTestsForClassLine(final ClassLine classLine) {
-    return legacyClassCoverage.getTestsForClassLine(classLine);
-  }
-
   public boolean allTestsGreen() {
     return this.failingTestDescriptions.isEmpty();
   }
@@ -96,13 +90,13 @@ public class CoverageData implements CoverageDatabase {
   }
 
   @Override
-  public Optional<ClassLines> getCoveredLinesForClass(ClassName clazz) {
-    return legacyClassCoverage.getCoveredLinesForClass(clazz);
+  public ClassLines getCodeLinesForClass(ClassName clazz) {
+    return legacyClassCoverage.getCodeLinesForClass(clazz);
   }
 
   @Override
-  public int getNumberOfCoveredLines(final Collection<ClassName> mutatedClass) {
-    return legacyClassCoverage.getNumberOfCoveredLines(mutatedClass);
+  public Set<ClassLine> getCoveredLines(ClassName clazz) {
+    return legacyClassCoverage.getCoveredLines(clazz);
   }
 
   @Override
@@ -144,11 +138,6 @@ public class CoverageData implements CoverageDatabase {
     return legacyClassCoverage.getClassesForFile(sourceFile, packageName);
   }
 
-  @Override
-  public CoverageSummary createSummary() {
-    return new CoverageSummary(numberOfLines(), coveredLines());
-  }
-
   private BigInteger generateCoverageNumber(Collection<TestInfo> coverage) {
     BigInteger coverageNumber = BigInteger.ZERO;
     Set<ClassName> testClasses = coverage.stream()
@@ -160,20 +149,6 @@ public class CoverageData implements CoverageDatabase {
     }
 
     return coverageNumber;
-  }
-
-  private Collection<ClassName> allClasses() {
-    return this.code.getCodeUnderTestNames();
-  }
-
-  private int numberOfLines() {
-    return this.code.codeTrees()
-            .map(ClassTree::numberOfCodeLines)
-            .reduce(0, Integer::sum);
-  }
-
-  private int coveredLines() {
-    return getNumberOfCoveredLines(allClasses());
   }
 
   private void checkForFailedTest(final CoverageResult cr) {

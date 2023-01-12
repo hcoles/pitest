@@ -13,6 +13,4 @@ public interface CoverageDatabase extends ReportCoverage {
 
   BigInteger getCoverageIdForClass(ClassName clazz);
 
-  CoverageSummary createSummary();
-
 }

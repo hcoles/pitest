@@ -65,8 +65,8 @@ public class MutationHtmlReportListenerTest {
     when(this.outputStrategy.createWriterForFile(any(String.class)))
         .thenReturn(this.writer);
 
-    when(this.coverageDb.getCoveredLinesForClass(any(ClassName.class))).thenReturn(
-        Optional.of(this.classInfo));
+    when(this.coverageDb.getCodeLinesForClass(any(ClassName.class))).thenReturn(
+        this.classInfo);
 
     this.testee = new MutationHtmlReportListener(StandardCharsets.UTF_8, this.coverageDb,
         this.outputStrategy, Collections.<String>emptyList(), this.sourceLocator);

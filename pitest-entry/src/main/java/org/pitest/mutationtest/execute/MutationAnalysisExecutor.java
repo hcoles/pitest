@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationMetaData;
+import org.pitest.mutationtest.MutationResultInterceptor;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.build.MutationAnalysisUnit;
 import org.pitest.util.Log;
@@ -24,8 +25,11 @@ public class MutationAnalysisExecutor {
   private final List<MutationResultListener> listeners;
   private final ThreadPoolExecutor           executor;
 
-  public MutationAnalysisExecutor(int numberOfThreads,
+  private final MutationResultInterceptor resultInterceptor;
+
+  public MutationAnalysisExecutor(int numberOfThreads, MutationResultInterceptor interceptor,
       List<MutationResultListener> listeners) {
+    this.resultInterceptor = interceptor;
     this.listeners = listeners;
     this.executor = new ThreadPoolExecutor(numberOfThreads, numberOfThreads,
         10, TimeUnit.SECONDS, new LinkedBlockingQueue<>(),
@@ -59,15 +63,24 @@ public class MutationAnalysisExecutor {
   }
 
   private void processResult(List<Future<MutationMetaData>> results)
-      throws InterruptedException, ExecutionException {
-    for (final Future<MutationMetaData> f : results) {
-      final MutationMetaData r = f.get();
-      for (final MutationResultListener l : this.listeners) {
-        for (final ClassMutationResults cr : r.toClassResults()) {
-          l.handleMutationResult(cr);
+          throws InterruptedException, ExecutionException {
+    for (Future<MutationMetaData> f : results) {
+      MutationMetaData metaData = f.get();
+      for (ClassMutationResults cr : resultInterceptor.modify(metaData.toClassResults())) {
+        for (MutationResultListener listener : this.listeners) {
+          listener.handleMutationResult(cr);
         }
       }
     }
+
+    // handle any results held back from processing. Only known
+    // use case here is inlined code consolidation.
+    for (ClassMutationResults each : resultInterceptor.remaining()) {
+      for (MutationResultListener listener : this.listeners) {
+        listener.handleMutationResult(each);
+      }
+    }
+
   }
 
   private void signalRunStartToAllListeners() {

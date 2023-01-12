@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest.tooling;
 
+import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.CachingByteArraySource;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassInfo;
@@ -26,6 +27,7 @@ import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.CoverageSummary;
 import org.pitest.coverage.NoCoverage;
+import org.pitest.coverage.ReportCoverage;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
 import org.pitest.help.Help;
@@ -35,6 +37,7 @@ import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationConfig;
+import org.pitest.mutationtest.MutationResultInterceptor;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.build.MutationAnalysisUnit;
 import org.pitest.mutationtest.build.MutationGrouper;
@@ -172,10 +175,11 @@ public class MutationCoverage {
     LOG.fine("Free Memory before analysis start " + (runtime.freeMemory() / MB)
         + " mb");
 
-    final List<MutationResultListener> config = createConfig(t0, coverageData, history,
+    ReportCoverage modifiedCoverage = transformCoverage(coverageData);
+    final List<MutationResultListener> config = createConfig(t0, modifiedCoverage, history,
                 stats, engine);
     final MutationAnalysisExecutor mae = new MutationAnalysisExecutor(
-        numberOfThreads(), config);
+        numberOfThreads(), resultInterceptor(), config);
     this.timings.registerStart(Timings.Stage.RUN_MUTATION_TESTS);
     mae.run(tus);
     this.timings.registerEnd(Timings.Stage.RUN_MUTATION_TESTS);
@@ -183,11 +187,29 @@ public class MutationCoverage {
     LOG.info("Completed in " + timeSpan(t0));
 
     CombinedStatistics combined = new CombinedStatistics(stats.getStatistics(),
-            coverageData.createSummary(), issues);
+            createSummary(modifiedCoverage), issues);
 
     printStats(combined);
 
     return combined;
+  }
+
+  private ReportCoverage transformCoverage(ReportCoverage coverageData) {
+    // cosmetic changes to coverage are made only after tests are assigned to
+    // mutants to ensure they cannot affect results.
+    return strategies.coverageTransformer().transform(coverageData);
+  }
+
+  private CoverageSummary createSummary(ReportCoverage modifiedCoverage) {
+    int numberOfCodeLines = this.code.codeTrees()
+            .map(ClassTree::numberOfCodeLines)
+            .reduce(0, Integer::sum);
+
+    int coveredLines = this.code.getCodeUnderTestNames().stream()
+            .mapToInt(c -> modifiedCoverage.getCoveredLines(c).size())
+            .sum();
+
+    return new CoverageSummary(numberOfCodeLines, coveredLines);
   }
 
   private Predicate<MutationInterceptor> allInterceptors() {
@@ -230,7 +252,7 @@ public class MutationCoverage {
   }
 
   private List<MutationResultListener> createConfig(long t0,
-                                                    CoverageDatabase coverageData,
+                                                    ReportCoverage coverageData,
                                                     HistoryStore history,
                                                     MutationStatisticsListener stats,
                                                     MutationEngine engine) {
@@ -252,6 +274,10 @@ public class MutationCoverage {
       ls.add(new SpinnerListener(System.out));
     }
     return ls;
+  }
+
+  private MutationResultInterceptor resultInterceptor() {
+    return this.strategies.resultInterceptor();
   }
 
   private void recordClassPath(HistoryStore history, CoverageDatabase coverageData) {
