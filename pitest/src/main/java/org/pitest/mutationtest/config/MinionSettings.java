@@ -40,7 +40,7 @@ public class MinionSettings {
             // hack until interface updated to return optional
             .filter(c -> !(c instanceof NullConfiguration))
             .collect(Collectors.toList());
-
+    System.out.println("configurations configurations configurations : " + configurations);
     if (configurations.isEmpty()) {
       throw new PitHelpError(NO_TEST_PLUGIN);
     }

@@ -13,34 +13,37 @@ import java.util.HashSet;
 import org.pitest.util.ReceiveStrategy;
 import org.pitest.util.Id;
 import java.util.logging.Logger;
+import org.pitest.mutationtest.execute.TdgMinionArgments;
+import org.pitest.coverage.execute.TdgTestMethodResult;
 public class TdgCommunicationThread extends CommunicationThread{
     private static final Logger    LOG = Log.getLogger();
     
 
     private static class SendData implements Consumer<SafeDataOutputStream> {
-        private  Collection<String> clazzes;
+        private  TdgMinionArgments tdgMinionArgments;
 
-        SendData( Collection<String> clazzes) {
-          this.clazzes = clazzes;
+        SendData( TdgMinionArgments tdgMinionArgments) {
+          this.tdgMinionArgments = tdgMinionArgments;
         }
     
         @Override
         public void accept(final SafeDataOutputStream dos) {
-            LOG.info("Sending " + this.clazzes.size() + " test classes to minion");
-            dos.writeInt(this.clazzes.size());
-            for (final String tc : this.clazzes) {
-            dos.writeString(tc);
-            }
+            // LOG.info("Sending " + this.clazzes.size() + " test classes to minion");
+            // dos.writeInt(this.clazzes.size());
+            // for (final String tc : this.clazzes) {
+            // dos.writeString(tc);
+            // }
+            dos.write(this.tdgMinionArgments);
             dos.flush();
-            LOG.info("Sent tests to minion");
+            // LOG.info("Sent TdgMinionArgments to minion");
         }
     }
 
     private static class Receive implements ReceiveStrategy {
-        private  final Consumer<TdgResult> handler;
+        private  final Consumer<TdgTestMethodResult> handler;
         
     
-        Receive(Consumer<TdgResult> handler) {
+        Receive(Consumer<TdgTestMethodResult> handler) {
           this.handler = handler;
         }
     
@@ -58,18 +61,14 @@ public class TdgCommunicationThread extends CommunicationThread{
         }
 
         private void handleOutcome(final SafeDataInputStream is) {
-            final String className = is.readString();
-            final int counter = is.readInt();
-            Set<String> methodNames = new HashSet<String>();
-            for (int i = 0; i < counter; i++) {
-                methodNames.add(is.readString());
-            }
-            // System.out.println("receive ::::: " + className + methodNames);
+            // final String className = is.readString();
+            TdgTestMethodResult testsResult = is.read(TdgTestMethodResult.class);
+            // System.out.println("receive ::::: " + testsResult.res);
 
-            handler.accept(new TdgResult(className, methodNames));
+            handler.accept(testsResult);
         }
     }
-    public TdgCommunicationThread(final ServerSocket socket,final Collection<String> clazzes, final Consumer<TdgResult> handler) {
-        super(socket, new SendData(clazzes), new Receive(handler));
+    public TdgCommunicationThread(final ServerSocket socket,final TdgMinionArgments tdgMinionArgments, final Consumer<TdgTestMethodResult> handler) {
+        super(socket, new SendData(tdgMinionArgments), new Receive(handler));
     }
 }

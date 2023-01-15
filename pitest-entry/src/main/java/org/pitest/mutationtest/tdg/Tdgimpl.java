@@ -85,10 +85,13 @@ public class Tdgimpl implements Tdg{
             // System.out.println("target2Tests or classMethodNames null, er!!");
             return new ArrayList<TestInfo>();
         }
-
+        // System.out.println("target2Tests target2Tests target2Tests : " + target2Tests);
+        // System.out.println("=========================================================== : ");
+        // System.out.println("classMethodNames classMethodNames classMethodNames : " + classMethodNames);
         List<TestInfo> tf = new ArrayList<>();
         for (String testClass : target2Tests.get(name.toString())) {
             List<TestInfo> res = new ArrayList<>();
+            if (!classMethodNames.containsKey(testClass)) continue;
             for (String methodNames : classMethodNames.get(testClass) ) {
                 res.add(this.createFromMethodName(methodNames, testClass));
             }
@@ -108,7 +111,7 @@ public class Tdgimpl implements Tdg{
     }
 
     private TestInfo createFromMethodName(String methodName, String testClass) {
-        return new TestInfo(testClass, testClass+"."+methodName+"("+testClass+")", 1, Optional.<ClassName> empty(), 1);
+        return new TestInfo(testClass, testClass+"."+methodName, 1, Optional.<ClassName> empty(), 1);
     }
 
     @Override
@@ -140,7 +143,7 @@ public class Tdgimpl implements Tdg{
         args.addAll(Arrays.asList("-cp", pathToUse));
         args.add(testClassPath);
         args.add(targetClassPath);
-        Log.getLogger().info("jdeps args : " + args);
+        // Log.getLogger().info("jdeps args : " + args);
         return getDepsFromJdepsOutput(AgentLoader.loadAndRunJdeps(args));
     }
 

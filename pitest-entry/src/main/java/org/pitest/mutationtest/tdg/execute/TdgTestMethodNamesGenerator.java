@@ -26,17 +26,23 @@ import org.pitest.util.Unchecked;
 import org.pitest.help.PitHelpError;
 import org.pitest.classinfo.ClassName;
 import java.util.stream.Collectors;
+import org.pitest.mutationtest.execute.TdgMinionArgments;
+import org.pitest.coverage.execute.TdgTestMethodResult;
+import org.pitest.testapi.TestUnit;
+import org.pitest.coverage.execute.CoverageOptions;
 public class TdgTestMethodNamesGenerator {
     private static final Logger    LOG = Log.getLogger();
 
     private final LaunchOptions    launchOptions;
     private final CodeSource       code;
     private final File             workingDir;
+    private final CoverageOptions coverageOptions;
     public TdgTestMethodNamesGenerator(final LaunchOptions  launchOptions,
-    final CodeSource       code, final File             workingDir) {
+    final CodeSource       code, final File             workingDir,CoverageOptions coverageOptions) {
         this.launchOptions = launchOptions;
         this.code = code;
         this.workingDir = workingDir;
+        this.coverageOptions = coverageOptions;
     }
 
     public Map<String, Set<String>> getClassMethodNames() {
@@ -50,13 +56,15 @@ public class TdgTestMethodNamesGenerator {
             
             Map<String, Set<String>> classMethodNames = new HashMap<>();
         
-            final Consumer<TdgResult> handler = resultProcessor(classMethodNames);
+            final Consumer<TdgTestMethodResult> handler = resultProcessor(classMethodNames);
             final SocketFinder sf = new SocketFinder();
             final ServerSocket socket = sf.getNextAvailableServerSocket();
+            //为了支持junit5，传入testPluginConfig的参数，利用JunitRunner寻找方法名
+            TdgMinionArgments tdgMinionArgments = new TdgMinionArgments(tests, coverageOptions.getPitConfig());
             final TdgProcess process = new TdgProcess(ProcessArgs
             .withClassPath(this.code.getClassPath()).andBaseDir(this.workingDir)
             .andLaunchOptions(this.launchOptions),
-            socket, tests, handler);
+            socket, handler, tdgMinionArgments);
 
             process.start();
 
@@ -70,6 +78,7 @@ public class TdgTestMethodNamesGenerator {
             } else if (!exitCode.isOk()) {
                 LOG.severe("Tdg generator Minion exited abnormally due to "
                     + exitCode);
+                    System.out.println("?????????????????????????????");
                 throw new PitError("Tdg generation minion exited abnormally! (" + exitCode + ")");
             } else {
                 LOG.fine("Tdg ggggggggggggggggggggggggggggggggggenerator Minion exited ok");
@@ -88,17 +97,30 @@ public class TdgTestMethodNamesGenerator {
     private static Function<ClassInfo, String> classInfoToName() {
         return a -> a.getName().asInternalName();
     }
-    private Consumer<TdgResult> resultProcessor(
+    private Consumer<TdgTestMethodResult> resultProcessor(
       final Map<String, Set<String>> classMethodNames) {
-    return new Consumer<TdgResult>() {
+    return new Consumer<TdgTestMethodResult>() {
       private final String[] spinner = new String[] { "\u0008/", "\u0008-",
           "\u0008\\", "\u0008|" };
       int i = 0;
-
+ 
       @Override
-      public void accept(final TdgResult tr) {
-        if (classMethodNames != null)
-            classMethodNames.putAll(tr.getclazzAndMethodNames());
+      public void accept(final TdgTestMethodResult tr) {
+        if (classMethodNames != null) {
+            // for (String testClass : tr.res.keySet()) {
+            //     for (String methods : tr.res.get(testClass)) {
+            //         System.out.println(testClass + " : " + methods);
+            //     }
+            // }
+            classMethodNames.putAll(tr.res);
+        }
+            // Set<String> ss = new HashSet<>();
+            // for (TestUnit unit : tr.tests) {
+            //     unit.getDescription().getFirstTestClass()
+            //     unit.
+            // }
+            
+
         System.out.printf("%s", this.spinner[this.i % this.spinner.length]);
         this.i++;
       }

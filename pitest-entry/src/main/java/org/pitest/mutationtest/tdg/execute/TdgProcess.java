@@ -10,14 +10,16 @@ import java.util.Optional;
 import java.io.IOException;
 import org.pitest.coverage.execute.TdgMinion;
 import org.pitest.coverage.execute.CoverageMinion;
+import org.pitest.mutationtest.execute.TdgMinionArgments;
+import org.pitest.coverage.execute.TdgTestMethodResult;
 public class TdgProcess {
     private final WrappingProcess             process;
     private final TdgCommunicationThread crt;
-    public TdgProcess(final ProcessArgs processArgs, final ServerSocket socket, final List<String> testClases,
-    final Consumer<TdgResult> handler) {
+    public TdgProcess(final ProcessArgs processArgs, final ServerSocket socket,
+    final Consumer<TdgTestMethodResult> handler, TdgMinionArgments tdgMinionArgments) {
         this.process = new WrappingProcess(socket.getLocalPort(), processArgs,
         TdgMinion.class);
-        this.crt = new TdgCommunicationThread(socket, testClases,
+        this.crt = new TdgCommunicationThread(socket, tdgMinionArgments,
         handler);
     }
 

@@ -123,7 +123,7 @@ Log.getLogger().info("breakpoint1");
     final CodeSource code = new CodeSource(cps);
     final Timings timings = new Timings();
     TdgTestMethodNamesGenerator classTestMethodNamesGen = 
-    new TdgTestMethodNamesGenerator(launchOptions, code, baseDir);
+    new TdgTestMethodNamesGenerator(launchOptions, code, baseDir,coverageOptions);
     timings.registerStart(Timings.Stage.TDG_MINION);
     Map<String, Set<String>> classTestMethodNames = classTestMethodNamesGen.getClassMethodNames();
     timings.registerEnd(Timings.Stage.TDG_MINION);

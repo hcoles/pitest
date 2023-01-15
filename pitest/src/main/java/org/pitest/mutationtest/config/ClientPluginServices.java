@@ -19,7 +19,9 @@ public class ClientPluginServices {
   }
 
   Collection<? extends TestPluginFactory> findTestFrameworkPlugins() {
-    return ServiceLoader.load(TestPluginFactory.class, this.loader);
+    Collection<? extends TestPluginFactory> cls = ServiceLoader.load(TestPluginFactory.class, this.loader);
+    System.out.println("Collection<? extends TestPluginFactory> : " + cls);
+    return cls;
   }
 
   Collection<? extends MutationEngineFactory> findMutationEngines() {
