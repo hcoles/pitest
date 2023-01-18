@@ -28,7 +28,7 @@ public final class TestInfo implements Serializable {
 
   private final String            name;
   private final String            definingClass;
-
+  public   int                    distance;// tdg中变异体和测试用例的距离
   private final int               time;
   private final int               blocks;
 
@@ -43,7 +43,17 @@ public final class TestInfo implements Serializable {
     this.blocks = blocksCovered;
 // System.out.println("lzp  testinfo definingCLass + name +  time + testee + blocksCovered" + definingClass + ":" + name + ":" + time + ":" + testee + ":" + blocksCovered);
   }
-
+ public TestInfo(final String definingClass, final String name,
+      final int time, final Optional<ClassName> testee, final int blocksCovered, final int dist) {
+    this.definingClass = internIfNotNull(definingClass);
+    this.name = name;
+    this.time = time;
+    this.testee = testee.orElse(null);
+    this.blocks = blocksCovered;
+    this.distance = dist;
+    // System.out.println(this.distance);
+// System.out.println("lzp  testinfo definingCLass + name +  time + testee + blocksCovered" + definingClass + ":" + name + ":" + time + ":" + testee + ":" + blocksCovered);
+  }
   public String getName() {
     return this.name;
   }

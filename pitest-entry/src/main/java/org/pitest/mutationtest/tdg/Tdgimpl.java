@@ -32,6 +32,7 @@ public class Tdgimpl implements Tdg{
     private Map<String, Set<String>> tc;
     private Map<String, Set<String>> target2Tests;
     private Map<String, Set<String>> classMethodNames;
+    Map<String, Map<String, Integer> > reachableWithWeigh = new HashMap<>();
     public Tdgimpl(ProjectClassPaths cps,  Map<String, Set<String>> classMethodNames) {
         if (classMethodNames == null) {
             System.out.println("init classMethodNames null");
@@ -76,6 +77,9 @@ public class Tdgimpl implements Tdg{
         }
         this.target2Tests = target2Tests;
         // Log.getLogger().info("after filtered  this.target2Tests  : " + target2Tests);
+        // System.out.println("reachableWithWeigh" + reachableWithWeigh);
+        // Log.getLogger().info("no no no no  dist");
+        Log.getLogger().info("test order with dist");
     }
 
     @Override
@@ -93,7 +97,10 @@ public class Tdgimpl implements Tdg{
             List<TestInfo> res = new ArrayList<>();
             if (!classMethodNames.containsKey(testClass)) continue;
             for (String methodNames : classMethodNames.get(testClass) ) {
-                res.add(this.createFromMethodName(methodNames, testClass));
+                
+                // res.add(this.createFromMethodName(methodNames, testClass));
+                
+                res.add(this.createFromMethodName(methodNames, testClass,name.toString()));// 开启距离排序
             }
             tf.addAll(res);
         }
@@ -109,7 +116,9 @@ public class Tdgimpl implements Tdg{
         }
         return tf;
     }
-
+    private TestInfo createFromMethodName(String methodName, String testClass,String testee) {
+        return new TestInfo(testClass, testClass+"."+methodName, 1, Optional.<ClassName> empty(), 1, reachableWithWeigh.get(testee).get(testClass));
+    }
     private TestInfo createFromMethodName(String methodName, String testClass) {
         return new TestInfo(testClass, testClass+"."+methodName, 1, Optional.<ClassName> empty(), 1);
     }
@@ -129,8 +138,8 @@ public class Tdgimpl implements Tdg{
                                                                   List<String> classesToAnalyze) {
         Map<String, Set<String>> tcPerClass = new HashMap<>();
         for (String clazz : classesToAnalyze) {
-            Set<String> deps = YSGLhelper.reverseReachabilityFromChangedClasses(
-                    new HashSet<>(Arrays.asList(clazz)), tcGraph);
+            Set<String> deps = YSGLhelper.reverseReachabilityFromChangedClassesWithDist(
+                clazz, tcGraph,reachableWithWeigh);
             deps.add(clazz);
             tcPerClass.put(clazz, deps);
         }
