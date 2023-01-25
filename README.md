@@ -8,9 +8,12 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-## 1.10.5 (unreleased)
+## 1.11.0 (unreleased)
 
 * #1138 Do not mutate redundant fall through to default switch cases
+* #1150 New extension points
+
+Note that #1150 includes breaking interface changes which may require updates to third party plugins.
 
 ## 1.10.4
 

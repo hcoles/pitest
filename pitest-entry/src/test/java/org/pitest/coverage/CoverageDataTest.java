@@ -77,35 +77,12 @@ public class CoverageDataTest {
   public void shouldReturnNoTestsWhenNoTestsCoverALine() {
     when(this.lm.mapLines(any(ClassName.class))).thenReturn(
         new HashMap<>());
-    final ClassLine line = new ClassLine("foo", 1);
-    assertEquals(Collections.emptyList(),
-        this.testee.getTestsForClassLine(line));
-  }
-
-  @Test
-  public void shouldStoreExecutionTimesOfTests() {
-
-    final int line = 1;
-    final int time = 42;
-
-    final BlockLocationBuilder block = aBlockLocation().withLocation(
-        aLocation().withClass(this.foo));
-    when(this.lm.mapLines(any(ClassName.class))).thenReturn(
-        makeCoverageMapForBlock(block, line));
-
-    final CoverageResultBuilder cr = aCoverageResult().withVisitedBlocks(
-        block.build(1)).withExecutionTime(time);
-
-    this.testee.calculateClassCoverage(cr.build());
-
-    assertEquals(Arrays.asList(42), FCollection.map(
-        this.testee.getTestsForClassLine(new ClassLine(this.foo, line)), TestInfo::getTime));
+    assertThat(this.testee.getCoveredLines(ClassName.fromString("foo"))).isEmpty();
   }
 
   @Test
   public void shouldReportNumberOfCoveredLinesWhenNoneCovered() {
-    assertEquals(0, this.testee.getNumberOfCoveredLines(Collections
-        .singletonList(ClassName.fromString("foo"))));
+    assertThat(this.testee.getCoveredLines(ClassName.fromString("foo"))).isEmpty();
   }
 
   @Test
@@ -121,8 +98,7 @@ public class CoverageDataTest {
 
     this.testee.calculateClassCoverage(cr.build());
 
-    assertEquals(2, this.testee.getNumberOfCoveredLines(Collections
-        .singletonList(this.foo)));
+    assertThat(this.testee.getCoveredLines(this.foo)).hasSize(2);
   }
 
   @Test
@@ -236,24 +212,6 @@ public class CoverageDataTest {
     assertThat(this.testee.getClassesForFile("Foo.java", "com.example.a.b.c"))
             .containsExactly(new ClassLines(foo1Class.name(), Collections.emptySet()));
 
-  }
-
-  @Test
-  public void shouldIncludeAllCoveredLinesInCoverageSummary() {
-
-    final BlockLocationBuilder block = aBlockLocation();
-    when(this.code.getCodeUnderTestNames()).thenReturn(
-        Collections.singleton(block.build().getLocation().getClassName()));
-    when(this.lm.mapLines(any(ClassName.class))).thenReturn(
-        makeCoverageMapForBlock(block, 1, 2, 3, 4));
-
-    final CoverageResultBuilder cr = aCoverageResult().withVisitedBlocks(
-        block.build(1));
-
-    this.testee.calculateClassCoverage(cr.build());
-
-    final CoverageSummary actual = this.testee.createSummary();
-    assertThat(actual.getNumberOfCoveredLines()).isEqualTo(4);
   }
 
   private CoverageResult makeCoverageResult(final String clazz,

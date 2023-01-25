@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Line based coverage data, used by html report and the history system
@@ -41,29 +42,20 @@ public class LegacyClassCoverage implements ReportCoverage {
     }
 
     @Override
-    public Optional<ClassLines> getCoveredLinesForClass(final ClassName clazz) {
+    public ClassLines getCodeLinesForClass(final ClassName clazz) {
         return code.fetchClassBytes(clazz)
                 .map(ClassTree::fromBytes)
-                .map(ClassLines::fromTree);
+                .map(ClassLines::fromTree)
+                .orElse(new ClassLines(clazz, Collections.emptySet()));
     }
 
     @Override
-    public int getNumberOfCoveredLines(Collection<ClassName> mutatedClass) {
-        return mutatedClass.stream()
-                .map(this::getLineCoverageForClassName)
-                .mapToInt(Map::size)
-                .sum();
-    }
-
-    @Override
-    public Collection<TestInfo> getTestsForClassLine(final ClassLine classLine) {
-        final Collection<TestInfo> result = getLineCoverageForClassName(
-                classLine.getClassName()).get(classLine);
-        if (result == null) {
-            return Collections.emptyList();
-        } else {
-            return result;
-        }
+    public Set<ClassLine> getCoveredLines(ClassName mutatedClass) {
+        return  Stream.of(mutatedClass)
+                .flatMap(m -> getLineCoverageForClassName(m).entrySet().stream())
+                .filter(e -> !e.getValue().isEmpty())
+                .map( e -> e.getKey())
+                .collect(Collectors.toSet());
     }
 
     @Override

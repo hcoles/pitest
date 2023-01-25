@@ -33,10 +33,6 @@ public class TestPluginArguments implements Serializable {
             Collections.emptyList(), false);
   }
 
-  public TestPluginArguments withTestPlugin(String plugin) {
-    return new TestPluginArguments(this.groupConfig, this.excludedRunners, this.includedTestMethods, this.skipFailingTests);
-  }
-
   public TestGroupConfig getGroupConfig() {
     return this.groupConfig;
   }

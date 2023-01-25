@@ -106,21 +106,21 @@ public class EntryPoint {
         .usingClassPathJar(data.useClasspathJar());
     final ProjectClassPaths cps = data.getMutationClassPaths();
 
-    final CodeSource code = new CodeSource(cps);
+    final CodeSource code = settings.createCodeSource(cps);
 
     final Timings timings = new Timings();
     final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
         baseDir, coverageOptions, launchOptions, code,
         settings.createCoverageExporter(), timings, data.getVerbosity());
 
-
     final Optional<WriterFactory> maybeWriter = data.createHistoryWriter();
     WriterFactory historyWriter = maybeWriter.orElse(new NullWriterFactory());
     final HistoryStore history = makeHistoryStore(data, maybeWriter);
 
     final MutationStrategies strategies = new MutationStrategies(
-        settings.createEngine(), history, coverageDatabase, reportFactory,
-        reportOutput, settings.createVerifier().create(code));
+        settings.createEngine(), history, coverageDatabase, reportFactory, settings.getResultInterceptor(),
+        settings.createCoverageTransformer(code),
+            reportOutput, settings.createVerifier().create(code));
 
     final MutationCoverage report = new MutationCoverage(strategies, baseDir,
         code, data, settings, timings);

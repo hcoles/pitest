@@ -6,6 +6,7 @@ import org.pitest.coverage.ClassLines;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
+import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
 
@@ -18,6 +19,8 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.pitest.mutationtest.LocationMother.aMutationId;
+import static org.pitest.mutationtest.engine.MutationDetailsMother.aMutationDetail;
 
 public class MutationTestSummaryDataTest {
 
@@ -100,9 +103,9 @@ public class MutationTestSummaryDataTest {
   @Test
   public void shouldReturnCorrectTestStrengthWhenAnalysedInOneUnit() {
     this.testee = buildSummaryDataWithMutationResults(makeClass(),
-            aMutationResult(DetectionStatus.NO_COVERAGE),
-            aMutationResult(DetectionStatus.KILLED),
-            aMutationResult(DetectionStatus.SURVIVED)
+            aMutationResult(DetectionStatus.NO_COVERAGE, "a"),
+            aMutationResult(DetectionStatus.KILLED, "b"),
+            aMutationResult(DetectionStatus.SURVIVED, "c")
     );
     assertEquals(50, this.testee.getTotals().getTestStrength());
   }
@@ -111,13 +114,13 @@ public class MutationTestSummaryDataTest {
   public void shouldReturnCorrectTestStrengthWhenAnalysedInTwoUnits() {
     ClassLines clazz = makeClass();
     this.testee = buildSummaryDataWithMutationResults(clazz,
-            aMutationResult(DetectionStatus.NO_COVERAGE),
-            aMutationResult(DetectionStatus.KILLED),
-            aMutationResult(DetectionStatus.SURVIVED)
+            aMutationResult(DetectionStatus.NO_COVERAGE, "a"),
+            aMutationResult(DetectionStatus.KILLED, "b"),
+            aMutationResult(DetectionStatus.SURVIVED, "c")
     );
     final MutationTestSummaryData additionalData = buildSummaryDataWithMutationResults(clazz,
-            aMutationResult(DetectionStatus.KILLED),
-            aMutationResult(DetectionStatus.KILLED)
+            aMutationResult(DetectionStatus.KILLED, "d"),
+            aMutationResult(DetectionStatus.KILLED, "e")
     );
     this.testee.add(additionalData);
     assertEquals(75, this.testee.getTotals().getTestStrength());
@@ -126,13 +129,13 @@ public class MutationTestSummaryDataTest {
   @Test
   public void shouldReturnCorrectTestStrengthWhenWhenCombiningResultsForDifferentClasses() {
     this.testee = buildSummaryDataWithMutationResults(makeClass(100),
-            aMutationResult(DetectionStatus.NO_COVERAGE),
-            aMutationResult(DetectionStatus.KILLED),
-            aMutationResult(DetectionStatus.SURVIVED)
+            aMutationResult(DetectionStatus.NO_COVERAGE, "a"),
+            aMutationResult(DetectionStatus.KILLED, "b"),
+            aMutationResult(DetectionStatus.SURVIVED, "c")
     );
     final MutationTestSummaryData additionalData = buildSummaryDataWithMutationResults(makeClass(200),
-            aMutationResult(DetectionStatus.KILLED),
-            aMutationResult(DetectionStatus.KILLED)
+            aMutationResult(DetectionStatus.KILLED, "d"),
+            aMutationResult(DetectionStatus.KILLED, "e")
     );
     this.testee.add(additionalData);
     assertEquals(75, this.testee.getTotals().getTestStrength());
@@ -182,7 +185,11 @@ public class MutationTestSummaryDataTest {
   }
 
   private MutationResult aMutationResult(DetectionStatus status) {
-    return new MutationResult(null, new MutationStatusTestPair(1, status, "A test"));
+    return new MutationResult(aMutationDetail().build(), new MutationStatusTestPair(1, status, "A test"));
+  }
+
+  private MutationResult aMutationResult(DetectionStatus status, String mutator) {
+    return new MutationResult(aMutationDetail().withId(aMutationId().withMutator(mutator)).build(), new MutationStatusTestPair(1, status, "A test"));
   }
 
   private MutationTestSummaryData buildSummaryDataMutators() {

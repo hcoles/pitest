@@ -14,7 +14,6 @@
  */
 package org.pitest.mutationtest.report.html;
 
-import org.pitest.coverage.ClassLine;
 import org.pitest.coverage.ClassLines;
 import org.pitest.coverage.ReportCoverage;
 import org.pitest.functional.FCollection;
@@ -25,6 +24,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -32,15 +32,24 @@ import java.util.stream.Collectors;
 public class AnnotatedLineFactory {
 
   private final Collection<MutationResult>         mutations;
-  private final ReportCoverage                     statistics;
+  private final ReportCoverage                     coverage;
   private final Collection<ClassLines>             classesInFile;
 
+  private final Set<Integer>                       coveredLines;
+
   public AnnotatedLineFactory(
-      final Collection<MutationResult> mutations,
-      final ReportCoverage statistics, final Collection<ClassLines> classes) {
+          final Collection<MutationResult> mutations,
+          final ReportCoverage coverage, final Collection<ClassLines> classes) {
     this.mutations = mutations;
-    this.statistics = statistics;
+    this.coverage = coverage;
     this.classesInFile = classes;
+    this.coveredLines = findCoveredLines(classes,coverage);
+  }
+
+  private Set<Integer> findCoveredLines(Collection<ClassLines> classes, ReportCoverage coverage) {
+   return classes.stream()
+            .flatMap(cl -> coverage.getCoveredLines(cl.name()).stream().map(l -> l.getLineNumber()))
+            .collect(Collectors.toSet());
   }
 
   public List<Line> convert(final Reader source) throws IOException {
@@ -97,10 +106,7 @@ public class AnnotatedLineFactory {
   }
 
   private boolean isLineCovered(final int line) {
-    final Predicate<ClassLines> predicate = a -> !AnnotatedLineFactory.this.statistics.getTestsForClassLine(
-        new ClassLine(a.name().asInternalName(), line)).isEmpty();
-    return FCollection.contains(this.classesInFile, predicate);
-
+    return coveredLines.contains(line);
   }
 
 }

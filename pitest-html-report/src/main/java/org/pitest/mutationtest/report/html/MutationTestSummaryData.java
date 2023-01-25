@@ -14,27 +14,30 @@
  */
 package org.pitest.mutationtest.report.html;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import org.pitest.coverage.ClassLines;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.MutationResult;
+import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.util.Log;
 
 public class MutationTestSummaryData {
 
   private final String                     fileName;
   private final Set<String>                mutators  = new TreeSet<>();
-  private final Collection<MutationResult> mutations = new ArrayList<>();
+  private final Map<MutationIdentifier,MutationResult> mutations = new HashMap<>();
   private final Set<ClassLines>             classes   = new HashSet<>();
 
   private long                             numberOfCoveredLines;
@@ -44,7 +47,7 @@ public class MutationTestSummaryData {
       final Collection<String> mutators, final Collection<ClassLines> classes,
       final long numberOfCoveredLines) {
     this.fileName = fileName;
-    this.mutations.addAll(results);
+    this.mutations.putAll(resultsToMap(results));
     this.mutators.addAll(mutators);
     this.classes.addAll(classes);
     this.numberOfCoveredLines = numberOfCoveredLines;
@@ -62,7 +65,7 @@ public class MutationTestSummaryData {
   }
 
   private long getNumberOfMutationsWithCoverage() {
-    return this.mutations.stream()
+    return this.mutations.values().stream()
             .filter(it -> it.getStatus().hasCoverage())
             .count();
   }
@@ -83,7 +86,8 @@ public class MutationTestSummaryData {
   }
 
   public void add(final MutationTestSummaryData data) {
-    this.mutations.addAll(data.mutations);
+    // FIXME, would need to replace here instead of add
+    this.mutations.putAll(data.mutations);
     this.mutators.addAll(data.getMutators());
     final int classesBefore = this.classes.size();
     this.classes.addAll(data.classes);
@@ -94,7 +98,7 @@ public class MutationTestSummaryData {
 
   public Collection<TestInfo> getTests() {
     final Set<TestInfo> uniqueTests = new HashSet<>();
-    FCollection.flatMapTo(this.mutations, mutationToTargettedTests(),
+    FCollection.flatMapTo(this.mutations.values(), mutationToTargettedTests(),
         uniqueTests);
     return uniqueTests;
   }
@@ -112,7 +116,7 @@ public class MutationTestSummaryData {
   }
 
   public MutationResultList getResults() {
-    return new MutationResultList(this.mutations);
+    return new MutationResultList(this.mutations.values());
   }
 
   public Collection<ClassLines> getClasses() {
@@ -133,7 +137,7 @@ public class MutationTestSummaryData {
 
   private long getNumberOfMutationsDetected() {
     int count = 0;
-    for (final MutationResult each : this.mutations) {
+    for (final MutationResult each : this.mutations.values()) {
       if (each.getStatus().isDetected()) {
         count++;
       }
@@ -144,5 +148,10 @@ public class MutationTestSummaryData {
   private Function<MutationResult, Iterable<TestInfo>> mutationToTargettedTests() {
     return a -> a.getDetails().getTestsInOrder();
   }
+
+  private static Map<MutationIdentifier, MutationResult> resultsToMap(Collection<MutationResult> results) {
+    return results.stream().collect(Collectors.toMap(mr -> mr.getDetails().getId(), Function.identity()));
+  }
+
 
 }

@@ -9,6 +9,7 @@ import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassPathRoot;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.CodeSource;
+import org.pitest.classpath.DefaultCodeSource;
 import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.mutationtest.config.PluginServices;
@@ -88,7 +89,7 @@ public class BuildVerifierVerifier {
         final PathFilter pf = new PathFilter(p -> true, p -> true);
         final ProjectClassPaths pcp = new ProjectClassPaths(
                 new ClassPath(root), new ClassFilter(c -> true, c -> true), pf);
-        return new CodeSource(pcp);
+        return new DefaultCodeSource(pcp);
     }
 
     public static ClassTree aValidClass() {
@@ -100,7 +101,7 @@ public class BuildVerifierVerifier {
         final PathFilter pf = new PathFilter(p -> true, p -> true);
         final ProjectClassPaths pcp = new ProjectClassPaths(
                 new ClassPath(), new ClassFilter(c -> true, c -> true), pf);
-        return new CodeSource(pcp);
+        return new DefaultCodeSource(pcp);
     }
 }
 

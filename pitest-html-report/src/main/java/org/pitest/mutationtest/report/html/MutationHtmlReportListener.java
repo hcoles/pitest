@@ -33,7 +33,6 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -42,6 +41,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
+
+import static java.util.Arrays.asList;
 
 public class MutationHtmlReportListener implements MutationResultListener {
 
@@ -62,7 +63,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
     this.outputCharset = outputCharset;
     this.coverage = coverage;
     this.outputStrategy = outputStrategy;
-    this.sourceRoots = new HashSet<>(Arrays.asList(locators));
+    this.sourceRoots = new HashSet<>(asList(locators));
     this.mutatorNames = new HashSet<>(mutatorNames);
     this.css = loadCss();
   }
@@ -120,14 +121,10 @@ public class MutationHtmlReportListener implements MutationResultListener {
   public MutationTestSummaryData createSummaryData(
       final ReportCoverage coverage, final ClassMutationResults data) {
 
-    final List<ClassLines> lines = this.coverage.getCoveredLinesForClass(data
-                    .getMutatedClass())
-            .map(l -> Collections.singletonList(l))
-            .orElse(Collections.emptyList());
+    final List<ClassLines> lines = asList(this.coverage.getCodeLinesForClass(data.getMutatedClass()));
 
     return new MutationTestSummaryData(data.getFileName(), data.getMutations(),
-        this.mutatorNames, lines, coverage.getNumberOfCoveredLines(Collections
-            .singleton(data.getMutatedClass())));
+        this.mutatorNames, lines, coverage.getCoveredLines(data.getMutatedClass()).size());
   }
 
   private SourceFile createAnnotatedSourceFile(

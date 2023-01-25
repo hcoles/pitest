@@ -14,6 +14,7 @@ import java.util.function.Predicate;
 
 import org.junit.Before;
 import org.pitest.classpath.CodeSource;
+import org.pitest.classpath.DefaultCodeSource;
 import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageGenerator;
@@ -114,7 +115,7 @@ public abstract class ReportTestBase {
           this.data.getClassPath(), this.data.createClassesFilter(), pf);
 
       final Timings timings = new Timings();
-      final CodeSource code = new CodeSource(cps);
+      final CodeSource code = new DefaultCodeSource(cps);
 
       final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
           null, coverageOptions, launchOptions, code,
@@ -124,7 +125,7 @@ public abstract class ReportTestBase {
 
       final MutationStrategies strategies = new MutationStrategies(
           new GregorEngineFactory(), history, coverageDatabase,
-          listenerFactory(), null, new NoVerification());
+          listenerFactory(), result -> result, cov -> cov, null, new NoVerification());
 
       final MutationCoverage testee = new MutationCoverage(strategies, null,
           code, this.data, new SettingsFactory(this.data, this.plugins),

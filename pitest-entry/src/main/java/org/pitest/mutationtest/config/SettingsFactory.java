@@ -1,11 +1,19 @@
 package org.pitest.mutationtest.config;
 
+import org.pitest.classpath.CodeSource;
+import org.pitest.classpath.CodeSourceFactory;
+import org.pitest.classpath.DefaultCodeSource;
+import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageExporter;
+import org.pitest.mutationtest.build.CoverageTransformer;
+import org.pitest.mutationtest.build.CoverageTransformerFactory;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.export.DefaultCoverageExporter;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.functional.FCollection;
+import org.pitest.mutationtest.CompoundMutationResultInterceptor;
 import org.pitest.mutationtest.MutationEngineFactory;
+import org.pitest.mutationtest.MutationResultInterceptor;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.build.CompoundInterceptorFactory;
 import org.pitest.mutationtest.build.DefaultMutationGrouperFactory;
@@ -96,6 +104,17 @@ public class SettingsFactory {
     return new DefaultMutationGrouperFactory();
   }
 
+  public CodeSource createCodeSource(ProjectClassPaths classPath) {
+    List<CodeSourceFactory> sources = this.plugins.findCodeSources();
+    if (sources.isEmpty()) {
+      return new DefaultCodeSource(classPath);
+    }
+    if (sources.size() > 1) {
+       throw new RuntimeException("More than CodeSource found on classpath.");
+    }
+    return sources.get(0).createCodeSource(classPath);
+  }
+
   public void describeFeatures(Consumer<Feature> enabled, Consumer<Feature> disabled) {
     final FeatureParser parser = new FeatureParser();
     final Collection<ProvidesFeature> available = new ArrayList<>(this.plugins.findFeatures());
@@ -156,6 +175,21 @@ public class SettingsFactory {
 
   public BuildVerifierFactory createVerifier() {
     return new CompoundBuildVerifierFactory(this.plugins.findVerifiers());
+  }
+
+  public MutationResultInterceptor getResultInterceptor() {
+    return new CompoundMutationResultInterceptor(this.plugins.findMutationResultInterceptor());
+  }
+
+  public CoverageTransformer createCoverageTransformer(CodeSource code) {
+    List<CoverageTransformerFactory> transformers = this.plugins.findCoverageTransformers();
+    if (transformers.size() > 1) {
+      throw new RuntimeException("More than 1 coverage transformer found on classpath");
+    }
+    if (transformers.isEmpty()) {
+      return cov -> cov;
+    }
+    return transformers.get(0).create(code);
   }
 
   private Collection<MutationResultListenerFactory> findListeners() {

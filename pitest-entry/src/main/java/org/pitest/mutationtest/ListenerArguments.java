@@ -1,6 +1,6 @@
 package org.pitest.mutationtest;
 
-import org.pitest.coverage.CoverageDatabase;
+import org.pitest.coverage.ReportCoverage;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.plugin.FeatureSetting;
@@ -15,7 +15,7 @@ import java.util.Optional;
 public class ListenerArguments {
 
   private final ResultOutputStrategy outputStrategy;
-  private final CoverageDatabase     coverage;
+  private final ReportCoverage       coverage;
   private final long                 startTime;
   private final SourceLocator        locator;
   private final MutationEngine       engine;
@@ -24,7 +24,7 @@ public class ListenerArguments {
   private final FeatureSetting       setting;
 
   public ListenerArguments(ResultOutputStrategy outputStrategy,
-                           CoverageDatabase coverage,
+                           ReportCoverage coverage,
                            SourceLocator locator,
                            MutationEngine engine,
                            long startTime,
@@ -34,7 +34,7 @@ public class ListenerArguments {
   }
 
   ListenerArguments(ResultOutputStrategy outputStrategy,
-                           CoverageDatabase coverage,
+                           ReportCoverage coverage,
                            SourceLocator locator,
                            MutationEngine engine,
                            long startTime,
@@ -55,7 +55,7 @@ public class ListenerArguments {
     return this.outputStrategy;
   }
 
-  public CoverageDatabase getCoverage() {
+  public ReportCoverage getCoverage() {
     return this.coverage;
   }
 
