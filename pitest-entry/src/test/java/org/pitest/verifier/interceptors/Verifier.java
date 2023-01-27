@@ -3,6 +3,8 @@ package org.pitest.verifier.interceptors;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassByteArraySource;
+import org.pitest.classinfo.Repository;
+import org.pitest.classpath.DefaultCodeSource;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;

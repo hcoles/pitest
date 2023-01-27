@@ -6,6 +6,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.pitest.bytecode.analysis.ClassTree;
+import org.pitest.classpath.CodeSource;
+import org.pitest.classpath.DefaultCodeSource;
+import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 
@@ -49,6 +52,16 @@ public class CompoundMutationInterceptorTest {
     when(this.otherChild.type()).thenReturn(InterceptorType.OTHER);
     when(this.cosmeticChild.type()).thenReturn(InterceptorType.MODIFY_COSMETIC);
     when(this.reportChild.type()).thenReturn(InterceptorType.REPORT);
+  }
+
+  @Test
+  public void initialisesAllChildren() {
+    this.testee = new CompoundMutationInterceptor(Arrays.asList(this.modifyChild, this.filterChild));
+    final CodeSource source = new DefaultCodeSource(new ProjectClassPaths(null, null,null));
+
+    this.testee.initialise(source);
+    verify(this.modifyChild).initialise(source);
+    verify(this.filterChild).initialise(source);
   }
 
   @Test
