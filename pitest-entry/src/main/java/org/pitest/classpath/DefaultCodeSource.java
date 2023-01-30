@@ -24,7 +24,7 @@ public class DefaultCodeSource implements CodeSource {
                 classPath.getClassPath())));
     }
 
-    DefaultCodeSource(final ProjectClassPaths classPath,
+    public DefaultCodeSource(final ProjectClassPaths classPath,
                final Repository classRepository) {
         this.classPath = classPath;
         this.classRepository = classRepository;

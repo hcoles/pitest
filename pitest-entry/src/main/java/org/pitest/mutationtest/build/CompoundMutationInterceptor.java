@@ -1,6 +1,7 @@
 package org.pitest.mutationtest.build;
 
 import org.pitest.bytecode.analysis.ClassTree;
+import org.pitest.classpath.CodeSource;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 
@@ -30,6 +31,11 @@ public class CompoundMutationInterceptor implements MutationInterceptor {
     return new CompoundMutationInterceptor(children.stream()
             .filter(p)
             .collect(Collectors.toList()));
+  }
+
+  @Override
+  public void initialise(CodeSource code) {
+    this.children.forEach(each -> each.initialise(code));
   }
 
   @Override
