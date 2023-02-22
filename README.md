@@ -8,7 +8,11 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-## 1.11.0 (unreleased)
+## 1.11.1
+
+* #1156 Prevent synthetic lines being counted in coverage
+
+## 1.11.0
 
 * #1138 Do not mutate redundant fall through to default switch cases
 * #1150 New extension points
