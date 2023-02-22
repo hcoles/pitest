@@ -55,16 +55,14 @@ public class CoverageTransformerTest {
   }
 
   @Test
-  public void shouldNotTransformClassesNotMatchingPredicate()
-      throws IllegalClassFormatException {
+  public void shouldNotTransformClassesNotMatchingPredicate() {
     final CoverageTransformer testee = new CoverageTransformer(
         False.<String> instance());
     assertNull(testee.transform(null, "anything", null, null, null));
   }
 
   @Test
-  public void shouldTransformClasseMatchingPredicate()
-      throws IllegalClassFormatException {
+  public void shouldTransformClasseMatchingPredicate() {
     final CoverageTransformer testee = new CoverageTransformer(
         s -> true);
     final byte[] bs = this.bytes.getBytes(String.class.getName()).get();
@@ -83,8 +81,7 @@ public class CoverageTransformerTest {
     assertValidClass(Math.class);
   }
 
-  private void assertValidClass(final Class<?> clazz)
-      throws IllegalClassFormatException {
+  private void assertValidClass(final Class<?> clazz) {
     final byte[] bs = transform(clazz);
     // printClass(bs);
     final StringWriter sw = new StringWriter();
@@ -105,8 +102,7 @@ public class CoverageTransformerTest {
         System.out)), ClassReader.EXPAND_FRAMES);
   }
 
-  private byte[] transform(final Class<?> clazz)
-      throws IllegalClassFormatException {
+  private byte[] transform(final Class<?> clazz) {
     final CoverageTransformer testee = new CoverageTransformer(
         s -> true);
     return testee.transform(this.loader, clazz.getName(), null,

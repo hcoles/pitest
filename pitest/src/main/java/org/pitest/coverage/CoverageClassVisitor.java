@@ -21,8 +21,8 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.pitest.classinfo.BridgeMethodFilter;
 import org.pitest.classinfo.MethodFilteringAdapter;
+import org.pitest.classinfo.SyntheticMethodFilter;
 import org.pitest.coverage.analysis.CoverageAnalyser;
 import sun.pitest.CodeCoverageStore;
 
@@ -43,7 +43,7 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
   private boolean   isInterface;
 
   public CoverageClassVisitor(final int classId, final ClassWriter writer) {
-    super(writer, BridgeMethodFilter.INSTANCE);
+    super(writer, SyntheticMethodFilter.INSTANCE);
     this.classId = classId;
   }
 
