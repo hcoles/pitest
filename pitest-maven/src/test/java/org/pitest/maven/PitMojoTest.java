@@ -396,7 +396,7 @@ public class PitMojoTest extends BasePitMojoTest {
   private void setupCoverage(long mutationScore, int lines, int linesCovered)
       throws MojoExecutionException {
     Iterable<Score> scores = Collections.<Score>emptyList();
-    final MutationStatistics stats = new MutationStatistics(scores, 100, mutationScore, 100, 0);
+    final MutationStatistics stats = new MutationStatistics(scores, 100, mutationScore, 100, 0, Collections.emptySet());
     CoverageSummary sum = new CoverageSummary(lines, linesCovered);
     final CombinedStatistics cs = new CombinedStatistics(stats, sum, Collections.emptyList());
     when(
@@ -408,7 +408,7 @@ public class PitMojoTest extends BasePitMojoTest {
   private void setupTestStrength(long totalMutations, long mutationDetected, long mutationsWithCoverage)
           throws MojoExecutionException {
     Iterable<Score> scores = Collections.<Score>emptyList();
-    final MutationStatistics stats = new MutationStatistics(scores, totalMutations, mutationDetected, mutationsWithCoverage, 0);
+    final MutationStatistics stats = new MutationStatistics(scores, totalMutations, mutationDetected, mutationsWithCoverage, 0, Collections.emptySet());
     CoverageSummary sum = new CoverageSummary(0, 0);
     final CombinedStatistics cs = new CombinedStatistics(stats, sum, Collections.emptyList());
     when(
@@ -421,7 +421,7 @@ public class PitMojoTest extends BasePitMojoTest {
       throws MojoExecutionException {
     Iterable<Score> scores = Collections.<Score>emptyList();
     int detected = 100;
-    final MutationStatistics stats = new MutationStatistics(scores, detected + survivors, detected, detected + survivors, 0);
+    final MutationStatistics stats = new MutationStatistics(scores, detected + survivors, detected, detected + survivors, 0, Collections.emptySet());
     CoverageSummary sum = new CoverageSummary(0, 0);
     final CombinedStatistics cs = new CombinedStatistics(stats, sum, Collections.emptyList());
     when(

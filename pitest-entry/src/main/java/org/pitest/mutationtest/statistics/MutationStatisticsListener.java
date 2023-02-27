@@ -43,6 +43,7 @@ MutationStatisticsSource {
   }
 
   private void processMetaData(final ClassMutationResults value) {
+    this.mutatorScores.registerClass(value.getMutatedClass());
     this.mutatorScores.registerResults(value.getMutations());
   }
 }

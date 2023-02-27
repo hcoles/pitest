@@ -2,19 +2,31 @@ package org.pitest.mutationtest.statistics;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
+import org.pitest.classinfo.ClassName;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.MutationResult;
 
 class MutationStatisticsPrecursor {
   private final Map<String, ScorePrecursor> mutatorTotalMap  = new HashMap<>();
+  private final Set<ClassName> mutatedClasses = new HashSet<>();
   private long                              numberOfTestsRun = 0;
 
   public void registerResults(final Collection<MutationResult> results) {
     results.forEach(register());
+  }
+
+  public void registerClass(ClassName mutatedClass) {
+    mutatedClasses.add(mutatedClass);
+  }
+
+  public Set<ClassName> mutatedClasses() {
+    return mutatedClasses;
   }
 
   private Consumer<MutationResult> register() {
@@ -39,7 +51,7 @@ class MutationStatisticsPrecursor {
         .fold(addDetectedTotals(), 0L, scores);
     final long totalWithCoverage = FCollection.fold(addCoveredTotals(), 0L, scores);
     return new MutationStatistics(scores, totalMutations, totalDetected, totalWithCoverage,
-        this.numberOfTestsRun);
+        this.numberOfTestsRun, mutatedClasses());
   }
 
   Iterable<Score> getScores() {
@@ -58,4 +70,6 @@ class MutationStatisticsPrecursor {
   private static BiFunction<Long, Score, Long> addCoveredTotals() {
     return (a, b) -> a + b.getTotalWithCoverage();
   }
+
+
 }
