@@ -14,10 +14,13 @@
  */
 package org.pitest.mutationtest.statistics;
 
+import org.pitest.classinfo.ClassName;
+
 import java.io.PrintStream;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
+import java.util.Set;
 
 public final class MutationStatistics {
   private final Iterable<Score> scores;
@@ -26,13 +29,20 @@ public final class MutationStatistics {
   private final long totalDetected;
   private final long totalWithCoverage;
 
-  public MutationStatistics(Iterable<Score> scores, long totalMutations,
-                            long totalDetected, long totalWithCoverage, long numberOfTestsRun) {
+  private final Set<ClassName> mutatedClasses;
+
+  public MutationStatistics(Iterable<Score> scores,
+                            long totalMutations,
+                            long totalDetected,
+                            long totalWithCoverage,
+                            long numberOfTestsRun,
+                            Set<ClassName> mutatedClasses) {
     this.scores = scores;
     this.totalMutations = totalMutations;
     this.totalDetected = totalDetected;
     this.numberOfTestsRun = numberOfTestsRun;
     this.totalWithCoverage = totalWithCoverage;
+    this.mutatedClasses = mutatedClasses;
   }
 
   public Iterable<Score> getScores() {
@@ -57,6 +67,10 @@ public final class MutationStatistics {
 
   public long getTotalSurvivingMutations() {
     return getTotalMutations() - getTotalDetectedMutations();
+  }
+
+  public Set<ClassName> mutatedClasses() {
+    return mutatedClasses;
   }
 
   public long getPercentageDetected() {

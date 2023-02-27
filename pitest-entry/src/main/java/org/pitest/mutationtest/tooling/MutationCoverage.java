@@ -74,8 +74,10 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 
 public class MutationCoverage {
 
@@ -143,7 +145,7 @@ public class MutationCoverage {
   }
 
   private CombinedStatistics emptyStatistics() {
-    MutationStatistics mutationStatistics = new MutationStatistics(emptyList(),0,0,0,0);
+    MutationStatistics mutationStatistics = new MutationStatistics(emptyList(),0,0,0,0, emptySet());
     return new CombinedStatistics(mutationStatistics, new CoverageSummary(0,0), Collections.emptyList());
   }
 
@@ -185,8 +187,9 @@ public class MutationCoverage {
 
     LOG.info("Completed in " + timeSpan(t0));
 
-    CombinedStatistics combined = new CombinedStatistics(stats.getStatistics(),
-            createSummary(modifiedCoverage), issues);
+    MutationStatistics mutationStats = stats.getStatistics();
+    CombinedStatistics combined = new CombinedStatistics(mutationStats,
+            createSummary(modifiedCoverage, mutationStats.mutatedClasses()), issues);
 
     printStats(combined);
 
@@ -199,12 +202,17 @@ public class MutationCoverage {
     return strategies.coverageTransformer().transform(coverageData);
   }
 
-  private CoverageSummary createSummary(ReportCoverage modifiedCoverage) {
-    int numberOfCodeLines = this.code.getCodeUnderTestNames().stream()
-            .map(c -> modifiedCoverage.getCodeLinesForClass(c).getNumberOfCodeLines())
+  private CoverageSummary createSummary(ReportCoverage modifiedCoverage, Set<ClassName> mutatedClasses) {
+    List<ClassName> examinedClasses = this.code.getCodeUnderTestNames().stream()
+            .filter(mutatedClasses::contains)
+            .collect(Collectors.toList());
+
+    int numberOfCodeLines = examinedClasses.stream()
+            .map(c -> modifiedCoverage.getCodeLinesForClass(c))
+            .map(c -> c.getNumberOfCodeLines())
             .reduce(0, Integer::sum);
 
-    int coveredLines = this.code.getCodeUnderTestNames().stream()
+    int coveredLines = examinedClasses.stream()
             .mapToInt(c -> modifiedCoverage.getCoveredLines(c).size())
             .sum();
 
@@ -324,7 +332,7 @@ public class MutationCoverage {
 
     final CoverageSummary coverage = combinedStatistics.getCoverageSummary();
     if (coverage != null) {
-      ps.println(String.format(">> Line Coverage: %d/%d (%d%%)", coverage.getNumberOfCoveredLines(),
+      ps.println(String.format(">> Line Coverage (for mutated classes only): %d/%d (%d%%)", coverage.getNumberOfCoveredLines(),
               coverage.getNumberOfLines(), coverage.getCoverage()));
     }
 
