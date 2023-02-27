@@ -8,6 +8,10 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+## 1.11.3
+
+* #1159 Include only mutated classes in line coverage stats
+
 ## 1.11.2
 
 * #1157 Report only target code lines
