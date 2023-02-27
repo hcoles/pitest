@@ -14,7 +14,6 @@
  */
 package org.pitest.mutationtest.tooling;
 
-import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.CachingByteArraySource;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassInfo;
@@ -201,8 +200,8 @@ public class MutationCoverage {
   }
 
   private CoverageSummary createSummary(ReportCoverage modifiedCoverage) {
-    int numberOfCodeLines = this.code.codeTrees()
-            .map(ClassTree::numberOfCodeLines)
+    int numberOfCodeLines = this.code.getCodeUnderTestNames().stream()
+            .map(c -> modifiedCoverage.getCodeLinesForClass(c).getNumberOfCodeLines())
             .reduce(0, Integer::sum);
 
     int coveredLines = this.code.getCodeUnderTestNames().stream()

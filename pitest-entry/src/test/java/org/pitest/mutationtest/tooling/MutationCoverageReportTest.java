@@ -41,6 +41,7 @@ import org.pitest.classinfo.ClassInfoMother;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.classpath.CodeSource;
+import org.pitest.coverage.ClassLines;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.help.Help;
@@ -158,6 +159,7 @@ public class MutationCoverageReportTest {
         Collections.singleton(clazz));
     when(this.code.getClassInfo(anyCollection())).thenReturn(
         Collections.singletonList(foo));
+    when(this.coverageDb.getCodeLinesForClass(clazz)).thenReturn(new ClassLines(clazz, Collections.emptySet()));
 
     createAndRunTestee();
 
@@ -198,6 +200,7 @@ public class MutationCoverageReportTest {
     when(this.mutater.findMutations(foo)).thenReturn(aMutantIn(Foo.class));
     when(this.code.getCodeUnderTestNames()).thenReturn(
         Collections.singleton(foo));
+    when(this.coverageDb.getCodeLinesForClass(foo)).thenReturn(new ClassLines(foo, Collections.emptySet()));
     final CombinedStatistics actual = createAndRunTestee();
     assertEquals(1, actual.getMutationStatistics().getTotalMutations());
   }
