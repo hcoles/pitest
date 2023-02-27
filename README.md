@@ -8,6 +8,13 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+## 1.11.2
+
+* #1157 Report only target code lines
+
+The line coverage stats reported on the console included code lines for the entire project, even when filters were applied. This
+resulted in dramatically low coverage scores.
+
 ## 1.11.1
 
 * #1156 Prevent synthetic lines being counted in coverage
