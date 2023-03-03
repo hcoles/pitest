@@ -34,6 +34,7 @@ public class PitMojoTest extends BasePitMojoTest {
     super.setUp();
 
     when(this.project.getExecutionProject()).thenReturn(executionProject);
+    when(this.project.getBasedir()).thenReturn(new File("BASEDIR"));
     when(this.executionProject.getBasedir()).thenReturn(new File("BASEDIR"));
   }
 
