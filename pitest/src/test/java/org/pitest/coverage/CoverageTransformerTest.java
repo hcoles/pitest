@@ -62,7 +62,7 @@ public class CoverageTransformerTest {
   }
 
   @Test
-  public void shouldTransformClasseMatchingPredicate() {
+  public void shouldTransformClassesMatchingPredicate() {
     final CoverageTransformer testee = new CoverageTransformer(
         s -> true);
     final byte[] bs = this.bytes.getBytes(String.class.getName()).get();
@@ -71,7 +71,7 @@ public class CoverageTransformerTest {
   }
 
   @Test
-  public void shouldGenerateValidClasses() throws IllegalClassFormatException {
+  public void shouldGenerateValidClasses() {
     assertValidClass(String.class);
     assertValidClass(Integer.class);
     assertValidClass(Vector.class);

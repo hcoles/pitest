@@ -59,15 +59,17 @@ public class CoverageClassVisitor extends MethodFilteringAdapter {
     this.isInterface = (access & Opcodes.ACC_INTERFACE) != 0;
   }
 
+  @Override
+  protected void preVisitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+    if (name.equals("<clinit>")) {
+      foundClinit = true;
+    }
+  }
 
   @Override
   public MethodVisitor visitMethodIfRequired(final int access,
       final String name, final String desc, final String signature,
       final String[] exceptions, final MethodVisitor methodVisitor) {
-
-    if (name.equals("<clinit>")) {
-      foundClinit = true;
-    }
 
     return new CoverageAnalyser(this, this.classId, this.probeCount,
         methodVisitor, access, name, desc, signature, exceptions);
