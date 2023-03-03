@@ -8,6 +8,11 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+## 1.11.4
+
+* #1161 Prevent duplicate clinit when synthetic clinit present
+* #1162 Auto add kotlin source dirs to maven when present
+
 ## 1.11.3
 
 * #1159 Include only mutated classes in line coverage stats
