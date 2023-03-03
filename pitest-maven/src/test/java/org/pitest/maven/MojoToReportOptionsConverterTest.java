@@ -20,13 +20,17 @@ import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.util.Unchecked;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,6 +70,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     Build build = new Build();
     build.setOutputDirectory("");
     when(this.project.getBuild()).thenReturn(build);
+    when(this.project.getBasedir()).thenReturn(new File("BASEDIR"));
   }
 
   public void testsParsesReportDir() {
@@ -443,6 +448,29 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     ReportOptions actual = parseConfig("<argLine>@{FOO} @{BAR}</argLine>");
     assertThat(actual.getArgLine()).isEqualTo("fooValue barValue");
   }
+
+  public void testAutoAddsKotlinSourceDirsWhenPresent() throws IOException {
+    // we're stuck in junit 3 land but can
+    // use junit 4's temporary folder rule programatically
+    TemporaryFolder t = new TemporaryFolder();
+    try {
+      t.create();
+      File base = t.getRoot();
+      when(project.getBasedir()).thenReturn(base);
+
+      Path main = base.toPath().resolve("src").resolve("main").resolve("kotlin");
+      Path test = base.toPath().resolve("src").resolve("test").resolve("kotlin");
+      Files.createDirectories(main);
+      Files.createDirectories(test);
+
+      ReportOptions actual = parseConfig("");
+      assertThat(actual.getSourcePaths()).contains(main);
+    } finally {
+      t.delete();
+    }
+
+  }
+
 
   private ReportOptions parseConfig(final String xml) {
     try {
