@@ -37,6 +37,8 @@ public abstract class MethodFilteringAdapter extends ClassVisitor {
   @Override
   public final MethodVisitor visitMethod(final int access, final String name,
       final String desc, final String signature, final String[] exceptions) {
+
+    preVisitMethod(access, name, desc, signature, exceptions);
     final MethodVisitor methodVisitor = this.cv.visitMethod(access, name, desc,
         signature, exceptions);
     if (shouldInstrument(access, name, desc, signature, exceptions)) {
@@ -45,6 +47,10 @@ public abstract class MethodFilteringAdapter extends ClassVisitor {
     } else {
       return methodVisitor;
     }
+  }
+
+  protected void preVisitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+    // noop
   }
 
   public abstract MethodVisitor visitMethodIfRequired(int access, String name,
