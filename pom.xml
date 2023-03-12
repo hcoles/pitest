@@ -9,7 +9,7 @@
 	<packaging>pom</packaging>
 	<version>${revision}</version>
 	<name>pitest-parent</name>
-	<url>http://pitest.org</url>
+	<url>https://pitest.org</url>
 	<description>Mutation testing system for java - parent project</description>
 	<scm>
 		<url>https://github.com/hcoles/pitest</url>
