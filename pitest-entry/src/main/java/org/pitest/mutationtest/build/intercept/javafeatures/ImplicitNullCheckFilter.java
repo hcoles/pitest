@@ -12,7 +12,6 @@ import java.util.function.Predicate;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.MethodInsnNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassName;
@@ -23,6 +22,7 @@ import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.sequence.Context;
+import org.pitest.sequence.Match;
 import org.pitest.sequence.QueryParams;
 import org.pitest.sequence.QueryStart;
 import org.pitest.sequence.SequenceMatcher;
@@ -36,7 +36,7 @@ public class ImplicitNullCheckFilter implements MutationInterceptor {
 
   static final SequenceMatcher<AbstractInsnNode> GET_CLASS_NULL_CHECK = QueryStart
       .any(AbstractInsnNode.class)
-      .then(methodCallTo(ClassName.fromClass(Object.class), "getClass").and(isInstruction(MUTATED_INSTRUCTION.read())))
+      .then(aGetClassCall().and(isInstruction(MUTATED_INSTRUCTION.read())))
       .then(POP) // immediate discard
       .then(isA(LabelNode.class).negate()) // use presence of a label to indicate this was a programmer call to getClass
       .zeroOrMore(QueryStart.match(anyInstruction()))
@@ -44,6 +44,10 @@ public class ImplicitNullCheckFilter implements MutationInterceptor {
           .withIgnores(notAnInstruction())
           .withDebug(DEBUG)
           );
+
+  private static Match<AbstractInsnNode> aGetClassCall() {
+    return methodCallTo(ClassName.fromClass(Object.class), "getClass");
+  }
 
 
   private ClassTree currentClass;
@@ -73,9 +77,10 @@ public class ImplicitNullCheckFilter implements MutationInterceptor {
       final AbstractInsnNode mutatedInstruction = method.instruction(instruction);
 
       // performance hack
-      if (!(mutatedInstruction instanceof MethodInsnNode)) {
-        return false;
+      if (!aGetClassCall().asPredicate().test(mutatedInstruction)) {
+          return false;
       }
+
 
       Context context = Context.start(DEBUG);
       context = context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
