@@ -1,47 +1,41 @@
 package org.pitest.mutationtest.build.intercept.javafeatures;
 
-import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
-import static org.pitest.bytecode.analysis.InstructionMatchers.isInstruction;
-import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
-import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
-import static org.pitest.bytecode.analysis.OpcodeMatchers.INVOKEDYNAMIC;
-import static org.pitest.bytecode.analysis.OpcodeMatchers.POP;
-
-import java.util.Collection;
-import java.util.Objects;
-import java.util.function.Predicate;
-
 import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.pitest.bytecode.analysis.ClassTree;
-import org.pitest.bytecode.analysis.MethodMatchers;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
-import org.pitest.mutationtest.build.InterceptorType;
-import org.pitest.mutationtest.build.MutationInterceptor;
-import org.pitest.mutationtest.engine.Mutater;
-import org.pitest.mutationtest.engine.MutationDetails;
+import org.pitest.mutationtest.build.intercept.Region;
+import org.pitest.mutationtest.build.intercept.RegionInterceptor;
 import org.pitest.sequence.Context;
+import org.pitest.sequence.Match;
 import org.pitest.sequence.QueryParams;
 import org.pitest.sequence.QueryStart;
 import org.pitest.sequence.SequenceMatcher;
 import org.pitest.sequence.Slot;
+import org.pitest.sequence.SlotWrite;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
+import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallTo;
+import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.INVOKEDYNAMIC;
+import static org.pitest.bytecode.analysis.OpcodeMatchers.POP;
+import static org.pitest.sequence.Result.result;
 
 /**
  * Filters out the calls to Objects.requireNotNull the compiler inserts when using method references.
  *
  */
-public class MethodReferenceNullCheckFilter implements MutationInterceptor {
+public class MethodReferenceNullCheckFilter extends RegionInterceptor {
 
   private static final boolean DEBUG = false;
-
   private static final Slot<AbstractInsnNode> MUTATED_INSTRUCTION = Slot.create(AbstractInsnNode.class);
 
   static final SequenceMatcher<AbstractInsnNode> NULL_CHECK = QueryStart
       .any(AbstractInsnNode.class)
-      .then(methodCallTo(ClassName.fromClass(Objects.class), "requireNonNull").and(isInstruction(MUTATED_INSTRUCTION.read())))
+      .then(requireNonNullCall().and(store(MUTATED_INSTRUCTION.write())))
       .then(POP)
       .then(INVOKEDYNAMIC)
       .zeroOrMore(QueryStart.match(anyInstruction()))
@@ -50,47 +44,20 @@ public class MethodReferenceNullCheckFilter implements MutationInterceptor {
           .withDebug(DEBUG)
           );
 
-
-  private ClassTree currentClass;
-
-  @Override
-  public InterceptorType type() {
-    return InterceptorType.FILTER;
+  private static Match<AbstractInsnNode> requireNonNullCall() {
+    return methodCallTo(ClassName.fromClass(Objects.class), "requireNonNull");
   }
 
   @Override
-  public void begin(ClassTree clazz) {
-    this.currentClass = clazz;
+  protected List<Region> computeRegions(MethodTree method) {
+    Context context = Context.start();
+    return NULL_CHECK.contextMatches(method.instructions(), context).stream()
+            .map(c -> new Region(c.retrieve(MUTATED_INSTRUCTION.read()).get(), c.retrieve(MUTATED_INSTRUCTION.read()).get()))
+            .collect(Collectors.toList());
   }
 
-  @Override
-  public Collection<MutationDetails> intercept(
-      Collection<MutationDetails> mutations, Mutater m) {
-    return FCollection.filter(mutations, Prelude.not(isAnImplicitNullCheck()));
-  }
-
-  private Predicate<MutationDetails> isAnImplicitNullCheck() {
-    return a -> {
-      final int instruction = a.getInstructionIndex();
-      final MethodTree method = MethodReferenceNullCheckFilter.this.currentClass.methods().stream()
-          .filter(MethodMatchers.forLocation(a.getId().getLocation()))
-          .findFirst()
-          .get();
-
-      final AbstractInsnNode mutatedInstruction = method.instruction(instruction);
-      // performance hack
-      if (!(mutatedInstruction instanceof MethodInsnNode)) {
-        return false;
-      }
-      Context context = Context.start(DEBUG);
-      context = context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
-      return NULL_CHECK.matches(method.instructions(), context);
-    };
-  }
-
-  @Override
-  public void end() {
-    this.currentClass = null;
+  private static Match<AbstractInsnNode> store(SlotWrite<AbstractInsnNode> slot) {
+    return (c, n) -> result(true, c.store(slot, n));
   }
 
 }

@@ -40,6 +40,7 @@ public abstract class RegionInterceptor implements MutationInterceptor {
                 .collect(Collectors.toList());
     }
 
+
     private Predicate<MutationDetails> buildPredicate() {
         return a -> {
             final int instruction = a.getInstructionIndex();
@@ -59,4 +60,5 @@ public abstract class RegionInterceptor implements MutationInterceptor {
         currentClass = null;
         cache = null;
     }
+
 }
