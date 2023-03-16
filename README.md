@@ -8,6 +8,11 @@ Read all about it at http://pitest.org
 
 ## Releases
 
+## 1.11.5
+
+* #1167 Fix poor static analysis performance for large methods
+* #1166 Update pitest web link to https (thanks @romani) 
+
 ## 1.11.4
 
 * #1161 Prevent duplicate clinit when synthetic clinit present
