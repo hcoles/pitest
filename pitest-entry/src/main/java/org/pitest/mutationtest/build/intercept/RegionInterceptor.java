@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  */
 public abstract class RegionInterceptor implements MutationInterceptor {
     private ClassTree currentClass;
-    private Map<MethodTree, List<Region>> cache;
+    private Map<MethodTree, List<RegionIndex>> cache;
 
     @Override
     public InterceptorType type() {
@@ -46,11 +46,16 @@ public abstract class RegionInterceptor implements MutationInterceptor {
             final int instruction = a.getInstructionIndex();
             final MethodTree method = this.currentClass.method(a.getId().getLocation()).get();
 
-            List<Region> regions = cache.computeIfAbsent(method, this::computeRegions);
-
+            List<RegionIndex> regions = cache.computeIfAbsent(method, this::computeRegionIndex);
             return regions.stream()
-                    .anyMatch(r -> instruction >= method.instructions().indexOf(r.start) && instruction <= method.instructions().indexOf(r.end));
+                    .anyMatch(r -> r.start() <= instruction && r.end() >= instruction);
         };
+    }
+
+    private List<RegionIndex> computeRegionIndex(MethodTree method) {
+        return computeRegions(method).stream()
+                .map(r -> new RegionIndex(method.instructions().indexOf(r.start), method.instructions().indexOf(r.end)))
+                .collect(Collectors.toList());
     }
 
     protected abstract List<Region> computeRegions(MethodTree method);
