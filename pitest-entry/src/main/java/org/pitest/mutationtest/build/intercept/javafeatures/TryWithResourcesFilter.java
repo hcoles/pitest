@@ -214,10 +214,9 @@ public class TryWithResourcesFilter extends RegionInterceptor {
 
     Context context = Context.start(DEBUG);
     context = context.store(HANDLERS.write(), handlers);
-    List<Region> regions = TRY_WITH_RESOURCES.contextMatches(method.instructions(), context).stream()
+    return TRY_WITH_RESOURCES.contextMatches(method.instructions(), context).stream()
             .map(c -> new Region(c.retrieve(START.read()).get(), c.retrieve(END.read()).get()))
             .collect(Collectors.toList());
-    return regions;
   }
 
 

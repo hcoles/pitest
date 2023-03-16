@@ -24,7 +24,7 @@ public class ImplicitNullCheckFilterTest {
   }
 
   @Test
-  public void flteraMutantsThatAlterGetClassInImplicitNullCheck() {
+  public void fltersMutantsThatAlterGetClassInImplicitNullCheck() {
     this.verifier.assertFiltersNMutationFromSample(1, "ImplicitNullCheck");
   }
 

@@ -80,10 +80,9 @@ public class StringSwitchFilter extends RegionInterceptor {
 
     protected List<Region> computeRegions(MethodTree method) {
         Context context = Context.start();
-        List<Region> regions = STRING_SWITCH.contextMatches(method.instructions(), context).stream()
+        return STRING_SWITCH.contextMatches(method.instructions(), context).stream()
                 .map(c -> new Region(c.retrieve(START.read()).get(), c.retrieve(END.read()).get()))
                 .collect(Collectors.toList());
-        return regions;
     }
 
 }
