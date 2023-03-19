@@ -10,7 +10,7 @@
 	<packaging>jar</packaging>
 	<name>pitest-maven-verification</name>
 	<description>Pitest Maven Mojo integration tests.</description>
-	<url>http://pitest.org</url>
+	<url>https://pitest.org</url>
 
 	<properties>
 		<maven.version>2.2.1</maven.version>

@@ -10,7 +10,7 @@
 	<packaging>maven-plugin</packaging>
 	<name>pitest-maven</name>
 	<description>Pitest Maven Mojo.</description>
-	<url>http://pitest.org</url>
+	<url>https://pitest.org</url>
 
 	<properties>
 		<scm.version>1.9.4</scm.version>

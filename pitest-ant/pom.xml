@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>pitest-ant</artifactId>
 	<name>pitest-ant</name>
-	<url>http://pitest.org</url>
+	<url>https://pitest.org</url>
 	<description>Pitest Ant task.</description>
 
 	<properties>
