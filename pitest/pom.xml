@@ -9,7 +9,7 @@
 	<artifactId>pitest</artifactId>
 	<packaging>jar</packaging>
 	<name>pitest</name>
-	<url>http://pitest.org</url>
+	<url>https://pitest.org</url>
 	<description>Mutation testing system for Java.</description>
 
 	<build>

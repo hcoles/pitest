@@ -9,7 +9,7 @@
 	</parent>
 	<artifactId>pitest-html-report</artifactId>
 	<name>pitest-html-report</name>
-	<url>http://pitest.org</url>
+	<url>https://pitest.org</url>
 	<description>Pitest html report plugin.</description>
 
 	<build>

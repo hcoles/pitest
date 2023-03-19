@@ -37,7 +37,7 @@ public enum Help {
   NO_JUNIT_EXCLUDE_RUNNERS(
       "Exclude Runners option requires JUnit 4.6 or above.");
 
-  private static final String URL = "http://pitest.org";
+  private static final String URL = "https://pitest.org";
   private final String        text;
 
   Help(final String text) {

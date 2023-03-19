@@ -9,7 +9,7 @@
 	</parent>
 	<artifactId>pitest-command-line</artifactId>
 	<name>pitest-command-line</name>
-	<url>http://pitest.org</url>
+	<url>https://pitest.org</url>
 	<description>Pitest command line tool.</description>
 
 	<build>

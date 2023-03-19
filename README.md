@@ -4,7 +4,7 @@
 
 Pitest (aka PIT) is a state of the art mutation testing system for Java and the JVM.
 
-Read all about it at http://pitest.org
+Read all about it at https://pitest.org
 
 ## Releases
 
@@ -579,7 +579,7 @@ Please note that any stored history files or sonar results are invalidated by th
 * support user defined test prioritisation
 * fix for issue blocking usage with [Robolectric](http://robolectric.org/)
 
-Note, setup for Ant based projects changes in this release. See [ant setup](http://pitest.org/quickstart/ant/) for details on usage.
+Note, setup for Ant based projects changes in this release. See [ant setup](https://pitest.org/quickstart/ant/) for details on usage.
 
 ### 0.31
 
