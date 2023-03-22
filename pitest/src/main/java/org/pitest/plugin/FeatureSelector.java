@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -34,15 +35,15 @@ public class FeatureSelector<T extends ProvidesFeature> {
   }
 
   private List<T> selectFeatures(List<FeatureSetting> features, Collection<T> filters) {
-    final List<T> factories = new ArrayList<>(filters);
-    final Map<String, Collection<T>> featureMap = FCollection.bucket(factories, byFeatureName());
+    List<T> factories = new ArrayList<>(filters);
+    Map<String, Collection<T>> featureMap = FCollection.bucket(factories, byFeatureName());
 
-    final List<T> active = factories.stream()
+    Set<T> active = factories.stream()
             .filter(isOnByDefault())
-            .collect(Collectors.toCollection(ArrayList::new));
+            .collect(Collectors.toSet());
 
-    for ( final FeatureSetting each : features ) {
-      final Collection<T> providers = featureMap.get(each.feature().toLowerCase());
+    for (FeatureSetting each : features) {
+      Collection<T> providers = featureMap.get(each.feature().toLowerCase());
       if ((providers == null) || providers.isEmpty()) {
         continue;
       }
@@ -59,7 +60,8 @@ public class FeatureSelector<T extends ProvidesFeature> {
       }
     }
 
-    return active;
+    return active.stream()
+            .collect(Collectors.toList());
   }
 
   private Predicate<T> isOnByDefault() {
