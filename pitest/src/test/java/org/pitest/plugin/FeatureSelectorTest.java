@@ -78,6 +78,14 @@ public class FeatureSelectorTest {
     assertThat(this.testee.getSettingForFeature("FOO")).isEqualTo(fooConfig);
   }
 
+  @Test
+  public void doesNotDuplicateFeatures() {
+    final FeatureSetting fooConfig = new FeatureSetting("foo", ToggleStatus.ACTIVATE,  new HashMap<>());
+    this.testee = new FeatureSelector<>(Arrays.asList(fooConfig), features(this.onByDefault));
+
+    assertThat(this.testee.getActiveFeatures()).hasSize(1);
+  }
+
   private List<FeatureSetting> noSettings() {
     return Collections.emptyList();
   }
