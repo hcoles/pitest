@@ -8,6 +8,11 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.11.6
+
+* #1171 Prevent double instantiation of features
+* #1170 Update links to https (thanks @romani)
+
 ## 1.11.5
 
 * #1167 Fix poor static analysis performance for large methods
