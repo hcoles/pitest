@@ -158,6 +158,9 @@ updated to a compatible version (1.0.0) when upgrading.
 
 History files from earlier releases are incompatible and should be deleted when upgrading.
 
+<details>
+    <summary>Older versions</summary>
+
 ### 1.8.1
 
 * #637  - Support different input and output encodings (thanks @qxo)
@@ -307,9 +310,6 @@ As a result of #900 the `testPlugin` parameter is now defunct, but pitest will c
 * #556 - Do not mutate enum constructors
 * #726 - Ensure static initializer coverage is recorded 
 * #734/#735/#736 - Replace legacy interfaces with Java API (thanks @AlexElin)
-
-<details>
-    <summary>Older versions</summary>
 
 ### 1.4.11
 
@@ -736,22 +736,14 @@ Please consult our [issue management rules](ISSUES.md) before creating or workin
 
 ## Credits
 
-Pitest is mainly the work of [me](https://twitter.com/0hjc) but has benefited from contributions from many others. 
+Pitest is mainly the work of [me](https://twitter.com/_pitest) but has benefited from contributions from many others. 
 
 Notable contributions not visible [here](https://github.com/hcoles/pitest/graphs/contributors) as they were made before this code was migrated to github include 
 
 * Nicolas Rusconi - Ant Task
 * Struan Kerr-Liddell - Improvements to html report
-* Stephan Pendorf - Multiple improvments including improved mutators
+* Stephan Pendorf - Multiple improvements including improved mutators
  
 Although PIT does not incorporate any code from the Jumble project (http://jumble.sourceforge.net/), the Jumble codebase was used as a guide when developing some aspects of PIT.
-
-## Other stuff
-
-The codebase is checked up on in a few places that give slower feedback than the github hooks.
-
-[maven2 on IBM JDK check](https://hjc.ci.cloudbees.com/job/maven2_triangle_example/)
-
-
 
 
