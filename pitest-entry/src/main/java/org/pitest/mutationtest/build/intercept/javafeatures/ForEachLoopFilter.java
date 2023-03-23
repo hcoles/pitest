@@ -191,11 +191,6 @@ public class ForEachLoopFilter implements MutationInterceptor {
       final int instruction = a.getInstructionIndex();
       final MethodTree method = currentClass.method(a.getId().getLocation()).get();
 
-      //performance hack
-      if (!mightContainForLoop(method.instructions())) {
-        return false;
-      }
-
       final AbstractInsnNode mutatedInstruction = method.instruction(instruction);
 
       Set<AbstractInsnNode> toAvoid = cache.computeIfAbsent(method, this::findLoopInstructions);
@@ -209,11 +204,6 @@ public class ForEachLoopFilter implements MutationInterceptor {
     return ITERATOR_LOOP.contextMatches(method.instructions(), context).stream()
             .flatMap(c -> c.retrieve(LOOP_INSTRUCTIONS.read()).get().stream())
             .collect(Collectors.toSet());
-  }
-
-  private boolean mightContainForLoop(List<AbstractInsnNode> instructions) {
-    return instructions.stream()
-            .anyMatch(hasNextMethodCall().or(ARRAYLENGTH).asPredicate());
   }
 
   @Override
