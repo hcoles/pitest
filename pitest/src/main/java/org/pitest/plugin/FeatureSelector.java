@@ -4,6 +4,7 @@ import org.pitest.functional.FCollection;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,6 +62,7 @@ public class FeatureSelector<T extends ProvidesFeature> {
     }
 
     return active.stream()
+            .sorted(Comparator.comparing(ProvidesFeature::provides))
             .collect(Collectors.toList());
   }
 
