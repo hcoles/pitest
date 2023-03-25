@@ -86,6 +86,21 @@ public class FeatureSelectorTest {
     assertThat(this.testee.getActiveFeatures()).hasSize(1);
   }
 
+  @Test
+  public void ordersFeaturesConsistently() {
+    final FeatureSetting fooConfig = new FeatureSetting("bar", ToggleStatus.ACTIVATE,  new HashMap<>());
+    this.testee = new FeatureSelector<>(Arrays.asList(fooConfig), features(this.onByDefault, this.offByDefault));
+
+    assertThat(this.testee.getActiveFeatures()).containsExactly(offByDefault, onByDefault);
+
+    // swap order
+    this.testee = new FeatureSelector<>(Arrays.asList(fooConfig), features(this.offByDefault, this.onByDefault));
+
+    assertThat(this.testee.getActiveFeatures()).containsExactly(offByDefault, onByDefault);
+
+  }
+
+
   private List<FeatureSetting> noSettings() {
     return Collections.emptyList();
   }

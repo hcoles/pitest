@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-public final class Feature {
+public final class Feature implements Comparable<Feature> {
 
   private final boolean onByDefault;
   private final boolean isInternal;
@@ -20,7 +20,6 @@ public final class Feature {
     this.name = name;
     this.description = description;
     this.params = params;
-
   }
 
   public static Feature named(String name) {
@@ -83,4 +82,8 @@ public final class Feature {
   }
 
 
+  @Override
+  public int compareTo(Feature o) {
+    return name.compareTo(o.name);
+  }
 }
