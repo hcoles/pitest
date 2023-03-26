@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.io.Writer;
 
 import java.util.Optional;
+
+import org.apache.commons.text.StringEscapeUtils;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationResultListener;
@@ -37,7 +39,7 @@ public class CSVReportListener implements MutationResultListener {
   }
 
   private String createKillingTestDesc(final Optional<String> killingTest) {
-    return (killingTest.isPresent()) ? String.format("\"%s\"", killingTest.get()) : "none";
+    return (killingTest.isPresent()) ? StringEscapeUtils.escapeCsv(killingTest.get()) : "none";
   }
 
   private String makeCsv(final Object... os) {
