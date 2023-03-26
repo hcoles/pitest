@@ -56,6 +56,18 @@ public class CSVReportListenerTest {
   }
 
   @Test
+  public void shouldQuoteKillingTestWhenNeeded() throws IOException {
+    final MutationResult mr = new MutationResult(
+            MutationTestResultMother.createDetails(), new MutationStatusTestPair(1,
+            DetectionStatus.KILLED, "foo(java.lang.String, java.lang.String)"));
+    this.testee.handleMutationResult(MutationTestResultMother
+            .createClassResults(mr));
+    final String expected = "file,clazz,mutator,method,42,KILLED,\"foo(java.lang.String, java.lang.String)\""
+            + NEW_LINE;
+    verify(this.out).write(expected);
+  }
+
+  @Test
   public void shouldOutputNoneWhenNoKillingTestFound() throws IOException {
     final MutationResult mr = new MutationResult(
         MutationTestResultMother.createDetails(), MutationStatusTestPair.notAnalysed(1,
