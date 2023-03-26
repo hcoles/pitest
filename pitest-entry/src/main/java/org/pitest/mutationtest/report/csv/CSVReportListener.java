@@ -37,7 +37,7 @@ public class CSVReportListener implements MutationResultListener {
   }
 
   private String createKillingTestDesc(final Optional<String> killingTest) {
-    return killingTest.orElse("none");
+    return (killingTest.isPresent()) ? String.format("\"%s\"", killingTest.get()) : "none";
   }
 
   private String makeCsv(final Object... os) {
