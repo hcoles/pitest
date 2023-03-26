@@ -8,6 +8,12 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.11.7
+
+* #1178 Commas in killing test name break csv export (thanks @Bonajo)
+* #1177 Apply features in a consistent order  
+* #1176 Upgrade to ASM 9.5
+
 ## 1.11.6
 
 * #1171 Prevent double instantiation of features
