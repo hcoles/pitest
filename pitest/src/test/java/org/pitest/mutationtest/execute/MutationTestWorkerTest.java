@@ -21,6 +21,7 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationStatusTestPair;
+import org.pitest.mutationtest.environment.ResetEnvironment;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -50,11 +51,14 @@ public class MutationTestWorkerTest {
   @Mock
   private Reporter                                    reporter;
 
+  @Mock
+  private ResetEnvironment                             reset;
+
   @Before
   public void setUp() {
     MockitoAnnotations.openMocks(this);
     this.testee = new MutationTestWorker(this.hotswapper, this.mutater,
-        this.loader, false);
+        this.loader, this.reset,false);
   }
 
   @Test

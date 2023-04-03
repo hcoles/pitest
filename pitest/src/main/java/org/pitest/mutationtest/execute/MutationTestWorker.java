@@ -16,6 +16,7 @@ package org.pitest.mutationtest.execute;
 
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationStatusTestPair;
+import org.pitest.mutationtest.environment.ResetEnvironment;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -57,10 +58,15 @@ public class MutationTestWorker {
   private final HotSwap                                     hotswap;
   private final boolean                                     fullMutationMatrix;
 
-  public MutationTestWorker(
-      final HotSwap hotswap,
-      final Mutater mutater, final ClassLoader loader, final boolean fullMutationMatrix) {
+  private final ResetEnvironment                            reset;
+
+  public MutationTestWorker(HotSwap hotswap,
+                            Mutater mutater,
+                            ClassLoader loader,
+                            ResetEnvironment reset,
+                            boolean fullMutationMatrix) {
     this.loader = loader;
+    this.reset = reset;
     this.mutater = mutater;
     this.hotswap = hotswap;
     this.fullMutationMatrix = fullMutationMatrix;
@@ -94,6 +100,7 @@ public class MutationTestWorker {
     // mess with the internals of Javassist so our mutated class
     // bytes are returned
     JavassistInterceptor.setMutant(mutatedClass);
+    reset.resetFor(mutatedClass);
 
     if (DEBUG) {
       LOG.fine("mutating method " + mutatedClass.getDetails().getMethod());

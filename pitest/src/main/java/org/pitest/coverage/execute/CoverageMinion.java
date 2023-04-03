@@ -22,6 +22,7 @@ import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.config.ClientPluginServices;
 import org.pitest.mutationtest.config.MinionSettings;
+import org.pitest.mutationtest.environment.TransformationPlugin;
 import org.pitest.mutationtest.mocksupport.BendJavassistToMyWillTransformer;
 import org.pitest.mutationtest.mocksupport.JavassistInputStreamInterceptorAdapater;
 import org.pitest.testapi.Configuration;
@@ -81,6 +82,8 @@ public class CoverageMinion {
       HotSwapAgent.addTransformer(new CoverageTransformer(
           convertToJVMClassFilter(paramsFromParent.getFilter())));
 
+      enableTransformations();
+
       final List<TestUnit> tus = getTestsFromParent(dis, paramsFromParent, invokeQueue);
 
       LOG.info(() -> tus.size() + " tests discovered");
@@ -121,6 +124,13 @@ public class CoverageMinion {
 
     System.exit(exitCode.getCode());
 
+  }
+
+  private static void enableTransformations() {
+    ClientPluginServices plugins = ClientPluginServices.makeForContextLoader();
+    for (TransformationPlugin each : plugins.findTransformations()) {
+      HotSwapAgent.addTransformer(each.makeTransformer());
+    }
   }
 
   private static List<TestUnit> removeTestsExecutedDuringDiscovery(List<TestUnit> tus) {

@@ -21,10 +21,12 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.EngineArguments;
+import org.pitest.mutationtest.environment.ResetEnvironment;
 import org.pitest.mutationtest.config.ClientPluginServices;
 import org.pitest.mutationtest.config.MinionSettings;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.MutationEngine;
+import org.pitest.mutationtest.environment.TransformationPlugin;
 import org.pitest.mutationtest.mocksupport.BendJavassistToMyWillTransformer;
 import org.pitest.mutationtest.mocksupport.JavassistInputStreamInterceptorAdapater;
 import org.pitest.mutationtest.mocksupport.JavassistInterceptor;
@@ -84,9 +86,10 @@ public class MutationTestMinion {
 
       final MutationEngine engine = createEngine(paramsFromParent.engine, paramsFromParent.engineArgs);
 
+      final ResetEnvironment reset = this.plugins.createReset();
 
       final MutationTestWorker worker = new MutationTestWorker(hotswap,
-          engine.createMutator(byteSource), loader, paramsFromParent.fullMutationMatrix);
+          engine.createMutator(byteSource), loader, reset, paramsFromParent.fullMutationMatrix);
 
       final List<TestUnit> tests = findTestsForTestClasses(loader,
           paramsFromParent.testClasses, createTestPlugin(paramsFromParent.pitConfig));
@@ -124,6 +127,8 @@ public class MutationTestMinion {
 
     enablePowerMockSupport();
     HotSwapAgent.addTransformer(new CatchNewClassLoadersTransformer());
+
+    enableTransformations();
 
     final int port = Integer.parseInt(args[0]);
 
@@ -164,6 +169,13 @@ public class MutationTestMinion {
     // Bwahahahahahahaha
     HotSwapAgent.addTransformer(new BendJavassistToMyWillTransformer(Prelude
         .or(new Glob("javassist/*")), JavassistInputStreamInterceptorAdapater.inputStreamAdapterSupplier(JavassistInterceptor.class)));
+  }
+
+  private static void enableTransformations() {
+    ClientPluginServices plugins = ClientPluginServices.makeForContextLoader();
+    for (TransformationPlugin each : plugins.findTransformations()) {
+      HotSwapAgent.addTransformer(each.makeTransformer());
+    }
   }
 
   private static void safelyCloseSocket(final Socket s) {
