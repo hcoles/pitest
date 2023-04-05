@@ -9,6 +9,8 @@ import org.pitest.mutationtest.build.MutationGrouperFactory;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.mutationtest.build.TestPrioritiserFactory;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.environment.EnvironmentResetPlugin;
+import org.pitest.mutationtest.environment.TransformationPlugin;
 import org.pitest.mutationtest.verify.BuildVerifierFactory;
 import org.pitest.plugin.ClientClasspathPlugin;
 import org.pitest.plugin.ProvidesFeature;
@@ -68,6 +70,8 @@ public class PluginServices {
     l.addAll(findMutationOperators());
     l.addAll(findTestFrameworkPlugins());
     l.addAll(nullPlugins());
+    l.addAll(load(TransformationPlugin.class));
+    l.addAll(load(EnvironmentResetPlugin.class));
     return l;
   }
 
