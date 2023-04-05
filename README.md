@@ -8,6 +8,10 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.12.0
+
+* #1186 New extension points
+
 ## 1.11.7
 
 * #1178 Commas in killing test name break csv export (thanks @Bonajo)
