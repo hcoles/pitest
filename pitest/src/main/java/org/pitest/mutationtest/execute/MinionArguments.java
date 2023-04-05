@@ -38,7 +38,7 @@ public class MinionArguments implements Serializable {
   final TestPluginArguments         pitConfig;
 
   public MinionArguments(final Collection<MutationDetails> mutations,
-      final Collection<ClassName> tests, final String engine,   final EngineArguments engineArgs,
+      final Collection<ClassName> tests, final String engine, final EngineArguments engineArgs,
       final TimeoutLengthStrategy timeoutStrategy, final Verbosity verbosity, final boolean fullMutationMatrix,
       final TestPluginArguments pitConfig) {
     this.mutations = mutations;

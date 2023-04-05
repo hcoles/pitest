@@ -12,6 +12,8 @@ public interface MutationContext extends BlockCounter {
   MutationIdentifier registerMutation(MethodMutatorFactory factory,
       String description);
 
+  void registerMutation(MutationIdentifier id, String description);
+
   boolean shouldMutate(MutationIdentifier newId);
 
 }
