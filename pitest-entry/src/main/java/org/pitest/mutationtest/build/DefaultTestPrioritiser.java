@@ -22,7 +22,7 @@ import org.pitest.mutationtest.engine.MutationDetails;
  */
 public class DefaultTestPrioritiser implements TestPrioritiser {
 
-  private static final int       TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS = 1000;
+  private static final int TIME_WEIGHTING_FOR_DIRECT_UNIT_TESTS = 1000;
 
   private final CoverageDatabase coverage;
 
