@@ -326,6 +326,15 @@ public class OptionsParserTest {
   }
 
   @Test
+  public void alsoSetsUseClasspathJarWhenClasspathFileProvided() {
+    final ClassLoader classLoader = getClass().getClassLoader();
+    final File classPathFile = new File(classLoader.getResource("testClassPathFile.txt").getFile());
+    final ReportOptions ro = parseAddingRequiredArgs("--classPathFile",
+            classPathFile.getAbsolutePath());
+    assertThat(ro.useClasspathJar()).isTrue();
+  }
+
+  @Test
   public void shouldDetermineIfFailWhenNoMutationsFlagIsSet() {
     assertTrue(parseAddingRequiredArgs("--failWhenNoMutations", "true")
         .shouldFailWhenNoMutations());

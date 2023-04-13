@@ -534,6 +534,7 @@ public class OptionsParser {
         LOG.warning("Unable to read class path file:" + userArgs.valueOf(this.classPathFile).getAbsolutePath() + " - "
                 + ioe.getMessage());
       }
+      data.setUseClasspathJar(true);
     }
     elements.addAll(userArgs.valuesOf(this.additionalClassPathSpec));
     data.setClassPathElements(elements);
