@@ -15,6 +15,7 @@
 package org.pitest.mutationtest.engine.gregor;
 
 import org.objectweb.asm.MethodVisitor;
+import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.plugin.ClientClasspathPlugin;
 
 /**
@@ -59,6 +60,10 @@ public interface MethodMutatorFactory extends ClientClasspathPlugin {
   @Override
   default String description() {
     return getName();
+  }
+
+  default boolean isMutatorFor(MutationIdentifier id) {
+    return id.getMutator().equals(getGloballyUniqueId());
   }
 
 }

@@ -102,7 +102,7 @@ public class GregorMutater implements Mutater {
         this.computeCache, FrameOptions.pickFlags(bytes.get()));
     final MutatingClassVisitor mca = new MutatingClassVisitor(w, context,
         filterMethods(), FCollection.filter(this.mutators,
-            isMutatorFor(id)));
+            m -> m.isMutatorFor(id)));
     reader.accept(mca, ClassReader.EXPAND_FRAMES);
 
     final List<MutationDetails> details = context.getMutationDetails(context
@@ -110,11 +110,6 @@ public class GregorMutater implements Mutater {
 
     return new Mutant(details.get(0), w.toByteArray());
 
-  }
-
-  private static Predicate<MethodMutatorFactory> isMutatorFor(
-      final MutationIdentifier id) {
-    return a -> id.getMutator().equals(a.getGloballyUniqueId());
   }
 
   private Predicate<MethodInfo> filterMethods() {
