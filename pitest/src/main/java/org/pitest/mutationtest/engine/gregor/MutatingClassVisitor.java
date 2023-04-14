@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.pitest.bytecode.ASMVersion;
 import org.pitest.classinfo.ClassName;
@@ -26,7 +27,6 @@ import org.pitest.mutationtest.engine.gregor.analysis.InstructionTrackingMethodV
 import org.pitest.mutationtest.engine.gregor.blocks.BlockTrackingMethodDecorator;
 
 class MutatingClassVisitor extends ClassVisitor {
-
   private final Predicate<MethodInfo>    filter;
   private final ClassContext              context;
   private final List<MethodMutatorFactory> methodMutators;
@@ -52,6 +52,19 @@ class MutatingClassVisitor extends ClassVisitor {
   public void visitSource(final String source, final String debug) {
     super.visitSource(source, debug);
     this.context.registerSourceFile(source);
+  }
+
+  @Override
+  public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
+      FieldVisitor next = super.visitField(access, name, descriptor, signature, value);
+      FieldInfo fieldInfo = new FieldInfo(access, name, descriptor, signature, value);
+      for (final MethodMutatorFactory each : this.methodMutators) {
+        FieldVisitor fv = each.createForField(this.context, fieldInfo, next);
+        if (fv != null) {
+          next = fv;
+        }
+      }
+      return next;
   }
 
   @Override
@@ -102,7 +115,10 @@ class MutatingClassVisitor extends ClassVisitor {
 
     MethodVisitor next = methodVisitor;
     for (final MethodMutatorFactory each : this.methodMutators) {
-      next = each.create(methodContext, methodInfo, next);
+      MethodVisitor mv = each.create(methodContext, methodInfo, next);
+      if (mv != null) {
+        next = mv;
+      }
     }
 
     return wrapWithDecorators(methodContext, next, methodInfo);
