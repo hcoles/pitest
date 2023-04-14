@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Logger;
@@ -170,7 +171,11 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
 
 
   private boolean isInFinallyBlock(MutationDetails m) {
-    MethodTree method = currentClass.method(m.getId().getLocation()).get();
+    Optional<MethodTree> maybeMethod = currentClass.method(m.getId().getLocation());
+    if (!maybeMethod.isPresent()) {
+      return false;
+    }
+    MethodTree method = maybeMethod.get();
     List<LabelNode> handlers = method.rawNode().tryCatchBlocks.stream()
             .filter(t -> t.type == null)
             .map(t -> t.handler)

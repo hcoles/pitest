@@ -55,8 +55,11 @@ public abstract class InfiniteLoopFilter implements MutationInterceptor {
   private Collection<MutationDetails> findTimeoutMutants(Location location,
       Collection<MutationDetails> mutations, Mutater m) {
 
-    final MethodTree method = this.currentClass.method(location)
-        .get();
+    final Optional<MethodTree> maybeMethod = this.currentClass.method(location);
+    if (!maybeMethod.isPresent()) {
+      return Collections.emptyList();
+    }
+    MethodTree method = maybeMethod.get();
 
     //  give up if our matcher thinks loop is already infinite
     if (infiniteLoopMatcher().matches(method.instructions())) {
@@ -64,7 +67,7 @@ public abstract class InfiniteLoopFilter implements MutationInterceptor {
     }
 
     final List<MutationDetails> timeouts = new ArrayList<>();
-    for ( final MutationDetails each : mutations ) {
+    for (final MutationDetails each : mutations) {
       // avoid cost of static analysis by first checking mutant is on
       // on instruction that could affect looping
       if (couldCauseInfiniteLoop(method, each) && isInfiniteLoop(each,m) ) {

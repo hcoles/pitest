@@ -17,6 +17,7 @@ package org.pitest.mutationtest.engine.gregor;
 import java.util.List;
 import java.util.function.Predicate;
 
+import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -29,7 +30,9 @@ import org.pitest.mutationtest.engine.gregor.blocks.BlockTrackingMethodDecorator
 class MutatingClassVisitor extends ClassVisitor {
   private final Predicate<MethodInfo>    filter;
   private final ClassContext              context;
-  private final List<MethodMutatorFactory> methodMutators;
+  private final List<MethodMutatorFactory> mutators;
+
+  private final NoMethodContext nonMethodContext;
 
   MutatingClassVisitor(final ClassVisitor delegateClassVisitor,
       final ClassContext context, final Predicate<MethodInfo> filter,
@@ -37,7 +40,8 @@ class MutatingClassVisitor extends ClassVisitor {
     super(ASMVersion.ASM_VERSION, delegateClassVisitor);
     this.context = context;
     this.filter = filter;
-    this.methodMutators = mutators;
+    this.mutators = mutators;
+    this.nonMethodContext = new NoMethodContext(context);
   }
 
   @Override
@@ -55,11 +59,24 @@ class MutatingClassVisitor extends ClassVisitor {
   }
 
   @Override
+  public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
+    AnnotationVisitor next = super.visitAnnotation(descriptor, visible);
+    AnnotationInfo annotationInfo = new AnnotationInfo(descriptor, visible);
+    for (final MethodMutatorFactory each : this.mutators) {
+      AnnotationVisitor fv = each.createForAnnotation(this.nonMethodContext, annotationInfo, next);
+      if (fv != null) {
+        next = fv;
+      }
+    }
+    return next;
+  }
+
+  @Override
   public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
       FieldVisitor next = super.visitField(access, name, descriptor, signature, value);
       FieldInfo fieldInfo = new FieldInfo(access, name, descriptor, signature, value);
-      for (final MethodMutatorFactory each : this.methodMutators) {
-        FieldVisitor fv = each.createForField(this.context, fieldInfo, next);
+      for (final MethodMutatorFactory each : this.mutators) {
+        FieldVisitor fv = each.createForField(this.nonMethodContext, fieldInfo, next);
         if (fv != null) {
           next = fv;
         }
@@ -114,7 +131,7 @@ class MutatingClassVisitor extends ClassVisitor {
       final MethodVisitor methodVisitor) {
 
     MethodVisitor next = methodVisitor;
-    for (final MethodMutatorFactory each : this.methodMutators) {
+    for (final MethodMutatorFactory each : this.mutators) {
       MethodVisitor mv = each.create(methodContext, methodInfo, next);
       if (mv != null) {
         next = mv;

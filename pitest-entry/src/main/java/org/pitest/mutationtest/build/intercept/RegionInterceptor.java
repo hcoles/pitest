@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -44,9 +45,13 @@ public abstract class RegionInterceptor implements MutationInterceptor {
     private Predicate<MutationDetails> buildPredicate() {
         return a -> {
             final int instruction = a.getInstructionIndex();
-            final MethodTree method = this.currentClass.method(a.getId().getLocation()).get();
+            final Optional<MethodTree> method = this.currentClass.method(a.getId().getLocation());
 
-            List<RegionIndex> regions = cache.computeIfAbsent(method, this::computeRegionIndex);
+            if (!method.isPresent()) {
+                return false;
+            }
+
+            List<RegionIndex> regions = cache.computeIfAbsent(method.get(), this::computeRegionIndex);
             return regions.stream()
                     .anyMatch(r -> r.start() <= instruction && r.end() >= instruction);
         };

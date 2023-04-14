@@ -159,7 +159,12 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
   private Predicate<MutationDetails> mutatesAForLoopCounter() {
     return a -> {
       final int instruction = a.getInstructionIndex();
-      final MethodTree method = AvoidForLoopCounterFilter.this.currentClass.method(a.getId().getLocation()).get();
+      Optional<MethodTree> maybeMethod = AvoidForLoopCounterFilter.this.currentClass.method(a.getId().getLocation());
+      if (!maybeMethod.isPresent()) {
+        return false;
+      }
+      MethodTree method = maybeMethod.get();
+
       final AbstractInsnNode mutatedInstruction = method.instruction(instruction);
 
       // performance hack

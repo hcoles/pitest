@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest.engine.gregor;
 
+import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.pitest.mutationtest.engine.MutationIdentifier;
@@ -25,7 +26,7 @@ import org.pitest.plugin.ClientClasspathPlugin;
  * mutation points (locations in byte code where mutations can be applied) and
  * applying those mutations to the byte code.
  *
- * Name of this class is misleading as it is capable of mutating both methods
+ * Name of this class is misleading as it is capable of mutating methods, annotations
  * and field, but it is retained for historic reasons.
  *
  * <p>
@@ -44,7 +45,12 @@ public interface MethodMutatorFactory extends ClientClasspathPlugin {
     return null;
   }
 
-  default FieldVisitor createForField(ClassContext context, FieldInfo fieldInfo, FieldVisitor fieldVisitor) {
+
+  default AnnotationVisitor createForAnnotation(NoMethodContext context, AnnotationInfo annotationInfo, AnnotationVisitor next) {
+    return null;
+  }
+
+  default FieldVisitor createForField(NoMethodContext context, FieldInfo fieldInfo, FieldVisitor fieldVisitor) {
     return null;
   }
 
