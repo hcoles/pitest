@@ -28,6 +28,7 @@ import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -189,7 +190,11 @@ public class ForEachLoopFilter implements MutationInterceptor {
   private Predicate<MutationDetails> mutatesIteratorLoopPlumbing() {
     return a -> {
       final int instruction = a.getInstructionIndex();
-      final MethodTree method = currentClass.method(a.getId().getLocation()).get();
+      final Optional<MethodTree> maybeMethod = currentClass.method(a.getId().getLocation());
+      if (!maybeMethod.isPresent()) {
+        return false;
+      }
+      MethodTree method = maybeMethod.get();
 
       final AbstractInsnNode mutatedInstruction = method.instruction(instruction);
 

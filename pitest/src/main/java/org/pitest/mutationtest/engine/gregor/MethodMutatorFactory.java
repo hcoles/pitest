@@ -14,16 +14,20 @@
  */
 package org.pitest.mutationtest.engine.gregor;
 
+import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.plugin.ClientClasspathPlugin;
 
 /**
  * A <code>MethodMutatorFactory</code> is a factory creating method mutating
- * method visitors. Those method visitors will serve two purposes: finding new
+ * visitors. These visitors will serve two purposes: finding new
  * mutation points (locations in byte code where mutations can be applied) and
  * applying those mutations to the byte code.
  *
+ * Name of this class is misleading as it is capable of mutating methods, annotations
+ * and field, but it is retained for historic reasons.
  *
  * <p>
  * A <code>MethodMutatorFactory</code> will have a globally unique id and must
@@ -36,8 +40,19 @@ import org.pitest.plugin.ClientClasspathPlugin;
  */
 public interface MethodMutatorFactory extends ClientClasspathPlugin {
 
-  MethodVisitor create(MutationContext context,
-      MethodInfo methodInfo, MethodVisitor methodVisitor);
+  default MethodVisitor create(MutationContext context,
+      MethodInfo methodInfo, MethodVisitor methodVisitor) {
+    return null;
+  }
+
+
+  default AnnotationVisitor createForAnnotation(NoMethodContext context, AnnotationInfo annotationInfo, AnnotationVisitor next) {
+    return null;
+  }
+
+  default FieldVisitor createForField(NoMethodContext context, FieldInfo fieldInfo, FieldVisitor fieldVisitor) {
+    return null;
+  }
 
   String getGloballyUniqueId();
 

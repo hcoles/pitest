@@ -48,6 +48,10 @@ public class MethodInfo {
     return this.methodDescriptor;
   }
 
+  public ClassInfo getOwningClass() {
+    return this.owningClass;
+  }
+
   public int getAccess() {
     return this.access;
   }
