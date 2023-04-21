@@ -23,9 +23,11 @@ public class CompoundInterceptorFactory {
   public CompoundMutationInterceptor createInterceptor(
       ReportOptions data,
       CoverageDatabase coverage,
-      ClassByteArraySource source) {
+      ClassByteArraySource source,
+      TestPrioritiser testPrioritiser
+      ) {
     final List<MutationInterceptor> interceptors = this.features.getActiveFeatures().stream()
-            .map(toInterceptor(this.features, data, coverage, source))
+            .map(toInterceptor(this.features, data, coverage, source, testPrioritiser))
             .collect(Collectors.toList());
     return new CompoundMutationInterceptor(interceptors);
   }
@@ -35,9 +37,11 @@ public class CompoundInterceptorFactory {
           FeatureSelector<MutationInterceptorFactory> features,
           ReportOptions data,
           CoverageDatabase coverage,
-          ClassByteArraySource source) {
+          ClassByteArraySource source,
+          TestPrioritiser testPrioritiser
+          ) {
 
-    return a -> a.createInterceptor(new InterceptorParameters(features.getSettingForFeature(a.provides().name()), data, coverage, source));
+    return a -> a.createInterceptor(new InterceptorParameters(features.getSettingForFeature(a.provides().name()), data, coverage, source, testPrioritiser));
 
   }
  }

@@ -17,13 +17,16 @@ public final class InterceptorParameters {
   private final ClassByteArraySource source;
   private final CoverageDatabase coverage;
 
+  private final TestPrioritiser testPrioritiser;
+
 
   public InterceptorParameters(FeatureSetting conf, ReportOptions data, CoverageDatabase coverage,
-      ClassByteArraySource source) {
+      ClassByteArraySource source, TestPrioritiser testPrioritiser) {
     this.conf = conf;
     this.data = data;
     this.coverage = coverage;
     this.source = source;
+    this.testPrioritiser = testPrioritiser;
   }
 
   public ReportOptions data() {
@@ -41,6 +44,10 @@ public final class InterceptorParameters {
 
   public ClassByteArraySource source() {
     return this.source;
+  }
+
+  public TestPrioritiser testPrioritiser() {
+    return this.testPrioritiser;
   }
 
   public Optional<String> getString(FeatureParameter limit) {
