@@ -8,6 +8,12 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.13.0
+
+* #1188 Allow mutators to produce multiple distinct mutations
+* #1190 Provide test prioritiser to interceptors
+* #1191 Enable mutation of annotations of methods and fields
+
 ## 1.12.0
 
 * #1186 New extension points
