@@ -64,7 +64,7 @@ public class FactoryVerifier {
     }
 
     public static InterceptorParameters emptyParams(ReportOptions data) {
-        return new InterceptorParameters(null, data, null, null);
+        return new InterceptorParameters(null, data, null, null, null);
     }
 
     public static ReportOptions emptyOptions() {
