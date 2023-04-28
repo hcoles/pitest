@@ -159,7 +159,11 @@ public final class ReportAggregator {
 
     public Builder addLineCoverageFile(final File lineCoverageFile) {
       validateFile(lineCoverageFile);
-      this.lineCoverageFiles.add(lineCoverageFile);
+      if (lineCoverageFile.exists()) {
+        this.lineCoverageFiles.add(lineCoverageFile);
+      } else {
+        LOG.info("ignoring absent line coverage file " + lineCoverageFile.getAbsolutePath());
+      }
       return this;
     }
 
@@ -173,7 +177,11 @@ public final class ReportAggregator {
 
     public Builder addMutationResultsFile(final File mutationResultsFile) {
       validateFile(mutationResultsFile);
-      this.mutationResultsFiles.add(mutationResultsFile);
+      if (mutationResultsFile.exists()) {
+        this.mutationResultsFiles.add(mutationResultsFile);
+      } else {
+        LOG.info("ignoring absent mutation results file " + mutationResultsFile.getAbsolutePath());
+      }
       return this;
     }
 
@@ -273,8 +281,9 @@ public final class ReportAggregator {
       if (file == null) {
         throw new IllegalArgumentException("file is null");
       }
-      if (!file.exists() || !file.isFile()) {
-        throw new IllegalArgumentException(file.getAbsolutePath() + " does not exist or is not a file");
+      // a non existent file shouldn't prevent the aggregator from being built
+      if (file.exists() && !file.isFile()) {
+        throw new IllegalArgumentException(file.getAbsolutePath() + "is not a file");
       }
     }
 
