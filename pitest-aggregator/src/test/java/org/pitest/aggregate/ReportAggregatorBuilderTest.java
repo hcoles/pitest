@@ -22,7 +22,7 @@ import org.junit.rules.ExpectedException;
 
 public class ReportAggregatorBuilderTest {
 
-  private static final String NOT_A_FILE = "does not exist or is not a file";
+  private static final String NOT_A_FILE = "is not a file";
   private static final String NOT_A_DIR  = "is not a directory";
   private static final String IS_NULL    = "is null";
   @Rule
@@ -38,10 +38,10 @@ public class ReportAggregatorBuilderTest {
 
   @Test
   public void testLineCoverageFiles_withFake() {
-    this.expected.expect(IllegalArgumentException.class);
-    this.expected.expectMessage(Matchers.containsString(NOT_A_FILE));
+    ReportAggregator.Builder builder = ReportAggregator.builder()
+        .lineCoverageFiles(Arrays.asList(new File("doesnotexist.xml")));
 
-    ReportAggregator.builder().lineCoverageFiles(Arrays.asList(new File("doesnotexist.xml")));
+    assertTrue(builder.getMutationResultsFiles().isEmpty());
   }
 
   @Test
@@ -62,10 +62,10 @@ public class ReportAggregatorBuilderTest {
 
   @Test
   public void testMutationResultsFiles_withFake() {
-    this.expected.expect(IllegalArgumentException.class);
-    this.expected.expectMessage(Matchers.containsString(NOT_A_FILE));
+    ReportAggregator.Builder builder = ReportAggregator.builder()
+        .mutationResultsFiles(Arrays.asList(new File("doesnotexist.xml")));
 
-    ReportAggregator.builder().mutationResultsFiles(Arrays.asList(new File("doesnotexist.xml")));
+    assertTrue(builder.getMutationResultsFiles().isEmpty());
   }
 
   @Test
