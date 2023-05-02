@@ -82,4 +82,17 @@ public class GlobTest {
     assertFalse(glob.matches("foo-Bar-car"));
   }
 
+  @Test
+  public void shouldSupportDoubleStarPackageMatcher() {
+    final Glob glob = new Glob("**.databinding.**.Foo");
+    assertTrue(glob.matches("databinding.Foo"));
+    assertTrue(glob.matches("databinding.bar.Foo"));
+    assertTrue(glob.matches("databinding.bar.car.Foo"));
+    assertTrue(glob.matches("foo.databinding.Foo"));
+    assertTrue(glob.matches("foo.car.databinding.bar.Foo"));
+    assertTrue(glob.matches(".databinding.Foo"));
+    assertFalse(glob.matches("databindingfoo.Foo"));
+    assertFalse(glob.matches("foodatabinding.Foo"));
+    assertFalse(glob.matches("databinding.fooFoo"));
+  }
 }

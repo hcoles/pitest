@@ -25,6 +25,9 @@ public class Glob implements Predicate<String> {
 
   private final Pattern regex;
 
+  private static final String ZERO_OR_MORE_PACKAGES      = "(?:.*\\.)*";
+  private static final String DOUBLE_STAR_PACKAGE_MARKER = "#%#%#";
+
   public Glob(final String glob) {
     String rectifiedGlob;
     if (glob.startsWith("~")) {
@@ -50,9 +53,10 @@ public class Glob implements Predicate<String> {
   }
 
   private static String convertGlobToRegex(final String glob) {
+    final String preparedGlob = glob.replace("**.", DOUBLE_STAR_PACKAGE_MARKER);
     final StringBuilder out = new StringBuilder("^");
-    for (int i = 0; i < glob.length(); ++i) {
-      final char c = glob.charAt(i);
+    for (int i = 0; i < preparedGlob.length(); ++i) {
+      final char c = preparedGlob.charAt(i);
       switch (c) {
       case '$':
         out.append("\\$");
@@ -74,7 +78,8 @@ public class Glob implements Predicate<String> {
       }
     }
     out.append('$');
-    return out.toString();
+    return out.toString()
+        .replace(DOUBLE_STAR_PACKAGE_MARKER, ZERO_OR_MORE_PACKAGES);
   }
 
   @Override
