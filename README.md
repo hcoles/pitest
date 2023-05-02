@@ -8,6 +8,10 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.13.1
+
+* #1194 Support `**.` pattern in globs (thanks @Pfoerd)
+
 ## 1.13.0
 
 * #1188 Allow mutators to produce multiple distinct mutations
