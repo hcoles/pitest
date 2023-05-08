@@ -98,7 +98,7 @@ public class CoverageMinion {
         CoverageWorker worker = new CoverageWorker(invokeQueue, toExecute);
         worker.run();
       } else {
-        LOG.info(() -> tus.size() + "All tests were executed as part of discovery.");
+        LOG.info(() -> "All " + tus.size() + " tests were executed as part of discovery.");
       }
 
     } catch (final PitHelpError phe) {
