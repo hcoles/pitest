@@ -36,6 +36,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import static org.pitest.util.Verbosity.VERBOSE;
+import static org.pitest.util.Verbosity.VERBOSE_NO_SPINNER;
 
 public class EntryPoint {
 
@@ -73,7 +74,7 @@ public class EntryPoint {
 
     updateData(data, settings);
 
-    if (data.getVerbosity() == VERBOSE) {
+    if ((data.getVerbosity() == VERBOSE) || (data.getVerbosity() == VERBOSE_NO_SPINNER)) {
       Log.getLogger().info("Project base directory is " + data.getProjectBase());
       Log.getLogger().info("---------------------------------------------------------------------------");
       Log.getLogger().info("Enabled (+) and disabled (-) features.");
