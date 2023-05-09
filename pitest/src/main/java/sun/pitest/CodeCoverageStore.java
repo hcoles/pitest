@@ -63,7 +63,7 @@ public final class CodeCoverageStore {
 
   public static synchronized void reset() {
     for (final Entry<Integer, boolean[]> each : CLASS_HITS.entrySet()) {
-      if (each.getValue()[0]) { //Probe 0 gets covered by any method that runs
+      if (each.getValue()[CLASS_HIT_INDEX]) { //Probe 0 gets covered by any method that runs
         Arrays.fill(each.getValue(), false);
       }
     }
