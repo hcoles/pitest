@@ -118,29 +118,21 @@ public final class CodeCoverageStore {
 
   public static boolean[] getOrRegisterClassProbes(final int classId,
       int probeCount) {
-    boolean[] ret = CLASS_HITS.putIfAbsent(classId, new boolean[probeCount + 1]);
-    if (ret == null) {
-      return CLASS_HITS.get(classId);
-    }
-    /*
-    It's possible that some other java agent has transformed this class, which has
-    resulted in it getting more blocks. It seems like our intended behavior is to
-    still collect coverage of these new synthetic blocks, so we need to
-    make sure that our coverage array grows when the class is re-transformed,
-    and it's possible that we have already instrumented the class, causing its
-    coverage array to get set up at the wrong size.
-     */
-    if (ret.length < probeCount + 1) {
-      synchronized (CLASS_HITS) {
-        ret = CLASS_HITS.get(classId);
-        if (ret.length < probeCount + 1) {
-          ret = new boolean[probeCount + 1];
-          CLASS_HITS.put(classId, ret);
-          return ret;
-        }
+    return CLASS_HITS.compute(classId, (key, probes) -> {
+      if ((probes == null)
+              /*
+              It's possible that some other java agent has transformed this class, which has
+              resulted in it getting more blocks. It seems like our intended behavior is to
+              still collect coverage of these new synthetic blocks, so we need to
+              make sure that our coverage array grows when the class is re-transformed,
+              and it's possible that we have already instrumented the class, causing its
+              coverage array to get set up at the wrong size.
+               */
+              || (probes.length < probeCount + 1)) {
+        return new boolean[probeCount + 1];
       }
-    }
-    return ret;
+      return probes;
+    });
   }
 
   public static void resetAllStaticState() {
