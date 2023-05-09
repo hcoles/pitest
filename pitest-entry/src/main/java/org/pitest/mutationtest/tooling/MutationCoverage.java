@@ -78,6 +78,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 public class MutationCoverage {
 
@@ -118,7 +119,7 @@ public class MutationCoverage {
     LOG.fine("Maximum available memory is " + (runtime.maxMemory() / MB)
         + " mb");
 
-    final long t0 = System.currentTimeMillis();
+    final long t0 = System.nanoTime();
 
     List<String> issues = verifyBuildSuitableForMutationTesting();
 
@@ -270,7 +271,7 @@ public class MutationCoverage {
     final ListenerArguments args = new ListenerArguments(
         this.strategies.output(), coverageData, new SmartSourceLocator(
             data.getSourcePaths(), this.data.getInputEncoding()), engine, t0, this.data.isFullMutationMatrix(), data);
-    
+
     final MutationResultListener mutationReportListener = this.strategies
         .listenerFactory().getListener(this.data.getFreeFormProperties(), args);
 
@@ -398,7 +399,7 @@ public class MutationCoverage {
   }
 
   private String timeSpan(final long t0) {
-    return "" + ((System.currentTimeMillis() - t0) / 1000) + " seconds";
+    return "" + (NANOSECONDS.toSeconds(System.nanoTime() - t0)) + " seconds";
   }
 
   private CoverageGenerator coverage() {

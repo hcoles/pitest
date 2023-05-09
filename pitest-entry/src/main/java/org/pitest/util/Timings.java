@@ -19,6 +19,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 public class Timings {
 
   public enum Stage {
@@ -43,11 +45,11 @@ public class Timings {
   private final Map<Stage, TimeSpan> timings = new LinkedHashMap<>();
 
   public void registerStart(final Stage stage) {
-    this.timings.put(stage, new TimeSpan(System.currentTimeMillis(), 0));
+    this.timings.put(stage, new TimeSpan(System.nanoTime(), 0));
   }
 
   public void registerEnd(final Stage stage) {
-    final long end = System.currentTimeMillis();
+    final long end = System.nanoTime();
     this.timings.get(stage).setEnd(end);
   }
 
@@ -58,7 +60,7 @@ public class Timings {
       ps.println("> " + each.getKey() + " : " + each.getValue());
     }
     ps.println(StringUtil.separatorLine());
-    ps.println("> Total " + " : " + new TimeSpan(0, total));
+    ps.println("> Total " + " : " + new TimeSpan(0, MILLISECONDS.toNanos(total)));
     ps.println(StringUtil.separatorLine());
   }
 

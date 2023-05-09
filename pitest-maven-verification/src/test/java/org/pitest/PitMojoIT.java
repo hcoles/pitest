@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import static java.util.Arrays.asList;
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeFalse;
@@ -59,13 +60,13 @@ public class PitMojoIT {
   @Before
   public void beforeEachTest() {
     LOGGER.info("running test '{}' with {} ", testName.getMethodName(), VERSION);
-    startTime = System.currentTimeMillis();
+    startTime = System.nanoTime();
   }
 
   @After
   public void afterEachTest() {
     LOGGER.info("duration of test '{}' {}ms", testName.getMethodName(),
-        System.currentTimeMillis() - startTime);
+        NANOSECONDS.toMillis(System.nanoTime() - startTime));
   }
 
   @Test

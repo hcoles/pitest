@@ -9,6 +9,8 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.logging.Logger;
 
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
+
 public class CoverageTestExecutionListener implements TestUnitExecutionListener {
 
     private static final Logger LOG = Log.getLogger();
@@ -25,13 +27,13 @@ public class CoverageTestExecutionListener implements TestUnitExecutionListener 
     @Override
     public void executionStarted(Description description) {
         LOG.fine(() -> "Gathering coverage for test " + description);
-        t0 = System.currentTimeMillis();
+        t0 = System.nanoTime();
         threadsBeforeTest = this.threads.getThreadCount();
     }
 
     @Override
     public void executionFinished(Description description, boolean passed) {
-        int executionTime = (int) (System.currentTimeMillis() - t0);
+        int executionTime = (int) NANOSECONDS.toMillis(System.nanoTime() - t0);
         if (executionTime < 0) {
             LOG.warning("Recorded negative test time. Test life cycle not as expected.");
             // substitute an unimportant, but high, time for this test so it is unlikely to

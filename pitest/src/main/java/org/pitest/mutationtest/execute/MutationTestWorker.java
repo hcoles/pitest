@@ -42,6 +42,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static org.pitest.util.Unchecked.translateCheckedException;
 
 public class MutationTestWorker {
@@ -79,10 +80,10 @@ public class MutationTestWorker {
       if (DEBUG) {
         LOG.fine("Running mutation " + mutation);
       }
-      final long t0 = System.currentTimeMillis();
+      final long t0 = System.nanoTime();
       processMutation(r, testSource, mutation);
       if (DEBUG) {
-        LOG.fine("processed mutation in " + (System.currentTimeMillis() - t0)
+        LOG.fine("processed mutation in " + NANOSECONDS.toMillis(System.nanoTime() - t0)
             + " ms.");
       }
     }
@@ -145,13 +146,13 @@ public class MutationTestWorker {
     }
 
     final Container c = createNewContainer();
-    final long t0 = System.currentTimeMillis();
+    final long t0 = System.nanoTime();
 
     if (this.hotswap.insertClass(mutationId.getClassName(), this.loader,
         mutatedClass.getBytes())) {
       if (DEBUG) {
         LOG.fine("replaced class with mutant in "
-            + (System.currentTimeMillis() - t0) + " ms");
+            + NANOSECONDS.toMillis(System.nanoTime() - t0) + " ms");
       }
 
       mutationDetected = doTestsDetectMutation(c, relevantTests);
@@ -190,7 +191,7 @@ public class MutationTestWorker {
       final CheckTestHasFailedResultListener listener = new CheckTestHasFailedResultListener(fullMutationMatrix);
 
       final Pitest pit = new Pitest(listener);
-      
+
       if (this.fullMutationMatrix) {
         pit.run(c, tests);
       } else {
