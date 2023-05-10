@@ -51,6 +51,10 @@ import java.util.List;
  *
  *   private void bar(){
  *     boolean[] localRefToProbes = $$pitCoverageProbes;
+ *     if (localRefToProbes == null) {
+ *         localRefToProbes = $$pitCoverageProbes = CodeCoverageStore.getOrRegisterClassProbes(thisClassID, $$pitCoverageProbeSize);
+ *     }
+ *     localRefToProbes[0] = true; //record class was hit
  *     //line of code
  *     localRefToProbes[1] = true; //assuming above line was probe 1
  *   }
