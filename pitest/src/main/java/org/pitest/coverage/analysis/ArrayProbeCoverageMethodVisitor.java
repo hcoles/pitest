@@ -30,36 +30,35 @@ import java.util.List;
  *
  * Instruments a method adding probes at each block.
  *
- * Probes are implemented by adding an array to each class. Block hits are
+ * <p>Probes are implemented by adding an array to each class. Block hits are
  * registered by a write to this local array. The array is registered upon class
- * initialization with the CodeCoverageStore, and all methods in the same class
+ * initialization with the {@code CodeCoverageStore}, and all methods in the same class
  * share the same array. The coverage store class reads this array at the end of
  * the test and handles communication of this data back to the parent process.
  *
- * The old approach was to allocate an array in *each* invocation of each method,
+ * <p>The old approach was to allocate an array in *each* invocation of each method,
  * and merge this in to a global array, which could get flushed between test runs.
  * The approach implemented here requires far fewer allocations and is faster, plus
  * it's better from a concurrency perspective (no locking needed except when first
  * initializing the coverage probe array).
  *
+ * <p>Here's a source-level example of the instrumentation result:
  *
- * Here's a source-level example of the instrumentation result:
- *
+ * <pre>
  * public class Foo {
- *   public static final int $$pitCoverageProbeSize = 10; //however many blocks there are + 1
- *   public static final byte[] $$pitCoverageProbes = CodeCoverageStore.getOrRegisterClassProbes(thisClassID,$$pitCoverageProbeSize);
+ *   private static int $$pitCoverageProbeSize = 10; //how many blocks there are + 1
+ *   private static boolean[] $$pitCoverageProbes = CodeCoverageStore.getOrRegisterClassProbes(thisClassID, $$pitCoverageProbeSize);
  *
  *   private void bar(){
- *     byte[] localRefToProbes = $$pitCoverageProbes;
+ *     boolean[] localRefToProbes = $$pitCoverageProbes;
  *     //line of code
- *     localRefToProbes[1] = 1; //assuming above line was probe 1
+ *     localRefToProbes[1] = true; //assuming above line was probe 1
  *   }
- *
  * }
+ * </pre>
  *
- * CodeCoverageStore maintains a reference to all of these $$pitCoverageProbes arrays
+ * <p>{@code CodeCoverageStore} maintains a reference to all of these {@code $$pitCoverageProbes} arrays
  * and empties them out between each test.
- *
  */
 public class ArrayProbeCoverageMethodVisitor extends AbstractCoverageStrategy {
 
