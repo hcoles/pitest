@@ -22,7 +22,7 @@
     are used for few artifacts -->
 	<properties>
 		<!-- this revision number used only for local builds -->
-		<revision>1.0.0-SNAPSHOT</revision>
+		<revision>dev-SNAPSHOT</revision>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 

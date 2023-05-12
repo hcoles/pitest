@@ -60,8 +60,13 @@ class MutatingClassVisitor extends ClassVisitor {
 
   @Override
   public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-    AnnotationVisitor next = super.visitAnnotation(descriptor, visible);
     AnnotationInfo annotationInfo = new AnnotationInfo(descriptor, visible);
+    for (final MethodMutatorFactory each : this.mutators) {
+      if (each.skipAnnotation(this.nonMethodContext, annotationInfo)) {
+        return null;
+      }
+    }
+    AnnotationVisitor next = super.visitAnnotation(descriptor, visible);
     for (final MethodMutatorFactory each : this.mutators) {
       AnnotationVisitor fv = each.createForAnnotation(this.nonMethodContext, annotationInfo, next);
       if (fv != null) {

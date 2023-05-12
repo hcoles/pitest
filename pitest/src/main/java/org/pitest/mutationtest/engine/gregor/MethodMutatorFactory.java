@@ -50,6 +50,10 @@ public interface MethodMutatorFactory extends ClientClasspathPlugin {
     return null;
   }
 
+  default boolean skipAnnotation(NoMethodContext nonMethodContext, AnnotationInfo annotationInfo) {
+    return false;
+  }
+
   default FieldVisitor createForField(NoMethodContext context, FieldInfo fieldInfo, FieldVisitor fieldVisitor) {
     return null;
   }
