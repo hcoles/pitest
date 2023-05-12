@@ -14,6 +14,10 @@
  */
 package org.pitest.util;
 
+import static java.util.concurrent.TimeUnit.HOURS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
@@ -22,23 +26,23 @@ public class TimeSpanTest {
 
   @Test
   public void shouldReportTimesAsLessThanOneSecondWhenLessThanOneSecond() {
-    assertEquals("< 1 second", new TimeSpan(0, 999).toString());
+    assertEquals("< 1 second", new TimeSpan(0, MILLISECONDS.toNanos(999)).toString());
   }
 
   @Test
   public void shouldReportTimesInSecondsWhenLessThenOneMinute() {
-    assertEquals("59 seconds", new TimeSpan(0, 59 * 1000).toString());
+    assertEquals("59 seconds", new TimeSpan(0, SECONDS.toNanos(59)).toString());
   }
 
   @Test
   public void shouldReportTimesInMinutesWhenMoreThanOneMinute() {
     assertEquals("1 minutes and 1 seconds",
-        new TimeSpan(0, (61 * 1000)).toString());
+        new TimeSpan(0, MINUTES.toNanos(1) + SECONDS.toNanos(1)).toString());
   }
 
   @Test
   public void shouldReportTimesInHoursWhenMoreThanOneHour() {
     assertEquals("1 hours, 2 minutes and 1 seconds", new TimeSpan(0,
-        (1000 * 60 * 60) + (121 * 1000)).toString());
+        HOURS.toNanos(1) + MINUTES.toNanos(2) + SECONDS.toNanos(1)).toString());
   }
 }

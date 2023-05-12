@@ -14,6 +14,9 @@
  */
 package org.pitest.util;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
+
 public class TimeSpan {
 
   private long start;
@@ -25,7 +28,7 @@ public class TimeSpan {
   }
 
   public long duration() {
-    return this.end - this.start;
+    return NANOSECONDS.toMillis(this.end - this.start);
   }
 
   public long getStart() {
@@ -47,9 +50,9 @@ public class TimeSpan {
   @Override
   public String toString() {
     final long millis = duration();
-    final int seconds = (int) (millis / 1000) % 60;
-    final int minutes = (int) ((millis / (1000 * 60)) % 60);
-    final int hours = (int) ((millis / (1000 * 60 * 60)) % 24);
+    final int seconds = (int) (MILLISECONDS.toSeconds(millis) % 60);
+    final int minutes = (int) (MILLISECONDS.toMinutes(millis) % 60);
+    final int hours = (int) MILLISECONDS.toHours(millis);
 
     if (hours != 0) {
       return "" + hours + " hours, " + minutes + " minutes and " + seconds

@@ -49,6 +49,8 @@ import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
+
 public class DefaultCoverageGenerator implements CoverageGenerator {
 
   private static final Logger    LOG = Log.getLogger();
@@ -77,7 +79,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
   @Override
   public CoverageData calculateCoverage() {
     try {
-      final long t0 = System.currentTimeMillis();
+      final long t0 = System.nanoTime();
 
       this.timings.registerStart(Timings.Stage.SCAN_CLASS_PATH);
       List<String> tests = this.code.testTrees()
@@ -94,7 +96,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
       gatherCoverageData(tests, coverage);
       this.timings.registerEnd(Timings.Stage.COVERAGE);
 
-      final long time = (System.currentTimeMillis() - t0) / 1000;
+      final long time = NANOSECONDS.toSeconds(System.nanoTime() - t0);
 
       LOG.info("Calculated coverage in " + time + " seconds.");
 
