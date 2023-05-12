@@ -39,6 +39,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -65,7 +66,7 @@ public class MojoToReportOptionsConverter {
 
   public ReportOptions convert() {
 
-    final List<String> classPath = new ArrayList<>();
+    final Set<String> classPath = new LinkedHashSet<>();
 
     try {
       classPath.addAll(this.mojo.getProject().getTestClasspathElements());
@@ -91,7 +92,7 @@ public class MojoToReportOptionsConverter {
 
   }
 
-  private ReportOptions parseReportOptions(final List<String> classPath) {
+  private ReportOptions parseReportOptions(final Set<String> classPath) {
     final ReportOptions data = new ReportOptions();
 
     if (this.mojo.getProject().getBuild() != null) {
@@ -264,12 +265,36 @@ public class MojoToReportOptionsConverter {
     data.setGroupConfig(conf);
   }
 
-  private void addOwnDependenciesToClassPath(final List<String> classPath) {
+  private void addOwnDependenciesToClassPath(final Set<String> classPath) {
     for (final Artifact dependency : filteredDependencies()) {
       this.log.info("Adding " + dependency.getGroupId() + ":"
           + dependency.getArtifactId() + " to SUT classpath");
       classPath.add(dependency.getFile().getAbsolutePath());
+      addTransitiveDependenciesToClassPath(dependency, classPath);
     }
+  }
+
+  private void addTransitiveDependenciesToClassPath(Artifact artifact, final Set<String> classPath) {
+    List<String> dependencyTrail = artifact.getDependencyTrail();
+    if ((dependencyTrail == null) || dependencyTrail.isEmpty()) {
+      return;
+    }
+    String selfTrailEntry = dependencyTrail.get(dependencyTrail.size() - 1);
+    mojo
+            .getPluginArtifactMap()
+            .values()
+            .stream()
+            .filter(otherArtifact -> {
+              List<String> otherDependencyTrail = otherArtifact.getDependencyTrail();
+              if (otherArtifact.equals(artifact) || (otherDependencyTrail == null) || otherDependencyTrail.isEmpty()) {
+                return false;
+              }
+              return otherDependencyTrail.contains(selfTrailEntry);
+            })
+            .peek(dependency -> addTransitiveDependenciesToClassPath(dependency, classPath))
+            .map(Artifact::getFile)
+            .map(File::getAbsolutePath)
+            .forEach(classPath::add);
   }
 
   private Collection<Predicate<String>> globStringsToPredicates(

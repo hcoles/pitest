@@ -20,9 +20,11 @@ import java.io.File;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.apache.maven.artifact.Artifact;
@@ -48,7 +50,7 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
   @Mock
   protected RunPitStrategy      executionStrategy;
 
-  protected List<String>        classPath;
+  protected Set<String>         classPath;
 
   @Mock
   protected Predicate<Artifact> filter;
@@ -62,10 +64,10 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
   protected void setUp() throws Exception {
     super.setUp();
     MockitoAnnotations.openMocks(this);
-    this.classPath = new ArrayList<>(FCollection.map(
+    this.classPath = new LinkedHashSet<>(FCollection.map(
         ClassPath.getClassPathElementsAsFiles(), File::getAbsolutePath));
     when(this.project.getProperties()).thenReturn(properties);
-    when(this.project.getTestClasspathElements()).thenReturn(this.classPath);
+    when(this.project.getTestClasspathElements()).thenReturn(new ArrayList<>(this.classPath));
     when(this.project.getPackaging()).thenReturn("jar");
     
     final Build build = new Build();
