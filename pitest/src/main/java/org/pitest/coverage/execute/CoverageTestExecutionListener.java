@@ -29,12 +29,13 @@ public class CoverageTestExecutionListener implements TestUnitExecutionListener 
     }
 
     @Override
-    public void executionStarted(Description description) {
+    public void executionStarted(Description description, boolean suppressParallelWarning) {
         LOG.fine(() -> "Gathering coverage for test " + description);
         startTimes.put(description, System.nanoTime());
         if (!firstThreadId.compareAndSet(0, Thread.currentThread().getId())
                 && (firstThreadId.get() != Thread.currentThread().getId())
-                && (threadsBeforeTest.size() > 0)) {
+                && (threadsBeforeTest.size() > 0)
+                && !suppressParallelWarning) {
             LOG.warning("Tests are run in parallel. Coverage recording most likely will not work properly.");
         }
         threadsBeforeTest.put(description, threads.getThreadCount());
