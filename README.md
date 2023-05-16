@@ -8,6 +8,15 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.13.2
+
+* #638  Ensure % shows as 100 when all mutants killed (thanks @Vampire)
+* #1197 Show start up info when logging set to VERBOSE_NO_SPINNER (thanks @Vampire)
+* #1198 Logging improvements (thanks @Vampire)
+* #1200 Warn if parallel test execution enabled during coverage collection (thanks @Vampire)
+* #1199 Switch to System.nanoTime for test timings (thanks @Vampire) 
+* #1207 Support for removal of class level annotations
+
 ## 1.13.1
 
 * #1194 Support `**.` pattern in globs (thanks @Pfoerd)
