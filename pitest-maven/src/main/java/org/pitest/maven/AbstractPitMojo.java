@@ -1,11 +1,13 @@
 package org.pitest.maven;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.eclipse.aether.RepositorySystem;
 import org.pitest.coverage.CoverageSummary;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
@@ -16,6 +18,7 @@ import org.pitest.plugin.ToolClasspathPlugin;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -36,6 +39,13 @@ public class AbstractPitMojo extends AbstractMojo {
   private final Predicate<Artifact>   filter;
 
   private final PluginServices        plugins;
+
+  /**
+   * The current build session instance.
+   */
+  @Parameter(defaultValue = "${session}", readonly = true)
+  private MavenSession session;
+
 
   // Concrete List types declared for all fields to work around maven 2 bug
   
@@ -385,18 +395,22 @@ public class AbstractPitMojo extends AbstractMojo {
 
   private final GoalStrategy          goalStrategy;
 
-  public AbstractPitMojo() {
+  private final RepositorySystem repositorySystem;
+
+  @Inject
+  public AbstractPitMojo(RepositorySystem repositorySystem) {
     this(new RunPitStrategy(), new DependencyFilter(PluginServices.makeForLoader(
         AbstractPitMojo.class.getClassLoader())), PluginServices.makeForLoader(
-        AbstractPitMojo.class.getClassLoader()), new NonEmptyProjectCheck());
+        AbstractPitMojo.class.getClassLoader()), new NonEmptyProjectCheck(), repositorySystem);
   }
 
-  public AbstractPitMojo(final GoalStrategy strategy, final Predicate<Artifact> filter,
-      final PluginServices plugins, final Predicate<MavenProject> emptyProjectCheck) {
+  public AbstractPitMojo(GoalStrategy strategy, Predicate<Artifact> filter,
+      PluginServices plugins, Predicate<MavenProject> emptyProjectCheck, RepositorySystem repositorySystem) {
     this.goalStrategy = strategy;
     this.filter = filter;
     this.plugins = plugins;
     this.notEmptyProject = emptyProjectCheck;
+    this.repositorySystem = repositorySystem;
   }
 
   @Override
@@ -738,6 +752,14 @@ public class AbstractPitMojo extends AbstractMojo {
 
   public String getProjectBase() {
     return projectBase;
+  }
+
+  public MavenSession session() {
+    return session;
+  }
+
+  public RepositorySystem repositorySystem() {
+    return repositorySystem;
   }
 
   static class RunDecision {

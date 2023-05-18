@@ -97,7 +97,7 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 
   protected AbstractPitMojo createPITMojo(final String config) throws Exception {
     final AbstractPitMojo pitMojo = new AbstractPitMojo(this.executionStrategy, this.filter,
-        this.plugins, p -> true);
+        this.plugins, p -> true, null);
     configurePitMojo(pitMojo, config);
     return pitMojo;
   }

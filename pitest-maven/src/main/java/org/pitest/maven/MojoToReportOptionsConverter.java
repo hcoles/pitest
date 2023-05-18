@@ -20,6 +20,10 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.resolution.ArtifactResult;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.DirectoryClassPathRoot;
 import org.pitest.functional.FCollection;
@@ -40,6 +44,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Function;
@@ -77,18 +82,84 @@ public class MojoToReportOptionsConverter {
 
     classPath.addAll(this.mojo.getAdditionalClasspathElements());
 
+    autoAddJUnitPlatform(classPath);
+    removeExcludedDependencies(classPath);
+
+    ReportOptions option = parseReportOptions(classPath);
+    return updateFromSurefire(option);
+
+  }
+
+  /**
+   * The junit 5 plugin needs junit-platform-launcher to run, but this will not be on the classpath
+   * of the project. We want to use the same version that surefire (and therefore the SUT) uses, not
+   * the one the plugin was built against.
+   * <p>
+   * It is not declared as a normal dependency, instead surefire picks the version to use based on
+   * other junit jars on the classpath. We're forced to do something similar here.
+   *
+   * @param classPath classpath to modify
+   */
+  private void autoAddJUnitPlatform(List<String> classPath) {
+    List<Artifact> junitDependencies = this.mojo.getProject().getArtifacts().stream()
+            .filter(a -> a.getGroupId().equals("org.junit.platform"))
+            .collect(Collectors.toList());
+
+    // If the launcher has been manually added to the dependencies, there is nothing to do
+    if (junitDependencies.stream().anyMatch(a -> a.getArtifactId().equals("junit-platform-launcher"))) {
+      return;
+    }
+
+    Optional<Artifact> maybeJUnitPlatform = findJUnitArtifact(junitDependencies);
+    if (!maybeJUnitPlatform.isPresent()) {
+      this.log.debug("JUnit 5 not on classpath");
+      return;
+    }
+
+    // Look for platform engine or platform commons on classpath
+    Artifact toMatch = maybeJUnitPlatform.get();
+
+    // Assume that platform launcher has been released with same version number as engine and commons
+    DefaultArtifact platformLauncher = new DefaultArtifact(toMatch.getGroupId(), "junit-platform-launcher", "jar",
+            toMatch.getVersion());
+
+    try {
+      ArtifactRequest r = new ArtifactRequest();
+      r.setArtifact(platformLauncher);
+      
+      r.setRepositories(this.mojo.getProject().getRemotePluginRepositories());
+      ArtifactResult resolved = this.mojo.repositorySystem().resolveArtifact(mojo.session().getRepositorySession(), r);
+
+      this.log.info("Auto adding " + resolved + " to classpath.");
+      classPath.add(resolved.getArtifact().getFile().getAbsolutePath());
+    } catch (ArtifactResolutionException e) {
+      this.log.error("Could not resolve " + platformLauncher);
+      throw new RuntimeException(e);
+    }
+
+  }
+
+  private static Optional<Artifact> findJUnitArtifact(List<Artifact> junitDependencies) {
+    Optional<Artifact> maybeEngine = junitDependencies.stream()
+            .filter(a -> a.getArtifactId().equals("junit-platform-engine"))
+            .findAny();
+    if (maybeEngine.isPresent()) {
+      return maybeEngine;
+    }
+
+    return junitDependencies.stream()
+            .filter(a -> a.getArtifactId().equals("junit-platform-commons"))
+            .findAny();
+  }
+
+  private void removeExcludedDependencies(List<String> classPath) {
     for (Object artifact : this.mojo.getProject().getArtifacts()) {
       final Artifact dependency = (Artifact) artifact;
-
       if (this.mojo.getClasspathDependencyExcludes().contains(
           dependency.getGroupId() + ":" + dependency.getArtifactId())) {
         classPath.remove(dependency.getFile().getPath());
       }
     }
-
-    ReportOptions option = parseReportOptions(classPath);
-    return updateFromSurefire(option);
-
   }
 
   private ReportOptions parseReportOptions(final List<String> classPath) {
@@ -270,6 +341,11 @@ public class MojoToReportOptionsConverter {
           + dependency.getArtifactId() + " to SUT classpath");
       classPath.add(dependency.getFile().getAbsolutePath());
     }
+
+    // If the user as explicitly added junit platform classes to the pitest classpath, trust that they
+    // know what they're doing and add them in
+    this.mojo.getPluginArtifactMap().values().stream().filter(a -> a.getGroupId().equals("org.junit.platform"))
+            .forEach(dependency -> classPath.add(dependency.getFile().getAbsolutePath()));
   }
 
   private Collection<Predicate<String>> globStringsToPredicates(
