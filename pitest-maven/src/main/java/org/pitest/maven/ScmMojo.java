@@ -33,10 +33,13 @@ import org.apache.maven.scm.command.status.StatusScmResult;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.codehaus.plexus.util.StringUtils;
+import org.eclipse.aether.RepositorySystem;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
+
+import javax.inject.Inject;
 
 /**
  * Goal which runs a coverage mutation report only for files that have been
@@ -96,16 +99,20 @@ public class ScmMojo extends AbstractPitMojo {
   @Parameter(property = "scmRootDir", defaultValue = "${project.parent.basedir}")
   private File            scmRootDir;
 
-  public ScmMojo(final RunPitStrategy executionStrategy,
-                 final ScmManager manager, Predicate<Artifact> filter,
-                 PluginServices plugins, boolean analyseLastCommit, Predicate<MavenProject> nonEmptyProjectCheck) {
-    super(executionStrategy, filter, plugins, nonEmptyProjectCheck);
+  public ScmMojo(RunPitStrategy executionStrategy,
+                 ScmManager manager, Predicate<Artifact> filter,
+                 PluginServices plugins,
+                 boolean analyseLastCommit,
+                 Predicate<MavenProject> nonEmptyProjectCheck,
+                 RepositorySystem repositorySystem) {
+    super(executionStrategy, filter, plugins, nonEmptyProjectCheck, repositorySystem);
     this.manager = manager;
     this.analyseLastCommit = analyseLastCommit;
   }
 
-  public ScmMojo() {
-
+  @Inject
+  public ScmMojo(RepositorySystem repositorySystem) {
+    super(repositorySystem);
   }
 
   @Override
