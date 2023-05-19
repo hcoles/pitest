@@ -8,6 +8,21 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.14.0
+
+* #1213 Filter equivalent divide by -1 maths mutants
+* #1212 Auto add junit-platform-launcher 
+
+#1212 Largely resolves the issue of keeping the pitest-junit5-plugin version in sync with the junit5 version for maven users.
+
+When used with 1.2.0 of the pitest-junit5-plugin, pitest will now automatically select a version of junit-platform-launcher which
+is compatible with the version of junit5 used by the system under test.
+
+Issues remain for gradle users who may still encounter api compatibilities when using 1.2.0 of the pitest-junit5-plugin. These can however now
+be resolved by manually adding the correct version of junit-platform-launcher to the classpath.
+
+It is hoped that a future version of the pitest gradle plugin will implement a fix similar to the pitest-maven solution.
+
 ## 1.13.2
 
 * #638  Ensure % shows as 100 when all mutants killed (thanks @Vampire)
