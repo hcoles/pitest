@@ -11,6 +11,10 @@ import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.SourceLocator;
+import org.pitest.mutationtest.build.CoverageTransformer;
+import org.pitest.mutationtest.config.PluginServices;
+import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.report.html.MutationHtmlReportListener;
 import org.pitest.mutationtest.tooling.SmartSourceLocator;
 import org.pitest.util.Log;
@@ -32,6 +36,8 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.asList;
 
 public final class ReportAggregator {
+
+  private final SettingsFactory settings;
   private final ResultOutputStrategy       resultOutputStrategy;
   private final DataLoader<BlockCoverage>  blockCoverageLoader;
   private final Set<File> mutationFiles;
@@ -41,13 +47,20 @@ public final class ReportAggregator {
   private final Charset inputCharset;
   private final Charset outputCharset;
 
-  private ReportAggregator(final ResultOutputStrategy resultOutputStrategy, final Set<File> lineCoverageFiles, final Set<File> mutationFiles,
-                           final Set<File> sourceCodeDirs, final Set<File> compiledCodeDirs, Charset inputCharset, Charset outputCharset) {
+  private ReportAggregator(SettingsFactory settings,
+                           ResultOutputStrategy resultOutputStrategy,
+                           Set<File> lineCoverageFiles,
+                           Set<File> mutationFiles,
+                           Set<File> sourceCodeDirs,
+                           Set<File> compiledCodeDirs,
+                           Charset inputCharset,
+                           Charset outputCharset) {
+    this.settings = settings;
     this.resultOutputStrategy = resultOutputStrategy;
     this.blockCoverageLoader = new BlockCoverageDataLoader(lineCoverageFiles);
     this.mutationFiles = mutationFiles;
     this.sourceCodeDirectories = Collections.unmodifiableCollection(new HashSet<>(sourceCodeDirs));
-    this.codeSourceAggregator = new CodeSourceAggregator(new HashSet<>(compiledCodeDirs));
+    this.codeSourceAggregator = new CodeSourceAggregator(settings, new HashSet<>(compiledCodeDirs));
     this.inputCharset = inputCharset;
     this.outputCharset = outputCharset;
   }
@@ -83,7 +96,6 @@ public final class ReportAggregator {
   private MutationResultListener createResultListener(SourceLocator sourceLocator, Collection<String> mutatorNames) throws ReportAggregationException {
     final CodeSource codeSource = this.codeSourceAggregator.createCodeSource();
     final ReportCoverage coverageDatabase = calculateCoverage(codeSource);
-    //final Collection<String> mutatorNames = new HashSet<>(FCollection.flatMap(mutationMetaData.getMutations(), resultToMutatorName()));
 
     return new MutationHtmlReportListener(outputCharset, coverageDatabase, this.resultOutputStrategy, mutatorNames, sourceLocator);
   }
@@ -112,10 +124,17 @@ public final class ReportAggregator {
               .collect(Collectors.toList());
       CoverageData cd = new CoverageData(codeSource, new LineMapper(codeSource));
       cd.loadBlockDataOnly(coverageData);
-      return cd;
+
+      return transformCoverage(cd);
+
     } catch (final Exception e) {
       throw new ReportAggregationException(e.getMessage(), e);
     }
+  }
+
+  private ReportCoverage transformCoverage(CoverageData cd) {
+    CoverageTransformer transformer = settings.createCoverageTransformer(codeSourceAggregator.createCodeSource());
+    return transformer.transform(cd);
   }
 
   public static Builder builder() {
@@ -247,7 +266,10 @@ public final class ReportAggregator {
 
     public ReportAggregator build() {
       validateState();
-      return new ReportAggregator(this.resultOutputStrategy,
+      final SettingsFactory settings = new SettingsFactory(new ReportOptions(), PluginServices.makeForContextLoader());
+      return new ReportAggregator(
+              settings,
+              this.resultOutputStrategy,
               this.lineCoverageFiles,
               this.mutationResultsFiles,
               this.sourceCodeDirectories,
