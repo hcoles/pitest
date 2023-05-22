@@ -1,5 +1,14 @@
 package org.pitest.aggregate;
 
+import org.hamcrest.Matchers;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+import java.io.File;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -11,20 +20,12 @@ import static org.pitest.aggregate.TestInvocationHelper.getSourceDirectory;
 import static org.pitest.aggregate.TestInvocationHelper.getTestCompiledDirectory;
 import static org.pitest.aggregate.TestInvocationHelper.getTestSourceDirectory;
 
-import java.io.File;
-import java.nio.charset.Charset;
-import java.util.Arrays;
-
-import org.hamcrest.Matchers;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 public class ReportAggregatorBuilderTest {
 
   private static final String NOT_A_FILE = "is not a file";
   private static final String NOT_A_DIR  = "is not a directory";
   private static final String IS_NULL    = "is null";
+
   @Rule
   public ExpectedException    expected   = ExpectedException.none();
 

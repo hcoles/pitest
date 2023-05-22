@@ -11,6 +11,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
+import org.pitest.mutationtest.config.PluginServices;
+import org.pitest.mutationtest.config.ReportOptions;
+import org.pitest.mutationtest.config.SettingsFactory;
 
 public class CodeSourceAggregatorTest {
 
@@ -23,7 +26,8 @@ public class CodeSourceAggregatorTest {
         .getParentFile() // pitest
         .getParentFile() // org
         .getParentFile(); // classes
-    this.underTest = new CodeSourceAggregator(Arrays.asList(testDir, mainDir));
+    SettingsFactory f = new SettingsFactory(new ReportOptions(), PluginServices.makeForContextLoader());
+    this.underTest = new CodeSourceAggregator(f, Arrays.asList(testDir, mainDir));
   }
 
   @Test
