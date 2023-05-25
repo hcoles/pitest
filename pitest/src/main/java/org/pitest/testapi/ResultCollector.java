@@ -14,6 +14,11 @@
  */
 package org.pitest.testapi;
 
+/**
+ * All implementations of this interface should be thread-safe, as the methods can be
+ * called from various threads and also from parallel running tests, depending on the used
+ * test engine.
+ */
 public interface ResultCollector {
 
   void notifyEnd(Description description, Throwable t);
