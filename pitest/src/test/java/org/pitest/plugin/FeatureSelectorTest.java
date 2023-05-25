@@ -100,6 +100,23 @@ public class FeatureSelectorTest {
 
   }
 
+  @Test
+  public void ordersLowerOrderValueFeaturesFirst() {
+    ProvidesFooByDefaultWithOrder1 order1 = new ProvidesFooByDefaultWithOrder1();
+    final FeatureSetting fooConfig = new FeatureSetting("bar", ToggleStatus.ACTIVATE,  new HashMap<>());
+    this.testee = new FeatureSelector<>(Arrays.asList(fooConfig), features(order1, this.offByDefault));
+
+    assertThat(this.testee.getActiveFeatures()).containsExactly(order1, offByDefault);
+
+    // swap order
+    this.testee = new FeatureSelector<>(Arrays.asList(fooConfig), features(this.offByDefault, order1));
+
+    assertThat(this.testee.getActiveFeatures()).containsExactly(order1, offByDefault);
+
+  }
+
+
+
 
   private List<FeatureSetting> noSettings() {
     return Collections.emptyList();
@@ -119,6 +136,17 @@ class ProvidesFooByDefault implements AFeature {
   @Override
   public Feature provides() {
     return Feature.named("foo").withOnByDefault(true);
+  }
+
+}
+
+class ProvidesFooByDefaultWithOrder1 implements AFeature {
+
+  @Override
+  public Feature provides() {
+    return Feature.named("foo")
+            .withOnByDefault(true)
+            .withOrder(1);
   }
 
 }

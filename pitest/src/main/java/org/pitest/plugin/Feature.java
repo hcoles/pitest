@@ -96,4 +96,9 @@ public final class Feature implements Comparable<Feature> {
             .thenComparing(Feature::name)
             .compare(this, o);
   }
+
+  @Override
+  public String toString() {
+    return name;
+  }
 }
