@@ -8,6 +8,11 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.14.1
+
+* #1215 Apply coverage rewrites when aggregating reports
+* #1219 Ensure try with resources filtering applied first (thanks @Vampire)
+
 ## 1.14.0
 
 * #1213 Filter equivalent divide by -1 maths mutants
