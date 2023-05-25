@@ -20,6 +20,7 @@ public class TryWithResourcesFilterFactory implements MutationInterceptorFactory
   @Override
   public Feature provides() {
     return Feature.named("FTRYWR")
+        .withOrder(50)
         .withOnByDefault(true)
         .withDescription("Filters mutations in code generated for try with resources statements");
   }
