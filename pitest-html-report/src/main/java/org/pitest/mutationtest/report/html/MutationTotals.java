@@ -1,5 +1,7 @@
 package org.pitest.mutationtest.report.html;
 
+import static org.pitest.util.PercentageCalculator.getPercentage;
+
 public class MutationTotals {
 
   private long numberOfFiles                 = 0;
@@ -50,14 +52,11 @@ public class MutationTotals {
   }
 
   public int getLineCoverage() {
-    return this.numberOfLines == 0 ? 100 : Math
-        .round((100f * this.numberOfLinesCovered) / this.numberOfLines);
+    return getPercentage(numberOfLines, numberOfLinesCovered);
   }
 
   public int getMutationCoverage() {
-    return this.numberOfMutations == 0 ? 100
-        : Math.round((100f * this.numberOfMutationsDetected)
-            / this.numberOfMutations);
+    return getPercentage(numberOfMutations, numberOfMutationsDetected);
   }
 
   public void addMutationsWithCoverage(final long mutationsWithCoverage) {
@@ -65,9 +64,7 @@ public class MutationTotals {
   }
 
   public int getTestStrength() {
-    return this.numberOfMutationsWithCoverage == 0 ? 0
-            : Math.round((100f * this.numberOfMutationsDetected)
-            / this.numberOfMutationsWithCoverage);
+    return getPercentage(numberOfMutationsWithCoverage, numberOfMutationsDetected);
   }
 
   public long getNumberOfMutationsWithCoverage() {

@@ -16,6 +16,8 @@ package org.pitest.mutationtest.statistics;
 
 import java.io.PrintStream;
 
+import static org.pitest.util.PercentageCalculator.getPercentage;
+
 public final class Score {
 
   private final String                mutatorName;
@@ -67,16 +69,7 @@ public final class Score {
   }
 
   public int getPercentageDetected() {
-    if (getTotalMutations() == 0) {
-      return 100;
-    }
-
-    if (getTotalDetectedMutations() == 0) {
-      return 0;
-    }
-
-    return Math.round((100f / getTotalMutations())
-        * getTotalDetectedMutations());
+    return getPercentage(getTotalMutations(), getTotalDetectedMutations());
   }
 
 }

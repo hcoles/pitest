@@ -22,6 +22,8 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 import java.util.Set;
 
+import static org.pitest.util.PercentageCalculator.getPercentage;
+
 public final class MutationStatistics {
   private final Iterable<Score> scores;
   private final long totalMutations;
@@ -73,21 +75,8 @@ public final class MutationStatistics {
     return mutatedClasses;
   }
 
-  public long getPercentageDetected() {
-    if (getTotalMutations() == 0) {
-      return 100;
-    }
-
-    if (getTotalDetectedMutations() == 0) {
-      return 0;
-    }
-
-    if (getTotalMutations() == getTotalDetectedMutations()) {
-      return 100;
-    }
-
-    return Math.min(99, Math.round((100f / getTotalMutations())
-        * getTotalDetectedMutations()));
+  public int getPercentageDetected() {
+    return getPercentage(getTotalMutations(), getTotalDetectedMutations());
   }
 
   public void report(final PrintStream out) {
@@ -98,7 +87,7 @@ public final class MutationStatistics {
             + ". Test strength " + this.getTestStrength() + "%");
     out.println(">> Ran " + this.numberOfTestsRun + " tests ("
         + getTestsPerMutation() + " tests per mutation)");
-    
+
     out.println("Enhanced functionality available at https://www.arcmutate.com/");
   }
 
@@ -113,16 +102,7 @@ public final class MutationStatistics {
         .format(testsPerMutation);
   }
 
-  public long getTestStrength() {
-    if (getTotalMutations() == 0) {
-      return 100;
-    }
-
-    if (getTotalMutationsWithCoverage() == 0) {
-      return 0;
-    }
-
-    return Math.round((100f / getTotalMutationsWithCoverage())
-            * getTotalDetectedMutations());
+  public int getTestStrength() {
+    return getPercentage(getTotalMutationsWithCoverage(), getTotalDetectedMutations());
   }
 }
