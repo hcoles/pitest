@@ -1,5 +1,7 @@
 package org.pitest.coverage;
 
+import static org.pitest.util.PercentageCalculator.getPercentage;
+
 /**
  * Basic summary of line coverage data
  */
@@ -22,8 +24,7 @@ public final class CoverageSummary {
   }
 
   public int getCoverage() {
-    return this.numberOfLines == 0 ? 100 : Math
-        .round((100f * this.numberOfCoveredLines) / this.numberOfLines);
+    return getPercentage(numberOfLines, numberOfCoveredLines);
   }
 
 }

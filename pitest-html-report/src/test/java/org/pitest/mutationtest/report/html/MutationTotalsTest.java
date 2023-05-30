@@ -66,19 +66,13 @@ public class MutationTotalsTest {
 
   @Test
   public void shouldCorrectlyCalculateTestStrengthWhenNoMutationsPresent() {
-    assertEquals(0, this.testee.getTestStrength());
+    assertEquals(100, this.testee.getTestStrength());
   }
 
   @Test
   public void shouldCorrectlyCalculateTestStrengthWhenNoMutationsDetected() {
     this.testee.addMutations(100);
-    assertEquals(0, this.testee.getTestStrength());
-  }
-
-  @Test
-  public void shouldCorrectlyCalculateTestStrengthWhenAllMutationsWithNoCoverage() {
-    this.testee.addMutations(100);
-    assertEquals(0, this.testee.getTestStrength());
+    assertEquals(100, this.testee.getTestStrength());
   }
 
   @Test
