@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -168,11 +169,11 @@ public class MutationTestWorker {
     return new UnContainer() {
       @Override
       public List<TestResult> execute(final TestUnit group) {
-        final List<TestResult> results = new ArrayList<>();
+        final Collection<TestResult> results = new ConcurrentLinkedDeque<>();
         final ExitingResultCollector rc = new ExitingResultCollector(
             new ConcreteResultCollector(results));
         group.execute(rc);
-        return results;
+        return new ArrayList<>(results);
       }
     };
   }

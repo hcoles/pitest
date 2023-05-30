@@ -16,7 +16,9 @@
 package org.pitest.testapi.execute.containers;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import org.pitest.testapi.TestResult;
 import org.pitest.testapi.TestUnit;
@@ -26,10 +28,10 @@ public class UnContainer implements Container {
 
   @Override
   public List<TestResult> execute(final TestUnit group) {
-    final List<TestResult> results = new ArrayList<>(12);
+    final Collection<TestResult> results = new ConcurrentLinkedDeque<>();
     final ConcreteResultCollector rc = new ConcreteResultCollector(results);
     group.execute(rc);
-    return results;
+    return new ArrayList<>(results);
   }
 
 }

@@ -17,10 +17,12 @@ package org.pitest.testapi.execute;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class ExitingResultCollector implements ResultCollector {
 
   private final ResultCollector child;
-  private boolean               hadFailure = false;
+  private final AtomicBoolean hadFailure = new AtomicBoolean(false);
 
   public ExitingResultCollector(final ResultCollector child) {
     this.child = child;
@@ -38,14 +40,14 @@ public class ExitingResultCollector implements ResultCollector {
 
   @Override
   public boolean shouldExit() {
-    return this.hadFailure;
+    return this.hadFailure.get();
   }
 
   @Override
   public void notifyEnd(final Description description, final Throwable t) {
     this.child.notifyEnd(description, t);
     if (t != null) {
-      this.hadFailure = true;
+      this.hadFailure.set(true);
     }
 
   }

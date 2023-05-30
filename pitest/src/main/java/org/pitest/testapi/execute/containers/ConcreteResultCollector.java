@@ -25,6 +25,11 @@ public final class ConcreteResultCollector implements ResultCollector {
 
   private final Collection<TestResult> feedback;
 
+  /**
+   * @param feedback the collection where to collect test results; this collection should be thread-safe
+   *                 as it can be called from various threads and also from parallel running tests,
+   *                 depending on the used test engine.
+   */
   public ConcreteResultCollector(final Collection<TestResult> feedback) {
     this.feedback = feedback;
   }

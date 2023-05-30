@@ -8,6 +8,10 @@ package org.pitest.testapi;
  * <p>At least one of the {@code executionStarted} methods needs to be overwritten
  * by subclasses as the default implementations call each other for backwards compatibility
  * and thus would cause a stack overflow error if called.
+ *
+ * <p>All implementations of this interface should be thread-safe, as the methods can be
+ * called from various threads and also from parallel running tests, depending on the used
+ * test engine.
  */
 public interface TestUnitExecutionListener {
     default void executionStarted(Description description) {
