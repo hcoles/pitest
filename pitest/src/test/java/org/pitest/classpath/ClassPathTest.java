@@ -14,21 +14,27 @@
  */
 package org.pitest.classpath;
 
+import static java.util.Arrays.asList;
 import static java.util.function.Predicate.isEqual;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.Predicate;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -43,6 +49,9 @@ public class ClassPathTest {
 
   @Mock
   private ClassPathRoot secondComponent;
+
+  @Rule
+  public TemporaryFolder dir = new TemporaryFolder();
 
   @Before
   public void setUp() {
@@ -68,13 +77,13 @@ public class ClassPathTest {
 
   @Test
   public void shouldReturnAllClassNames() {
-    assertEquals(Arrays.asList("FooClass", "BarClass"),
+    assertEquals(asList("FooClass", "BarClass"),
         this.testee.classNames());
   }
 
   @Test
   public void shouldFindMatchingClasses() {
-    assertEquals(Arrays.asList("FooClass"),
+    assertEquals(asList("FooClass"),
         this.testee.findClasses(isEqual("FooClass")));
   }
 
@@ -82,6 +91,21 @@ public class ClassPathTest {
   public void shouldAllowSubComponentsToBeSelected() {
     assertEquals(Collections.singletonList("FooClass"), this.testee
         .getComponent(rootIsEqualTo("foo")).classNames());
+  }
+
+  @Test
+  public void handlesEmptyFilesWithoutError() throws IOException {
+    File empty = dir.newFile("empty.jar");
+    ClassPath underTest = new ClassPath(asList(empty));
+    assertThat(underTest.getClassData("")).isNull();
+  }
+
+  @Test
+  public void doesNotErrorWhenNonArchiveFilesOnClasspath() throws IOException {
+    File notAJar = dir.newFile("notajar");
+    Files.write(notAJar.toPath(), "some content".getBytes());
+    ClassPath underTest = new ClassPath(asList(notAJar));
+    assertThat(underTest.getClassData("")).isNull();
   }
 
   private Predicate<ClassPathRoot> rootIsEqualTo(final String value) {
