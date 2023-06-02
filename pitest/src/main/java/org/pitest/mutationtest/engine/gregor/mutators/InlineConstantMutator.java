@@ -43,31 +43,33 @@ public class InlineConstantMutator implements MethodMutatorFactory {
       this.context = context;
     }
 
-    private void mutate(final Double constant) {
+    private boolean mutate(final Double constant) {
       // avoid addition to floating points as may yield same value
 
       final Double replacement = (constant == 1D) ? 2D : 1D;
 
       if (shouldMutate(constant, replacement)) {
         translateToByteCode(replacement);
-      } else {
-        translateToByteCode(constant);
+        return true;
       }
+
+      return false;
     }
 
-    private void mutate(final Float constant) {
+    private boolean mutate(final Float constant) {
       // avoid addition to floating points as may yield same value
 
       final Float replacement = (constant == 1F) ? 2F : 1F;
 
       if (shouldMutate(constant, replacement)) {
         translateToByteCode(replacement);
-      } else {
-        translateToByteCode(constant);
+        return true;
       }
+
+      return false;
     }
 
-    private void mutate(final Integer constant) {
+    private boolean mutate(final Integer constant) {
       final Integer replacement;
 
       switch (constant.intValue()) {
@@ -87,33 +89,35 @@ public class InlineConstantMutator implements MethodMutatorFactory {
 
       if (shouldMutate(constant, replacement)) {
         translateToByteCode(replacement);
-      } else {
-        translateToByteCode(constant);
+        return true;
       }
+
+      return false;
     }
 
-    private void mutate(final Long constant) {
+    private boolean mutate(final Long constant) {
 
       final Long replacement = constant + 1L;
 
       if (shouldMutate(constant, replacement)) {
         translateToByteCode(replacement);
-      } else {
-        translateToByteCode(constant);
+        return true;
       }
+
+      return false;
 
     }
 
-    private void mutate(final Number constant) {
+    private boolean mutate(final Number constant) {
 
       if (constant instanceof Integer) {
-        mutate((Integer) constant);
+        return mutate((Integer) constant);
       } else if (constant instanceof Long) {
-        mutate((Long) constant);
+        return mutate((Long) constant);
       } else if (constant instanceof Float) {
-        mutate((Float) constant);
+        return mutate((Float) constant);
       } else if (constant instanceof Double) {
-        mutate((Double) constant);
+        return mutate((Double) constant);
       } else {
         throw new PitError("Unsupported subtype of Number found:"
             + constant.getClass());
@@ -251,7 +255,9 @@ public class InlineConstantMutator implements MethodMutatorFactory {
         return;
       }
 
-      mutate(inlineConstant);
+      if (!mutate(inlineConstant) ) {
+        super.visitInsn(opcode);
+      }
     }
 
     /*
@@ -262,10 +268,12 @@ public class InlineConstantMutator implements MethodMutatorFactory {
     @Override
     public void visitIntInsn(final int opcode, final int operand) {
       if ((opcode == Opcodes.BIPUSH) || (opcode == Opcodes.SIPUSH)) {
-        mutate(operand);
-      } else {
-        super.visitIntInsn(opcode, operand);
+        if (mutate(operand) ) {
+          return;
+        }
       }
+
+      super.visitIntInsn(opcode, operand);
     }
 
     /*
@@ -277,10 +285,12 @@ public class InlineConstantMutator implements MethodMutatorFactory {
     public void visitLdcInsn(final Object constant) {
       // do not mutate strings or .class here
       if (constant instanceof Number) {
-        mutate((Number) constant);
-      } else {
-        super.visitLdcInsn(constant);
+        if (mutate((Number) constant)) {
+            return;
+        }
       }
+
+      super.visitLdcInsn(constant);
     }
 
   }
