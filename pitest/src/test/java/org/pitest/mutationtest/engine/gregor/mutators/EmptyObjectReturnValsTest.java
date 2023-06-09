@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.pitest.mutationtest.engine.gregor.mutators.returns.EmptyObjectReturnValsMutator.EMPTY_RETURNS;
 
@@ -174,6 +175,14 @@ public class EmptyObjectReturnValsTest {
     assertThat(actual).isEmpty();
   }
 
+  @Test
+  public void mutatesIterableToEmptyList() {
+    Iterable actual = v.forCallableClass(AnIterable.class)
+            .firstMutantReturnValue();
+
+    assertThat(actual).isEmpty();
+  }
+
   private static class ObjectReturn implements Callable<Object> {
     @Override
     public Object call() throws Exception {
@@ -286,6 +295,13 @@ public class EmptyObjectReturnValsTest {
     @Override
     public Stream<String> call() throws Exception {
       return Stream.of("hello");
+    }
+  }
+
+  private static class AnIterable implements Callable<Iterable<String>> {
+    @Override
+    public Iterable<String> call() throws Exception {
+      return asList("hello");
     }
   }
 

@@ -72,6 +72,7 @@ class AReturnMethodVisitor extends AbstractInsnMutator {
     NON_NULL_MUTATIONS.put("java.util.Map", returnEmptyMap());
     NON_NULL_MUTATIONS.put("java.util.Set", returnEmptySet());
     NON_NULL_MUTATIONS.put("java.util.Collection", returnEmptyList());
+    NON_NULL_MUTATIONS.put("java.lang.Iterable", returnEmptyList());
   }
 
   AReturnMethodVisitor(final MethodMutatorFactory factory,

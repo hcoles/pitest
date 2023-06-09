@@ -221,6 +221,11 @@ public class EquivalentReturnMutationFilterTest {
   public void filtersEquivalentStreamMutants() {
     verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyStream.class);
   }
+
+  @Test
+  public void filtersEquivalentIterableMutants() {
+    verifier.assertFiltersNMutationFromClass(1, AlreadyReturnsEmptyIterable.class);
+  }
 }
 
 class Widget{}
@@ -474,5 +479,11 @@ class AlreadyReturnsEmptyOptionalInTryBlock {
 class AlreadyReturnsEmptyStream {
   public Stream<String> a() {
     return Stream.empty();
+  }
+}
+
+class AlreadyReturnsEmptyIterable {
+  public Iterable<String> a() {
+    return Collections.emptyList();
   }
 }
