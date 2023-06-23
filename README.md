@@ -8,6 +8,14 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.14.2
+
+* #1221 - Unified percentage calculate (thanks @Vampire)
+* #1218 - Thread safety for results collection when tests run in parallel (thanks @Vampire)
+* #1225 - Prevent error when non archive files included on classpath
+* #1229 - Mutate Iterables to emptyList
+* #1227/1232 - Fix MethodMutator interface to depend on abstract types
+
 ## 1.14.1
 
 * #1215 Apply coverage rewrites when aggregating reports
