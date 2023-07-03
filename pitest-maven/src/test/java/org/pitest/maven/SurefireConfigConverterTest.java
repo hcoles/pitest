@@ -98,6 +98,16 @@ public class SurefireConfigConverterTest {
   }
 
   @Test
+  public void shouldConvertMultipleSurefireGroupExcludesCommaSeparated() throws Exception {
+    this.surefireConfig = makeConfig("<excludedGroups>integration, regression</excludedGroups>");
+    ReportOptions actual = this.testee
+            .update(this.options, this.surefireConfig);
+
+    assertThat(actual.getGroupConfig().getExcludedGroups()).containsOnly(
+            "integration", "regression");
+  }
+
+  @Test
   public void shouldNotUseSurefireGroupsWhenPitestIncludesSpecified()
       throws Exception {
     TestGroupConfig gc = new TestGroupConfig(Collections.<String> emptyList(),
