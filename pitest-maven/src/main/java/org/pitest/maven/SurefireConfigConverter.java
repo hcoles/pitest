@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.util.Objects;
@@ -46,8 +47,10 @@ public class SurefireConfigConverter {
   private List<String> extractStrings(String element, Xpp3Dom configuration) {
     Xpp3Dom groups = configuration.getChild(element);
     if (groups != null) {
-      String[] parts = groups.getValue().split(" ");
-      return Arrays.asList(parts);
+      return Arrays.stream(groups.getValue().split("[ ,]+"))
+              .filter(StringUtils::isNotBlank)
+              .map(String::trim)
+              .collect(Collectors.toList());
     } else {
       return Collections.emptyList();
     }
