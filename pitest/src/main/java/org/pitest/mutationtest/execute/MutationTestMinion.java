@@ -151,6 +151,7 @@ public class MutationTestMinion {
       LOG.log(Level.WARNING, "Error during mutation test", ex);
     } finally {
       if (s != null) {
+        LOG.fine(() -> "Closing socket");
         safelyCloseSocket(s);
       }
     }
