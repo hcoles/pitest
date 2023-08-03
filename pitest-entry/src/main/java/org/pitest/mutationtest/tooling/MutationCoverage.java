@@ -67,6 +67,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -289,9 +290,14 @@ public class MutationCoverage {
   }
 
   private void recordClassPath(HistoryStore history, CoverageDatabase coverageData) {
-    final Set<ClassName> allClassNames = getAllClassesAndTests(coverageData);
-    final Collection<HierarchicalClassId> ids = FCollection.map(
-        this.code.getClassInfo(allClassNames), ClassInfo::getHierarchicalId);
+    Set<ClassName> allClassNames = getAllClassesAndTests(coverageData);
+
+    // sort by classname to ensure order consistent across machines
+    List<HierarchicalClassId> ids = this.code.getClassInfo(allClassNames).stream()
+            .map(ClassInfo::getHierarchicalId)
+            .sorted(Comparator.comparing(HierarchicalClassId::getName))
+            .collect(Collectors.toList());
+
     history.recordClassPath(ids, coverageData);
   }
 
