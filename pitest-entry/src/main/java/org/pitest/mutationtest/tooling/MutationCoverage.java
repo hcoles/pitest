@@ -376,8 +376,9 @@ public class MutationCoverage {
 
     final MutationSource source = new MutationSource(mutationConfig, testPrioritiser, bas, interceptor);
 
-    final MutationAnalyser analyser = new IncrementalAnalyser(
-        new DefaultCodeHistory(this.code, history), coverageData);
+    final MutationAnalyser analyser =  new IncrementalAnalyser(new DefaultCodeHistory(this.code, history),
+            coverageData,
+            enableIncrementalAnalysisLogging(history));
 
     final WorkerFactory wf = new WorkerFactory(this.baseDir, coverage()
         .getConfiguration(), mutationConfig, args,
@@ -392,6 +393,13 @@ public class MutationCoverage {
         source, grouper);
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
+  }
+
+  private boolean enableIncrementalAnalysisLogging(HistoryStore history) {
+    // Horrible hack to prevent logging during pre scan phase. This would
+    // cause confusion as if only part of the log is read it appears that
+    // incremental analysis has affected no mutants
+    return !(history instanceof NullHistoryStore);
   }
 
   private void checkMutationsFound(final List<MutationAnalysisUnit> tus) {
