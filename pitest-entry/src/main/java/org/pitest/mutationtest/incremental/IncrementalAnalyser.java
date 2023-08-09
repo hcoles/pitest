@@ -30,10 +30,16 @@ public class IncrementalAnalyser implements MutationAnalyser {
   private final CoverageDatabase           coverage;
   private final Map<DetectionStatus, Long> preAnalysed = new EnumMap<>(DetectionStatus.class);
 
-  public IncrementalAnalyser(final CodeHistory history,
-      final CoverageDatabase coverage) {
+  private final boolean enableLog;
+
+  public IncrementalAnalyser(CodeHistory history, CoverageDatabase coverage) {
+    this(history, coverage, true);
+  }
+  
+  public IncrementalAnalyser(CodeHistory history, CoverageDatabase coverage, boolean enableLog) {
     this.history = history;
     this.coverage = coverage;
+    this.enableLog = enableLog;
   }
 
   @Override
@@ -52,7 +58,9 @@ public class IncrementalAnalyser implements MutationAnalyser {
       }
     }
 
-    logTotals();
+    if (enableLog) {
+      logTotals();
+    }
 
     return mrs;
 
