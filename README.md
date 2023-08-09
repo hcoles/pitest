@@ -8,6 +8,12 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.14.3
+
+* #1239 Support comma separated excludedGroups (thanks @johnathana)
+* #1243 Explicitly order classpath in history file to ensure consistency between runs
+* #1245 Prevent confusing logging of dummy incremental analysis runs 
+
 ## 1.14.2
 
 * #1221 - Unified percentage calculate (thanks @Vampire)
