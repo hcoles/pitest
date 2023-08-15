@@ -3,11 +3,11 @@ package org.pitest.mutationtest.incremental;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
-import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.pitest.mutationtest.DetectionStatus.KILLED;
@@ -19,6 +19,7 @@ import static org.pitest.mutationtest.LocationMother.aMutationId;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -29,6 +30,7 @@ import java.util.logging.Logger;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.junit.After;
 import org.junit.Before;
@@ -242,6 +244,54 @@ public class IncrementalAnalyserTest {
   }
 
   @Test
+  public void prioritisesLastKillingTestWhenClassHasChanged() {
+
+    final String killingTest = "fooTest";
+    setHistoryForAllMutationsTo(DetectionStatus.KILLED, killingTest);
+    Collection<TestInfo> tests = Arrays.asList(testNamed("one"), testNamed("two"), testNamed(killingTest), testNamed("three"));
+
+    final MutationDetails md = makeMutation("foo");
+    md.addTestsInOrder(tests);
+
+    when(this.coverage.getTestsForClass(any(ClassName.class)))
+            .thenReturn(tests);
+    when(this.history.hasClassChanged(ClassName.fromString("clazz"))).thenReturn(
+            true);
+    when(this.history.hasClassChanged(ClassName.fromString("TEST_CLASS")))
+            .thenReturn(false);
+
+    MutationResult actual = this.testee.analyse(singletonList(md)).stream()
+                    .findFirst().get();
+
+    assertThat(actual.getDetails().getTestsInOrder().get(0), Matchers.equalTo(testNamed(killingTest)));
+    assertThat(actual.getDetails().getTestsInOrder(), Matchers.hasSize(4));
+  }
+
+  @Test
+  public void prioritisesLastKillingTestWhenTestHasChanged() {
+
+    final String killingTest = "fooTest";
+    setHistoryForAllMutationsTo(DetectionStatus.KILLED, killingTest);
+    Collection<TestInfo> tests = Arrays.asList(testNamed("one"), testNamed("two"), testNamed(killingTest), testNamed("three"));
+
+    final MutationDetails md = makeMutation("foo");
+    md.addTestsInOrder(tests);
+
+    when(this.coverage.getTestsForClass(any(ClassName.class)))
+            .thenReturn(tests);
+    when(this.history.hasClassChanged(ClassName.fromString("clazz"))).thenReturn(
+            false);
+    when(this.history.hasClassChanged(ClassName.fromString("TEST_CLASS")))
+            .thenReturn(true);
+
+    MutationResult actual = this.testee.analyse(singletonList(md)).stream()
+            .findFirst().get();
+
+    assertThat(actual.getDetails().getTestsInOrder().get(0), Matchers.equalTo(testNamed(killingTest)));
+    assertThat(actual.getDetails().getTestsInOrder(), Matchers.hasSize(4));
+  }
+
+  @Test
   public void assessMultipleMutationsAtATime() {
     final MutationDetails md1 = makeMutation("foo");
     final MutationDetails md2 = makeMutation("bar");
@@ -297,6 +347,11 @@ public class IncrementalAnalyserTest {
                     "Incremental analysis set 1 mutations to a status of SURVIVED",
                     "Incremental analysis reduced number of mutations by 3"
             ));
+  }
+
+  private TestInfo testNamed(String name) {
+    return new TestInfo(
+            "TEST_CLASS", name, 0, Optional.empty(), 0);
   }
 
   private Matcher<MutationResult> withStatus(final DetectionStatus status) {

@@ -43,8 +43,7 @@ public class IncrementalAnalyser implements MutationAnalyser {
   }
 
   @Override
-  public Collection<MutationResult> analyse(
-      final Collection<MutationDetails> mutation) {
+  public Collection<MutationResult> analyse(Collection<MutationDetails> mutation) {
 
     final List<MutationResult> mrs = new ArrayList<>(
         mutation.size());
@@ -81,12 +80,14 @@ public class IncrementalAnalyser implements MutationAnalyser {
     LOG.info("Incremental analysis reduced number of mutations by " + numberOfReducedMutations );
   }
 
-  private MutationResult analyseFromHistory(final MutationDetails each,
-      final MutationStatusTestPair mutationStatusTestPair) {
+  private MutationResult analyseFromHistory(MutationDetails each, MutationStatusTestPair mutationStatusTestPair) {
 
     final ClassName clazz = each.getClassName();
 
     if (this.history.hasClassChanged(clazz)) {
+      if (mutationStatusTestPair.getKillingTest().isPresent()) {
+        return prioritiseLastTest(each, mutationStatusTestPair.getKillingTest().get());
+      }
       return analyseFromScratch(each);
     }
 
@@ -103,6 +104,10 @@ public class IncrementalAnalyser implements MutationAnalyser {
                 DetectionStatus.KILLED,
                 killingTestNames,
                 mutationStatusTestPair.getSucceedingTests());
+      } else {
+        if (mutationStatusTestPair.getKillingTest().isPresent()) {
+          return prioritiseLastTest(each, mutationStatusTestPair.getKillingTest().get());
+        }
       }
     }
 
@@ -114,7 +119,6 @@ public class IncrementalAnalyser implements MutationAnalyser {
 
     return analyseFromScratch(each);
   }
-
   private List<String> filterUnchangedKillingTests(final MutationDetails each,
                                                    final MutationStatusTestPair mutationStatusTestPair) {
 
@@ -132,6 +136,25 @@ public class IncrementalAnalyser implements MutationAnalyser {
   private static Predicate<TestInfo> isAKillingTestFor(final MutationStatusTestPair mutation) {
     final List<String> killingTestNames = mutation.getKillingTests();
     return a -> killingTestNames.contains(a.getName());
+  }
+
+  private MutationResult prioritiseLastTest(MutationDetails mutation, String killingTestName) {
+    List<TestInfo> mutableOrderedTestList = mutation.getTestsInOrder();
+
+    Optional<TestInfo> maybeKillingTest = mutation.getTestsInOrder().stream()
+            .filter(ti -> ti.getName().equals(killingTestName))
+            .findFirst();
+
+    // last killing test is no longer available
+    if (!maybeKillingTest.isPresent()) {
+      return analyseFromScratch(mutation);
+    }
+
+    // hack the ordered list to put the killing test at the front
+    mutableOrderedTestList.remove(maybeKillingTest.get());
+    mutableOrderedTestList.add(0, maybeKillingTest.get());
+
+    return analyseFromScratch(mutation);
   }
 
   private MutationResult analyseFromScratch(final MutationDetails mutation) {
