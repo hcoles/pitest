@@ -8,6 +8,10 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.14.4
+
+#1246 Priotitise previous killing test when using history files
+
 ## 1.14.3
 
 * #1239 Support comma separated excludedGroups (thanks @johnathana)
