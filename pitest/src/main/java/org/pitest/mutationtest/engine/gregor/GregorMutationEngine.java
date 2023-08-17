@@ -18,9 +18,9 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
 
@@ -54,7 +54,9 @@ public class GregorMutationEngine implements MutationEngine {
 
   @Override
   public Collection<String> getMutatorNames() {
-    return FCollection.map(this.mutationOperators, MethodMutatorFactory::getName);
+    return this.mutationOperators.stream()
+            .map(MethodMutatorFactory::getName)
+            .collect(Collectors.toList());
   }
 
   @Override

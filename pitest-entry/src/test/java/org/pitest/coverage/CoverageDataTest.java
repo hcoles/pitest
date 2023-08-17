@@ -40,6 +40,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -116,7 +117,9 @@ public class CoverageDataTest {
     this.testee.calculateClassCoverage(makeCoverageResult("foo", "fooTest2", 0,
         2));
 
-    List<String> actual = FCollection.map(this.testee.getTestsForClass(this.foo), TestInfo::getName);
+    List<String> actual = this.testee.getTestsForClass(this.foo).stream()
+            .map(TestInfo::getName)
+            .collect(Collectors.toList());
 
     assertThat(actual).containsExactlyInAnyOrder("fooTest", "fooTest2");
   }

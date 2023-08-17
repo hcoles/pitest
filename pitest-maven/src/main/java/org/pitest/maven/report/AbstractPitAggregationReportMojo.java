@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
  * Common code for report aggregation mojo.
@@ -136,7 +137,9 @@ abstract class AbstractPitAggregationReportMojo extends PitReportMojo {
     for (final List directoryList : directoryLists) {
       roots.addAll(directoryList);
     }
-    return FCollection.map(roots, File::new);
+    return roots.stream()
+            .map(File::new)
+            .collect(Collectors.toList());
   }
 
   private List<File> getProjectFilesByFilter(final File projectBaseDir,

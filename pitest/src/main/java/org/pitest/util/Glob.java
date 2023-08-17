@@ -18,8 +18,9 @@ import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import org.pitest.functional.FCollection;
+import static org.pitest.functional.Streams.asStream;
 
 public class Glob implements Predicate<String> {
 
@@ -47,9 +48,10 @@ public class Glob implements Predicate<String> {
     return Glob::new;
   }
 
-  public static Collection<Predicate<String>> toGlobPredicates(
-      final Collection<String> globs) {
-    return FCollection.map(globs, Glob.toGlobPredicate());
+  public static Collection<Predicate<String>> toGlobPredicates(Collection<String> globs) {
+    return asStream(globs)
+            .map(Glob.toGlobPredicate())
+            .collect(Collectors.toList());
   }
 
   private static String convertGlobToRegex(final String glob) {

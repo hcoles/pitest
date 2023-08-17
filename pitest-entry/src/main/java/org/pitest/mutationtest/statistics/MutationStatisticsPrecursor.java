@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.FCollection;
@@ -55,7 +56,9 @@ class MutationStatisticsPrecursor {
   }
 
   Iterable<Score> getScores() {
-    return FCollection.map(this.mutatorTotalMap.values(), ScorePrecursor::toScore);
+    return this.mutatorTotalMap.values().stream()
+            .map(ScorePrecursor::toScore)
+            .collect(Collectors.toList());
   }
 
 

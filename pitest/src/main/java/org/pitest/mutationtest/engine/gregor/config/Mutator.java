@@ -15,7 +15,6 @@
 package org.pitest.mutationtest.engine.gregor.config;
 
 import org.pitest.functional.FCollection;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -43,6 +42,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static org.pitest.functional.Streams.asStream;
 
 public final class Mutator {
 
@@ -102,8 +103,9 @@ public final class Mutator {
   }
 
   public static Collection<MethodMutatorFactory> byName(final String name) {
-    return FCollection.map(MUTATORS.get(name),
-        Prelude.id(MethodMutatorFactory.class));
+    // prevent null collection returns?
+    return asStream(MUTATORS.get(name))
+            .collect(Collectors.toList());
   }
 
   public static Collection<MethodMutatorFactory> fromStrings(

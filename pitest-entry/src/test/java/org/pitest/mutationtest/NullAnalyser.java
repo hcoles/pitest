@@ -2,6 +2,7 @@ package org.pitest.mutationtest;
 
 import java.util.Collection;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -15,7 +16,9 @@ public class NullAnalyser implements MutationAnalyser {
   @Override
   public Collection<MutationResult> analyse(
       final Collection<MutationDetails> mutationsForClasses) {
-    return FCollection.map(mutationsForClasses, mutationToResult());
+    return mutationsForClasses.stream()
+            .map(mutationToResult())
+            .collect(Collectors.toList());
   }
 
   private Function<MutationDetails, MutationResult> mutationToResult() {

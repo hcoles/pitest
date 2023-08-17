@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Build;
@@ -35,7 +36,6 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classpath.ClassPath;
-import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.config.PluginServices;
 
 import edu.emory.mathcs.backport.java.util.Collections;
@@ -62,8 +62,9 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
   protected void setUp() throws Exception {
     super.setUp();
     MockitoAnnotations.openMocks(this);
-    this.classPath = new ArrayList<>(FCollection.map(
-        ClassPath.getClassPathElementsAsFiles(), File::getAbsolutePath));
+    this.classPath = ClassPath.getClassPathElementsAsFiles().stream()
+            .map(File::getAbsolutePath)
+            .collect(Collectors.toList());
     when(this.project.getProperties()).thenReturn(properties);
     when(this.project.getTestClasspathElements()).thenReturn(this.classPath);
     when(this.project.getPackaging()).thenReturn("jar");

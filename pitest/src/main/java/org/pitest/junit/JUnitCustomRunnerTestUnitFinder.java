@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -127,7 +128,9 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
       if (a == null) {
         return Collections.emptyList();
       }
-      return FCollection.map(Arrays.asList(a.value()), Class::getName);
+      return Stream.of(a.value())
+              .map(Class::getName)
+              .collect(Collectors.toList());
     };
   }
 

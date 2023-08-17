@@ -19,7 +19,6 @@ import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassPathRoot;
 import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
-import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
@@ -53,6 +52,7 @@ import java.util.StringJoiner;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static org.pitest.functional.Streams.asStream;
 import static org.pitest.functional.prelude.Prelude.not;
 import static org.pitest.functional.prelude.Prelude.or;
 
@@ -246,8 +246,9 @@ public class ReportOptions {
   }
 
   private ClassPath createClassPathFromElements() {
-    return new ClassPath(
-        FCollection.map(this.classPathElements, File::new));
+    return new ClassPath(asStream(this.classPathElements)
+            .map(File::new)
+            .collect(Collectors.toList()));
   }
 
   public Collection<String> getTargetClasses() {

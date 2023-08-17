@@ -50,8 +50,9 @@ public class MutationStatusMap {
   }
 
   public List<MutationResult> createMutationResults() {
-    return FCollection.map(this.mutationMap.entrySet(),
-        detailsToMutationResults());
+    return this.mutationMap.entrySet().stream()
+            .map(detailsToMutationResults())
+            .collect(Collectors.toList());
 
   }
 

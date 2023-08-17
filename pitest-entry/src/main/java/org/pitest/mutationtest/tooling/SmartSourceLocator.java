@@ -45,7 +45,9 @@ public class SmartSourceLocator implements SourceLocator {
     final Collection<Path> childDirs = FCollection.flatMap(roots, collectChildren(MAX_DEPTH));
     childDirs.addAll(roots);
 
-    this.children = FCollection.map(childDirs, f -> new DirectorySourceLocator(f, this.inputCharset));
+    this.children = childDirs.stream()
+            .map(f -> new DirectorySourceLocator(f, this.inputCharset))
+            .collect(Collectors.toList());
   }
 
   private Function<Path, Collection<Path>> collectChildren(final int depth) {

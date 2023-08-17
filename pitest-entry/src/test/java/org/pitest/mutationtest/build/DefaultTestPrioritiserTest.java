@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.pitest.mutationtest.LocationMother.aLocation;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -20,8 +19,9 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.TestInfo;
-import org.pitest.functional.FCollection;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
@@ -60,9 +60,6 @@ public class DefaultTestPrioritiserTest {
     final List<TestInfo> actual = this.testee.assignTests(makeMutation("foo"));
 
     assertThat(actual.stream().map(toTime())).contains(1, 100, 1000, 10000);
-
-    assertEquals(Arrays.asList(1, 100, 1000, 10000),
-        FCollection.map(actual, toTime()));
   }
 
   private Function<TestInfo, Integer> toTime() {
@@ -70,8 +67,9 @@ public class DefaultTestPrioritiserTest {
   }
 
   private List<TestInfo> makeTestInfos(final Integer... times) {
-    return new ArrayList<>(FCollection.map(Arrays.asList(times),
-        timeToTestInfo()));
+    return Arrays.stream(times)
+            .map(timeToTestInfo())
+            .collect(Collectors.toList());
   }
 
   private Function<Integer, TestInfo> timeToTestInfo() {

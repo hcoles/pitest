@@ -46,6 +46,7 @@ import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import static org.pitest.functional.Streams.asStream;
 import static org.pitest.mutationtest.config.ConfigOption.ARG_LINE;
 import static org.pitest.mutationtest.config.ConfigOption.AVOID_CALLS;
 import static org.pitest.mutationtest.config.ConfigOption.CHILD_JVM;
@@ -437,8 +438,9 @@ public class OptionsParser {
       final OptionSet userArgs) {
     data.setReportDir(this.reportDirSpec.value(userArgs));
     data.setTargetClasses(this.targetClassesSpec.values(userArgs));
-    data.setTargetTests(FCollection.map(this.targetTestsSpec.values(userArgs),
-        Glob.toGlobPredicate()));
+    data.setTargetTests(asStream(this.targetTestsSpec.values(userArgs))
+            .map(Glob.toGlobPredicate())
+            .collect(Collectors.toList()));
     data.setSourceDirs(asPaths(this.sourceDirSpec.values(userArgs)));
     data.setMutators(this.mutators.values(userArgs));
     data.setFeatures(this.features.values(userArgs));
@@ -467,8 +469,9 @@ public class OptionsParser {
     data.setLoggingClasses(this.avoidCallsSpec.values(userArgs));
     data.setExcludedMethods(this.excludedMethodsSpec.values(userArgs));
     data.setExcludedClasses(this.excludedClassesSpec.values(userArgs));
-    data.setExcludedTestClasses(FCollection.map(
-        this.excludedTestClassesSpec.values(userArgs), Glob.toGlobPredicate()));
+    data.setExcludedTestClasses(asStream(this.excludedTestClassesSpec.values(userArgs)).
+            map(Glob.toGlobPredicate())
+            .collect(Collectors.toList()));
     configureVerbosity(data, userArgs);
 
     data.addOutputFormats(this.outputFormatSpec.values(userArgs));

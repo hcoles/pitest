@@ -107,8 +107,9 @@ public class MutationTestBuilder {
   }
 
   private static Function<MutationDetails, Iterable<ClassName>> mutationDetailsToTestClass() {
-    return a -> FCollection.map(a.getTestsInOrder(),
-        TestInfo.toDefiningClassName());
+    return a -> a.getTestsInOrder().stream()
+            .map(TestInfo.toDefiningClassName())
+            .collect(Collectors.toList());
   }
 
 }
