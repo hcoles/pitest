@@ -1,7 +1,5 @@
 package org.pitest.classpath;
 
-import org.pitest.functional.FCollection;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +9,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class CompoundClassPathRoot implements ClassPathRoot,
     Iterable<ClassPathRoot> {
@@ -83,7 +82,9 @@ public class CompoundClassPathRoot implements ClassPathRoot,
 
   private  static List<ClassPathRoot> wrapToAvoidIOOperations(
       List<ClassPathRoot> roots) {
-    return FCollection.map(roots, NameCachingRoot.toCachingRoot());
+    return roots.stream()
+            .map(NameCachingRoot.toCachingRoot())
+            .collect(Collectors.toList());
   }
 
 

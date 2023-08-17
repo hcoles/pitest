@@ -11,6 +11,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -161,9 +163,11 @@ public class ScmMojo extends AbstractPitMojo {
     final File sourceRoot = new File(this.getProject().getBuild()
         .getSourceDirectory());
 
-    final List<String> modifiedPaths = FCollection.map(findModifiedPaths(), pathByScmDir());
-    return FCollection.flatMap(modifiedPaths, new PathToJavaClassConverter(
-            sourceRoot.getAbsolutePath()));
+    final Stream<String> modifiedPaths = findModifiedPaths().stream()
+            .map(pathByScmDir());
+    return modifiedPaths.flatMap(new PathToJavaClassConverter(
+            sourceRoot.getAbsolutePath()))
+            .collect(Collectors.toList());
 
   }
 

@@ -18,7 +18,6 @@ package org.pitest.coverage;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
-import org.pitest.functional.FCollection;
 import org.pitest.testapi.Description;
 import org.pitest.util.Log;
 
@@ -124,12 +123,16 @@ public class CoverageData implements CoverageDatabase {
   }
 
   public List<BlockCoverage> createCoverage() {
-    return FCollection.map(this.blockCoverage.entrySet(), toBlockCoverage());
+    return this.blockCoverage.entrySet().stream()
+            .map(toBlockCoverage())
+            .collect(Collectors.toList());
   }
 
   private static Function<Entry<BlockLocation, Set<TestInfo>>, BlockCoverage> toBlockCoverage() {
-    return a -> new BlockCoverage(a.getKey(), FCollection.map(a.getValue(),
-        TestInfo.toName()));
+    return a -> new BlockCoverage(a.getKey(),
+            a.getValue().stream()
+                    .map(TestInfo.toName())
+                    .collect(Collectors.toList()));
   }
 
   @Override

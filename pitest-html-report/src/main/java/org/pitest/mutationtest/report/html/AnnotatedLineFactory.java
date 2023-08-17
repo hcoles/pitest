@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class AnnotatedLineFactory {
 
@@ -55,7 +56,9 @@ public class AnnotatedLineFactory {
   public List<Line> convert(final Reader source) throws IOException {
     try {
       final InputStreamLineIterable lines = new InputStreamLineIterable(source);
-      return FCollection.map(lines, stringToAnnotatedLine());
+      return StreamSupport.stream(lines.spliterator(), false)
+              .map(stringToAnnotatedLine())
+              .collect(Collectors.toList());
     } finally {
       source.close();
     }

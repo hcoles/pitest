@@ -21,8 +21,9 @@ import org.objectweb.asm.tree.RecordComponentNode;
 import org.objectweb.asm.util.Textifier;
 import org.objectweb.asm.util.TraceClassVisitor;
 import org.pitest.classinfo.ClassName;
-import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.engine.Location;
+
+import static org.pitest.functional.Streams.asStream;
 
 public class ClassTree {
 
@@ -44,7 +45,9 @@ public class ClassTree {
     if (this.lazyMethods != null) {
       return this.lazyMethods;
     }
-    this.lazyMethods = FCollection.map(this.rawNode.methods, toTree(name()));
+    this.lazyMethods = asStream(this.rawNode.methods)
+            .map(toTree(name()))
+            .collect(Collectors.toList());
     return this.lazyMethods;
   }
 

@@ -1,13 +1,14 @@
 package org.pitest.plugin;
 
-import org.pitest.functional.FCollection;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static org.pitest.functional.Streams.asStream;
 
 /**
  * Cheap and cheerful parser for simple feature config language.
@@ -18,7 +19,9 @@ import java.util.function.Function;
 public class FeatureParser {
 
   public List<FeatureSetting> parseFeatures(Collection<String> config) {
-    return FCollection.map(config, stringToSettings());
+    return asStream(config)
+            .map(stringToSettings())
+            .collect(Collectors.toList());
   }
 
   private Function<String, FeatureSetting> stringToSettings() {

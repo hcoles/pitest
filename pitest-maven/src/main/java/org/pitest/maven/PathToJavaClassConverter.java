@@ -1,9 +1,9 @@
 package org.pitest.maven;
 
 import java.io.File;
-import java.util.Collections;
 
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Converts paths to java class names globs if they are within the supplied
@@ -15,7 +15,7 @@ import java.util.function.Function;
  * with the supplied filenames.
  *
  */
-class PathToJavaClassConverter implements Function<String, Iterable<String>> {
+class PathToJavaClassConverter implements Function<String, Stream<String>> {
 
   private final String sourceRoot;
 
@@ -24,7 +24,7 @@ class PathToJavaClassConverter implements Function<String, Iterable<String>> {
   }
 
   @Override
-  public Iterable<String> apply(final String a) {
+  public Stream<String> apply(final String a) {
     final File f = new File(a);
     final String modifiedFilePath = f.getAbsolutePath();
     final String fileName = f.getName();
@@ -33,17 +33,17 @@ class PathToJavaClassConverter implements Function<String, Iterable<String>> {
         && (fileName.indexOf('.') != -1)) {
       return createClassGlobFromFilePath(this.sourceRoot, modifiedFilePath);
     }
-    return Collections.emptyList();
+    return Stream.empty();
 
   }
 
-  private Iterable<String> createClassGlobFromFilePath(final String sourceRoot,
+  private Stream<String> createClassGlobFromFilePath(final String sourceRoot,
       final String modifiedFilePath) {
     final String rootedPath = modifiedFilePath.substring(sourceRoot.length() + 1);
     // some scms report paths in portable format, some in os specific format (i
     // think)
     // replace both possibilities regardless of host os
-    return Collections.singleton(stripFileExtension(rootedPath).replace('/',
+    return Stream.of(stripFileExtension(rootedPath).replace('/',
         '.').replace('\\', '.')
         + "*");
   }

@@ -8,7 +8,6 @@ import org.pitest.classpath.CodeSource;
 import org.pitest.classpath.DirectoryClassPathRoot;
 import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
-import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.config.DefaultCodePathPredicate;
 import org.pitest.mutationtest.config.DefaultDependencyPathPredicate;
@@ -21,6 +20,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 class CodeSourceAggregator {
 
@@ -49,10 +49,14 @@ class CodeSourceAggregator {
     for (final File buildOutputDirectory : this.compiledCodeDirectories) {
       if (buildOutputDirectory.exists()) {
         final DirectoryClassPathRoot dcRoot = new DirectoryClassPathRoot(buildOutputDirectory);
-        classes.addAll(FCollection.map(dcRoot.classNames(), toPredicate()));
+        classes.addAll(dcRoot.classNames().stream()
+                .map(toPredicate())
+                .collect(Collectors.toList()));
       }
     }
-    return Prelude.or(FCollection.map(classes, Glob.toGlobPredicate()));
+    return Prelude.or(classes.stream()
+            .map(Glob.toGlobPredicate())
+            .collect(Collectors.toList()));
   }
 
   private Function<String, String> toPredicate() {

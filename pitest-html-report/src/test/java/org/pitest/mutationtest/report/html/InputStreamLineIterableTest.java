@@ -20,7 +20,6 @@ import java.io.StringReader;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.pitest.functional.FCollection;
 
 public class InputStreamLineIterableTest {
 
@@ -34,7 +33,7 @@ public class InputStreamLineIterableTest {
 
   @Test
   public void shouldReadAllInput() {
-    assertThat(FCollection.map(testee, s -> s)).containsExactly("1", "2", "3");
+    assertThat(testee).containsExactly("1", "2", "3");
   }
 
 }

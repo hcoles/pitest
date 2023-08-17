@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -77,8 +78,9 @@ public class MutationSourceTest {
   }
 
   private List<TestInfo> makeTestInfos(final Integer... times) {
-    return new ArrayList<>(FCollection.map(Arrays.asList(times),
-        timeToTestInfo()));
+    return Arrays.stream(times)
+            .map(timeToTestInfo())
+            .collect(Collectors.toList());
   }
 
   private Function<Integer, TestInfo> timeToTestInfo() {

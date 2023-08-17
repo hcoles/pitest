@@ -18,7 +18,6 @@ import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.pitest.coverage.ClassLines;
 import org.pitest.coverage.ReportCoverage;
-import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.SourceLocator;
@@ -41,6 +40,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
@@ -159,9 +159,10 @@ public class MutationHtmlReportListener implements MutationResultListener {
     return Collections.emptyList();
   }
 
-  private Collection<String> classInfoToNames(
-      final Collection<ClassLines> classes) {
-    return FCollection.map(classes, classInfoToJavaName());
+  private Collection<String> classInfoToNames(Collection<ClassLines> classes) {
+    return classes.stream()
+            .map(classInfoToJavaName())
+            .collect(Collectors.toList());
   }
 
   private Function<ClassLines, String> classInfoToJavaName() {

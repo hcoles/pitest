@@ -56,7 +56,9 @@ public class MutationTestBuilder {
       final Collection<ClassName> codeClasses) {
     final List<MutationAnalysisUnit> tus = new ArrayList<>();
 
-    final List<MutationDetails> mutations = FCollection.flatMap(codeClasses, mutationSource::createMutations);
+    final List<MutationDetails> mutations = codeClasses.stream()
+                    .flatMap(c -> mutationSource.createMutations(c).stream())
+                            .collect(Collectors.toList());
 
     mutations.sort(comparing(MutationDetails::getId));
 
@@ -107,8 +109,9 @@ public class MutationTestBuilder {
   }
 
   private static Function<MutationDetails, Iterable<ClassName>> mutationDetailsToTestClass() {
-    return a -> FCollection.map(a.getTestsInOrder(),
-        TestInfo.toDefiningClassName());
+    return a -> a.getTestsInOrder().stream()
+            .map(TestInfo.toDefiningClassName())
+            .collect(Collectors.toList());
   }
 
 }

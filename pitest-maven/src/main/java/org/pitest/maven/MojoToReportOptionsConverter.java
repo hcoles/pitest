@@ -52,6 +52,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.pitest.functional.Streams.asStream;
+
 public class MojoToReportOptionsConverter {
 
   private final AbstractPitMojo                 mojo;
@@ -350,11 +352,15 @@ public class MojoToReportOptionsConverter {
 
   private Collection<Predicate<String>> globStringsToPredicates(
       final List<String> excludedMethods) {
-    return FCollection.map(excludedMethods, Glob.toGlobPredicate());
+    return asStream(excludedMethods)
+            .map(Glob.toGlobPredicate())
+            .collect(Collectors.toList());
   }
 
   private Collection<Predicate<String>> determineTargetTests() {
-    return FCollection.map(useConfiguredTargetTestsOrFindOccupiedPackages(this.mojo.getTargetTests()), Glob.toGlobPredicate());
+    return useConfiguredTargetTestsOrFindOccupiedPackages(this.mojo.getTargetTests()).stream()
+            .map(Glob.toGlobPredicate())
+            .collect(Collectors.toList());
   }
 
   private Collection<String> useConfiguredTargetTestsOrFindOccupiedPackages(
