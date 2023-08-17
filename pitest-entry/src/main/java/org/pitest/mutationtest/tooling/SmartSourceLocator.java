@@ -23,9 +23,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 
-import org.pitest.functional.FCollection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,16 +40,15 @@ public class SmartSourceLocator implements SourceLocator {
 
   public SmartSourceLocator(final Collection<Path> roots, Charset inputCharset) {
     this.inputCharset = inputCharset;
-    final Collection<Path> childDirs = FCollection.flatMap(roots, collectChildren(MAX_DEPTH));
+    final Collection<Path> childDirs = roots.stream()
+                    .flatMap(r -> collectDirectories(r, MAX_DEPTH).stream())
+                            .collect(Collectors.toList());
+
     childDirs.addAll(roots);
 
     this.children = childDirs.stream()
             .map(f -> new DirectorySourceLocator(f, this.inputCharset))
             .collect(Collectors.toList());
-  }
-
-  private Function<Path, Collection<Path>> collectChildren(final int depth) {
-    return a -> collectDirectories(a, depth);
   }
 
   private Collection<Path> collectDirectories(Path root, int depth) {

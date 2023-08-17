@@ -18,7 +18,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -120,17 +119,18 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
   private List<String> getCategories(final Class<?> a) {
     final Category c = a.getAnnotation(Category.class);
-    return FCollection.flatMap(Arrays.asList(c), toCategoryNames());
+    return Stream.of(c)
+            .flatMap(toCategoryNames())
+            .collect(Collectors.toList());
   }
 
-  private Function<Category, Iterable<String>> toCategoryNames() {
+  private Function<Category, Stream<String>> toCategoryNames() {
     return a -> {
       if (a == null) {
-        return Collections.emptyList();
+        return Stream.empty();
       }
       return Stream.of(a.value())
-              .map(Class::getName)
-              .collect(Collectors.toList());
+              .map(Class::getName);
     };
   }
 

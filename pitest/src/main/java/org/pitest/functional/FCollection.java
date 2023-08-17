@@ -28,6 +28,7 @@ import java.util.function.Predicate;
  */
 public abstract class FCollection {
 
+  @Deprecated
   public static <A, B> void mapTo(final Iterable<? extends A> as,
       final Function<A, B> f, final Collection<? super B> bs) {
     if (as != null) {
@@ -37,6 +38,7 @@ public abstract class FCollection {
     }
   }
 
+  @Deprecated
   public static <A, B> List<B> map(final Iterable<? extends A> as,
       final Function<A, B> f) {
     final List<B> bs = emptyList();
@@ -55,6 +57,7 @@ public abstract class FCollection {
     }
   }
 
+  @Deprecated
   public static <A, B> List<B> flatMap(
       final Iterable<? extends A> as, final Function<A, ? extends Iterable<B>> f) {
     final List<B> bs = emptyList();
@@ -62,10 +65,8 @@ public abstract class FCollection {
     return bs;
   }
 
-  private static <T> List<T> emptyList() {
-    return new ArrayList<>();
-  }
 
+  @Deprecated
   public static <T> List<T> filter(final Iterable<? extends T> xs,
       final Predicate<T> predicate) {
     final List<T> dest = emptyList();
@@ -73,7 +74,7 @@ public abstract class FCollection {
     return dest;
   }
 
-  public static <T> void filter(final Iterable<? extends T> xs,
+  private static <T> void filter(final Iterable<? extends T> xs,
       final Predicate<T> predicate, final Collection<? super T> dest) {
     for (final T x : xs) {
       if (predicate.test(x)) {
@@ -82,6 +83,7 @@ public abstract class FCollection {
     }
   }
 
+  @Deprecated
   public static <T> boolean contains(final Iterable<? extends T> xs,
       final Predicate<T> predicate) {
     for (final T x : xs) {
@@ -102,6 +104,7 @@ public abstract class FCollection {
     return p;
   }
 
+  @Deprecated
   public static <T> Collection<T> flatten(
       final Iterable<? extends Iterable<? extends T>> ts) {
     final List<T> list = new ArrayList<>();
@@ -142,6 +145,10 @@ public abstract class FCollection {
       existing.add(each);
     }
     return bucketed;
+  }
+
+  private static <T> List<T> emptyList() {
+    return new ArrayList<>();
   }
 
 }
