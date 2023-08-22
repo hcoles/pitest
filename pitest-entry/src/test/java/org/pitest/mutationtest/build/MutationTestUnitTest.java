@@ -25,7 +25,6 @@ import org.pitest.mutationtest.engine.MutationDetailsMother;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.process.JavaAgent;
 import org.pitest.process.LaunchOptions;
-import org.pitest.testapi.Configuration;
 import org.pitest.util.Verbosity;
 
 public class MutationTestUnitTest {
@@ -33,9 +32,6 @@ public class MutationTestUnitTest {
   private MutationTestUnit      testee;
   private List<MutationDetails> mutations;
   private Collection<ClassName> tests;
-
-  @Mock
-  private Configuration         config;
 
   private MutationConfig        mutationConfig;
 
@@ -55,7 +51,7 @@ public class MutationTestUnitTest {
         this.javaAgent));
     this.mutations = new ArrayList<>();
     this.tests = new ArrayList<>();
-    this.testee = new MutationTestUnit(this.mutations, this.tests,
+    this.testee = new MutationTestUnit(this.mutations,
         new WorkerFactory(null, TestPluginArguments.defaults(), this.mutationConfig, EngineArguments.arguments(), this.timeout,
             Verbosity.DEFAULT, false, null));
 
@@ -75,7 +71,7 @@ public class MutationTestUnitTest {
   public void shouldReportPriorityBasedOnNumberOfMutations() {
     this.mutations.add(MutationDetailsMother.aMutationDetail().build());
     this.testee = new MutationTestUnit(MutationDetailsMother.aMutationDetail()
-        .build(42), this.tests, null);
+        .build(42), null);
     assertThat(this.testee.priority()).isEqualTo(42);
   }
 

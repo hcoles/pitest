@@ -15,7 +15,6 @@
 package org.pitest.mutationtest.build;
 
 import org.pitest.classinfo.ClassName;
-import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.DetectionStatus;
@@ -25,10 +24,7 @@ import org.pitest.mutationtest.engine.MutationDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -96,22 +92,11 @@ public class MutationTestBuilder {
 
   private MutationAnalysisUnit makeUnanalysedUnit(
       final Collection<MutationDetails> needAnalysis) {
-    final Set<ClassName> uniqueTestClasses = new HashSet<>();
-    FCollection.flatMapTo(needAnalysis, mutationDetailsToTestClass(),
-        uniqueTestClasses);
-
-    return new MutationTestUnit(needAnalysis, uniqueTestClasses,
-        this.workerFactory);
+    return new MutationTestUnit(needAnalysis, this.workerFactory);
   }
 
   private static Predicate<MutationResult> statusNotKnown() {
     return a -> a.getStatus() == DetectionStatus.NOT_STARTED;
-  }
-
-  private static Function<MutationDetails, Iterable<ClassName>> mutationDetailsToTestClass() {
-    return a -> a.getTestsInOrder().stream()
-            .map(TestInfo.toDefiningClassName())
-            .collect(Collectors.toList());
   }
 
 }

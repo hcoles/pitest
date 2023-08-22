@@ -16,9 +16,12 @@ package org.pitest.mutationtest.build;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.pitest.classinfo.ClassName;
+import org.pitest.coverage.TestInfo;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationMetaData;
 import org.pitest.mutationtest.MutationStatusMap;
@@ -34,12 +37,9 @@ public class MutationTestUnit implements MutationAnalysisUnit {
   private final Collection<MutationDetails> availableMutations;
   private final WorkerFactory               workerFactory;
 
-  private final Collection<ClassName>       testClasses;
 
-  public MutationTestUnit(final Collection<MutationDetails> availableMutations,
-      final Collection<ClassName> testClasses, final WorkerFactory workerFactory) {
+  public MutationTestUnit(Collection<MutationDetails> availableMutations, WorkerFactory workerFactory) {
     this.availableMutations = availableMutations;
-    this.testClasses = testClasses;
     this.workerFactory = workerFactory;
   }
 
@@ -76,7 +76,7 @@ public class MutationTestUnit implements MutationAnalysisUnit {
     final Collection<MutationDetails> remainingMutations = mutations
         .getUnrunMutations();
     final MutationTestProcess worker = this.workerFactory.createWorker(
-        remainingMutations, this.testClasses);
+        remainingMutations, testClassesFor(remainingMutations));
     worker.start();
 
     setFirstMutationToStatusOfStartedInCaseMinionFailsAtBoot(mutations,
@@ -86,6 +86,12 @@ public class MutationTestUnit implements MutationAnalysisUnit {
     worker.results(mutations);
 
     correctResultForProcessExitCode(mutations, exitCode);
+  }
+
+  private Set<ClassName> testClassesFor(Collection<MutationDetails> remainingMutations) {
+    return remainingMutations.stream()
+            .flatMap(m -> m.getTestsInOrder().stream().map(TestInfo.toDefiningClassName()))
+            .collect(Collectors.toSet());
   }
 
   private static ExitCode waitForMinionToDie(final MutationTestProcess worker) {
