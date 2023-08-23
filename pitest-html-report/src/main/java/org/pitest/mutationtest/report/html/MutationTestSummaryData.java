@@ -97,10 +97,10 @@ public class MutationTestSummaryData {
   }
 
   public Collection<TestInfo> getTests() {
-    final Set<TestInfo> uniqueTests = new HashSet<>();
-    FCollection.flatMapTo(this.mutations.values(), mutationToTargettedTests(),
-        uniqueTests);
-    return uniqueTests;
+    return this.mutations.values().stream()
+            .flatMap(a -> a.getDetails().getTestsInOrder().stream())
+            .distinct()
+            .collect(Collectors.toList());
   }
 
   public String getFileName() {
@@ -143,10 +143,6 @@ public class MutationTestSummaryData {
       }
     }
     return count;
-  }
-
-  private Function<MutationResult, Iterable<TestInfo>> mutationToTargettedTests() {
-    return a -> a.getDetails().getTestsInOrder();
   }
 
   private static Map<MutationIdentifier, MutationResult> resultsToMap(Collection<MutationResult> results) {

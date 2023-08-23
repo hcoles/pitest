@@ -46,6 +46,7 @@ public abstract class FCollection {
     return bs;
   }
 
+  @Deprecated
   public static <A, B> void flatMapTo(final Iterable<? extends A> as,
       final Function<A, ? extends Iterable<B>> f, final Collection<? super B> bs) {
     if (as != null) {

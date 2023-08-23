@@ -14,7 +14,6 @@
  */
 package org.pitest.mutationtest.engine.gregor.config;
 
-import org.pitest.functional.FCollection;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -42,6 +41,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.pitest.functional.Streams.asStream;
 
@@ -120,11 +120,13 @@ public final class Mutator {
             .filter(s -> !s.startsWith("-"))
             .collect(Collectors.toList());
 
-    final Set<MethodMutatorFactory> unique = new TreeSet<>(compareId());
-    FCollection.flatMapTo(inclusions, fromString(MUTATORS), unique);
+    Set<MethodMutatorFactory> unique = inclusions.stream()
+            .flatMap(fromString(MUTATORS))
+            .collect(Collectors.toCollection(() -> new TreeSet<>(compareId())));
 
-    final Set<MethodMutatorFactory> excluded = new TreeSet<>(compareId());
-    FCollection.flatMapTo(exclusions, fromString(MUTATORS), excluded);
+    Set<MethodMutatorFactory> excluded = exclusions.stream()
+            .flatMap(fromString(MUTATORS))
+            .collect(Collectors.toCollection(() -> new TreeSet<>(compareId())));
 
     unique.removeAll(excluded);
 
@@ -135,18 +137,18 @@ public final class Mutator {
     return Comparator.comparing(MethodMutatorFactory::getGloballyUniqueId);
   }
 
-  private static Function<String, Iterable<MethodMutatorFactory>> fromString(Map<String, List<MethodMutatorFactory>> mutators) {
+  private static Function<String, Stream<MethodMutatorFactory>> fromString(Map<String, List<MethodMutatorFactory>> mutators) {
     return a -> {
 
       if (a.equals("ALL")) {
-        return all();
+        return all().stream();
       }
 
-      final Iterable<MethodMutatorFactory> i = mutators.get(a);
+      final List<MethodMutatorFactory> i = mutators.get(a);
       if (i == null) {
         throw new PitHelpError(Help.UNKNOWN_MUTATOR, a);
       }
-      return i;
+      return i.stream();
     };
   }
 
