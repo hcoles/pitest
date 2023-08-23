@@ -1,0 +1,11 @@
+package org.pitest.mutationtest;
+
+import org.pitest.mutationtest.incremental.WriterFactory;
+import org.pitest.plugin.ToolClasspathPlugin;
+
+import java.io.Reader;
+import java.util.Optional;
+
+public interface HistoryFactory extends ToolClasspathPlugin {
+    HistoryStore makeHistory(WriterFactory output, Optional<Reader> input);
+}

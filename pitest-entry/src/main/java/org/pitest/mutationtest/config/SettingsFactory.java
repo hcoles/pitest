@@ -5,6 +5,7 @@ import org.pitest.classpath.CodeSourceFactory;
 import org.pitest.classpath.DefaultCodeSource;
 import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageExporter;
+import org.pitest.mutationtest.HistoryFactory;
 import org.pitest.mutationtest.build.CoverageTransformer;
 import org.pitest.mutationtest.build.CoverageTransformerFactory;
 import org.pitest.coverage.execute.CoverageOptions;
@@ -21,6 +22,7 @@ import org.pitest.mutationtest.build.DefaultTestPrioritiserFactory;
 import org.pitest.mutationtest.build.MutationGrouperFactory;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.mutationtest.build.TestPrioritiserFactory;
+import org.pitest.mutationtest.incremental.DefaultHistory;
 import org.pitest.mutationtest.verify.BuildVerifierFactory;
 import org.pitest.mutationtest.verify.CompoundBuildVerifierFactory;
 import org.pitest.plugin.Feature;
@@ -110,9 +112,20 @@ public class SettingsFactory {
       return new DefaultCodeSource(classPath);
     }
     if (sources.size() > 1) {
-       throw new RuntimeException("More than CodeSource found on classpath.");
+       throw new RuntimeException("More than one CodeSource found on classpath.");
     }
     return sources.get(0).createCodeSource(classPath);
+  }
+
+  public HistoryFactory createHistory() {
+    List<HistoryFactory> sources = this.plugins.findHistory();
+    if (sources.isEmpty()) {
+      return new DefaultHistory();
+    }
+    if (sources.size() > 1) {
+      throw new RuntimeException("More than one HistoryFactory found on classpath.");
+    }
+    return sources.get(0);
   }
 
   public void describeFeatures(Consumer<Feature> enabled, Consumer<Feature> disabled) {

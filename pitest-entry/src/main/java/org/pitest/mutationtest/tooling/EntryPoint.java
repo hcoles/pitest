@@ -7,6 +7,7 @@ import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
+import org.pitest.mutationtest.HistoryFactory;
 import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.config.PluginServices;
@@ -14,7 +15,6 @@ import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.incremental.NullHistoryStore;
 import org.pitest.mutationtest.incremental.NullWriterFactory;
-import org.pitest.mutationtest.incremental.ObjectOutputStreamHistoryStore;
 import org.pitest.mutationtest.incremental.WriterFactory;
 import org.pitest.plugin.Feature;
 import org.pitest.plugin.FeatureParameter;
@@ -116,7 +116,8 @@ public class EntryPoint {
 
     final Optional<WriterFactory> maybeWriter = data.createHistoryWriter();
     WriterFactory historyWriter = maybeWriter.orElse(new NullWriterFactory());
-    final HistoryStore history = makeHistoryStore(data, maybeWriter);
+    HistoryFactory historyFactory = settings.createHistory();
+    final HistoryStore history = pickHistoryStore(data, maybeWriter, historyFactory);
 
     final MutationStrategies strategies = new MutationStrategies(
         settings.createEngine(), history, coverageDatabase, reportFactory, settings.getResultInterceptor(),
@@ -146,15 +147,14 @@ public class EntryPoint {
 
   private void updateData(ReportOptions data, SettingsFactory settings) {
     settings.createUpdater().updateConfig(null, data);
-
   }
 
-  private HistoryStore makeHistoryStore(ReportOptions data,  Optional<WriterFactory> historyWriter) {
+  private HistoryStore pickHistoryStore(ReportOptions data, Optional<WriterFactory> historyWriter, HistoryFactory factory) {
     final Optional<Reader> reader = data.createHistoryReader();
     if (!reader.isPresent() && !historyWriter.isPresent()) {
       return new NullHistoryStore();
     }
-    return new ObjectOutputStreamHistoryStore(historyWriter.orElse(new NullWriterFactory()), reader);
+    return factory.makeHistory(historyWriter.orElse(new NullWriterFactory()), reader);
   }
 
   private void checkMatrixMode(ReportOptions data) {

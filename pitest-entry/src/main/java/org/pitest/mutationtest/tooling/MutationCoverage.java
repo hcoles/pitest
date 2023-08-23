@@ -153,7 +153,7 @@ public class MutationCoverage {
 
   private CombinedStatistics runAnalysis(Runtime runtime, long t0, EngineArguments args, MutationEngine engine, List<String> issues) {
     CoverageDatabase coverageData = coverage().calculateCoverage();
-    HistoryStore history =  this.strategies.history();
+    HistoryStore history = this.strategies.history();
 
     LOG.fine("Used memory after coverage calculation "
         + ((runtime.totalMemory() - runtime.freeMemory()) / MB) + " mb");

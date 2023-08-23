@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
+import org.pitest.mutationtest.incremental.DefaultHistory;
 import org.pitest.plugin.Feature;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.PitError;
@@ -15,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.Consumer;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -144,6 +146,11 @@ public class SettingsFactoryTest {
     assertThatCode( () ->this.testee.checkRequestedFeatures())
             .doesNotThrowAnyException();
 
+  }
+
+  @Test
+  public void producesDefaultHistoryStore() {
+    assertThat(this.testee.createHistory()).isInstanceOf(DefaultHistory.class);
   }
 
 }
