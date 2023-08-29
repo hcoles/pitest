@@ -28,7 +28,7 @@ public class HistoryListener implements MutationResultListener {
 
   @Override
   public void runEnd() {
-
+    this.historyStore.close();
   }
 
 }

@@ -36,6 +36,11 @@ public class NullHistoryStore implements HistoryStore {
   }
 
   @Override
+  public void close() {
+
+  }
+
+  @Override
   public void recordClassPath(final Collection<HierarchicalClassId> ids,
       final CoverageDatabase coverageInfo) {
 

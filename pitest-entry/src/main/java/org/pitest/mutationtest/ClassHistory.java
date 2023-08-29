@@ -2,6 +2,7 @@ package org.pitest.mutationtest;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
@@ -46,5 +47,13 @@ public class ClassHistory implements Serializable {
     final ClassHistory other = (ClassHistory) obj;
     return Objects.equals(id, other.id)
             && Objects.equals(coverageId, other.coverageId);
+  }
+
+  @Override
+  public String toString() {
+    return new StringJoiner(", ", ClassHistory.class.getSimpleName() + "[", "]")
+            .add("id=" + id)
+            .add("coverageId='" + coverageId + "'")
+            .toString();
   }
 }

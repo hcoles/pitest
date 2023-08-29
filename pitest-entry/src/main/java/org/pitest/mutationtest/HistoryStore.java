@@ -20,4 +20,5 @@ public interface HistoryStore {
 
   Map<ClassName, ClassHistory> getHistoricClassPath();
 
+  void close();
 }

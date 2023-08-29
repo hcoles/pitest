@@ -79,6 +79,11 @@ public class ObjectOutputStreamHistoryStore implements HistoryStore {
   }
 
   @Override
+  public void close() {
+
+  }
+
+  @Override
   public void initialize() {
     if (this.input != null) {
       restoreClassPath();
