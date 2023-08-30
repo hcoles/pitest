@@ -1,6 +1,7 @@
   package org.pitest.plugin;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 
 import java.util.Collections;
 import java.util.List;
@@ -11,17 +12,12 @@ import org.junit.rules.ExpectedException;
 import java.util.Optional;
 
 public class FeatureParserTest {
-
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
-
   FeatureParser testee = new FeatureParser();
 
   @Test
   public void shouldRejectInputNotStartingWithPlusOrMinus() {
-    this.thrown.expect(RuntimeException.class);
-    final FeatureSetting actual = parse("FOO");
-    assertThat(actual.addsFeature()).isFalse();
+    assertThatCode( () -> parse("FOO"))
+            .hasMessageContaining("Could not parse FOO");
   }
 
   @Test
@@ -86,6 +82,12 @@ public class FeatureParserTest {
   public void shouldParseListValues() {
     final FeatureSetting actual = parse("+BAR(things[1] things[2] things[3] things[4] size[42])");
     assertThat(actual.getList("things")).contains("1","2","3","4");
+  }
+
+  @Test
+  public void failsCleanlyWhenBracketsWrongWayRound() {
+    assertThatCode(() -> parse("+BAR[things(1])]"))
+            .hasMessageContaining("Could not parse feature. Parameters should be configured with +feature(param[value], param2[value2])");
   }
 
 
