@@ -54,7 +54,11 @@ public class FeatureParser {
       if (current == null) {
         current = new ArrayList<>();
       }
-      current.add(pairs[i + 1].trim());
+      if (i + 1 < pairs.length) {
+        current.add(pairs[i + 1].trim());
+      } else {
+        throw new RuntimeException("Could not parse feature. Parameters should be configured with +feature(param[value], param2[value2])");
+      }
      vals.put(key, current);
     }
   }
