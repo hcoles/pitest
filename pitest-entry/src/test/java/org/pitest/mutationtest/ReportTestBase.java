@@ -2,7 +2,6 @@ package org.pitest.mutationtest;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,7 +25,7 @@ import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
-import org.pitest.mutationtest.incremental.NullHistoryStore;
+import org.pitest.mutationtest.incremental.NullHistory;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.mutationtest.tooling.MutationCoverage;
 import org.pitest.mutationtest.tooling.MutationStrategies;
@@ -121,7 +120,7 @@ public abstract class ReportTestBase {
           null, coverageOptions, launchOptions, code,
           new NullCoverageExporter(), timings, Verbosity.DEFAULT);
 
-      final HistoryStore history = new NullHistoryStore();
+      final History history = new NullHistory();
 
       final MutationStrategies strategies = new MutationStrategies(
           new GregorEngineFactory(), history, coverageDatabase,

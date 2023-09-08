@@ -7,18 +7,20 @@ import java.util.stream.Stream;
 
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.classinfo.ClassInfo;
-import org.pitest.classinfo.ClassInfoSource;
+import org.pitest.classinfo.ClassHash;
+import org.pitest.classinfo.ClassHashSource;
 import org.pitest.classinfo.ClassName;
 
 /**
  * Provides access to code and tests on the classpath
  */
-public interface CodeSource extends ClassInfoSource, ClassByteArraySource {
+public interface CodeSource extends ClassHashSource, ClassByteArraySource {
 
   Stream<ClassTree> codeTrees();
 
   Set<ClassName> getCodeUnderTestNames();
+
+  Set<ClassName> getTestClassNames();
 
   Stream<ClassTree> testTrees();
 
@@ -28,9 +30,8 @@ public interface CodeSource extends ClassInfoSource, ClassByteArraySource {
 
   Optional<byte[]> fetchClassBytes(ClassName clazz);
 
-  @Override
-  Optional<ClassInfo> fetchClass(ClassName clazz);
-  Collection<ClassInfo> getClassInfo(Collection<ClassName> classes);
+  Optional<ClassHash> fetchClassHash(ClassName clazz);
+  Collection<ClassHash> fetchClassHashes(Collection<ClassName> classes);
 
   @Override
   Optional<byte[]> getBytes(String clazz);

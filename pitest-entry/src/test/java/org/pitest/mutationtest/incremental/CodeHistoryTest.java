@@ -13,10 +13,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.classinfo.ClassHashSource;
 import org.pitest.classinfo.ClassIdentifier;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoMother;
-import org.pitest.classinfo.ClassInfoSource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
 import java.util.Optional;
@@ -25,12 +25,12 @@ import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
-public class DefaultCodeHistoryTest {
+public class CodeHistoryTest {
 
-  private DefaultCodeHistory                                    testee;
+  private CodeHistory                                    testee;
 
   @Mock
-  private ClassInfoSource                                       classInfoSource;
+  private ClassHashSource classInfoSource;
 
   private final Map<ClassName, ClassHistory>                    historicClassPath = new HashMap<>();
 
@@ -39,7 +39,7 @@ public class DefaultCodeHistoryTest {
   @Before
   public void setUp() {
     MockitoAnnotations.openMocks(this);
-    this.testee = new DefaultCodeHistory(this.classInfoSource, this.results,
+    this.testee = new CodeHistory(this.classInfoSource, this.results,
         this.historicClassPath);
   }
 
@@ -111,12 +111,12 @@ public class DefaultCodeHistoryTest {
 
   private void setCurrentClassPath(final HierarchicalClassId currentId) {
     final ClassInfo currentClass = ClassInfoMother.make(currentId.getId());
-    when(this.classInfoSource.fetchClass(ClassName.fromString("foo")))
+    when(this.classInfoSource.fetchClassHash(ClassName.fromString("foo")))
     .thenReturn(Optional.ofNullable(currentClass));
   }
 
   private void setCurrentClassPath(final ClassInfo info) {
-    when(this.classInfoSource.fetchClass(ClassName.fromString("foo")))
+    when(this.classInfoSource.fetchClassHash(ClassName.fromString("foo")))
     .thenReturn(Optional.ofNullable(info));
   }
 

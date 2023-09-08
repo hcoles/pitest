@@ -28,7 +28,6 @@ import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageMother.BlockLocationBuilder;
 import org.pitest.coverage.CoverageMother.CoverageResultBuilder;
-import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.testapi.Description;
 
@@ -151,7 +150,7 @@ public class CoverageDataTest {
     final ClassName foo = ClassName.fromString("Foo");
     final ClassInfo ci = ClassInfoMother.make(foo);
 
-    when(this.code.getClassInfo(any(Collection.class))).thenReturn(
+    when(this.code.fetchClassHashes(any(Collection.class))).thenReturn(
         Collections.singletonList(ci));
 
     final BlockLocationBuilder block = aBlockLocation().withLocation(

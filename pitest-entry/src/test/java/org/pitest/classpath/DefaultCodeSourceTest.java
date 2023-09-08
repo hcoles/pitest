@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.classinfo.ClassHash;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoMother;
 import org.pitest.classinfo.ClassName;
@@ -27,9 +28,9 @@ public class DefaultCodeSourceTest {
   @Mock
   private ProjectClassPaths   classPath;
 
-  private ClassInfo           foo;
+  private ClassHash foo;
 
-  private ClassInfo           bar;
+  private ClassHash           bar;
 
   @Before
   public void setUp() {
@@ -83,11 +84,11 @@ public class DefaultCodeSourceTest {
 
   @Test
   public void shouldProvideDetailsOfRequestedClasses() {
-    when(this.repository.fetchClass(ClassName.fromString("Foo"))).thenReturn(
+    when(this.repository.fetchClassHash(ClassName.fromString("Foo"))).thenReturn(
         Optional.ofNullable(this.foo));
-    when(this.repository.fetchClass(ClassName.fromString("Unknown")))
-    .thenReturn(Optional.<ClassInfo> empty());
-    assertEquals(Arrays.asList(this.foo), this.testee.getClassInfo(Arrays
+    when(this.repository.fetchClassHash(ClassName.fromString("Unknown")))
+    .thenReturn(Optional.<ClassHash> empty());
+    assertEquals(Arrays.asList(this.foo), this.testee.fetchClassHashes(Arrays
         .asList(ClassName.fromString("Foo"), ClassName.fromString("Unknown"))));
   }
 
@@ -99,7 +100,7 @@ public class DefaultCodeSourceTest {
 
   private ClassInfo makeClassInfo(final String name) {
     final ClassInfo ci = ClassInfoMother.make(name);
-    when(this.repository.fetchClass(ClassName.fromString(name))).thenReturn(
+    when(this.repository.fetchClassHash(ClassName.fromString(name))).thenReturn(
         Optional.ofNullable(ci));
     return ci;
   }

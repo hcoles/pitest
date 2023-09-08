@@ -22,7 +22,7 @@ import org.pitest.mutationtest.build.DefaultTestPrioritiserFactory;
 import org.pitest.mutationtest.build.MutationGrouperFactory;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.mutationtest.build.TestPrioritiserFactory;
-import org.pitest.mutationtest.incremental.DefaultHistory;
+import org.pitest.mutationtest.incremental.DefaultHistoryFactory;
 import org.pitest.mutationtest.verify.BuildVerifierFactory;
 import org.pitest.mutationtest.verify.CompoundBuildVerifierFactory;
 import org.pitest.plugin.Feature;
@@ -120,7 +120,7 @@ public class SettingsFactory {
   public HistoryFactory createHistory() {
     List<HistoryFactory> sources = this.plugins.findHistory();
     if (sources.isEmpty()) {
-      return new DefaultHistory();
+      return new DefaultHistoryFactory();
     }
     if (sources.size() > 1) {
       throw new RuntimeException("More than one HistoryFactory found on classpath.");

@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
-import org.pitest.mutationtest.incremental.DefaultHistory;
+import org.pitest.mutationtest.incremental.DefaultHistoryFactory;
 import org.pitest.plugin.Feature;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.PitError;
@@ -150,7 +150,7 @@ public class SettingsFactoryTest {
 
   @Test
   public void producesDefaultHistoryStore() {
-    assertThat(this.testee.createHistory()).isInstanceOf(DefaultHistory.class);
+    assertThat(this.testee.createHistory()).isInstanceOf(DefaultHistoryFactory.class);
   }
 
 }

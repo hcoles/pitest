@@ -15,12 +15,15 @@
 
 package org.pitest.coverage;
 
+import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.process.LaunchOptions;
 
+import java.util.function.Predicate;
+
 public interface CoverageGenerator {
 
-  CoverageDatabase calculateCoverage();
+  CoverageDatabase calculateCoverage(Predicate<ClassName> testFilter);
 
   TestPluginArguments getConfiguration();
 

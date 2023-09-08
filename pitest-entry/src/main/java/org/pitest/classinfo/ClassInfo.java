@@ -22,17 +22,22 @@ import java.util.Optional;
  * a class between runs are tracked by calculating the hash of its bytecode and the
  * bytecode of classes it has a strong relationship to.
  */
-public final class ClassInfo {
+public final class ClassInfo implements ClassHash {
 
   private final ClassIdentifier        id;
   private final ClassPointer           outerClass;
   private final ClassPointer           superClass;
 
   public ClassInfo(ClassPointer superClass, ClassPointer outerClass, ClassInfoBuilder builder) {
+    this(superClass, outerClass, builder.id);
+  }
+
+  public ClassInfo(ClassPointer superClass, ClassPointer outerClass, ClassIdentifier id) {
     this.superClass = superClass;
     this.outerClass = outerClass;
-    this.id = builder.id;
+    this.id = id;
   }
+
   public ClassIdentifier getId() {
     return this.id;
   }

@@ -12,32 +12,40 @@ import java.io.Serializable;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
+import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageDatabase;
 import java.util.Optional;
 import org.pitest.mutationtest.ClassHistory;
-import org.pitest.mutationtest.HistoryStore;
+import org.pitest.mutationtest.History;
+import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
+import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.util.Log;
 import org.pitest.util.Unchecked;
 
-public class ObjectOutputStreamHistoryStore implements HistoryStore {
+public class ObjectOutputStreamHistory implements History {
 
   private static final Logger                                   LOG               = Log
       .getLogger();
+
+  private final CodeSource code;
   private final WriterFactory                                   outputFactory;
   private final BufferedReader                                  input;
   private final Map<MutationIdentifier, MutationStatusTestPair> previousResults   = new HashMap<>();
   private final Map<ClassName, ClassHistory>                    previousClassPath = new HashMap<>();
+  private CoverageDatabase coverageData;
 
-  public ObjectOutputStreamHistoryStore(final WriterFactory output,
-      final Optional<Reader> input) {
+  public ObjectOutputStreamHistory(CodeSource code, WriterFactory output,
+                                   final Optional<Reader> input) {
+    this.code = code;
     this.outputFactory = output;
     this.input = createReader(input);
   }
@@ -63,19 +71,16 @@ public class ObjectOutputStreamHistoryStore implements HistoryStore {
   @Override
   public void recordResult(final MutationResult result) {
     final PrintWriter output = this.outputFactory.create();
-    output.println(serialize(new ObjectOutputStreamHistoryStore.IdResult(
+    output.println(serialize(new ObjectOutputStreamHistory.IdResult(
         result.getDetails().getId(), result.getStatusTestPair())));
     output.flush();
   }
 
   @Override
-  public Map<MutationIdentifier, MutationStatusTestPair> getHistoricResults() {
-    return this.previousResults;
-  }
-
-  @Override
-  public Map<ClassName, ClassHistory> getHistoricClassPath() {
-    return this.previousClassPath;
+  public List<MutationResult> analyse(List<MutationDetails> mutationsForClasses) {
+     final MutationAnalyser analyser =  new IncrementalAnalyser(new CodeHistory(code, this.previousResults, this.previousClassPath),
+            this.coverageData);
+    return analyser.analyse(mutationsForClasses);
   }
 
   @Override
@@ -94,6 +99,11 @@ public class ObjectOutputStreamHistoryStore implements HistoryStore {
         throw Unchecked.translateCheckedException(e);
       }
     }
+  }
+
+  @Override
+  public void processCoverage(CoverageDatabase coverageData) {
+    this.coverageData = coverageData;
   }
 
   private void restoreResults() {
@@ -145,6 +155,14 @@ public class ObjectOutputStreamHistoryStore implements HistoryStore {
     } catch (final IOException e) {
       throw Unchecked.translateCheckedException(e);
     }
+  }
+
+  public Map<ClassName, ClassHistory> getHistoricClassPath() {
+    return this.previousClassPath;
+  }
+
+  public Map<MutationIdentifier, MutationStatusTestPair> getHistoricResults() {
+    return this.previousResults;
   }
 
   private static class IdResult implements Serializable {

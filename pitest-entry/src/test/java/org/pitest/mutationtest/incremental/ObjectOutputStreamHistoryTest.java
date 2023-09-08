@@ -25,6 +25,7 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassIdentifier;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
+import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageDatabase;
 import java.util.Optional;
 import org.pitest.mutationtest.ClassHistory;
@@ -34,14 +35,17 @@ import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.report.MutationTestResultMother;
 
-public class ObjectOutputStreamHistoryStoreTest {
+public class ObjectOutputStreamHistoryTest {
 
     private static final String             COV           = BigInteger.TEN.toString(16);
 
-    private ObjectOutputStreamHistoryStore  testee;
+    private ObjectOutputStreamHistory testee;
 
     @Mock
     private CoverageDatabase                coverage;
+
+    @Mock
+    private CodeSource code;
 
     private final Writer                    output        = new StringWriter();
 
@@ -50,7 +54,7 @@ public class ObjectOutputStreamHistoryStoreTest {
         @Override
         public PrintWriter create() {
             return new PrintWriter(
-                ObjectOutputStreamHistoryStoreTest.this.output);
+                ObjectOutputStreamHistoryTest.this.output);
         }
 
         @Override
@@ -77,7 +81,7 @@ public class ObjectOutputStreamHistoryStoreTest {
         recordClassPathWithTestee(foo.getId(), bar.getId());
 
         final Reader reader = new StringReader(this.output.toString());
-        this.testee = new ObjectOutputStreamHistoryStore(this.writerFactory,
+        this.testee = new ObjectOutputStreamHistory(this.code, this.writerFactory,
             Optional.ofNullable(reader));
         this.testee.initialize();
 
@@ -100,7 +104,7 @@ public class ObjectOutputStreamHistoryStoreTest {
         this.testee.recordResult(mr);
 
         final Reader reader = new StringReader(this.output.toString());
-        this.testee = new ObjectOutputStreamHistoryStore(this.writerFactory,
+        this.testee = new ObjectOutputStreamHistory(this.code, this.writerFactory,
             Optional.ofNullable(reader));
         this.testee.initialize();
         final Map<MutationIdentifier, MutationStatusTestPair> expected = new HashMap<>();
@@ -111,7 +115,7 @@ public class ObjectOutputStreamHistoryStoreTest {
     @Test
     public void shouldNotAttemptToWriteToFileWhenNoneSupplied() {
         try {
-            this.testee = new ObjectOutputStreamHistoryStore(this.writerFactory,
+            this.testee = new ObjectOutputStreamHistory(this.code, this.writerFactory,
                 Optional.<Reader> empty());
             this.testee.initialize();
         } catch (final Exception ex) {
@@ -133,7 +137,7 @@ public class ObjectOutputStreamHistoryStoreTest {
         this.output.append("rubbish");
 
         final Reader reader = new StringReader(this.output.toString());
-        this.testee = new ObjectOutputStreamHistoryStore(this.writerFactory,
+        this.testee = new ObjectOutputStreamHistory(this.code, this.writerFactory,
             Optional.ofNullable(reader));
         this.testee.initialize();
 
@@ -142,7 +146,7 @@ public class ObjectOutputStreamHistoryStoreTest {
 
     private void recordClassPathWithTestee(
         final HierarchicalClassId... classIdentifiers) {
-        this.testee = new ObjectOutputStreamHistoryStore(this.writerFactory,
+        this.testee = new ObjectOutputStreamHistory(this.code, this.writerFactory,
             Optional.<Reader> empty());
         final Collection<HierarchicalClassId> ids = Arrays.asList(classIdentifiers);
         this.testee.recordClassPath(ids, this.coverage);

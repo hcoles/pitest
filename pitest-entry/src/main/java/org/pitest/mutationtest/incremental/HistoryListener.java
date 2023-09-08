@@ -1,15 +1,15 @@
 package org.pitest.mutationtest.incremental;
 
 import org.pitest.mutationtest.ClassMutationResults;
-import org.pitest.mutationtest.HistoryStore;
+import org.pitest.mutationtest.History;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationResultListener;
 
 public class HistoryListener implements MutationResultListener {
 
-  private final HistoryStore historyStore;
+  private final History historyStore;
 
-  public HistoryListener(final HistoryStore historyStore) {
+  public HistoryListener(final History historyStore) {
     this.historyStore = historyStore;
   }
 

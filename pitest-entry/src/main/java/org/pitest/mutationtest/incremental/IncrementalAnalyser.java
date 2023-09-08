@@ -22,7 +22,7 @@ import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.util.Log;
 
-public class IncrementalAnalyser implements MutationAnalyser {
+class IncrementalAnalyser implements MutationAnalyser {
 
   private static final Logger              LOG         = Log.getLogger();
 
@@ -30,36 +30,26 @@ public class IncrementalAnalyser implements MutationAnalyser {
   private final CoverageDatabase           coverage;
   private final Map<DetectionStatus, Long> preAnalysed = new EnumMap<>(DetectionStatus.class);
 
-  private final boolean enableLog;
-
-  public IncrementalAnalyser(CodeHistory history, CoverageDatabase coverage) {
-    this(history, coverage, true);
-  }
-  
-  public IncrementalAnalyser(CodeHistory history, CoverageDatabase coverage, boolean enableLog) {
+  IncrementalAnalyser(CodeHistory history, CoverageDatabase coverage) {
     this.history = history;
     this.coverage = coverage;
-    this.enableLog = enableLog;
   }
 
   @Override
-  public Collection<MutationResult> analyse(Collection<MutationDetails> mutation) {
+  public List<MutationResult> analyse(Collection<MutationDetails> mutation) {
 
     final List<MutationResult> mrs = new ArrayList<>(
         mutation.size());
     for (final MutationDetails each : mutation) {
       final Optional<MutationStatusTestPair> maybeResult = this.history
           .getPreviousResult(each.getId());
-      if (!maybeResult.isPresent()) {
-        mrs.add(analyseFromScratch(each));
-      } else {
+      // discard the mutant if no existing result
+      if (maybeResult.isPresent()) {
         mrs.add(analyseFromHistory(each, maybeResult.get()));
       }
     }
 
-    if (enableLog) {
-      logTotals();
-    }
+    logTotals();
 
     return mrs;
 

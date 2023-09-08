@@ -45,7 +45,6 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
-import org.mockito.MockitoAnnotations;
 import org.pitest.junit.RunnerSuiteFinderTest.ThrowsOnDiscoverySuite;
 import org.pitest.testapi.NullExecutionListener;
 import org.pitest.testapi.TestGroupConfig;
@@ -63,7 +62,6 @@ public class JUnitCustomRunnerTestUnitFinderTest {
 
   @Before
   public void setup() {
-    MockitoAnnotations.openMocks(this);
     this.testee = new JUnitCustomRunnerTestUnitFinder(new TestGroupConfig(), Collections.<String>emptyList(),
             Collections.<String>emptyList());
   }

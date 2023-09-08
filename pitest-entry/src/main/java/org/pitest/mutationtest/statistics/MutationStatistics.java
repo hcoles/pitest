@@ -63,6 +63,10 @@ public final class MutationStatistics {
     return this.totalWithCoverage;
   }
 
+  public long getNumberOfTestsRun() {
+    return numberOfTestsRun;
+  }
+
   private long getTotalMutationsWithoutCoverage() {
     return this.totalMutations - this.totalWithCoverage;
   }

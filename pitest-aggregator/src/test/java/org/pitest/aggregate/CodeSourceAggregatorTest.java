@@ -35,8 +35,8 @@ public class CodeSourceAggregatorTest {
     final CodeSource source = this.underTest.createCodeSource();
     assertNotNull(source);
 
-    assertTrue(source.fetchClass(ClassName.fromClass(CodeSourceAggregator.class)).isPresent());
-    assertFalse(source.fetchClass(ClassName.fromString("com.doesnt.exist.Type")).isPresent());
+    assertTrue(source.fetchClassHash(ClassName.fromClass(CodeSourceAggregator.class)).isPresent());
+    assertFalse(source.fetchClassHash(ClassName.fromString("com.doesnt.exist.Type")).isPresent());
   }
 
 }
