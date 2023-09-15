@@ -93,7 +93,13 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
           this.code));
 
       this.timings.registerStart(Timings.Stage.COVERAGE);
-      gatherCoverageData(tests, coverage);
+      if (tests.isEmpty()) {
+        // This may happen as a result of filtering for incremental analysis as well as
+        // simple misconfiguration.
+        LOG.info("No test classes identified to scan");
+      } else {
+        gatherCoverageData(tests, coverage);
+      }
       this.timings.registerEnd(Timings.Stage.COVERAGE);
 
       final long time = NANOSECONDS.toSeconds(System.nanoTime() - t0);

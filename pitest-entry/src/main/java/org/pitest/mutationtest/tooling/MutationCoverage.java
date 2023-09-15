@@ -16,9 +16,7 @@ package org.pitest.mutationtest.tooling;
 
 import org.pitest.classinfo.CachingByteArraySource;
 import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.classinfo.ClassHash;
 import org.pitest.classinfo.ClassName;
-import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.CodeSource;
@@ -62,8 +60,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -166,8 +162,6 @@ public class MutationCoverage {
     this.timings.registerEnd(Timings.Stage.BUILD_MUTATION_TESTS);
 
     LOG.info("Created " + tus.size() + " mutation test units" );
-
-    recordClassPath(history, coverageData);
 
     LOG.fine("Used memory before analysis start "
         + ((runtime.totalMemory() - runtime.freeMemory()) / MB) + " mb");
@@ -285,25 +279,6 @@ public class MutationCoverage {
     return this.strategies.resultInterceptor();
   }
 
-  private void recordClassPath(History history, CoverageDatabase coverageData) {
-    Set<ClassName> allClassNames = getAllClassesAndTests();
-
-    // sort by classname to ensure order consistent across machines
-    List<HierarchicalClassId> ids = this.code.fetchClassHashes(allClassNames).stream()
-            .map(ClassHash::getHierarchicalId)
-            .sorted(Comparator.comparing(HierarchicalClassId::getName))
-            .collect(Collectors.toList());
-
-    history.recordClassPath(ids, coverageData);
-  }
-
-  private Set<ClassName> getAllClassesAndTests() {
-    final Set<ClassName> names = new HashSet<>();
-    names.addAll(code.getCodeUnderTestNames());
-    names.addAll(code.getTestClassNames());
-    return names;
-  }
-
   private List<String> verifyBuildSuitableForMutationTesting() {
     return this.strategies.buildVerifier().verify();
   }
@@ -368,9 +343,6 @@ public class MutationCoverage {
 
     final MutationSource source = new MutationSource(mutationConfig, testPrioritiser, bas, interceptor);
 
-  //  final MutationAnalyser analyser =  new IncrementalAnalyser(new DefaultCodeHistory(this.code, history),
-   //         coverageData,
-    //        enableIncrementalAnalysisLogging(history));
 
     final WorkerFactory wf = new WorkerFactory(this.baseDir, coverage()
         .getConfiguration(), mutationConfig, args,

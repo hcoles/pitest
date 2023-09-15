@@ -10,17 +10,21 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Serializable;
 import java.util.Base64;
-import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
+import org.pitest.classinfo.ClassHash;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageDatabase;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.pitest.mutationtest.ClassHistory;
 import org.pitest.mutationtest.History;
 import org.pitest.mutationtest.MutationAnalyser;
@@ -53,19 +57,6 @@ public class ObjectOutputStreamHistory implements History {
   private BufferedReader createReader(Optional<Reader> input) {
     return input.map(BufferedReader::new)
             .orElse(null);
-  }
-
-  @Override
-  public void recordClassPath(final Collection<HierarchicalClassId> ids,
-      final CoverageDatabase coverageInfo) {
-    final PrintWriter output = this.outputFactory.create();
-    output.println(ids.size());
-    for (final HierarchicalClassId each : ids) {
-      final ClassHistory coverage = new ClassHistory(each,
-          coverageInfo.getCoverageIdForClass(each.getName()).toString(16));
-      output.println(serialize(coverage));
-    }
-    output.flush();
   }
 
   @Override
@@ -104,7 +95,28 @@ public class ObjectOutputStreamHistory implements History {
   @Override
   public void processCoverage(CoverageDatabase coverageData) {
     this.coverageData = coverageData;
+    recordClassPath(coverageData);
   }
+
+  private void recordClassPath(CoverageDatabase coverageData) {
+    Set<ClassName> allClassNames = code.getAllClassAndTestNames();
+
+    // sort by classname to ensure order consistent across machines
+    List<HierarchicalClassId> ids = this.code.fetchClassHashes(allClassNames).stream()
+            .map(ClassHash::getHierarchicalId)
+            .sorted(Comparator.comparing(HierarchicalClassId::getName))
+            .collect(Collectors.toList());
+
+    final PrintWriter output = this.outputFactory.create();
+    output.println(ids.size());
+    for (final HierarchicalClassId each : ids) {
+      final ClassHistory coverage = new ClassHistory(each,
+              coverageData.getCoverageIdForClass(each.getName()).toString(16));
+      output.println(serialize(coverage));
+    }
+    output.flush();
+  }
+
 
   private void restoreResults() {
     String line;

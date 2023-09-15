@@ -22,12 +22,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pitest.classinfo.ClassHash;
 import org.pitest.classinfo.ClassIdentifier;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageDatabase;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.pitest.mutationtest.ClassHistory;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
@@ -148,8 +151,31 @@ public class ObjectOutputStreamHistoryTest {
         final HierarchicalClassId... classIdentifiers) {
         this.testee = new ObjectOutputStreamHistory(this.code, this.writerFactory,
             Optional.<Reader> empty());
-        final Collection<HierarchicalClassId> ids = Arrays.asList(classIdentifiers);
-        this.testee.recordClassPath(ids, this.coverage);
+        final Collection<ClassHash> ids = Arrays.asList(classIdentifiers).stream()
+                .map(id -> new ClassHash() {
+                    @Override
+                    public ClassIdentifier getId() {
+                        return id.getId();
+                    }
+
+                    @Override
+                    public ClassName getName() {
+                        return id.getName();
+                    }
+
+                    @Override
+                    public BigInteger getDeepHash() {
+                        return BigInteger.ZERO;
+                    }
+
+                    @Override
+                    public HierarchicalClassId getHierarchicalId() {
+                        return id;
+                    }
+                }).collect(Collectors.toList());
+
+        when(code.fetchClassHashes(any(Collection.class))).thenReturn(ids);
+        this.testee.processCoverage(this.coverage);
     }
 
 }

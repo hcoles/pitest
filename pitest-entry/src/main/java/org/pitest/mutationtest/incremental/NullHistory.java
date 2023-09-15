@@ -1,10 +1,8 @@
 package org.pitest.mutationtest.incremental;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.mutationtest.History;
 import org.pitest.mutationtest.MutationResult;
@@ -33,12 +31,6 @@ public class NullHistory implements History {
 
   @Override
   public void close() {
-
-  }
-
-  @Override
-  public void recordClassPath(final Collection<HierarchicalClassId> ids,
-      final CoverageDatabase coverageInfo) {
 
   }
 

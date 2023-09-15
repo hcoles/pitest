@@ -14,7 +14,6 @@
  */
 package org.pitest.mutationtest.tooling;
 
-import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyCollection;
@@ -164,33 +163,7 @@ public class MutationCoverageReportTest {
 
     createAndRunTestee();
 
-    verify(this.history).recordClassPath(asList(fooId), this.coverageDb);
-  }
-
-  @Test
-  public void ordersHistoryEntries() {
-
-    final ClassName clazz = ClassName.fromClass(Foo.class);
-
-    final HierarchicalClassId fooId = new HierarchicalClassId(
-            new ClassIdentifier(0, clazz), "0");
-    final HierarchicalClassId barId = new HierarchicalClassId(
-            new ClassIdentifier(0, ClassName.fromString("Bar")), "0");
-    final ClassInfo foo = ClassInfoMother.make(fooId.getId());
-    final ClassInfo bar = ClassInfoMother.make(barId.getId());
-
-    when(this.mutater.findMutations(ClassName.fromClass(Foo.class))).thenReturn(aMutantIn(Foo.class));
-
-    when(this.code.getCodeUnderTestNames()).thenReturn(
-            Collections.singleton(clazz));
-    when(this.code.fetchClassHashes(anyCollection())).thenReturn(
-           asList(foo, bar));
-    when(this.coverageDb.getCodeLinesForClass(clazz)).thenReturn(new ClassLines(clazz, Collections.emptySet()));
-
-    createAndRunTestee();
-
-    // bar comes first alphabetically
-    verify(this.history).recordClassPath(asList(barId, fooId), this.coverageDb);
+    verify(this.history).processCoverage(this.coverageDb);
   }
 
   @Test
