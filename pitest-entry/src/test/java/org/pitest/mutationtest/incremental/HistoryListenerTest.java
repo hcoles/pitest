@@ -27,18 +27,10 @@ public class HistoryListenerTest {
   }
 
   @Test
-  public void shouldRecordMutationResults() {
-    final MutationResult mr = makeResult();
-    final ClassMutationResults metaData = MutationTestResultMother
-        .createClassResults(mr);
-    this.testee.handleMutationResult(metaData);
-    verify(this.store).recordResult(mr);
+  public void closesTheAttachedHistory() {
+    this.testee.runEnd();
+    verify(this.store).close();
   }
 
-  private MutationResult makeResult() {
-    return new MutationResult(
-        MutationTestResultMother.createDetails(), MutationStatusTestPair.notAnalysed(0,
-            DetectionStatus.KILLED));
-  }
 
 }

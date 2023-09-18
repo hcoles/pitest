@@ -9,6 +9,7 @@ import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
 import org.pitest.mutationtest.History;
 import org.pitest.mutationtest.HistoryFactory;
+import org.pitest.mutationtest.incremental.HistoryResultInterceptor;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
@@ -120,7 +121,7 @@ public class EntryPoint {
     final History history = pickHistoryStore(code, data, maybeWriter, historyFactory);
 
     final MutationStrategies strategies = new MutationStrategies(
-        settings.createEngine(), history, coverageDatabase, reportFactory, settings.getResultInterceptor(),
+        settings.createEngine(), history, coverageDatabase, reportFactory, settings.getResultInterceptor().add(new HistoryResultInterceptor(history)),
         settings.createCoverageTransformer(code),
             reportOutput, settings.createVerifier().create(code));
 

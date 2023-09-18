@@ -2,7 +2,6 @@ package org.pitest.mutationtest.incremental;
 
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.History;
-import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationResultListener;
 
 public class HistoryListener implements MutationResultListener {
@@ -20,10 +19,7 @@ public class HistoryListener implements MutationResultListener {
 
   @Override
   public void handleMutationResult(final ClassMutationResults metaData) {
-    for (final MutationResult each : metaData.getMutations()) {
-      this.historyStore.recordResult(each);
-    }
-
+    // results are collected in an interceptor to ensure we have unmodified mutants
   }
 
   @Override

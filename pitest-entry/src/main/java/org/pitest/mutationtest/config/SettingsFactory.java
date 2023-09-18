@@ -14,7 +14,6 @@ import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.CompoundMutationResultInterceptor;
 import org.pitest.mutationtest.MutationEngineFactory;
-import org.pitest.mutationtest.MutationResultInterceptor;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.build.CompoundInterceptorFactory;
 import org.pitest.mutationtest.build.DefaultMutationGrouperFactory;
@@ -190,7 +189,7 @@ public class SettingsFactory {
     return new CompoundBuildVerifierFactory(this.plugins.findVerifiers());
   }
 
-  public MutationResultInterceptor getResultInterceptor() {
+  public CompoundMutationResultInterceptor getResultInterceptor() {
     return new CompoundMutationResultInterceptor(this.plugins.findMutationResultInterceptor());
   }
 
