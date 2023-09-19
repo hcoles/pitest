@@ -136,10 +136,18 @@ public class AbstractPitMojo extends AbstractMojo {
   private ArrayList<String>           mutators;
   
   /**
-   * Mutation operators to apply
+   * Features to activate/deactivate
    */
   @Parameter(property = "features")
   private ArrayList<String>           features;
+
+  /**
+   * Additional features activate/deactivate, use to
+   * avoid overwriting features set in the build script when
+   * specifying features from the command line
+   */
+  @Parameter(property = "extraFeatures")
+  private ArrayList<String>           extraFeatures;
 
 
   /**
@@ -739,7 +747,9 @@ public class AbstractPitMojo extends AbstractMojo {
   }
   
   public ArrayList<String> getFeatures() {
-    return withoutNulls(features);
+    ArrayList<String> consolidated = emptyWithoutNulls(features);
+    consolidated.addAll(emptyWithoutNulls(extraFeatures));
+    return consolidated;
   }
 
   public boolean isUseClasspathJar() {
@@ -776,6 +786,14 @@ public class AbstractPitMojo extends AbstractMojo {
     public List<String> getReasons() {
       return Collections.unmodifiableList(reasons);
     }
+  }
+
+  private <X> ArrayList<X> emptyWithoutNulls(List<X> originalList) {
+    if (originalList == null) {
+      return new ArrayList<>();
+    }
+
+    return withoutNulls(originalList);
   }
 
   private <X> ArrayList<X> withoutNulls(List<X> originalList) {
