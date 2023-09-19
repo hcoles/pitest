@@ -394,6 +394,23 @@ public class PitMojoTest extends BasePitMojoTest {
         mojo.getFeatures());
   }
 
+  public void testCombinesFeaturesAndExtraFeatures() throws Exception {
+
+    AbstractPitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
+            + "  <features>\n"
+            + "    <feature>FEATURE</feature>\n"
+            + "  </features>\n"
+            + "  <extraFeatures>\n"
+            + "    <feature>ALSO_A_FEATURE</feature>\n"
+            + "    <feature>MORE</feature>\n"
+            + "  </extraFeatures>\n"
+    ));
+
+    assertEquals(
+            asList("FEATURE", "ALSO_A_FEATURE", "MORE"),
+            mojo.getFeatures());
+  }
+
   private void setupCoverage(long mutationScore, int lines, int linesCovered)
       throws MojoExecutionException {
     Iterable<Score> scores = Collections.<Score>emptyList();
