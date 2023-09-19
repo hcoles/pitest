@@ -73,6 +73,7 @@ import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.mutationtest.execute.MutationAnalysisExecutor;
+import org.pitest.mutationtest.incremental.NullHistory;
 import org.pitest.mutationtest.tooling.JarCreatingJarFinder;
 import org.pitest.process.DefaultJavaExecutableLocator;
 import org.pitest.process.JavaAgent;
@@ -247,7 +248,7 @@ public class TestMutationTesting {
         null, coverageOptions, launchOptions, code, new NullCoverageExporter(),
         timings, Verbosity.DEFAULT);
 
-    final CoverageDatabase coverageData = coverageGenerator.calculateCoverage();
+    final CoverageDatabase coverageData = coverageGenerator.calculateCoverage(c -> true);
 
     final Collection<ClassName> codeClasses = code.getCodeUnderTestNames();
 
@@ -278,7 +279,7 @@ public class TestMutationTesting {
 
 
     final MutationTestBuilder builder = new MutationTestBuilder(wf,
-        new NullAnalyser(), source, new DefaultGrouper(0));
+        new NullHistory(), source, new DefaultGrouper(0));
 
     final List<MutationAnalysisUnit> tus = builder
         .createMutationTestUnits(codeClasses);

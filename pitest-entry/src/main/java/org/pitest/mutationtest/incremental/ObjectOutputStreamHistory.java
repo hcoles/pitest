@@ -10,34 +10,46 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Serializable;
 import java.util.Base64;
-import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
+import org.pitest.classinfo.ClassHash;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
+import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageDatabase;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.pitest.mutationtest.ClassHistory;
-import org.pitest.mutationtest.HistoryStore;
+import org.pitest.mutationtest.History;
+import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
+import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.util.Log;
 import org.pitest.util.Unchecked;
 
-public class ObjectOutputStreamHistoryStore implements HistoryStore {
+public class ObjectOutputStreamHistory implements History {
 
   private static final Logger                                   LOG               = Log
       .getLogger();
+
+  private final CodeSource code;
   private final WriterFactory                                   outputFactory;
   private final BufferedReader                                  input;
   private final Map<MutationIdentifier, MutationStatusTestPair> previousResults   = new HashMap<>();
   private final Map<ClassName, ClassHistory>                    previousClassPath = new HashMap<>();
+  private CoverageDatabase coverageData;
 
-  public ObjectOutputStreamHistoryStore(final WriterFactory output,
-      final Optional<Reader> input) {
+  public ObjectOutputStreamHistory(CodeSource code, WriterFactory output,
+                                   final Optional<Reader> input) {
+    this.code = code;
     this.outputFactory = output;
     this.input = createReader(input);
   }
@@ -48,34 +60,23 @@ public class ObjectOutputStreamHistoryStore implements HistoryStore {
   }
 
   @Override
-  public void recordClassPath(final Collection<HierarchicalClassId> ids,
-      final CoverageDatabase coverageInfo) {
-    final PrintWriter output = this.outputFactory.create();
-    output.println(ids.size());
-    for (final HierarchicalClassId each : ids) {
-      final ClassHistory coverage = new ClassHistory(each,
-          coverageInfo.getCoverageIdForClass(each.getName()).toString(16));
-      output.println(serialize(coverage));
-    }
-    output.flush();
-  }
-
-  @Override
   public void recordResult(final MutationResult result) {
     final PrintWriter output = this.outputFactory.create();
-    output.println(serialize(new ObjectOutputStreamHistoryStore.IdResult(
+    output.println(serialize(new ObjectOutputStreamHistory.IdResult(
         result.getDetails().getId(), result.getStatusTestPair())));
     output.flush();
   }
 
   @Override
-  public Map<MutationIdentifier, MutationStatusTestPair> getHistoricResults() {
-    return this.previousResults;
+  public List<MutationResult> analyse(List<MutationDetails> mutationsForClasses) {
+     final MutationAnalyser analyser =  new IncrementalAnalyser(new CodeHistory(code, this.previousResults, this.previousClassPath),
+            this.coverageData);
+    return analyser.analyse(mutationsForClasses);
   }
 
   @Override
-  public Map<ClassName, ClassHistory> getHistoricClassPath() {
-    return this.previousClassPath;
+  public void close() {
+
   }
 
   @Override
@@ -90,6 +91,32 @@ public class ObjectOutputStreamHistoryStore implements HistoryStore {
       }
     }
   }
+
+  @Override
+  public void processCoverage(CoverageDatabase coverageData) {
+    this.coverageData = coverageData;
+    recordClassPath(coverageData);
+  }
+
+  private void recordClassPath(CoverageDatabase coverageData) {
+    Set<ClassName> allClassNames = code.getAllClassAndTestNames();
+
+    // sort by classname to ensure order consistent across machines
+    List<HierarchicalClassId> ids = this.code.fetchClassHashes(allClassNames).stream()
+            .map(ClassHash::getHierarchicalId)
+            .sorted(Comparator.comparing(HierarchicalClassId::getName))
+            .collect(Collectors.toList());
+
+    final PrintWriter output = this.outputFactory.create();
+    output.println(ids.size());
+    for (final HierarchicalClassId each : ids) {
+      final ClassHistory coverage = new ClassHistory(each,
+              coverageData.getCoverageIdForClass(each.getName()).toString(16));
+      output.println(serialize(coverage));
+    }
+    output.flush();
+  }
+
 
   private void restoreResults() {
     String line;
@@ -140,6 +167,14 @@ public class ObjectOutputStreamHistoryStore implements HistoryStore {
     } catch (final IOException e) {
       throw Unchecked.translateCheckedException(e);
     }
+  }
+
+  public Map<ClassName, ClassHistory> getHistoricClassPath() {
+    return this.previousClassPath;
+  }
+
+  public Map<MutationIdentifier, MutationStatusTestPair> getHistoricResults() {
+    return this.previousResults;
   }
 
   private static class IdResult implements Serializable {

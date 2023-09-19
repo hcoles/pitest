@@ -5,8 +5,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.mutationtest.ClassMutationResults;
+import org.pitest.mutationtest.History;
 import org.pitest.mutationtest.DetectionStatus;
-import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.report.MutationTestResultMother;
@@ -18,7 +18,7 @@ public class HistoryListenerTest {
   private HistoryListener testee;
 
   @Mock
-  private HistoryStore    store;
+  private History store;
 
   @Before
   public void setUp() {
@@ -27,18 +27,10 @@ public class HistoryListenerTest {
   }
 
   @Test
-  public void shouldRecordMutationResults() {
-    final MutationResult mr = makeResult();
-    final ClassMutationResults metaData = MutationTestResultMother
-        .createClassResults(mr);
-    this.testee.handleMutationResult(metaData);
-    verify(this.store).recordResult(mr);
+  public void closesTheAttachedHistory() {
+    this.testee.runEnd();
+    verify(this.store).close();
   }
 
-  private MutationResult makeResult() {
-    return new MutationResult(
-        MutationTestResultMother.createDetails(), MutationStatusTestPair.notAnalysed(0,
-            DetectionStatus.KILLED));
-  }
 
 }

@@ -1,6 +1,7 @@
 package org.pitest.mutationtest.config;
 
 import org.pitest.classpath.CodeSourceFactory;
+import org.pitest.mutationtest.HistoryFactory;
 import org.pitest.mutationtest.build.CoverageTransformerFactory;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultInterceptor;
@@ -57,6 +58,7 @@ public class PluginServices {
     l.addAll(findCoverageTransformers());
     l.addAll(findVerifiers());
     l.addAll(findCodeSources());
+    l.addAll(findHistory());
     return l;
   }
 
@@ -125,6 +127,10 @@ public class PluginServices {
 
   public List<CodeSourceFactory> findCodeSources() {
     return new ArrayList<>(load(CodeSourceFactory.class));
+  }
+
+  public List<HistoryFactory> findHistory() {
+    return new ArrayList<>(load(HistoryFactory.class));
   }
 
   public Collection<ProvidesFeature> findFeatures() {

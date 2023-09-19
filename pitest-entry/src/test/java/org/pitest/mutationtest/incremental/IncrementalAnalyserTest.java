@@ -81,17 +81,16 @@ public class IncrementalAnalyserTest {
   }
 
   @Test
-  public void shouldStartNewMutationsAtAStatusOfNotStarted() {
+  public void shouldNotPreprocessNewMutations() {
     final MutationDetails md = makeMutation("foo");
     when(this.history.getPreviousResult(any(MutationIdentifier.class)))
     .thenReturn(Optional.empty());
 
     final Collection<MutationResult> actual = this.testee.analyse(singletonList(md));
 
-    assertThat(actual, hasItem(withStatus(NOT_STARTED)));
+    assertThat(actual, Matchers.hasSize(0));
     assertThat(logCatcher.logEntries,
             hasItems(
-                    "Incremental analysis set 1 mutations to a status of NOT_STARTED",
                     "Incremental analysis reduced number of mutations by 0"
             ));
   }
@@ -337,12 +336,10 @@ public class IncrementalAnalyserTest {
     assertThat(actual, contains(
             withStatus(KILLED),
             withStatus(KILLED),
-            withStatus(SURVIVED),
-            withStatus(NOT_STARTED)
+            withStatus(SURVIVED)
     ));
     assertThat(logCatcher.logEntries,
             hasItems(
-                    "Incremental analysis set 1 mutations to a status of NOT_STARTED",
                     "Incremental analysis set 2 mutations to a status of KILLED",
                     "Incremental analysis set 1 mutations to a status of SURVIVED",
                     "Incremental analysis reduced number of mutations by 3"

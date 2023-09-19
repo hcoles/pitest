@@ -1,6 +1,7 @@
 package org.pitest.mutationtest;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.pitest.mutationtest.engine.MutationDetails;
 
@@ -9,7 +10,6 @@ import org.pitest.mutationtest.engine.MutationDetails;
  */
 public interface MutationAnalyser {
 
-  Collection<MutationResult> analyse(
-      Collection<MutationDetails> mutationsForClasses);
+  List<MutationResult> analyse(Collection<MutationDetails> mutationsForClasses);
 
 }

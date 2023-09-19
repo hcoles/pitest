@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.pitest.mutationtest.report.MutationTestResultMother;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,9 +15,9 @@ import static org.pitest.mutationtest.report.MutationTestResultMother.aMutationT
 public class CompoundMutationResultInterceptorTest {
 
     @Test
-    public void chainsChildCallsToModify() {
-        MutationResultInterceptor a = appendToDesc("foo");
-        MutationResultInterceptor b = appendToDesc("bar");
+    public void chainsChildCallsToModifyByPriority() {
+        MutationResultInterceptor a = appendToDesc("bar", 1);
+        MutationResultInterceptor b = appendToDesc("foo", 0);
 
         CompoundMutationResultInterceptor underTest = new CompoundMutationResultInterceptor(asList(a,b));
 
@@ -27,6 +26,7 @@ public class CompoundMutationResultInterceptorTest {
         assertThat(actual.stream().flatMap(c -> c.getMutations().stream()))
                 .allMatch(m -> m.getDetails().getDescription().endsWith("foobar"));
     }
+
 
     @Test
     public void combinesRemainingResults() {
@@ -59,13 +59,18 @@ public class CompoundMutationResultInterceptorTest {
         return asList(MutationTestResultMother.createClassResults(aMutationTestResult().build(2)));
     }
 
-    private MutationResultInterceptor appendToDesc(final String foo) {
+    private MutationResultInterceptor appendToDesc(final String foo, final int priority) {
         return new MutationResultInterceptor() {
             @Override
             public Collection<ClassMutationResults> modify(Collection<ClassMutationResults> results) {
                 return results.stream()
                         .map(r -> new ClassMutationResults(r.getMutations().stream().map(m -> appendToDesc(m, foo)).collect(Collectors.toList())))
                         .collect(Collectors.toList());
+            }
+
+            @Override
+            public int priority() {
+                return priority;
             }
 
             private MutationResult appendToDesc(MutationResult result, String toAppend) {

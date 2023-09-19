@@ -16,9 +16,7 @@ package org.pitest.mutationtest.tooling;
 
 import org.pitest.classinfo.CachingByteArraySource;
 import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
-import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.CodeSource;
@@ -27,14 +25,11 @@ import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.CoverageSummary;
 import org.pitest.coverage.NoCoverage;
 import org.pitest.coverage.ReportCoverage;
-import org.pitest.coverage.TestInfo;
-import org.pitest.functional.FCollection;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
+import org.pitest.mutationtest.History;
 import org.pitest.mutationtest.EngineArguments;
-import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.ListenerArguments;
-import org.pitest.mutationtest.MutationAnalyser;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationResultInterceptor;
 import org.pitest.mutationtest.MutationResultListener;
@@ -50,10 +45,8 @@ import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.execute.MutationAnalysisExecutor;
-import org.pitest.mutationtest.incremental.DefaultCodeHistory;
 import org.pitest.mutationtest.incremental.HistoryListener;
-import org.pitest.mutationtest.incremental.IncrementalAnalyser;
-import org.pitest.mutationtest.incremental.NullHistoryStore;
+import org.pitest.mutationtest.incremental.NullHistory;
 import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.statistics.MutationStatisticsListener;
 import org.pitest.mutationtest.statistics.Score;
@@ -67,8 +60,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -152,8 +143,11 @@ public class MutationCoverage {
   }
 
   private CombinedStatistics runAnalysis(Runtime runtime, long t0, EngineArguments args, MutationEngine engine, List<String> issues) {
-    CoverageDatabase coverageData = coverage().calculateCoverage();
-    HistoryStore history =  this.strategies.history();
+    History history = this.strategies.history();
+    history.initialize();
+
+    CoverageDatabase coverageData = coverage().calculateCoverage(history.limitTests());
+    history.processCoverage(coverageData);
 
     LOG.fine("Used memory after coverage calculation "
         + ((runtime.totalMemory() - runtime.freeMemory()) / MB) + " mb");
@@ -162,16 +156,12 @@ public class MutationCoverage {
 
     final MutationStatisticsListener stats = new MutationStatisticsListener();
 
-    history.initialize();
-
     this.timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
     final List<MutationAnalysisUnit> tus = buildMutationTests(coverageData, history,
             engine, args, allInterceptors());
     this.timings.registerEnd(Timings.Stage.BUILD_MUTATION_TESTS);
 
     LOG.info("Created " + tus.size() + " mutation test units" );
-
-    recordClassPath(history, coverageData);
 
     LOG.fine("Used memory before analysis start "
         + ((runtime.totalMemory() - runtime.freeMemory()) / MB) + " mb");
@@ -233,7 +223,7 @@ public class MutationCoverage {
     // an initial run here we are able to skip coverage generation when no mutants
     // are found, e.g if pitest is being run against diffs.
     this.timings.registerStart(Timings.Stage.MUTATION_PRE_SCAN);
-    List<MutationAnalysisUnit> mutants = buildMutationTests(new NoCoverage(), new NullHistoryStore(), engine, args, noReportsOrFilters());
+    List<MutationAnalysisUnit> mutants = buildMutationTests(new NoCoverage(), new NullHistory(), engine, args, noReportsOrFilters());
     this.timings.registerEnd(Timings.Stage.MUTATION_PRE_SCAN);
     return mutants;
   }
@@ -262,7 +252,7 @@ public class MutationCoverage {
 
   private List<MutationResultListener> createConfig(long t0,
                                                     ReportCoverage coverageData,
-                                                    HistoryStore history,
+                                                    History history,
                                                     MutationStatisticsListener stats,
                                                     MutationEngine engine) {
     final List<MutationResultListener> ls = new ArrayList<>();
@@ -287,29 +277,6 @@ public class MutationCoverage {
 
   private MutationResultInterceptor resultInterceptor() {
     return this.strategies.resultInterceptor();
-  }
-
-  private void recordClassPath(HistoryStore history, CoverageDatabase coverageData) {
-    Set<ClassName> allClassNames = getAllClassesAndTests(coverageData);
-
-    // sort by classname to ensure order consistent across machines
-    List<HierarchicalClassId> ids = this.code.getClassInfo(allClassNames).stream()
-            .map(ClassInfo::getHierarchicalId)
-            .sorted(Comparator.comparing(HierarchicalClassId::getName))
-            .collect(Collectors.toList());
-
-    history.recordClassPath(ids, coverageData);
-  }
-
-  private Set<ClassName> getAllClassesAndTests(
-      final CoverageDatabase coverageData) {
-    final Set<ClassName> names = new HashSet<>();
-    for (final ClassName each : this.code.getCodeUnderTestNames()) {
-      names.add(each);
-      FCollection.mapTo(coverageData.getTestsForClass(each),
-          TestInfo.toDefiningClassName(), names);
-    }
-    return names;
   }
 
   private List<String> verifyBuildSuitableForMutationTesting() {
@@ -353,7 +320,7 @@ public class MutationCoverage {
   }
 
   private List<MutationAnalysisUnit> buildMutationTests(CoverageDatabase coverageData,
-                                                        HistoryStore history,
+                                                        History history,
                                                         MutationEngine engine,
                                                         EngineArguments args,
                                                         Predicate<MutationInterceptor> interceptorFilter) {
@@ -376,9 +343,6 @@ public class MutationCoverage {
 
     final MutationSource source = new MutationSource(mutationConfig, testPrioritiser, bas, interceptor);
 
-    final MutationAnalyser analyser =  new IncrementalAnalyser(new DefaultCodeHistory(this.code, history),
-            coverageData,
-            enableIncrementalAnalysisLogging(history));
 
     final WorkerFactory wf = new WorkerFactory(this.baseDir, coverage()
         .getConfiguration(), mutationConfig, args,
@@ -389,19 +353,11 @@ public class MutationCoverage {
     final MutationGrouper grouper = this.settings.getMutationGrouper().makeFactory(
         this.data.getFreeFormProperties(), this.code,
         this.data.getNumberOfThreads(), this.data.getMutationUnitSize());
-    final MutationTestBuilder builder = new MutationTestBuilder(wf, analyser,
+    final MutationTestBuilder builder = new MutationTestBuilder(wf, history,
         source, grouper);
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
   }
-
-  private boolean enableIncrementalAnalysisLogging(HistoryStore history) {
-    // Horrible hack to prevent logging during pre scan phase. This would
-    // cause confusion as if only part of the log is read it appears that
-    // incremental analysis has affected no mutants
-    return !(history instanceof NullHistoryStore);
-  }
-
   private void checkMutationsFound(final List<MutationAnalysisUnit> tus) {
     if (tus.isEmpty()) {
       if (this.data.shouldFailWhenNoMutations()) {

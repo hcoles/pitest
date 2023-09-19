@@ -1,8 +1,8 @@
 package org.pitest.mutationtest.tooling;
 
 import org.pitest.coverage.CoverageGenerator;
+import org.pitest.mutationtest.History;
 import org.pitest.mutationtest.build.CoverageTransformer;
-import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultInterceptor;
 import org.pitest.mutationtest.MutationResultListenerFactory;
@@ -11,7 +11,7 @@ import org.pitest.util.ResultOutputStrategy;
 
 public class MutationStrategies {
 
-  private final HistoryStore                  history;
+  private final History history;
   private final CoverageGenerator             coverage;
   private final MutationResultListenerFactory listenerFactory;
   private final MutationResultInterceptor     resultsInterceptor;
@@ -22,11 +22,11 @@ public class MutationStrategies {
   private final ResultOutputStrategy          output;
 
   public MutationStrategies(final MutationEngineFactory factory,
-      final HistoryStore history, final CoverageGenerator coverage,
-      final MutationResultListenerFactory listenerFactory,
-      final MutationResultInterceptor resultsInterceptor,
-      final CoverageTransformer coverageTransformer,
-      final ResultOutputStrategy output, final BuildVerifier buildVerifier) {
+                            final History history, final CoverageGenerator coverage,
+                            final MutationResultListenerFactory listenerFactory,
+                            final MutationResultInterceptor resultsInterceptor,
+                            final CoverageTransformer coverageTransformer,
+                            final ResultOutputStrategy output, final BuildVerifier buildVerifier) {
     this.history = history;
     this.coverage = coverage;
     this.listenerFactory = listenerFactory;
@@ -37,7 +37,7 @@ public class MutationStrategies {
     this.output = output;
   }
 
-  public HistoryStore history() {
+  public History history() {
     return this.history;
   }
 

@@ -29,4 +29,8 @@ public interface MutationResultInterceptor extends ToolClasspathPlugin {
     default String description() {
         return "";
     }
+
+    default int priority() {
+      return 10;
+    }
 }

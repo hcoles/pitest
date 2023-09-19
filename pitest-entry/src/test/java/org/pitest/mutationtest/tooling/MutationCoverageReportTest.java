@@ -14,7 +14,6 @@
  */
 package org.pitest.mutationtest.tooling;
 
-import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyCollection;
@@ -25,11 +24,10 @@ import static org.mockito.Mockito.when;
 import static org.pitest.mutationtest.LocationMother.aLocation;
 import static org.pitest.mutationtest.LocationMother.aMutationId;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -47,8 +45,8 @@ import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
+import org.pitest.mutationtest.History;
 import org.pitest.mutationtest.EngineArguments;
-import org.pitest.mutationtest.HistoryStore;
 import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultListener;
@@ -88,7 +86,7 @@ public class MutationCoverageReportTest {
   private CodeSource                    code;
 
   @Mock
-  private HistoryStore                  history;
+  private History history;
 
   @Mock
   private MutationEngineFactory         mutationFactory;
@@ -110,10 +108,11 @@ public class MutationCoverageReportTest {
     MockitoAnnotations.openMocks(this);
     this.data = new ReportOptions();
     this.data.setSourceDirs(Collections.emptyList());
-    when(this.coverage.calculateCoverage()).thenReturn(this.coverageDb);
+    when(this.coverage.calculateCoverage(any(Predicate.class))).thenReturn(this.coverageDb);
     when(
         this.listenerFactory.getListener(any(),
             any(ListenerArguments.class))).thenReturn(this.listener);
+    when(history.limitTests()).thenReturn(c -> true);
     mockMutationEngine();
   }
 
@@ -158,39 +157,13 @@ public class MutationCoverageReportTest {
 
     when(this.code.getCodeUnderTestNames()).thenReturn(
         Collections.singleton(clazz));
-    when(this.code.getClassInfo(anyCollection())).thenReturn(
+    when(this.code.fetchClassHashes(anyCollection())).thenReturn(
         Collections.singletonList(foo));
     when(this.coverageDb.getCodeLinesForClass(clazz)).thenReturn(new ClassLines(clazz, Collections.emptySet()));
 
     createAndRunTestee();
 
-    verify(this.history).recordClassPath(asList(fooId), this.coverageDb);
-  }
-
-  @Test
-  public void ordersHistoryEntries() {
-
-    final ClassName clazz = ClassName.fromClass(Foo.class);
-
-    final HierarchicalClassId fooId = new HierarchicalClassId(
-            new ClassIdentifier(0, clazz), "0");
-    final HierarchicalClassId barId = new HierarchicalClassId(
-            new ClassIdentifier(0, ClassName.fromString("Bar")), "0");
-    final ClassInfo foo = ClassInfoMother.make(fooId.getId());
-    final ClassInfo bar = ClassInfoMother.make(barId.getId());
-
-    when(this.mutater.findMutations(ClassName.fromClass(Foo.class))).thenReturn(aMutantIn(Foo.class));
-
-    when(this.code.getCodeUnderTestNames()).thenReturn(
-            Collections.singleton(clazz));
-    when(this.code.getClassInfo(anyCollection())).thenReturn(
-           asList(foo, bar));
-    when(this.coverageDb.getCodeLinesForClass(clazz)).thenReturn(new ClassLines(clazz, Collections.emptySet()));
-
-    createAndRunTestee();
-
-    // bar comes first alphabetically
-    verify(this.history).recordClassPath(asList(barId, fooId), this.coverageDb);
+    verify(this.history).processCoverage(this.coverageDb);
   }
 
   @Test
@@ -210,7 +183,7 @@ public class MutationCoverageReportTest {
   public void shouldNotRunCoverageWhenNoMutationsFound() {
     this.data.setFailWhenNoMutations(false);
     createAndRunTestee();
-    verify(coverage, never()).calculateCoverage();
+    verify(coverage, never()).calculateCoverage(any(Predicate.class));
   }
 
   @Test

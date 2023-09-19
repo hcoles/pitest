@@ -16,8 +16,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassName;
-import org.pitest.mutationtest.NullAnalyser;
 import org.pitest.mutationtest.engine.MutationDetails;
+import org.pitest.mutationtest.incremental.NullHistory;
 
 public class MutationTestBuilderTest {
 
@@ -91,7 +91,7 @@ public class MutationTestBuilderTest {
   }
 
   private void makeTesteeWithUnitSizeOf(int unitSize) {
-    this.testee = new MutationTestBuilder(this.wf, new NullAnalyser(),
+    this.testee = new MutationTestBuilder(this.wf, new NullHistory(),
         this.source, new DefaultGrouper(unitSize));
   }
 

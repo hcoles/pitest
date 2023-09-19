@@ -5,6 +5,7 @@ import org.pitest.classpath.CodeSourceFactory;
 import org.pitest.classpath.DefaultCodeSource;
 import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageExporter;
+import org.pitest.mutationtest.HistoryFactory;
 import org.pitest.mutationtest.build.CoverageTransformer;
 import org.pitest.mutationtest.build.CoverageTransformerFactory;
 import org.pitest.coverage.execute.CoverageOptions;
@@ -13,7 +14,6 @@ import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.CompoundMutationResultInterceptor;
 import org.pitest.mutationtest.MutationEngineFactory;
-import org.pitest.mutationtest.MutationResultInterceptor;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.build.CompoundInterceptorFactory;
 import org.pitest.mutationtest.build.DefaultMutationGrouperFactory;
@@ -21,6 +21,7 @@ import org.pitest.mutationtest.build.DefaultTestPrioritiserFactory;
 import org.pitest.mutationtest.build.MutationGrouperFactory;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.mutationtest.build.TestPrioritiserFactory;
+import org.pitest.mutationtest.incremental.DefaultHistoryFactory;
 import org.pitest.mutationtest.verify.BuildVerifierFactory;
 import org.pitest.mutationtest.verify.CompoundBuildVerifierFactory;
 import org.pitest.plugin.Feature;
@@ -110,9 +111,25 @@ public class SettingsFactory {
       return new DefaultCodeSource(classPath);
     }
     if (sources.size() > 1) {
-       throw new RuntimeException("More than CodeSource found on classpath.");
+       throw new RuntimeException("More than one CodeSource found on classpath.");
     }
     return sources.get(0).createCodeSource(classPath);
+  }
+
+  public HistoryFactory createHistory() {
+    List<HistoryFactory> available = this.plugins.findHistory();
+
+    final FeatureParser parser = new FeatureParser();
+    FeatureSelector<HistoryFactory> historyFeatures = new FeatureSelector<>(parser.parseFeatures(this.options.getFeatures()), available);
+    List<HistoryFactory> enabledHistory = historyFeatures.getActiveFeatures();
+
+    if (enabledHistory.isEmpty()) {
+      return new DefaultHistoryFactory();
+    }
+    if (enabledHistory.size() > 1) {
+      throw new RuntimeException("More than one HistoryFactory enabled.");
+    }
+    return enabledHistory.get(0);
   }
 
   public void describeFeatures(Consumer<Feature> enabled, Consumer<Feature> disabled) {
@@ -177,7 +194,7 @@ public class SettingsFactory {
     return new CompoundBuildVerifierFactory(this.plugins.findVerifiers());
   }
 
-  public MutationResultInterceptor getResultInterceptor() {
+  public CompoundMutationResultInterceptor getResultInterceptor() {
     return new CompoundMutationResultInterceptor(this.plugins.findMutationResultInterceptor());
   }
 

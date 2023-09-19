@@ -16,7 +16,6 @@
 package org.pitest.coverage.execute;
 
 import org.pitest.bytecode.analysis.ClassTree;
-import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageData;
@@ -45,7 +44,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -77,13 +76,14 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
   }
 
   @Override
-  public CoverageData calculateCoverage() {
+  public CoverageData calculateCoverage(Predicate<ClassName> testFilter) {
     try {
       final long t0 = System.nanoTime();
 
       this.timings.registerStart(Timings.Stage.SCAN_CLASS_PATH);
       List<String> tests = this.code.testTrees()
               .map(ClassTree::name)
+              .filter(testFilter)
               .map(ClassName::asInternalName)
               .collect(Collectors.toList());
 
@@ -93,7 +93,13 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
           this.code));
 
       this.timings.registerStart(Timings.Stage.COVERAGE);
-      gatherCoverageData(tests, coverage);
+      if (tests.isEmpty()) {
+        // This may happen as a result of filtering for incremental analysis as well as
+        // simple misconfiguration.
+        LOG.info("No test classes identified to scan");
+      } else {
+        gatherCoverageData(tests, coverage);
+      }
       this.timings.registerEnd(Timings.Stage.COVERAGE);
 
       final long time = NANOSECONDS.toSeconds(System.nanoTime() - t0);
@@ -152,10 +158,6 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     } else {
       LOG.fine("Coverage generator Minion exited ok");
     }
-  }
-
-  private static Function<ClassInfo, String> classInfoToName() {
-    return a -> a.getName().asInternalName();
   }
 
   private Consumer<String> captureStandardOutIfVerbose() {

@@ -21,7 +21,7 @@ import java.util.Set;
 
 import java.util.Optional;
 
-public class Repository implements ClassInfoSource {
+public class Repository implements ClassHashSource {
 
   private final HashFunction              hashFunction;
   private final Map<ClassName, ClassInfo> knownClasses   = new HashMap<>();
@@ -41,17 +41,18 @@ public class Repository implements ClassInfoSource {
     return this.knownClasses.containsKey(name) || querySource(name).isPresent();
   }
 
-  public Optional<ClassInfo> fetchClass(final Class<?> clazz) { // NO_UCD (test
-    // only)
-    return fetchClass(clazz.getName());
-  }
-
-  private Optional<ClassInfo> fetchClass(final String name) {
-    return fetchClass(ClassName.fromString(name));
-  }
-
   @Override
-  public Optional<ClassInfo> fetchClass(final ClassName name) {
+  public Optional<ClassHash> fetchClassHash(final ClassName clazz) {
+    return this.fetchClass(clazz)
+            .map(ClassHash.class::cast);
+  }
+
+  Optional<ClassInfo> fetchClass(final Class<?> clazz) { // NO_UCD (test
+    // only)
+    return fetchClass(ClassName.fromClass(clazz));
+  }
+
+  Optional<ClassInfo> fetchClass(final ClassName name) {
     final ClassInfo info = this.knownClasses.get(name);
     if (info != null) {
       return Optional.ofNullable(info);

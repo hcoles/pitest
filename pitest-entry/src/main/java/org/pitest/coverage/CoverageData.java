@@ -15,7 +15,7 @@
 
 package org.pitest.coverage;
 
-import org.pitest.classinfo.ClassInfo;
+import org.pitest.classinfo.ClassHash;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
 import org.pitest.testapi.Description;
@@ -147,7 +147,7 @@ public class CoverageData implements CoverageDatabase {
             .map(TestInfo.toDefiningClassName())
             .collect(Collectors.toSet());
 
-    for (final ClassInfo each : this.code.getClassInfo(testClasses)) {
+    for (final ClassHash each : this.code.fetchClassHashes(testClasses)) {
       coverageNumber = coverageNumber.add(each.getDeepHash());
     }
 

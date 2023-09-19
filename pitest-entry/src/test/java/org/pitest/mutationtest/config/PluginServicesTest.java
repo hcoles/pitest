@@ -47,6 +47,10 @@ public class PluginServicesTest {
     assertThat(testee.findFeatures()).hasAtLeastOneElementOfType(MutationResultListenerFactory.class);
   }
 
+  @Test
+  public void noHistoryStoresProvidedByDefault() {
+    assertThat(testee.findHistory()).isEmpty();
+  }
 
   private PluginServices createWithFeatures(MutationInterceptorFactory ... features) {
     Services loader = Mockito.mock(Services.class);

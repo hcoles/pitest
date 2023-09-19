@@ -7,17 +7,21 @@ import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
-import org.pitest.mutationtest.HistoryStore;
+import org.pitest.mutationtest.History;
+import org.pitest.mutationtest.HistoryFactory;
+import org.pitest.mutationtest.HistoryParams;
+import org.pitest.mutationtest.incremental.HistoryResultInterceptor;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
-import org.pitest.mutationtest.incremental.NullHistoryStore;
+import org.pitest.mutationtest.incremental.NullHistory;
 import org.pitest.mutationtest.incremental.NullWriterFactory;
-import org.pitest.mutationtest.incremental.ObjectOutputStreamHistoryStore;
 import org.pitest.mutationtest.incremental.WriterFactory;
 import org.pitest.plugin.Feature;
 import org.pitest.plugin.FeatureParameter;
+import org.pitest.plugin.FeatureParser;
+import org.pitest.plugin.FeatureSelector;
 import org.pitest.process.ArgLineParser;
 import org.pitest.process.JavaAgent;
 import org.pitest.process.LaunchOptions;
@@ -35,6 +39,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static java.util.Collections.singletonList;
 import static org.pitest.util.Verbosity.VERBOSE;
 import static org.pitest.util.Verbosity.VERBOSE_NO_SPINNER;
 
@@ -116,10 +121,11 @@ public class EntryPoint {
 
     final Optional<WriterFactory> maybeWriter = data.createHistoryWriter();
     WriterFactory historyWriter = maybeWriter.orElse(new NullWriterFactory());
-    final HistoryStore history = makeHistoryStore(data, maybeWriter);
+    HistoryFactory historyFactory = settings.createHistory();
+    final History history = pickHistoryStore(code, data, maybeWriter, historyFactory);
 
     final MutationStrategies strategies = new MutationStrategies(
-        settings.createEngine(), history, coverageDatabase, reportFactory, settings.getResultInterceptor(),
+        settings.createEngine(), history, coverageDatabase, reportFactory, settings.getResultInterceptor().add(new HistoryResultInterceptor(history)),
         settings.createCoverageTransformer(code),
             reportOutput, settings.createVerifier().create(code));
 
@@ -146,15 +152,16 @@ public class EntryPoint {
 
   private void updateData(ReportOptions data, SettingsFactory settings) {
     settings.createUpdater().updateConfig(null, data);
-
   }
 
-  private HistoryStore makeHistoryStore(ReportOptions data,  Optional<WriterFactory> historyWriter) {
+  private History pickHistoryStore(CodeSource code, ReportOptions data, Optional<WriterFactory> historyWriter, HistoryFactory factory) {
     final Optional<Reader> reader = data.createHistoryReader();
     if (!reader.isPresent() && !historyWriter.isPresent()) {
-      return new NullHistoryStore();
+      return new NullHistory();
     }
-    return new ObjectOutputStreamHistoryStore(historyWriter.orElse(new NullWriterFactory()), reader);
+    FeatureParser parser = new FeatureParser();
+    FeatureSelector select = new FeatureSelector(parser.parseFeatures(data.getFeatures()), singletonList(factory));
+    return factory.makeHistory(new HistoryParams(select, code), historyWriter.orElse(new NullWriterFactory()), reader);
   }
 
   private void checkMatrixMode(ReportOptions data) {
