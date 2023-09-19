@@ -9,6 +9,7 @@ import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
 import org.pitest.mutationtest.History;
 import org.pitest.mutationtest.HistoryFactory;
+import org.pitest.mutationtest.HistoryParams;
 import org.pitest.mutationtest.incremental.HistoryResultInterceptor;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.config.PluginServices;
@@ -19,6 +20,8 @@ import org.pitest.mutationtest.incremental.NullWriterFactory;
 import org.pitest.mutationtest.incremental.WriterFactory;
 import org.pitest.plugin.Feature;
 import org.pitest.plugin.FeatureParameter;
+import org.pitest.plugin.FeatureParser;
+import org.pitest.plugin.FeatureSelector;
 import org.pitest.process.ArgLineParser;
 import org.pitest.process.JavaAgent;
 import org.pitest.process.LaunchOptions;
@@ -36,6 +39,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static java.util.Collections.singletonList;
 import static org.pitest.util.Verbosity.VERBOSE;
 import static org.pitest.util.Verbosity.VERBOSE_NO_SPINNER;
 
@@ -155,7 +159,9 @@ public class EntryPoint {
     if (!reader.isPresent() && !historyWriter.isPresent()) {
       return new NullHistory();
     }
-    return factory.makeHistory(code, historyWriter.orElse(new NullWriterFactory()), reader);
+    FeatureParser parser = new FeatureParser();
+    FeatureSelector select = new FeatureSelector(parser.parseFeatures(data.getFeatures()), singletonList(factory));
+    return factory.makeHistory(new HistoryParams(select, code), historyWriter.orElse(new NullWriterFactory()), reader);
   }
 
   private void checkMatrixMode(ReportOptions data) {

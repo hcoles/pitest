@@ -117,14 +117,19 @@ public class SettingsFactory {
   }
 
   public HistoryFactory createHistory() {
-    List<HistoryFactory> sources = this.plugins.findHistory();
-    if (sources.isEmpty()) {
+    List<HistoryFactory> available = this.plugins.findHistory();
+
+    final FeatureParser parser = new FeatureParser();
+    FeatureSelector<HistoryFactory> historyFeatures = new FeatureSelector<>(parser.parseFeatures(this.options.getFeatures()), available);
+    List<HistoryFactory> enabledHistory = historyFeatures.getActiveFeatures();
+
+    if (enabledHistory.isEmpty()) {
       return new DefaultHistoryFactory();
     }
-    if (sources.size() > 1) {
-      throw new RuntimeException("More than one HistoryFactory found on classpath.");
+    if (enabledHistory.size() > 1) {
+      throw new RuntimeException("More than one HistoryFactory enabled.");
     }
-    return sources.get(0);
+    return enabledHistory.get(0);
   }
 
   public void describeFeatures(Consumer<Feature> enabled, Consumer<Feature> disabled) {

@@ -71,6 +71,12 @@ public class FeatureParserTest {
   }
 
   @Test
+  public void shouldParseSingleBooleanConfigValues() {
+    final FeatureSetting actual = parse("+BAR(on[true])");
+    assertThat(actual.getBoolean("on")).contains(true);
+  }
+
+  @Test
   public void shouldParseMultipleConfigValues() {
     final FeatureSetting actual = parse("+BAR(name[hello]size[42])");
     assertThat(actual.getString("name")).contains("hello");
@@ -89,7 +95,6 @@ public class FeatureParserTest {
     assertThatCode(() -> parse("+BAR[things(1])]"))
             .hasMessageContaining("Could not parse feature. Parameters should be configured with +feature(param[value], param2[value2])");
   }
-
 
   private FeatureSetting parse(String dsl) {
     final List<FeatureSetting> actual = this.testee.parseFeatures(Collections.singletonList(dsl));

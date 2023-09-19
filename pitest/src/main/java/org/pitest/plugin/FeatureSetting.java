@@ -55,4 +55,9 @@ public final class FeatureSetting {
     return val.map(Integer::parseInt);
   }
 
+  public Optional<Boolean> getBoolean(String key) {
+    Optional<String> val = this.getString(key);
+    return val.map(Boolean::parseBoolean);
+  }
+
 }
