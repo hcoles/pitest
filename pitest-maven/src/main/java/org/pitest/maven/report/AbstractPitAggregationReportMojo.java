@@ -157,8 +157,7 @@ abstract class AbstractPitAggregationReportMojo extends PitReportMojo {
   }
 
   @SuppressWarnings("unchecked")
-  private List<File> getCompiledDirs(final MavenProject project)
-      throws Exception {
+  private List<File> getCompiledDirs(final MavenProject project) {
     final List<String> sourceRoots = new ArrayList<>();
     for (final Object artifactObj : FCollection
         .filter(project.getPluginArtifactMap().values(), new DependencyFilter(

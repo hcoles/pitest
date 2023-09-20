@@ -37,14 +37,14 @@ public class XMLReportListenerTest {
   @Before
   public void setup() {
     this.out = new StringWriter();
-    this.testee = new XMLReportListener(this.out, false);
+    this.testee = new XMLReportListener(this.out, false, false);
   }
 
   @Test
   public void shouldCreateAValidXmlDocumentWhenNoResults() {
     this.testee.runStart();
     this.testee.runEnd();
-    final String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<mutations>\n</mutations>\n";
+    final String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<mutations partial=\"false\">\n</mutations>\n";
     assertThat(expected).isEqualTo(this.out.toString());
   }
 
@@ -61,7 +61,7 @@ public class XMLReportListenerTest {
 
   @Test
   public void shouldOutputFullMutationMatrixWhenEnabled() {
-    this.testee = new XMLReportListener(this.out, true);
+    this.testee = new XMLReportListener(this.out, true, false);
     final MutationResult mr = new MutationResult(
             MutationTestResultMother.createDetails(),
             new MutationStatusTestPair(3, DetectionStatus.KILLED, Arrays.asList("foo", "foo2"), Arrays.asList("bar")));

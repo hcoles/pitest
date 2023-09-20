@@ -21,7 +21,9 @@
     <tbody>
         <tr>
             <td>$totals.numberOfFiles$</td>
-            <td>$totals.lineCoverage$% <div class="coverage_bar"><div class="coverage_complete width-$totals.lineCoverage$"></div><div class="coverage_legend">$totals.numberOfLinesCovered$/$totals.numberOfLines$</div></div></td>
+            $if(showCoverage)$ <td>$totals.lineCoverage$% <div class="coverage_bar"><div class="coverage_complete width-$totals.lineCoverage$"></div><div class="coverage_legend">$totals.numberOfLinesCovered$/$totals.numberOfLines$</div></div></td>
+            $else$<td><div class="coverage_bar"><div class="coverage_complete width-100"></div><div class="coverage_legend">n/a</div></div></td>
+            $endif$
             <td>$totals.mutationCoverage$% <div class="coverage_bar"><div class="coverage_complete width-$totals.mutationCoverage$"></div><div class="coverage_legend">$totals.numberOfMutationsDetected$/$totals.numberOfMutations$</div></div></td>
             <td>$totals.testStrength$% <div class="coverage_bar"><div class="coverage_complete width-$totals.testStrength$"></div><div class="coverage_legend">$totals.numberOfMutationsDetected$/$totals.numberOfMutationsWithCoverage$</div></div></td>
         </tr>
@@ -45,7 +47,9 @@ $packageSummaries:{ summary |
         <tr>
             <td><a href="./$summary.packageDirectory$/index.html">$summary.packageName$</a></td>
             <td>$summary.totals.numberOfFiles$</td>
-            <td><div class="coverage_percentage">$summary.totals.lineCoverage$% </div><div class="coverage_bar"><div class="coverage_complete width-$summary.totals.lineCoverage$"></div><div class="coverage_legend">$summary.totals.numberOfLinesCovered$/$summary.totals.numberOfLines$</div></div></td>
+            $if(showCoverage)$ <td><div class="coverage_percentage">$summary.totals.lineCoverage$% </div><div class="coverage_bar"><div class="coverage_complete width-$summary.totals.lineCoverage$"></div><div class="coverage_legend">$summary.totals.numberOfLinesCovered$/$summary.totals.numberOfLines$</div></div></td>
+            $else$<td><div class="coverage_bar"><div class="coverage_complete width-100"></div><div class="coverage_legend">n/a</div></div></td>
+            $endif$
             <td><div class="coverage_percentage">$summary.totals.mutationCoverage$% </div><div class="coverage_bar"><div class="coverage_complete width-$summary.totals.mutationCoverage$"></div><div class="coverage_legend">$summary.totals.numberOfMutationsDetected$/$summary.totals.numberOfMutations$</div></div></td>
             <td><div class="coverage_percentage">$summary.totals.testStrength$% </div><div class="coverage_bar"><div class="coverage_complete width-$summary.totals.testStrength$"></div><div class="coverage_legend">$summary.totals.numberOfMutationsDetected$/$summary.totals.numberOfMutationsWithCoverage$</div></div></td>
         </tr>

@@ -56,16 +56,21 @@ public class MutationHtmlReportListener implements MutationResultListener {
 
   private final String                    css;
   private final Charset                   outputCharset;
+  private final boolean reportCoverage;
 
-  public MutationHtmlReportListener(Charset outputCharset, final ReportCoverage coverage,
-                                    final ResultOutputStrategy outputStrategy,
-                                    Collection<String> mutatorNames, final SourceLocator... locators) {
+  public MutationHtmlReportListener(Charset outputCharset,
+                                    ReportCoverage coverage,
+                                    ResultOutputStrategy outputStrategy,
+                                    Collection<String> mutatorNames,
+                                    boolean reportCoverage,
+                                    SourceLocator... locators) {
     this.outputCharset = outputCharset;
     this.coverage = coverage;
     this.outputStrategy = outputStrategy;
     this.sourceRoots = new HashSet<>(asList(locators));
     this.mutatorNames = new HashSet<>(mutatorNames);
     this.css = loadCss();
+    this.reportCoverage = reportCoverage;
   }
 
   private String loadCss() {
@@ -101,7 +106,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
       st.setAttribute("sourceFile", sourceFile);
       st.setAttribute("mutatedClasses", mutationMetaData.getMutatedClasses());
       st.setAttribute("outputCharset", this.outputCharset);
-
+      st.setAttribute("showCoverage", this.reportCoverage);
       writer.write(st.toString());
 
 
@@ -153,7 +158,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
         sourceFile);
     if (reader.isPresent()) {
       final AnnotatedLineFactory alf = new AnnotatedLineFactory(
-          mutationsForThisFile.list(), this.coverage, classes);
+          mutationsForThisFile.list(), this.coverage, classes, this.reportCoverage);
       return alf.convert(reader.get());
     }
     return Collections.emptyList();
@@ -215,6 +220,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
     st.setAttribute("totals", totals);
     st.setAttribute("packageSummaries", psd);
     st.setAttribute("outputCharset", this.outputCharset);
+    st.setAttribute("showCoverage", this.reportCoverage);
     try {
       writer.write(st.toString());
       writer.close();
@@ -233,6 +239,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
         .getPackageDirectory() + File.separator + "index.html");
     st.setAttribute("packageData", psData);
     st.setAttribute("outputCharset", this.outputCharset);
+    st.setAttribute("showCoverage", this.reportCoverage);
     try {
       writer.write(st.toString());
       writer.close();
