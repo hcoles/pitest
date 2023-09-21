@@ -8,6 +8,18 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.15.0
+
+* #1253 suppress coverage stats when history test reduction enabled
+* #1252 add extrafeatures param for maven to allow features to be added on commandline without overwriting existing list
+* #1251 expand history interfaces (breaking change)
+* #1250 improve error message when failing to parse feature strings
+* #1248 performance tweak - delay test class identification
+* #1247 legacy code removal
+
+As a result of the breaking api changes in #1251, the arcmutate kotlin
+plugin should be upgraded to 1.1.0 when upgrading to pitest 1.15.0
+
 ## 1.14.4
 
 #1246 Priotitise previous killing test when using history files
