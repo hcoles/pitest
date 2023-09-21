@@ -32,19 +32,20 @@ import java.util.stream.StreamSupport;
 
 public class AnnotatedLineFactory {
 
-  private final Collection<MutationResult>         mutations;
-  private final ReportCoverage                     coverage;
-  private final Collection<ClassLines>             classesInFile;
-
-  private final Set<Integer>                       coveredLines;
+  private final Collection<MutationResult> mutations;
+  private final Collection<ClassLines> classesInFile;
+  private final Set<Integer>  coveredLines;
+  private final boolean reportCoverage;
 
   public AnnotatedLineFactory(
           final Collection<MutationResult> mutations,
-          final ReportCoverage coverage, final Collection<ClassLines> classes) {
+          final ReportCoverage coverage,
+          final Collection<ClassLines> classes,
+          boolean reportCoverage) {
     this.mutations = mutations;
-    this.coverage = coverage;
     this.classesInFile = classes;
     this.coveredLines = findCoveredLines(classes,coverage);
+    this.reportCoverage = reportCoverage;
   }
 
   private Set<Integer> findCoveredLines(Collection<ClassLines> classes, ReportCoverage coverage) {
@@ -93,7 +94,7 @@ public class AnnotatedLineFactory {
 
   private LineStatus lineCovered(final int line) {
 
-    if (!isCodeLine(line)) {
+    if (!isCodeLine(line) || !reportCoverage) {
       return LineStatus.NotApplicable;
     } else {
       if (isLineCovered(line)) {

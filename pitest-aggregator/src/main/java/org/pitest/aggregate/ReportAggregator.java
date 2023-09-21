@@ -8,7 +8,6 @@ import org.pitest.coverage.ReportCoverage;
 import org.pitest.coverage.analysis.LineMapper;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationMetaData;
-import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.SourceLocator;
 import org.pitest.mutationtest.build.CoverageTransformer;
@@ -21,7 +20,10 @@ import org.pitest.util.Log;
 import org.pitest.util.ResultOutputStrategy;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,9 +31,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 
@@ -68,7 +70,9 @@ public final class ReportAggregator {
   public AggregationResult aggregateReport() throws ReportAggregationException {
     SmartSourceLocator sourceLocator = new SmartSourceLocator(asPaths(this.sourceCodeDirectories), inputCharset);
 
-    final MutationResultListener mutationResultListener = createResultListener(sourceLocator, Collections.emptySet());
+    boolean partialCoverage = scanForPartialCoverageFlag(mutationFiles);
+
+    final MutationResultListener mutationResultListener = createResultListener(sourceLocator, Collections.emptySet(), partialCoverage);
     final ReportAggregatorResultListener reportAggregatorResultListener = new ReportAggregatorResultListener();
 
     reportAggregatorResultListener.runStart();
@@ -93,28 +97,33 @@ public final class ReportAggregator {
     return reportAggregatorResultListener.result();
   }
 
-  private MutationResultListener createResultListener(SourceLocator sourceLocator, Collection<String> mutatorNames) throws ReportAggregationException {
+  private boolean scanForPartialCoverageFlag(Set<File> mutationFiles) {
+    // scan for the partial coverage flag. All files should have the same flag, so only really
+    // need to scan the first line of the first file, but expressing as a loop here just because.
+    for (File each : mutationFiles) {
+      try (Stream<String> lines = Files.lines(each.toPath())) {
+        // search for a false flag as this is the most likely case
+        if (lines.anyMatch(l -> l.contains("<mutations partial=\"false\"")) ) {
+          return false;
+        }
+      } catch (IOException e) {
+        throw new UncheckedIOException(e);
+      }
+    }
+    return true;
+  }
+
+  private MutationResultListener createResultListener(SourceLocator sourceLocator, Collection<String> mutatorNames, boolean partialCoverage) throws ReportAggregationException {
     final CodeSource codeSource = this.codeSourceAggregator.createCodeSource();
     final ReportCoverage coverageDatabase = calculateCoverage(codeSource);
 
-    return new MutationHtmlReportListener(outputCharset, coverageDatabase, this.resultOutputStrategy, mutatorNames, sourceLocator);
+    return new MutationHtmlReportListener(outputCharset, coverageDatabase, this.resultOutputStrategy, mutatorNames, partialCoverage, sourceLocator);
   }
 
   private Collection<Path> asPaths(Collection<File> files) {
     return files.stream()
             .map(File::toPath)
             .collect(Collectors.toList());
-  }
-
-  private static Function<MutationResult, List<String>> resultToMutatorName() {
-    return a -> {
-      try {
-        final String mutatorName = a.getDetails().getId().getMutator();//MutatorUtil.loadMutator(a.getDetails().getMutator()).getName();
-        return Collections.singletonList(mutatorName);
-      } catch (final Exception e) {
-        throw new RuntimeException("Cannot convert to mutator: " + a.getDetails().getMutator(), e);
-      }
-    };
   }
 
   private ReportCoverage calculateCoverage(final CodeSource codeSource) throws ReportAggregationException {

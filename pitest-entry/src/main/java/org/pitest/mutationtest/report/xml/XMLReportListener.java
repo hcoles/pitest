@@ -55,13 +55,16 @@ public class XMLReportListener implements MutationResultListener {
   private final Writer out;
   private final boolean fullMutationMatrix;
 
-  public XMLReportListener(final ResultOutputStrategy outputStrategy, boolean fullMutationMatrix) {
-    this(outputStrategy.createWriterForFile("mutations.xml"), fullMutationMatrix);
+  private final boolean partialCoverage;
+
+  public XMLReportListener(final ResultOutputStrategy outputStrategy, boolean fullMutationMatrix, boolean partialCoverage) {
+    this(outputStrategy.createWriterForFile("mutations.xml"), fullMutationMatrix, partialCoverage);
   }
 
-  public XMLReportListener(final Writer out, boolean fullMutationMatrix) {
+  public XMLReportListener(final Writer out, boolean fullMutationMatrix, boolean partialCoverage) {
     this.out = out;
     this.fullMutationMatrix = fullMutationMatrix;
+    this.partialCoverage = partialCoverage;
   }
 
   private void writeResult(final ClassMutationResults metaData) {
@@ -176,7 +179,7 @@ public class XMLReportListener implements MutationResultListener {
   @Override
   public void runStart() {
     write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-    write("<mutations>\n");
+    write("<mutations partial=\"" + this.partialCoverage + "\">\n");
   }
 
   @Override

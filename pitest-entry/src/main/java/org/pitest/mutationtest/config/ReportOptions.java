@@ -132,6 +132,8 @@ public class ReportOptions {
 
   private boolean                        includeLaunchClasspath         = true;
 
+  private boolean                        reportCoverage                 = true;
+
   private Properties                     properties;
 
   private int maxSurvivors;
@@ -647,6 +649,13 @@ public class ReportOptions {
     this.outputEncoding = outputEncoding;
   }
 
+  public boolean shouldReportCoverage() {
+    return reportCoverage;
+  }
+
+  public void setReportCoverage(boolean reportCoverage) {
+    this.reportCoverage = reportCoverage;
+  }
 
   @Override
   public String toString() {
@@ -695,6 +704,7 @@ public class ReportOptions {
             .add("projectBase=" + projectBase)
             .add("inputEncoding=" + inputEncoding)
             .add("outputEncoding=" + outputEncoding)
+            .add("reportCoverage=" + reportCoverage)
             .toString();
   }
 
