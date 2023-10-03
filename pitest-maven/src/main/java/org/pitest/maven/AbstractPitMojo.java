@@ -700,7 +700,7 @@ public class AbstractPitMojo extends AbstractMojo {
     }
 
     if (!notEmptyProject.test(project)) {
-      decision.addReason("Project has no tests, it is empty.");
+      decision.addReason("Project has either no tests or no production code.");
     }
 
     return decision;
