@@ -127,7 +127,7 @@ public class ObjectOutputStreamHistory implements History {
         this.previousResults.put(result.id, result.status);
         line = this.input.readLine();
       }
-    } catch (final IOException e) {
+    } catch (final Exception e) {
       LOG.warning("Could not read previous results");
     }
   }

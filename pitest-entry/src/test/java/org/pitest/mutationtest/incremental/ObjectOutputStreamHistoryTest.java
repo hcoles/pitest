@@ -147,6 +147,37 @@ public class ObjectOutputStreamHistoryTest {
         assertFalse(this.testee.getHistoricResults().isEmpty());
     }
 
+    @Test
+    public void doesNotErrorOnOldHistoryFile() throws IOException {
+        final HierarchicalClassId foo = new HierarchicalClassId(
+                new ClassIdentifier(0, ClassName.fromString("foo")), "");
+        recordClassPathWithTestee(foo);
+
+        final MutationResult mr = new MutationResult(
+                MutationTestResultMother.createDetails("foo"),
+                new MutationStatusTestPair(1, DetectionStatus.KILLED, "testName"));
+
+        this.testee.recordResult(mr);
+        this.output.append(pitest14HistoryFile());
+
+        final Reader reader = new StringReader(this.output.toString());
+        this.testee = new ObjectOutputStreamHistory(this.code, this.writerFactory,
+                Optional.ofNullable(reader));
+        this.testee.initialize();
+
+        assertFalse(this.testee.getHistoricResults().isEmpty());
+    }
+
+    private String pitest14HistoryFile() {
+        return "rO0ABXNyACRvcmcucGl0ZXN0Lm11dGF0aW9udGVzdC5DbGFzc0hpc3RvcnkAAAAAAAAAAQIAAkwACmNvdmVyYWdlSWR0ABJMamF2YS9sYW5nL1N0cmluZztM" +
+                "AAJpZHQAKkxvcmcvcGl0ZXN0L2NsYXNzaW5mby9IaWVyYXJjaGljYWxDbGFzc0lkO3hwdAAIMTY1MmVhMDRzcgAob3JnLnBpdGVzdC5jbGFzc2luZm8uSGllc" +
+                "mFyY2hpY2FsQ2xhc3NJZAAAAAAAAAABAgACTAAHY2xhc3NJZHQAJkxvcmcvcGl0ZXN0L2NsYXNzaW5mby9DbGFz" +
+                "c0lkZW50aWZpZXI7TAAQaGllcmFyY2hpY2FsSGFzaHEAfgABeHBzcgAkb3JnLnBpdGVzdC5jbGFzc2luZm8uQ2xhc3NJZGVudGl" +
+                "maWVyAAAAAAAAAAECAAJKAARoYXNoTAAEbmFtZXQAIExvcmcvcGl0ZXN0L2NsYXNzaW5mby9DbGFzc05hbWU7eHAAAAAAFlLqBHNyAB5" +
+                "vcmcucGl0ZXN0LmNsYXNzaW5mby5DbGFzc05hbWUAAAAAAAAAAQIAAUwABG5hbWVxAH4AAXhwdAAkY29tL2V4YW1wbGUvbW9kdWxlYi9DYX" +
+                "RDb252ZXJ0ZXJUZXN0dAAIMTY1MmVhMDQ=";
+    }
+
     private void recordClassPathWithTestee(
         final HierarchicalClassId... classIdentifiers) {
         this.testee = new ObjectOutputStreamHistory(this.code, this.writerFactory,
