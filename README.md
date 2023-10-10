@@ -8,6 +8,11 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.15.1
+
+* #1260 Upgrade to ASM 9.6 for Java 22 support
+* #1261 Do not error on pitest history files < 1.15.0
+
 ## 1.15.0
 
 * #1253 suppress coverage stats when history test reduction enabled
