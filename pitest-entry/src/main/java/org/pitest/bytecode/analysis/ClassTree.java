@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -39,6 +40,12 @@ public class ClassTree {
     final ClassNode classNode = new ClassNode();
     cr.accept(classNode, ClassReader.EXPAND_FRAMES);
     return new ClassTree(classNode);
+  }
+
+  public byte[] toBytes() {
+    ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+    rawNode().accept(classWriter);
+    return classWriter.toByteArray();
   }
 
   public List<MethodTree> methods() {
