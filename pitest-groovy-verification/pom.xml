@@ -30,8 +30,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
 					<compilerId>groovy-eclipse-compiler</compilerId>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 					<includes>
 						<include>**/*.groovy</include>
 						<include>**/*.java</include>
