@@ -4,7 +4,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import com.example.service.ExampleService;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
