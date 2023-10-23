@@ -7,7 +7,7 @@ import org.pitest.verifier.interceptors.FactoryVerifier;
 
 public class FirstLineInterceptorFactoryTest {
 
-    GroovyFilterFactory underTest = new GroovyFilterFactory();
+    FirstLineInterceptorFactory underTest = new FirstLineInterceptorFactory();
 
     @Test
     public void isOnChain() {
@@ -16,16 +16,16 @@ public class FirstLineInterceptorFactoryTest {
     }
 
     @Test
-    public void isOnByDefault() {
+    public void isOffByDefault() {
         FactoryVerifier.confirmFactory(underTest)
-                .isOnByDefault();
+                .isOffByDefault();
     }
 
 
     @Test
-    public void featureIsCalledFGroovy() {
+    public void featureIsCalledNoFirstLine() {
         FactoryVerifier.confirmFactory(underTest)
-                .featureName().isEqualTo("fgroovy");
+                .featureName().isEqualTo("nofirstline");
     }
 
     @Test

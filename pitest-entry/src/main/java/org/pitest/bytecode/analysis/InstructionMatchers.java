@@ -19,14 +19,18 @@ import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.IincInsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.pitest.classinfo.ClassName;
 import org.pitest.sequence.Match;
 import org.pitest.sequence.Slot;
 import org.pitest.sequence.SlotRead;
 import org.pitest.sequence.SlotWrite;
+
+import java.util.function.Predicate;
 
 public class InstructionMatchers {
 
@@ -40,7 +44,28 @@ public class InstructionMatchers {
   public static Match<AbstractInsnNode> notAnInstruction() {
      return isA(LineNumberNode.class).or(isA(FrameNode.class));
   }
-  
+
+  public static Match<AbstractInsnNode> newCall(ClassName target) {
+    final String clazz = target.asInternalName();
+    return (c, t) -> {
+      if ( t instanceof TypeInsnNode ) {
+        final TypeInsnNode call = (TypeInsnNode) t;
+        return result(call.getOpcode() == Opcodes.NEW && call.desc.equals(clazz), c);
+      }
+      return result(false, c);
+    };
+  }
+
+  public static Match<AbstractInsnNode> ldcString(Predicate<String> match) {
+    return (c, t) -> {
+      if ( t instanceof LdcInsnNode) {
+        final LdcInsnNode ldc = (LdcInsnNode) t;
+        return result(ldc.cst instanceof String && match.test((String) ldc.cst), c);
+      }
+      return result(false, c);
+    };
+  }
+
   public static Match<AbstractInsnNode> opCode(final int opcode) {
     return (c, a) -> result(a.getOpcode() == opcode, c);
   }

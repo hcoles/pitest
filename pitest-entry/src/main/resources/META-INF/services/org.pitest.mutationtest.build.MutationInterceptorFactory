@@ -23,5 +23,6 @@ org.pitest.mutationtest.build.intercept.equivalent.EqualsPerformanceShortcutFilt
 org.pitest.mutationtest.build.intercept.equivalent.EquivalentReturnMutationFilter
 org.pitest.mutationtest.build.intercept.exclude.FirstLineInterceptorFactory
 org.pitest.mutationtest.build.intercept.equivalent.DivisionByMinusOneFilterFactory
+org.pitest.mutationtest.build.intercept.lombok.LombokFilter
 
 org.pitest.plugin.export.MutantExportFactory
