@@ -7,7 +7,7 @@ public class NullExecutionListener implements TestUnitExecutionListener {
     }
 
     @Override
-    public void executionFinished(Description description, boolean passed) {
+    public void executionFinished(Description description, boolean passed, Throwable error) {
         //noop
     }
 }
