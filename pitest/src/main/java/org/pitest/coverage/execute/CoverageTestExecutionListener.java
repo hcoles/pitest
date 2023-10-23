@@ -10,6 +10,7 @@ import java.lang.management.ThreadMXBean;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
@@ -42,7 +43,12 @@ public class CoverageTestExecutionListener implements TestUnitExecutionListener 
     }
 
     @Override
-    public void executionFinished(Description description, boolean passed) {
+    public void executionFinished(Description description, boolean passed, Throwable maybeError) {
+
+        if (maybeError != null) {
+            LOG.log(Level.SEVERE, description.toString(), maybeError);
+        }
+
         Long t0 = startTimes.remove(description);
         int executionTime;
         if (t0 == null) {
@@ -70,4 +76,5 @@ public class CoverageTestExecutionListener implements TestUnitExecutionListener 
 
         invokeQueue.recordTestOutcome(description, passed, executionTime);
     }
+
 }

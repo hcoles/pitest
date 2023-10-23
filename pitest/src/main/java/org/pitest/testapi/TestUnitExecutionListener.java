@@ -20,5 +20,10 @@ public interface TestUnitExecutionListener {
     default void executionStarted(Description description, boolean suppressParallelWarning) {
         executionStarted(description);
     }
-    void executionFinished(Description description, boolean passed);
+
+    default void executionFinished(Description description, boolean passed) {
+        executionFinished(description, passed, null);
+    }
+
+    void executionFinished(Description description, boolean passed, Throwable error);
 }
