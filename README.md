@@ -8,6 +8,13 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.15.2
+
+* #1268 - Filter Lombok NonNull checks
+* #1267 - Expand test api to allow reporting of errors during test scanning 
+
+#1267 will ensure that previously hidden errors encountered by the JUnit5 plugin will now be reported. This is a backwards compatible api change. It will have no effect until the JUnit5 plugin is updated to use the expanded api. The updated plugin will not be compatible with earlier versions of pitest.
+
 ## 1.15.1
 
 * #1260 Upgrade to ASM 9.6 for Java 22 support
