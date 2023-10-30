@@ -9,20 +9,21 @@ import java.util.function.Consumer;
 import org.pitest.coverage.CoverageResult;
 import org.pitest.process.ProcessArgs;
 import org.pitest.process.WrappingProcess;
+import org.pitest.util.CommunicationThread;
 import org.pitest.util.ExitCode;
 
 public class CoverageProcess {
 
   private final WrappingProcess             process;
-  private final CoverageCommunicationThread crt;
+  private final CommunicationThread crt;
 
   public CoverageProcess(final ProcessArgs processArgs,
       final CoverageOptions arguments, final ServerSocket socket,
       final List<String> testClasses, final Consumer<CoverageResult> handler) {
     this.process = new WrappingProcess(socket.getLocalPort(), processArgs,
         CoverageMinion.class);
-    this.crt = new CoverageCommunicationThread(socket, arguments, testClasses,
-        handler);
+
+    this.crt = new CommunicationThread(socket, new SendData(arguments, testClasses), new Receive(handler));
   }
 
   public void start() throws IOException, InterruptedException {

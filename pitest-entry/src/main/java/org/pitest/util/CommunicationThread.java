@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CommunicationThread {
+public final class CommunicationThread {
 
   private static final Logger                     LOG = Log.getLogger();
 
