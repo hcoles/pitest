@@ -29,6 +29,8 @@ class Receive implements ReceiveStrategy {
             case Id.REPORT:
                 handleReport(is);
                 break;
+            default:
+                LOG.severe("Unknown control byte " + control);
         }
     }
 
