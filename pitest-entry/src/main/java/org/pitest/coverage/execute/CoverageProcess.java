@@ -37,6 +37,12 @@ public class CoverageProcess {
       while (!maybeExit.isPresent() && this.process.isAlive()) {
         maybeExit = this.crt.waitToFinish(10);
       }
+
+      // Either the monitored process died, or the thread ended.
+      // Check the thread one last time to try and avoid reporting
+      // an error code if it was the process that went down first
+      maybeExit = this.crt.waitToFinish(10);
+
       return maybeExit.orElse(ExitCode.MINION_DIED);
     } finally {
       this.process.destroy();

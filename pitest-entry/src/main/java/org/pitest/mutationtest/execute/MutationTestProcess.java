@@ -51,7 +51,8 @@ public class MutationTestProcess {
     try {
       // Wait a moment to give the monitoring thread time to finish naturally. This
       // happens when the monitored process sends a "DONE" signal over the socket,
-      // the process itself should exit shortly after sending the signal
+      // the process itself should exit shortly after sending the signal.
+      // Most likely the process will still be running
       Optional<ExitCode> maybeExit = this.thread.waitToFinish(5);
 
       // While the monitored process reports being alive, keep polling
@@ -59,6 +60,11 @@ public class MutationTestProcess {
       while (!maybeExit.isPresent() && this.process.isAlive()) {
         maybeExit = this.thread.waitToFinish(10);
       }
+
+      // Either the monitored process died, or the thread ended.
+      // Check the thread one last time to try and avoid reporting
+      // an error code if it was the process that went down first
+      maybeExit = this.thread.waitToFinish(10);
 
       // If the monitored thread is still live, but the process is dead
       // then either the process never properly started or it died
