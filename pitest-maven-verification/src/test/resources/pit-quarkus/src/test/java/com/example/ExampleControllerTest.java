@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import com.example.service.ExampleService;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import io.quarkus.test.junit.mockito.InjectMock;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
