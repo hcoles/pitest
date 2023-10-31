@@ -99,6 +99,11 @@ public class MutationTestMinion {
               tests, this.reporter));
 
       this.reporter.done(ExitCode.OK);
+
+      // rudely kill the vm in case it is kept alive
+      // by threads launched by client
+      System.exit(0);
+
     } catch (final Throwable ex) {
       ex.printStackTrace(System.out);
       LOG.log(Level.WARNING, "Error during mutation test", ex);
