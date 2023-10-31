@@ -8,6 +8,10 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.15.3
+
+* #1271 - Double check thread status before marking minion as dead
+
 ## 1.15.2
 
 * #1268 - Filter Lombok NonNull checks
