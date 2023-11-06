@@ -1,6 +1,7 @@
 package org.pitest.mutationtest.build.intercept.staticinitializers;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.Handle;
+import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
@@ -11,6 +12,7 @@ import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -64,7 +66,6 @@ class StaticInitializerInterceptor implements MutationInterceptor {
     final Optional<MethodTree> clinit = tree.methods().stream().filter(nameEquals("<clinit>")).findFirst();
 
     if (clinit.isPresent()) {
-
       // We can't see if a method *call* is private from the call site
       // so collect a set of private methods within the class first
       Set<Location> privateMethods = tree.methods().stream()
@@ -72,9 +73,11 @@ class StaticInitializerInterceptor implements MutationInterceptor {
               .map(MethodTree::asLocation)
               .collect(Collectors.toSet());
 
+      // Get map of each private method to the private methods it calls
+      // Any call to a no private method breaks the chain
       Map<Location, List<Call>> callTree = tree.methods().stream()
               .filter(m -> m.isPrivate() || m.rawNode().name.equals("<clinit>"))
-              .flatMap(m -> callsFor(tree, m).stream().map(c -> new Call(m.asLocation(), c)))
+              .flatMap(m -> allCallsFor(tree, m).stream().map(c -> new Call(m.asLocation(), c)))
               .filter(c -> privateMethods.contains(c.to()))
               .collect(Collectors.groupingBy(Call::from));
 
@@ -86,12 +89,27 @@ class StaticInitializerInterceptor implements MutationInterceptor {
     }
   }
 
-  private List<Location> callsFor(ClassTree tree, MethodTree m) {
+  private boolean enumConstructor(MethodTree m, boolean isEnum) {
+    return isEnum && m.rawNode().name.equals("<init>");
+  }
+
+  private List<Location> allCallsFor(ClassTree tree, MethodTree m) {
+    return Stream.concat(callsFor(tree,m), invokeDynamicCallsFor(tree,m))
+            .collect(Collectors.toList());
+  }
+
+  private Stream<Location> callsFor(ClassTree tree, MethodTree m) {
     return m.instructions().stream()
             .flatMap(is(MethodInsnNode.class))
             .filter(calls(tree.name()))
-            .map(this::asLocation)
-            .collect(Collectors.toList());
+            .map(this::asLocation);
+  }
+
+  private Stream<Location> invokeDynamicCallsFor(ClassTree tree, MethodTree m) {
+    return m.instructions().stream()
+            .flatMap(is(InvokeDynamicInsnNode.class))
+            .filter(callsDynamically(tree.name()))
+            .flatMap(this::asLocation);
   }
 
   private void visit(Map<Location, List<Call>> callTree, Set<Location> visited, Location l) {
@@ -114,7 +132,24 @@ class StaticInitializerInterceptor implements MutationInterceptor {
     return a -> a.owner.equals(self.asInternalName());
   }
 
-  private <T extends AbstractInsnNode> Function<AbstractInsnNode,Stream<T>> is(final Class<T> clazz) {
+  private Predicate<InvokeDynamicInsnNode> callsDynamically(final ClassName self) {
+    return a -> asLocation(a)
+            .anyMatch(l -> l.getClassName().equals(self));
+
+  }
+
+  private Stream<Location> asLocation(InvokeDynamicInsnNode call) {
+    return Arrays.stream(call.bsmArgs)
+            .flatMap(is(Handle.class))
+            .flatMap(this::handleToLocation);
+  }
+
+  private Stream<Location> handleToLocation(Handle handle) {
+    ClassName c = ClassName.fromString(handle.getOwner());
+    return Stream.of(Location.location(c, handle.getName(), handle.getDesc()));
+  }
+
+  private <T> Function<Object,Stream<T>> is(final Class<T> clazz) {
     return a -> {
       if (a.getClass().isAssignableFrom(clazz)) {
         return Stream.of((T)a);

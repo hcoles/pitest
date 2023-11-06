@@ -1,7 +1,9 @@
 package org.pitest.mutationtest.build.intercept.staticinitializers;
 
 import com.example.staticinitializers.BrokenChain;
+import com.example.staticinitializers.EnumWithLambdaInConstructor;
 import com.example.staticinitializers.MethodsCallsEachOtherInLoop;
+import com.example.staticinitializers.NestedEnumWithLambdaInStaticInitializer;
 import com.example.staticinitializers.SecondLevelPrivateMethods;
 import com.example.staticinitializers.SingletonWithWorkInInitializer;
 import com.example.staticinitializers.ThirdLevelPrivateMethods;
@@ -77,14 +79,25 @@ public class StaticInitializerInterceptorTest {
               .verify();
     }
 
-  @Test
-  public void filtersMutantsInSingletonConstructor() {
-    v.forClass(SingletonWithWorkInInitializer.class)
-            .forMutantsMatching(inMethod("<init>", "()V"))
-            .mutantsAreGenerated()
-            .allMutantsAreFiltered()
-            .verify();
-  }
+    @Test
+    public void filtersMutantsInSingletonConstructor() {
+        v.forClass(SingletonWithWorkInInitializer.class)
+                .forMutantsMatching(inMethod("<init>", "()V"))
+                .mutantsAreGenerated()
+                .allMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void mutatesPrivateMethodsCalledFromPublicMethodInSingleton() {
+        v.forClass(SingletonWithWorkInInitializer.class)
+                .forMutantsMatching(inMethod("mutateMeCalledFromPublicMethod", "()V"))
+                .mutantsAreGenerated()
+                .noMutantsAreFiltered()
+                .verify();
+    }
+
+
 
     @Test
     public void filtersMutantsCalledFromPrivateSingletonConstructor() {
@@ -126,6 +139,24 @@ public class StaticInitializerInterceptorTest {
     public void analysisDoesNotGetStuckInInfiniteLoop() {
         v.forClass(MethodsCallsEachOtherInLoop.class)
                 .forMutantsMatching(inMethodStartingWith("a"))
+                .mutantsAreGenerated()
+                .allMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void filtersMutantsInEnumPrivateMethodsCalledViaMethodRef() {
+        v.forClass(EnumWithLambdaInConstructor.class)
+                .forMutantsMatching(inMethodStartingWith("doStuff"))
+                .mutantsAreGenerated()
+                .allMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void filtersMutantsInLambdaCalledFromStaticInitializerInNestedEnum() {
+        v.forClass(NestedEnumWithLambdaInStaticInitializer.TOYS.class)
+                .forMutantsMatching(inMethodStartingWith("lambda"))
                 .mutantsAreGenerated()
                 .allMutantsAreFiltered()
                 .verify();

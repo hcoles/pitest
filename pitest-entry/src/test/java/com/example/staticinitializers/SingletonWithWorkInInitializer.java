@@ -14,10 +14,15 @@ public class SingletonWithWorkInInitializer {
     }
 
     public boolean isMember6() {
+        mutateMeCalledFromPublicMethod();
         return 6 == num;
     }
 
     private void doNotMutateMethodCalledFromConstructor() {
+        System.out.println("do not mutate");
+    }
+
+    private void mutateMeCalledFromPublicMethod() {
         System.out.println("do not mutate");
     }
 }
