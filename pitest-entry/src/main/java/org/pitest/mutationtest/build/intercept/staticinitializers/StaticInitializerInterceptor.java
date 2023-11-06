@@ -89,10 +89,6 @@ class StaticInitializerInterceptor implements MutationInterceptor {
     }
   }
 
-  private boolean enumConstructor(MethodTree m, boolean isEnum) {
-    return isEnum && m.rawNode().name.equals("<init>");
-  }
-
   private List<Location> allCallsFor(ClassTree tree, MethodTree m) {
     return Stream.concat(callsFor(tree,m), invokeDynamicCallsFor(tree,m))
             .collect(Collectors.toList());
