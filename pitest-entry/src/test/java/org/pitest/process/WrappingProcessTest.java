@@ -42,7 +42,7 @@ public class WrappingProcessTest {
         .andLaunchOptions(launchOptions).andStdout(nullHandler())
         .andStderr(nullHandler());
 
-    final WrappingProcess wrappingProcess = new WrappingProcess(-1, processArgs,
+    final WrappingProcess wrappingProcess = WrappingProcess.create(-1, processArgs,
         getClass());
     wrappingProcess.start();
     final JavaProcess process = wrappingProcess.getProcess();
