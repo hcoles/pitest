@@ -20,7 +20,7 @@ public class CoverageProcess {
   public CoverageProcess(final ProcessArgs processArgs,
       final CoverageOptions arguments, final ServerSocket socket,
       final List<String> testClasses, final Consumer<CoverageResult> handler) {
-    this.process = new WrappingProcess(socket.getLocalPort(), processArgs,
+    this.process = WrappingProcess.create(socket.getLocalPort(), processArgs,
         CoverageMinion.class);
 
     this.crt = new CommunicationThread(socket, new SendData(arguments, testClasses), new Receive(handler));

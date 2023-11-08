@@ -23,7 +23,7 @@ public class MutationTestProcess {
 
   public MutationTestProcess(final ServerSocket socket,
       final ProcessArgs processArgs, final MinionArguments arguments) {
-    this.process = new WrappingProcess(socket.getLocalPort(), processArgs,
+    this.process = WrappingProcess.create(socket.getLocalPort(), processArgs,
         MutationTestMinion.class);
 
     this.idMap = new ConcurrentHashMap<>();
