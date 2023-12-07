@@ -4,12 +4,12 @@ import org.pitest.classpath.CodeSource;
 import org.pitest.classpath.CodeSourceFactory;
 import org.pitest.classpath.DefaultCodeSource;
 import org.pitest.classpath.ProjectClassPaths;
+import org.pitest.coverage.CompoundCoverageExporterFactory;
 import org.pitest.coverage.CoverageExporter;
 import org.pitest.mutationtest.HistoryFactory;
 import org.pitest.mutationtest.build.CoverageTransformer;
 import org.pitest.mutationtest.build.CoverageTransformerFactory;
 import org.pitest.coverage.execute.CoverageOptions;
-import org.pitest.coverage.export.DefaultCoverageExporter;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.CompoundMutationResultInterceptor;
@@ -63,7 +63,9 @@ public class SettingsFactory {
 
   public CoverageExporter createCoverageExporter() {
     if (this.options.shouldExportLineCoverage()) {
-      return new DefaultCoverageExporter(getOutputStrategy());
+      final FeatureParser parser = new FeatureParser();
+      return new CompoundCoverageExporterFactory(parser.parseFeatures(this.options.getFeatures()), this.plugins.findCoverageExport())
+                .create(this.options.getReportDirectoryStrategy());
     } else {
       return new NullCoverageExporter();
     }
