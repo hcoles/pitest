@@ -1,9 +1,13 @@
 package org.pitest.mutationtest.config;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
+import org.pitest.coverage.CoverageExporter;
 import org.pitest.coverage.execute.CoverageOptions;
+import org.pitest.coverage.export.DefaultCoverageExporter;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.mutationtest.incremental.DefaultHistoryFactory;
@@ -12,6 +16,8 @@ import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.PitError;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.Consumer;
@@ -33,6 +39,9 @@ public class SettingsFactoryTest {
 
   private SettingsFactory      testee;
 
+  @Rule
+  public TemporaryFolder reportDir = new TemporaryFolder();
+
   @Before
   public void setUp() {
     this.testee = new SettingsFactory(this.options, this.plugins);
@@ -43,6 +52,31 @@ public class SettingsFactoryTest {
   public void shouldReturnANullCoverageExporterWhenOptionSetToFalse() {
     this.options.setExportLineCoverage(false);
     assertTrue(this.testee.createCoverageExporter() instanceof NullCoverageExporter);
+  }
+
+  @Test
+  public void usesDefaultCoverageExporterWhenOptionSetToTrueAndNoOtherExportersPresent() throws IOException {
+    this.options.setExportLineCoverage(true);
+    this.options.setShouldCreateTimestampedReports(false);
+    this.options.setReportDir(reportDir.getRoot().getAbsolutePath());
+    CoverageExporter actual = this.testee.createCoverageExporter();
+    actual.recordCoverage(Collections.emptyList());
+
+    assertThat(Files.list(reportDir.getRoot().toPath()))
+            .anyMatch(path -> path.getFileName().toString().equals("linecoverage.xml"));
+  }
+
+  @Test
+  public void generatesNoCoverageWhenAllExportersDisabled() throws IOException {
+    this.options.setExportLineCoverage(true);
+    this.options.setShouldCreateTimestampedReports(false);
+    this.options.setReportDir(reportDir.getRoot().getAbsolutePath());
+    this.options.setFeatures(Arrays.asList("-defaultCoverage"));
+    CoverageExporter actual = this.testee.createCoverageExporter();
+    actual.recordCoverage(Collections.emptyList());
+
+    assertThat(Files.list(reportDir.getRoot().toPath()))
+            .noneMatch(path -> path.getFileName().toString().equals("linecoverage.xml"));
   }
 
   @Test
