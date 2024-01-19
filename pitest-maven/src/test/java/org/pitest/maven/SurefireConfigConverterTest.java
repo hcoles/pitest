@@ -164,6 +164,29 @@ public class SurefireConfigConverterTest {
     assertThat(actual.skipFailingTests()).isFalse();
   }
 
+  @Test
+  public void convertsArgline() throws Exception {
+    this.surefireConfig = makeConfig("<argLine>-Xmx1024m</argLine>");
+
+    ReportOptions actual = this.testee
+        .update(this.options, this.surefireConfig);
+
+    assertThat(actual.getArgLine()).isEqualTo("-Xmx1024m");
+  }
+
+  @Test
+  public void doesNotConvertArglineWhenAlreadySetInPitestConfig() throws Exception {
+    this.surefireConfig = makeConfig("<argLine>-Xmx1024m</argLine>");
+
+    this.options.setArgLine("-foo");
+
+    ReportOptions actual = this.testee
+            .update(this.options, this.surefireConfig);
+
+    assertThat(actual.getArgLine()).isEqualTo("-foo");
+  }
+
+
   private Xpp3Dom makeConfig(String s) throws Exception {
     String xml = "<configuration>" + s + "</configuration>";
     InputStream stream = new ByteArrayInputStream(xml.getBytes("UTF-8"));

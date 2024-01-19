@@ -471,7 +471,6 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
 
   }
 
-
   private ReportOptions parseConfig(final String xml) {
     try {
       final String pom = createPomWithConfiguration(xml);
