@@ -29,6 +29,7 @@ public class SurefireConfigConverter {
     convertExcludes(option, configuration);
     convertGroups(option, configuration);
     convertTestFailureIgnore(option, configuration);
+    convertArgLine(option, configuration);
     return option;
   }
 
@@ -67,6 +68,18 @@ public class SurefireConfigConverter {
     excludes.addAll(option.getExcludedTestClasses());
     option.setExcludedTestClasses(excludes);
   }
+
+  private void convertArgLine(ReportOptions option, Xpp3Dom configuration) {
+    if (option.getArgLine() != null) {
+      return;
+    }
+
+    Xpp3Dom argLine = configuration.getChild("argLine");
+    if (argLine != null) {
+      option.setArgLine(argLine.getValue());
+    }
+  }
+
 
   private Predicate<String> filenameToClassFilter(String filename) {
     return new Glob(filename.replace(".java", "").replace("/", "."));
