@@ -8,6 +8,14 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.15.4
+
+* #1288 - New extension point to allow custom coverage export formats
+* #1289 - Parse argline configuration from surefire configuration
+
+Note, maven users who have previously needed to duplicate argline parameters between surefire and pitest's `jvmArgs` and `argline` parameters may need
+to adjust their configuration when upgrading. Entries supplied to surefire will now automatically be added to pitest. 
+
 ## 1.15.3
 
 * #1271 - Double check thread status before marking minion as dead
