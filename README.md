@@ -12,6 +12,7 @@ Read all about it at https://pitest.org
 
 * #1288 - New extension point to allow custom coverage export formats
 * #1289 - Parse argline configuration from surefire configuration
+* #1274 Follow invoke dynamic calls when detecting static initializer only methods
 
 Note, maven users who have previously needed to duplicate argline parameters between surefire and pitest's `jvmArgs` and `argline` parameters may need
 to adjust their configuration when upgrading. Entries supplied to surefire will now automatically be added to pitest. 
