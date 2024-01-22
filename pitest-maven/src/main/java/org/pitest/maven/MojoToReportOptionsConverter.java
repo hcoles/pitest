@@ -88,7 +88,16 @@ public class MojoToReportOptionsConverter {
     removeExcludedDependencies(classPath);
 
     ReportOptions option = parseReportOptions(classPath);
-    return updateFromSurefire(option);
+    ReportOptions withSureFire = updateFromSurefire(option);
+
+    // Null check here is a bad unit testing artifact, should never be null in real life
+    ReportOptions effective = withSureFire != null ? withSureFire : option;
+
+    // argline may contain surefire style properties that require expanding
+    if (effective.getArgLine() != null) {
+      effective.setArgLine(this.replacePropertyExpressions(option.getArgLine()));
+    }
+    return effective;
 
   }
 
@@ -196,7 +205,7 @@ public class MojoToReportOptionsConverter {
       data.addChildJVMArgs(this.mojo.getJvmArgs());
     }
     if (this.mojo.getArgLine() != null) {
-      data.setArgLine(replacePropertyExpressions(this.mojo.getArgLine()));
+      data.setArgLine(this.mojo.getArgLine());
     }
 
     data.setMutators(determineMutators());
