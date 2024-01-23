@@ -90,8 +90,11 @@ class StaticInitializerInterceptor implements MutationInterceptor {
   }
 
   private List<Location> allCallsFor(ClassTree tree, MethodTree m) {
-    return Stream.concat(callsFor(tree,m), invokeDynamicCallsFor(tree,m))
-            .collect(Collectors.toList());
+    // temporarily disable dynamic calls as they are more likely to be involved
+    // in storing delayed execution code within static fields.
+    return callsFor(tree,m).collect(Collectors.toList());
+  //  return Stream.concat(callsFor(tree,m), invokeDynamicCallsFor(tree,m))
+  //          .collect(Collectors.toList());
   }
 
   private Stream<Location> callsFor(ClassTree tree, MethodTree m) {
