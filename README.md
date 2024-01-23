@@ -8,6 +8,12 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.15.6
+
+* #1295  temporarily remove dynamic call tracking
+
+Invoke dynamic call tracking for static initializer code will be reintroduced when additional logic to suppress mutation filtering for delayed execution code has been implemented.
+
 ## 1.15.5
 
 * #1292 Arg lines taken from surefire config do not have properties replaced
