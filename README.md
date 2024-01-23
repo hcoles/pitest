@@ -8,6 +8,10 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.15.5
+
+* #1292 Arg lines taken from surefire config do not have properties replaced
+
 ## 1.15.4
 
 * #1288 - New extension point to allow custom coverage export formats
