@@ -64,8 +64,8 @@ public class CoverageOptions implements Serializable {
             glob("org.pitest.*"),
             glob("java.*"),
             glob("javax.*"),
-            glob("com.sun*"),
-            glob("org.junit*"),
+            glob("com.sun.*"),
+            glob("org.junit.*"),
             glob("sun.*"));
   }
 

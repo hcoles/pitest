@@ -40,8 +40,18 @@ public class CoverageOptionsTest {
   }
 
   @Test
+  public void shouldNotCoverDotSun() {
+    assertThat(this.testee.getFilter().test("com.sun.dance")).isFalse();
+  }
+
+  @Test
+  public void shouldCoverSunDance() {
+    assertThat(this.testee.getFilter().test("com.sundance")).isTrue();
+  }
+
+  @Test
   public void shouldNotCoverJUnitWhenFilterIsBroad() {
-    assertThat(this.testee.getFilter().test("sun.foo.Bar")).isFalse();
+    assertThat(this.testee.getFilter().test("org.junit.Bar")).isFalse();
   }
 
   @Test
