@@ -8,6 +8,12 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.15.7
+
+#1305 Coverage not recorded for code in packages name com.sun*
+
+A filter intended to pickup legacy JDK classes in the "com.sun.*" package was missing a `'`, resulting in no code coverage being registered if the code under test happened to be in a package starting with "sun".
+
 ## 1.15.6
 
 * #1295  temporarily remove dynamic call tracking
