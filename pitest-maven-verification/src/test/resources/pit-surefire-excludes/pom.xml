@@ -14,6 +14,9 @@
             <scope>test</scope>
             </dependency>
 	</dependencies>
+	<properties>
+		<argLine/>
+	</properties>
 	<build>
 		<plugins>
 			<plugin>
@@ -34,6 +37,7 @@
 			    <exclude>**/FailingTest.java</exclude>
 			    <exclude>**/BadTest.java</exclude>
 			  </excludes>
+				<argLine>@{argLine} -XX:+EnableDynamicAgentLoading</argLine>
 			</configuration>
 		        </plugin>
 			<plugin>
