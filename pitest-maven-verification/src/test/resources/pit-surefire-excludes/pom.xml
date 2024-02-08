@@ -37,7 +37,7 @@
 			    <exclude>**/FailingTest.java</exclude>
 			    <exclude>**/BadTest.java</exclude>
 			  </excludes>
-				<argLine>@{argLine} -XX:+EnableDynamicAgentLoading</argLine>
+				<argLine>@{argLine} -DnotNeeded=avalue</argLine>
 			</configuration>
 		        </plugin>
 			<plugin>
