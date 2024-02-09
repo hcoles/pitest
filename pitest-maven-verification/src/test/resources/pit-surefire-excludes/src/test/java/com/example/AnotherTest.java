@@ -18,4 +18,10 @@ public class AnotherTest {
     assertEquals(1, Covered.someCode(1));
   }
 
+  @Test
+  public void dependsOnArgLine() {
+    assertEquals("isSet", System.getProperty("MUST_BE_SET"));
+    assertEquals("alsoSet", System.getProperty("MUST_ALSO_BE_SET"));
+  }
+
 }

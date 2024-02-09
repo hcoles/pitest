@@ -441,11 +441,21 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertThat(actual.getArgLine()).isEqualTo("foo");
   }
 
-  public void testEvaluatesArgLineProperties() {
+  public void testEvaluatesSureFireLateEvalArgLineProperties() {
     properties.setProperty("FOO", "fooValue");
     properties.setProperty("BAR", "barValue");
     properties.setProperty("UNUSED", "unusedValue");
     ReportOptions actual = parseConfig("<argLine>@{FOO} @{BAR}</argLine>");
+    assertThat(actual.getArgLine()).isEqualTo("fooValue barValue");
+  }
+
+  public void testEvaluatesNormalPropertiesInArgLines() {
+    properties.setProperty("FOO", "fooValue");
+    properties.setProperty("BAR", "barValue");
+    properties.setProperty("UNUSED", "unusedValue");
+    // these are normally auto resolved by maven, but if we pull
+    // in an argline from surefire it will not have been escaped.
+    ReportOptions actual = parseConfig("<argLine>${FOO} ${BAR}</argLine>");
     assertThat(actual.getArgLine()).isEqualTo("fooValue barValue");
   }
 

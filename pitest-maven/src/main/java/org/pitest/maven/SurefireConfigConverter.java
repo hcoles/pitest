@@ -22,14 +22,22 @@ import org.pitest.util.Glob;
  */
 public class SurefireConfigConverter {
 
-  public ReportOptions update(ReportOptions option, Xpp3Dom configuration) {
+  private final boolean parseArgLine;
+
+    public SurefireConfigConverter(boolean parseArgLine) {
+        this.parseArgLine = parseArgLine;
+    }
+
+    public ReportOptions update(ReportOptions option, Xpp3Dom configuration) {
     if (configuration == null) {
       return option;
     }
     convertExcludes(option, configuration);
     convertGroups(option, configuration);
     convertTestFailureIgnore(option, configuration);
-    convertArgLine(option, configuration);
+    if (parseArgLine) {
+      convertArgLine(option, configuration);
+    }
     return option;
   }
 
@@ -70,13 +78,10 @@ public class SurefireConfigConverter {
   }
 
   private void convertArgLine(ReportOptions option, Xpp3Dom configuration) {
-    if (option.getArgLine() != null) {
-      return;
-    }
-
     Xpp3Dom argLine = configuration.getChild("argLine");
     if (argLine != null) {
-      option.setArgLine(argLine.getValue());
+      String existing = option.getArgLine() != null ? option.getArgLine() + " " : "";
+      option.setArgLine(existing + argLine.getValue());
     }
   }
 

@@ -17,7 +17,7 @@ import org.pitest.util.Glob;
 
 public class SurefireConfigConverterTest {
 
-  SurefireConfigConverter testee  = new SurefireConfigConverter();
+  SurefireConfigConverter testee  = new SurefireConfigConverter(true);
   ReportOptions           options = new ReportOptions();
   Xpp3Dom                 surefireConfig;
 
@@ -166,16 +166,28 @@ public class SurefireConfigConverterTest {
 
   @Test
   public void convertsArgline() throws Exception {
-    this.surefireConfig = makeConfig("<argLine>-Xmx1024m</argLine>");
+    this.surefireConfig = makeConfig("<argLine>-Xmx1024m -Dfoo=${BAR} -Dfoo=$@BAR}</argLine>");
 
     ReportOptions actual = this.testee
         .update(this.options, this.surefireConfig);
 
-    assertThat(actual.getArgLine()).isEqualTo("-Xmx1024m");
+    assertThat(actual.getArgLine()).isEqualTo("-Xmx1024m -Dfoo=${BAR} -Dfoo=$@BAR}");
   }
 
   @Test
-  public void doesNotConvertArglineWhenAlreadySetInPitestConfig() throws Exception {
+  public void appendsToExistingArgLine() throws Exception {
+    this.surefireConfig = makeConfig("<argLine>-Xmx1024m -Dfoo=${BAR} -Dfoo=$@BAR}</argLine>");
+    this.options.setArgLine("alreadyHere");
+
+    ReportOptions actual = this.testee
+            .update(this.options, this.surefireConfig);
+
+    assertThat(actual.getArgLine()).isEqualTo("alreadyHere -Xmx1024m -Dfoo=${BAR} -Dfoo=$@BAR}");
+  }
+
+  @Test
+  public void doesNotConvertArglineWhenFlagNotSet() throws Exception {
+    this.testee = new SurefireConfigConverter(false);
     this.surefireConfig = makeConfig("<argLine>-Xmx1024m</argLine>");
 
     this.options.setArgLine("-foo");

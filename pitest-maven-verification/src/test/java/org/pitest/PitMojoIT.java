@@ -321,6 +321,8 @@ public class PitMojoIT {
 
   @Test
   public void shouldReadExclusionsFromSurefireConfig() throws Exception {
+    // Note this test also tests the argline parsing concern
+
     File testDir = prepare("/pit-surefire-excludes");
     verifier.executeGoal("test");
     verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");

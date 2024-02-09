@@ -320,6 +320,13 @@ public class AbstractPitMojo extends AbstractMojo {
   private boolean                     parseSurefireConfig;
 
   /**
+   * When set will try and set the argLine based on surefire configuration. This
+   * may not give the desired result in some circumstances
+   */
+  @Parameter(defaultValue = "true")
+  private boolean                     parseSurefireArgLine;
+
+  /**
    * honours common skipTests flag in a maven run
    */
   @Parameter(property = "skipTests", defaultValue = "false")
@@ -515,7 +522,7 @@ public class AbstractPitMojo extends AbstractMojo {
 
   protected Optional<CombinedStatistics> analyse() throws MojoExecutionException {
     final ReportOptions data = new MojoToReportOptionsConverter(this,
-        new SurefireConfigConverter(), this.filter).convert();
+        new SurefireConfigConverter(this.isParseSurefireArgLine()), this.filter).convert();
     return Optional.ofNullable(this.goalStrategy.execute(detectBaseDir(), data,
         this.plugins, this.environmentVariables));
   }
@@ -724,6 +731,10 @@ public class AbstractPitMojo extends AbstractMojo {
 
   public boolean isParseSurefireConfig() {
     return this.parseSurefireConfig;
+  }
+
+  public boolean isParseSurefireArgLine() {
+    return this.parseSurefireArgLine;
   }
 
   public boolean skipFailingTests() {
