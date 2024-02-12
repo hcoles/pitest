@@ -95,7 +95,8 @@ public class MojoToReportOptionsConverter {
 
     // argline may contain surefire style properties that require expanding
     if (effective.getArgLine() != null) {
-      effective.setArgLine(this.replacePropertyExpressions(option.getArgLine()));
+      log.info("Replacing properties in argLine " + effective.getArgLine());
+      effective.setArgLine(this.replacePropertyExpressions(effective.getArgLine()));
     }
     return effective;
 
@@ -488,13 +489,25 @@ public class MojoToReportOptionsConverter {
    */
   private String replacePropertyExpressions(String argLine) {
     for (Enumeration<?> e = mojo.getProject().getProperties().propertyNames(); e.hasMoreElements();) {
+
       String key = e.nextElement().toString();
-      String field = "@{" + key + "}";
-      if (argLine.contains(field))  {
-        argLine = argLine.replace(field, mojo.getProject().getProperties().getProperty(key, ""));
-      }
+
+      // Replace surefire late evaluation syntax properties
+      argLine = replaceFieldForSymbol('@', key, argLine);
+
+      // Normally properties will already have been expanded by maven, but this is
+      // bypassed for argLines pulled from surefire, se we must handle them here
+      argLine = replaceFieldForSymbol('$', key, argLine);
     }
 
+    return argLine;
+  }
+
+  private String replaceFieldForSymbol(char symbol, String key, String argLine) {
+    String field = symbol + "{" + key + "}";
+    if (argLine.contains(field))  {
+      return argLine.replace(field, mojo.getProject().getProperties().getProperty(key, ""));
+    }
     return argLine;
   }
 

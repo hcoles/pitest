@@ -135,7 +135,7 @@ public class ScmMojo extends AbstractPitMojo {
     logClassNames();
     defaultTargetTestsIfNoValueSet();
     final ReportOptions data = new MojoToReportOptionsConverter(this,
-        new SurefireConfigConverter(), getFilter()).convert();
+        new SurefireConfigConverter(this.isParseSurefireArgLine()), getFilter()).convert();
     data.setFailWhenNoMutations(false);
 
     return Optional.ofNullable(this.getGoalStrategy().execute(detectBaseDir(), data,

@@ -15,6 +15,8 @@
             </dependency>
 	</dependencies>
 	<properties>
+		<a.value>isSet</a.value>
+		<b.value>alsoSet</b.value>
 		<argLine/>
 	</properties>
 	<build>
@@ -37,7 +39,7 @@
 			    <exclude>**/FailingTest.java</exclude>
 			    <exclude>**/BadTest.java</exclude>
 			  </excludes>
-				<argLine>@{argLine} -DnotNeeded=avalue</argLine>
+				<argLine>${argLine} -DMUST_BE_SET=${a.value} -DMUST_ALSO_BE_SET=@{b.value}</argLine>
 			</configuration>
 		        </plugin>
 			<plugin>
