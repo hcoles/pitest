@@ -1,0 +1,97 @@
+package org.pitest.mutationtest.build.intercept.defensive;
+
+import org.junit.Test;
+import org.pitest.mutationtest.build.InterceptorType;
+import org.pitest.mutationtest.build.MutationInterceptorFactory;
+import org.pitest.mutationtest.engine.gregor.mutators.NullMutateEverything;
+import org.pitest.verifier.interceptors.FactoryVerifier;
+import org.pitest.verifier.interceptors.InterceptorVerifier;
+import org.pitest.verifier.interceptors.VerifierStart;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.pitest.bytecode.analysis.OpcodeMatchers.INVOKESTATIC;
+
+
+public class ReturnUnmodifiableCollectionFactoryTest {
+    private final MutationInterceptorFactory underTest = new ReturnUnmodifiableCollectionFactory();
+    InterceptorVerifier v = VerifierStart.forInterceptorFactory(underTest)
+            .usingMutator(new NullMutateEverything());
+
+    @Test
+    public void isOnChain() {
+        FactoryVerifier.confirmFactory(underTest)
+                .isOnChain();
+    }
+
+    @Test
+    public void isOnByDefault() {
+        FactoryVerifier.confirmFactory(underTest)
+                .isOnByDefault();
+    }
+
+    @Test
+    public void featureIsCalledLombok() {
+        FactoryVerifier.confirmFactory(underTest)
+                .featureName().isEqualTo("defensivereturn");
+    }
+
+    @Test
+    public void createsFilters() {
+        FactoryVerifier.confirmFactory(underTest)
+                .createsInterceptorsOfType(InterceptorType.FILTER);
+    }
+
+
+    @Test
+    public void filtersMutationsToReturnUnmodifiableSet() {
+        v.forClass(HasUnmodifiableSetReturn.class)
+                .forCodeMatching(INVOKESTATIC.asPredicate())
+                .allMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void doesNotFilterOtherCode() {
+        v.forClass(HasUnmodifiableSetReturn.class)
+                .forCodeMatching(INVOKESTATIC.asPredicate().negate())
+                .noMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void doesNotFilterOtherCallsToUnModifiableSet() {
+        v.forClass(HasUnmodifiableSetNonReturn.class)
+                .forAnyCode()
+                .noMutantsAreFiltered()
+                .verify();
+    }
+}
+
+class HasUnmodifiableSetReturn {
+    private final Set<String> s = new HashSet<>();
+
+    public Set<String> mutateMe(int i) {
+        if (i != 1) {
+            return Collections.unmodifiableSet(s);
+        }
+
+        return s;
+    }
+}
+
+class HasUnmodifiableSetNonReturn {
+    private final Set<String> s = new HashSet<>();
+    private Set<String> copy;
+
+
+    public Set<String> dontMutateME(int i) {
+        if (i != 1) {
+            copy = Collections.unmodifiableSet(s);
+        }
+
+        return s;
+    }
+}
