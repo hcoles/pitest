@@ -8,8 +8,11 @@ import org.pitest.verifier.interceptors.FactoryVerifier;
 import org.pitest.verifier.interceptors.InterceptorVerifier;
 import org.pitest.verifier.interceptors.VerifierStart;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.pitest.bytecode.analysis.OpcodeMatchers.INVOKESTATIC;
@@ -27,15 +30,15 @@ public class ReturnUnmodifiableCollectionFactoryTest {
     }
 
     @Test
-    public void isOnByDefault() {
+    public void isOffByDefault() {
         FactoryVerifier.confirmFactory(underTest)
-                .isOnByDefault();
+                .isOffByDefault();
     }
 
     @Test
     public void featureIsCalledLombok() {
         FactoryVerifier.confirmFactory(underTest)
-                .featureName().isEqualTo("defensivereturn");
+                .featureName().isEqualTo("funmodifiablecollection");
     }
 
     @Test
@@ -48,6 +51,22 @@ public class ReturnUnmodifiableCollectionFactoryTest {
     @Test
     public void filtersMutationsToReturnUnmodifiableSet() {
         v.forClass(HasUnmodifiableSetReturn.class)
+                .forCodeMatching(INVOKESTATIC.asPredicate())
+                .allMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void filtersMutationsToReturnUnmodifiableList() {
+        v.forClass(HasUnmodifiableListReturn.class)
+                .forCodeMatching(INVOKESTATIC.asPredicate())
+                .allMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void filtersMutationsToReturnUnmodifiableMap() {
+        v.forClass(HasUnmodifiableMapReturn.class)
                 .forCodeMatching(INVOKESTATIC.asPredicate())
                 .allMutantsAreFiltered()
                 .verify();
@@ -79,6 +98,25 @@ class HasUnmodifiableSetReturn {
         }
 
         return s;
+    }
+}
+
+class HasUnmodifiableListReturn {
+    private final List<String> s = new ArrayList<>();
+
+    public List<String> mutateMe(int i) {
+        if (i != 1) {
+            return Collections.unmodifiableList(s);
+        }
+
+        return s;
+    }
+}
+
+class HasUnmodifiableMapReturn {
+
+    public Map<String,String> mutateMe(Map<String,String> m) {
+        return Collections.unmodifiableMap(m);
     }
 }
 

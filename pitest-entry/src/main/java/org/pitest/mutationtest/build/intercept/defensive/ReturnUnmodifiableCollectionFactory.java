@@ -13,8 +13,8 @@ public class ReturnUnmodifiableCollectionFactory implements MutationInterceptorF
 
     @Override
     public Feature provides() {
-        return Feature.named("DEFENSIVERETURN")
-                .withOnByDefault(true)
+        return Feature.named("funmodifiablecollection")
+                .withOnByDefault(false)
                 .withDescription(description());
     }
 
