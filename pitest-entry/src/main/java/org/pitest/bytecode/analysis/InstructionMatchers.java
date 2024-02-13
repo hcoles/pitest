@@ -188,15 +188,18 @@ public class InstructionMatchers {
   }
 
   public static  Match<AbstractInsnNode> methodCallTo(final ClassName owner, final String name) {
+    return methodCallTo(owner, c -> c.equals(name));
+  }
+
+  public static  Match<AbstractInsnNode> methodCallTo(final ClassName owner, Predicate<String> name) {
     return (c, t) -> {
       if ( t instanceof MethodInsnNode ) {
         final MethodInsnNode call = (MethodInsnNode) t;
-        return result( call.name.equals(name) && call.owner.equals(owner.asInternalName()), c);
+        return result( name.test(call.name) && call.owner.equals(owner.asInternalName()), c);
       }
       return result(false, c);
     };
   }
-
 
   public static  Match<AbstractInsnNode> isInstruction(final SlotRead<AbstractInsnNode> target) {
     return (c, t) -> result(c.retrieve(target).get() == t, c);

@@ -17,7 +17,6 @@ import org.pitest.mutationtest.engine.gregor.GregorMutater;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.config.Mutator;
 import org.pitest.mutationtest.engine.gregor.mutators.returns.BooleanFalseReturnValsMutator;
-import org.pitest.mutationtest.engine.gregor.mutators.returns.PrimitiveReturnsMutator;
 
 public class EqualsPerformanceShortcutFilterTest {
 
