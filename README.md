@@ -8,6 +8,16 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.15.8
+
+* #1310 Filter mutations to Collections.unmodifiable*
+* #1309 Replace fields in argLines imported from surefire config
+* #1308 Bump maven vcs versions
+
+The filtering for #1310 is off by default. To activate it add the filter string `+funmodifiablecollection`.
+
+1309 adds a new maven property `parseSurefireArgLine`. This is set to true by default, but surefire argline parsing can now be disabled by setting it to false.
+
 ## 1.15.7
 
 #1305 Coverage not recorded for code in packages name com.sun*
