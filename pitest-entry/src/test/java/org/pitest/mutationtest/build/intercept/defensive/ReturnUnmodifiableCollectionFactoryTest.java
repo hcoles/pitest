@@ -30,15 +30,15 @@ public class ReturnUnmodifiableCollectionFactoryTest {
     }
 
     @Test
-    public void isOnByDefault() {
+    public void isOffByDefault() {
         FactoryVerifier.confirmFactory(underTest)
-                .isOnByDefault();
+                .isOffByDefault();
     }
 
     @Test
-    public void featureIsCalledLombok() {
+    public void featureIsCalledUnmodifiableCollection() {
         FactoryVerifier.confirmFactory(underTest)
-                .featureName().isEqualTo("defensivereturn");
+                .featureName().isEqualTo("funmodifiablecollection");
     }
 
     @Test
