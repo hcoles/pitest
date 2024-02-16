@@ -18,8 +18,8 @@ import java.util.Set;
 import static org.pitest.bytecode.analysis.OpcodeMatchers.INVOKESTATIC;
 
 
-public class ReturnUnmodifiableCollectionFactoryTest {
-    private final MutationInterceptorFactory underTest = new ReturnUnmodifiableCollectionFactory();
+public class UnmodifiableCollectionsFactoryTest {
+    private final MutationInterceptorFactory underTest = new UnmodifiableCollectionFactory();
     InterceptorVerifier v = VerifierStart.forInterceptorFactory(underTest)
             .usingMutator(new NullMutateEverything());
 
@@ -81,11 +81,27 @@ public class ReturnUnmodifiableCollectionFactoryTest {
     }
 
     @Test
+    public void filtersUnmodifiableStoresToFields() {
+        v.forClass(StoresToFields.class)
+                .forCodeMatching(INVOKESTATIC.asPredicate())
+                .allMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
     public void doesNotFilterOtherCallsToUnModifiableSet() {
         v.forClass(HasUnmodifiableSetNonReturn.class)
                 .forAnyCode()
                 .noMutantsAreFiltered()
                 .verify();
+    }
+}
+
+class StoresToFields {
+    final List<String> ls;
+
+    StoresToFields(List<String> mod) {
+        ls = Collections.unmodifiableList(mod);
     }
 }
 
@@ -122,12 +138,10 @@ class HasUnmodifiableMapReturn {
 
 class HasUnmodifiableSetNonReturn {
     private final Set<String> s = new HashSet<>();
-    private Set<String> copy;
-
 
     public Set<String> dontMutateME(int i) {
         if (i != 1) {
-            copy = Collections.unmodifiableSet(s);
+            Set<String> copy = Collections.unmodifiableSet(s);
         }
 
         return s;
