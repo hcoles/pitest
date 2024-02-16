@@ -27,7 +27,7 @@ import static org.pitest.bytecode.analysis.OpcodeMatchers.INVOKESTATIC;
 import static org.pitest.bytecode.analysis.OpcodeMatchers.PUTFIELD;
 import static org.pitest.sequence.Result.result;
 
-public class ReturnUnmodifiableCollection extends RegionInterceptor {
+public class UnmodifiableCollections extends RegionInterceptor {
 
     static final Slot<AbstractInsnNode> MUTATED_INSTRUCTION = Slot.create(AbstractInsnNode.class);
 

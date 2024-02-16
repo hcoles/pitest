@@ -5,10 +5,10 @@ import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.plugin.Feature;
 
-public class ReturnUnmodifiableCollectionFactory implements MutationInterceptorFactory {
+public class UnmodifiableCollectionFactory implements MutationInterceptorFactory {
     @Override
     public MutationInterceptor createInterceptor(InterceptorParameters params) {
-        return new ReturnUnmodifiableCollection();
+        return new UnmodifiableCollections();
     }
 
     @Override
@@ -20,6 +20,6 @@ public class ReturnUnmodifiableCollectionFactory implements MutationInterceptorF
 
     @Override
     public String description() {
-        return "Filter mutations to defensive return wrappers such as unmodifiableCollection";
+        return "Filter mutations to defensive wrappers such as unmodifiableCollection on return or field write";
     }
 }

@@ -18,8 +18,8 @@ import java.util.Set;
 import static org.pitest.bytecode.analysis.OpcodeMatchers.INVOKESTATIC;
 
 
-public class ReturnUnmodifiableCollectionFactoryTest {
-    private final MutationInterceptorFactory underTest = new ReturnUnmodifiableCollectionFactory();
+public class UnmodifiableCollectionsFactoryTest {
+    private final MutationInterceptorFactory underTest = new UnmodifiableCollectionFactory();
     InterceptorVerifier v = VerifierStart.forInterceptorFactory(underTest)
             .usingMutator(new NullMutateEverything());
 
