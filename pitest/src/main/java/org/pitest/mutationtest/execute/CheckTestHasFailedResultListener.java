@@ -25,6 +25,7 @@ public class CheckTestHasFailedResultListener implements TestListener {
 
   private final List<Description>   succeedingTests = new ArrayList<>();
   private final List<Description>   failingTests = new ArrayList<>();
+  public final List<String> throwables = new ArrayList<>();
   private final boolean       recordPassingTests;
   private int                 testsRun        = 0;
 
@@ -35,6 +36,11 @@ public class CheckTestHasFailedResultListener implements TestListener {
   @Override
   public void onTestFailure(final TestResult tr) {
     this.failingTests.add(tr.getDescription());
+
+    if (tr.getThrowable() != null) {
+      // TO DO: expand the data that we capture from the throwable instance.
+      this.throwables.add(tr.getThrowable().getClass().descriptorString());
+    }
   }
 
   @Override
