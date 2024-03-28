@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -198,10 +199,21 @@ public class SurefireConfigConverterTest {
     assertThat(actual.getArgLine()).isEqualTo("-foo");
   }
 
+  @Test
+  public void shouldConvertEnvironmentVariables() throws Exception {
+    this.surefireConfig = makeConfig("<environmentVariables><ONE_OF_MANY>value</ONE_OF_MANY>" +
+            "<B>42</B></environmentVariables>");
+
+    ReportOptions actual = this.testee
+            .update(this.options, this.surefireConfig);
+
+    assertThat(actual.getEnvironmentVariables()).containsEntry("ONE_OF_MANY", "value");
+    assertThat(actual.getEnvironmentVariables()).containsEntry("B", "42");
+  }
 
   private Xpp3Dom makeConfig(String s) throws Exception {
     String xml = "<configuration>" + s + "</configuration>";
-    InputStream stream = new ByteArrayInputStream(xml.getBytes("UTF-8"));
+    InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
     return Xpp3DomBuilder.build(stream, "UTF-8");
   }
 

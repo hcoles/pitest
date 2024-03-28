@@ -44,8 +44,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.StringJoiner;
@@ -148,6 +150,9 @@ public class ReportOptions {
   private Path                           projectBase;
   private Charset inputEncoding;
   private Charset outputEncoding;
+
+  // currently used only via maven
+  private Map<String,String> environmentVariables = new HashMap<>();
 
 
   public Verbosity getVerbosity() {
@@ -655,6 +660,10 @@ public class ReportOptions {
 
   public void setReportCoverage(boolean reportCoverage) {
     this.reportCoverage = reportCoverage;
+  }
+
+  public Map<String,String> getEnvironmentVariables() {
+    return environmentVariables;
   }
 
   @Override
