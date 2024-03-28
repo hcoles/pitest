@@ -523,8 +523,13 @@ public class AbstractPitMojo extends AbstractMojo {
   protected Optional<CombinedStatistics> analyse() throws MojoExecutionException {
     final ReportOptions data = new MojoToReportOptionsConverter(this,
         new SurefireConfigConverter(this.isParseSurefireArgLine()), this.filter).convert();
+
+    // overwrite variable from surefire with any explicitly set
+    // for pitest / add additional values
+    data.getEnvironmentVariables().putAll(this.environmentVariables);
+
     return Optional.ofNullable(this.goalStrategy.execute(detectBaseDir(), data,
-        this.plugins, this.environmentVariables));
+        this.plugins, data.getEnvironmentVariables()));
   }
 
   protected File detectBaseDir() {
