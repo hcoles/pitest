@@ -21,6 +21,7 @@ import org.pitest.coverage.ReportCoverage;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.SourceLocator;
+import org.pitest.mutationtest.verify.BuildIssue;
 import org.pitest.util.FileUtil;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
@@ -58,11 +59,14 @@ public class MutationHtmlReportListener implements MutationResultListener {
   private final Charset                   outputCharset;
   private final boolean reportCoverage;
 
+  private final List<BuildIssue> issues;
+
   public MutationHtmlReportListener(Charset outputCharset,
                                     ReportCoverage coverage,
                                     ResultOutputStrategy outputStrategy,
                                     Collection<String> mutatorNames,
                                     boolean reportCoverage,
+                                    List<BuildIssue> issues,
                                     SourceLocator... locators) {
     this.outputCharset = outputCharset;
     this.coverage = coverage;
@@ -71,6 +75,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
     this.mutatorNames = new HashSet<>(mutatorNames);
     this.css = loadCss();
     this.reportCoverage = reportCoverage;
+    this.issues = issues;
   }
 
   private String loadCss() {
@@ -221,6 +226,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
     st.setAttribute("packageSummaries", psd);
     st.setAttribute("outputCharset", this.outputCharset);
     st.setAttribute("showCoverage", this.reportCoverage);
+    st.setAttribute("issues", wrap(this.issues));
     try {
       writer.write(st.toString());
       writer.close();
@@ -228,6 +234,13 @@ public class MutationHtmlReportListener implements MutationResultListener {
       e.printStackTrace();
     }
 
+  }
+
+  private List<ConvertedIssue> wrap(List<BuildIssue> issues) {
+    return issues.stream()
+            .sorted()
+            .map(ConvertedIssue::new)
+            .collect(Collectors.toList());
   }
 
   private void createPackageIndexPage(final PackageSummaryData psData) {
@@ -268,6 +281,23 @@ public class MutationHtmlReportListener implements MutationResultListener {
     generateAnnotatedSourceFile(packageData.getForSourceFile(metaData
         .getFileName()));
 
+  }
+
+}
+
+// wrapper providing StringTemplate friendly accessors
+class ConvertedIssue {
+  private final BuildIssue issue;
+  ConvertedIssue(BuildIssue issue) {
+    this.issue = issue;
+  }
+
+  public String getText() {
+    return issue.text();
+  }
+
+  public String getUrl() {
+    return issue.url();
   }
 
 }

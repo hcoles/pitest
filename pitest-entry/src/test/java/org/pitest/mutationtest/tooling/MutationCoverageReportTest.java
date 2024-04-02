@@ -169,7 +169,7 @@ public class MutationCoverageReportTest {
   @Test
   public void shouldCheckBuildSuitableForMutationTesting() {
     createAndRunTestee();
-    verify(this.verifier).verify();
+    verify(this.verifier).verifyBuild();
   }
 
   @Test

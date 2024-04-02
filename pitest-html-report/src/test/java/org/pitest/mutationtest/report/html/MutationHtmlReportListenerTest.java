@@ -69,7 +69,7 @@ public class MutationHtmlReportListenerTest {
         this.classInfo);
 
     this.testee = new MutationHtmlReportListener(StandardCharsets.UTF_8, this.coverageDb,
-        this.outputStrategy, Collections.<String>emptyList(), true, this.sourceLocator);
+        this.outputStrategy, Collections.<String>emptyList(), true, Collections.emptyList(), this.sourceLocator);
   }
 
   @Test

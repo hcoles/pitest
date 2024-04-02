@@ -1,6 +1,8 @@
 package org.pitest.mutationtest.verify;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Checks project for potential issues. Should throw an exception
@@ -9,6 +11,15 @@ import java.util.List;
  */
 public interface BuildVerifier {
 
-  List<String> verify();
+  @Deprecated
+  default List<String> verify() {
+    return Collections.emptyList();
+  }
+
+  default List<BuildIssue> verifyBuild() {
+    return verify().stream()
+            .map(BuildIssue::issue)
+            .collect(Collectors.toList());
+  }
 
 }

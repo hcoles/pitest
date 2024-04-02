@@ -15,10 +15,17 @@ public class CompoundBuildVerifierFactory implements BuildVerifierFactory {
 
     @Override
     public BuildVerifier create(CodeSource code) {
-        return () -> verifiers.stream()
+        List<BuildIssue> issues = verifiers.stream()
                 .map(f -> f.create(code))
-                .flatMap(v -> v.verify().stream())
+                .flatMap(v -> v.verifyBuild().stream())
                 .collect(Collectors.toList());
+
+        return new BuildVerifier() {
+            @Override
+            public List<BuildIssue> verifyBuild() {
+                return issues;
+            }
+        };
     }
 
     @Override

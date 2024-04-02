@@ -28,7 +28,7 @@ public class HtmlReportFactory implements MutationResultListenerFactory {
       ListenerArguments args) {
     return new MutationHtmlReportListener(args.data().getOutputEncoding(), args.getCoverage(),
         args.getOutputStrategy(), args.getEngine().getMutatorNames(), args.data().shouldReportCoverage(),
-        args.getLocator());
+            args.issues(), args.getLocator());
   }
 
   @Override

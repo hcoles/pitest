@@ -57,21 +57,21 @@ public class DefaultBuildVerifierTest {
   @Test
   public void shouldNotThrowErrorForClassCompiledWithDebugInfo() {
     setupClassPath(AClass.class);
-    this.testee.verify();
+    this.testee.verifyBuild();
     // pass
   }
 
   @Test(expected = PitHelpError.class)
   public void shouldThrowErrorForClassCompiledWithoutSourceFileDebugInfo() {
     setupClassPath(new ResourceFolderByteArraySource(), "FooNoSource");
-    this.testee.verify();
+    this.testee.verifyBuild();
   }
 
   @Test
   public void shouldNotThrowErrorForSyntheticClassCompiledWithoutSourceFileDebugInfo() {
     setupClassPath(new ResourceFolderByteArraySource(), "SyntheticNoSourceDebug");
     try {
-      this.testee.verify();
+      this.testee.verifyBuild();
     } catch (final PitHelpError ex) {
       fail();
     }
@@ -80,14 +80,14 @@ public class DefaultBuildVerifierTest {
   @Test(expected = PitHelpError.class)
   public void shouldThrowErrorForClassCompiledWithoutLineNumberDebugInfo() {
     setupClassPath(new ResourceFolderByteArraySource(), "FooNoLines");
-    this.testee.verify();
+    this.testee.verifyBuild();
   }
 
   @Test
   public void shouldNotThrowAnErrorWhenNoClassesFound() {
     when(this.code.codeTrees()).thenReturn(Stream.empty());
     try {
-      this.testee.verify();
+      this.testee.verifyBuild();
     } catch (final PitHelpError e) {
       fail();
     }
@@ -97,7 +97,7 @@ public class DefaultBuildVerifierTest {
   public void shouldNotThrowAnErrorWhenOnlyInterfacesPresent() {
     setupClassPath(AnInterface.class);
     try {
-      this.testee.verify();
+      this.testee.verifyBuild();
     } catch (final PitHelpError e) {
       fail();
     }
@@ -106,7 +106,7 @@ public class DefaultBuildVerifierTest {
   @Test
   public void doesNotErrorWhenNoClassesProvided() {
     when(this.code.codeTrees()).thenReturn(Stream.empty());
-    assertThatCode(() -> this.testee.verify()).doesNotThrowAnyException();
+    assertThatCode(() -> this.testee.verifyBuild()).doesNotThrowAnyException();
   }
 
   private void setupClassPath(final Class<?> clazz) {
