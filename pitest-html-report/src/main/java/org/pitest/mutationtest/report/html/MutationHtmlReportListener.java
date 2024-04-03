@@ -238,6 +238,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
 
   private List<ConvertedIssue> wrap(List<BuildIssue> issues) {
     return issues.stream()
+            .distinct()
             .sorted()
             .map(ConvertedIssue::new)
             .collect(Collectors.toList());

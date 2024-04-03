@@ -10,6 +10,7 @@ import org.pitest.util.ResultOutputStrategy;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Data passed to the listener MutationResultListener factories for use when
@@ -55,7 +56,10 @@ public class ListenerArguments {
     this.fullMutationMatrix = fullMutationMatrix;
     this.data = data;
     this.setting = setting;
-    this.issues = issues;
+    this.issues = issues.stream()
+            .distinct()
+            .sorted()
+            .collect(Collectors.toList());
   }
 
   public ResultOutputStrategy getOutputStrategy() {
