@@ -18,14 +18,14 @@ public class MissingJUnit5PluginVerifierFactoryTest {
     @Test
     public void doesNotDisplayMessageWhenJUnit5NotPresent() {
         v.withCodeSource(codeSourceReturning(ClassName.fromString("not.relevant.Foo")))
-                .issues()
+                .messages()
                 .isEmpty();
     }
 
     @Test
     public void displaysWarningWhenJUnit5PresentWithoutPlugin() {
         v.withCodeSource(codeSourceReturning(ClassName.fromString("org.junit.jupiter.api.Test")))
-                .issues()
+                .messages()
                 .isNotEmpty();
     }
 
@@ -34,7 +34,7 @@ public class MissingJUnit5PluginVerifierFactoryTest {
         v.withCodeSource(codeSourceReturning(ClassName.fromString("org.junit.jupiter.api.Test"),
                         ClassName.fromString("org.pitest.junit5.JUnit5TestPluginFactory")
                         ))
-                .issues()
+                .messages()
                 .isEmpty();
     }
 

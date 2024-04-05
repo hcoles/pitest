@@ -70,8 +70,8 @@ $errors : { error |
 <hr/>
 
 <ul>
-$issues:{ issue |
-        <li><a href="$issue.url$">$issue.text$</a>
+$messages:{ message |
+        <li><a href="$message.url$">$message.text$</a>
 }$
 </ul>
 

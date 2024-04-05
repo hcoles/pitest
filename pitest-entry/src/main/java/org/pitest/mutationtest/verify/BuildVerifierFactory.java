@@ -5,5 +5,12 @@ import org.pitest.plugin.ToolClasspathPlugin;
 
 public interface BuildVerifierFactory extends ToolClasspathPlugin {
 
-    BuildVerifier create(CodeSource code);
+    default BuildVerifier create(BuildVerifierArguments args) {
+        return create(args.code());
+    }
+
+    @Deprecated
+    default BuildVerifier create(CodeSource code) {
+        throw new IllegalStateException();
+    }
 }

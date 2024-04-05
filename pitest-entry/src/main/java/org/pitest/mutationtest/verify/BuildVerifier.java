@@ -16,9 +16,9 @@ public interface BuildVerifier {
     return Collections.emptyList();
   }
 
-  default List<BuildIssue> verifyBuild() {
+  default List<BuildMessage> verifyBuild() {
     return verify().stream()
-            .map(BuildIssue::issue)
+            .map(BuildMessage::buildMessage)
             .collect(Collectors.toList());
   }
 

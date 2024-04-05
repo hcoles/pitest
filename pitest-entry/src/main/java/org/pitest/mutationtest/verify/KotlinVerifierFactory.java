@@ -29,9 +29,9 @@ class KotlinVerifier implements BuildVerifier {
     }
 
     @Override
-    public List<BuildIssue> verifyBuild() {
+    public List<BuildMessage> verifyBuild() {
         if (kotlinIsOnClassPath() && !kotlinPluginIsPresent() && kotlinClassesToBeMutated()) {
-            return asList(new BuildIssue("Project uses kotlin, but the Arcmutate kotlin plugin is not present.", "https://docs.arcmutate.com/docs/kotlin.html", 4));
+            return asList(new BuildMessage("Project uses kotlin, but the Arcmutate kotlin plugin is not present.", "https://docs.arcmutate.com/docs/kotlin.html", 4));
         }
 
         return Collections.emptyList();

@@ -3,7 +3,7 @@ package org.pitest.mutationtest;
 import org.pitest.coverage.ReportCoverage;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.engine.MutationEngine;
-import org.pitest.mutationtest.verify.BuildIssue;
+import org.pitest.mutationtest.verify.BuildMessage;
 import org.pitest.plugin.FeatureSetting;
 import org.pitest.util.ResultOutputStrategy;
 
@@ -26,7 +26,7 @@ public class ListenerArguments {
   private final boolean              fullMutationMatrix;
   private final ReportOptions        data;
   private final FeatureSetting       setting;
-  private final List<BuildIssue> issues;
+  private final List<BuildMessage> issues;
 
   public ListenerArguments(ResultOutputStrategy outputStrategy,
                            ReportCoverage coverage,
@@ -35,7 +35,7 @@ public class ListenerArguments {
                            long startTime,
                            boolean fullMutationMatrix,
                            ReportOptions  data,
-                           List<BuildIssue> issues) {
+                           List<BuildMessage> issues) {
     this(outputStrategy, coverage, locator, engine, startTime, fullMutationMatrix, data, null, issues);
   }
 
@@ -47,7 +47,7 @@ public class ListenerArguments {
                            boolean fullMutationMatrix,
                            ReportOptions  data,
                            FeatureSetting setting,
-                           List<BuildIssue> issues) {
+                           List<BuildMessage> issues) {
     this.outputStrategy = outputStrategy;
     this.coverage = coverage;
     this.locator = locator;
@@ -94,7 +94,7 @@ public class ListenerArguments {
     return Optional.ofNullable(setting);
   }
 
-  public List<BuildIssue> issues() {
+  public List<BuildMessage> issues() {
     return Collections.unmodifiableList(issues);
   }
 

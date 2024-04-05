@@ -50,7 +50,7 @@ import org.pitest.mutationtest.incremental.NullHistory;
 import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.statistics.MutationStatisticsListener;
 import org.pitest.mutationtest.statistics.Score;
-import org.pitest.mutationtest.verify.BuildIssue;
+import org.pitest.mutationtest.verify.BuildMessage;
 import org.pitest.util.Log;
 import org.pitest.util.StringUtil;
 import org.pitest.util.Timings;
@@ -114,7 +114,7 @@ public class MutationCoverage {
 
     final long t0 = System.nanoTime();
 
-    List<BuildIssue> issues = verifyBuildSuitableForMutationTesting();
+    List<BuildMessage> issues = verifyBuildSuitableForMutationTesting();
 
     checkExcludedRunners();
 
@@ -143,7 +143,7 @@ public class MutationCoverage {
     return new CombinedStatistics(mutationStatistics, new CoverageSummary(0,0), Collections.emptyList());
   }
 
-  private CombinedStatistics runAnalysis(Runtime runtime, long t0, EngineArguments args, MutationEngine engine, List<BuildIssue> issues) {
+  private CombinedStatistics runAnalysis(Runtime runtime, long t0, EngineArguments args, MutationEngine engine, List<BuildMessage> issues) {
     History history = this.strategies.history();
     history.initialize();
 
@@ -255,7 +255,7 @@ public class MutationCoverage {
                                                     ReportCoverage coverageData,
                                                     History history,
                                                     MutationStatisticsListener stats,
-                                                    MutationEngine engine, List<BuildIssue> issues) {
+                                                    MutationEngine engine, List<BuildMessage> issues) {
     final List<MutationResultListener> ls = new ArrayList<>();
 
     ls.add(stats);
@@ -280,7 +280,7 @@ public class MutationCoverage {
     return this.strategies.resultInterceptor();
   }
 
-  private List<BuildIssue> verifyBuildSuitableForMutationTesting() {
+  private List<BuildMessage> verifyBuildSuitableForMutationTesting() {
     return this.strategies.buildVerifier().verifyBuild();
   }
 

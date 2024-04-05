@@ -2,19 +2,19 @@ package org.pitest.mutationtest.verify;
 
 import java.util.Objects;
 
-public final class BuildIssue implements Comparable<BuildIssue> {
+public final class BuildMessage implements Comparable<BuildMessage> {
     private final String text;
     private final String url;
     private final int priority;
 
-    public BuildIssue(String text, String url, int priority) {
+    public BuildMessage(String text, String url, int priority) {
         this.text = text;
         this.url = url;
         this.priority = priority;
     }
 
-    public static BuildIssue issue(String text) {
-        return new BuildIssue(text, null, 5);
+    public static BuildMessage buildMessage(String text) {
+        return new BuildMessage(text, null, 5);
     }
 
     public String text() {
@@ -42,7 +42,7 @@ public final class BuildIssue implements Comparable<BuildIssue> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        BuildIssue that = (BuildIssue) o;
+        BuildMessage that = (BuildMessage) o;
         return priority == that.priority && Objects.equals(text, that.text) && Objects.equals(url, that.url);
     }
 
@@ -52,7 +52,7 @@ public final class BuildIssue implements Comparable<BuildIssue> {
     }
 
     @Override
-    public int compareTo(BuildIssue o) {
+    public int compareTo(BuildMessage o) {
         return Integer.compare(this.priority, o.priority);
     }
 }

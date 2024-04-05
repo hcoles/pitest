@@ -21,7 +21,7 @@ import org.pitest.coverage.ReportCoverage;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.SourceLocator;
-import org.pitest.mutationtest.verify.BuildIssue;
+import org.pitest.mutationtest.verify.BuildMessage;
 import org.pitest.util.FileUtil;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
@@ -59,14 +59,14 @@ public class MutationHtmlReportListener implements MutationResultListener {
   private final Charset                   outputCharset;
   private final boolean reportCoverage;
 
-  private final List<BuildIssue> issues;
+  private final List<BuildMessage> messages;
 
   public MutationHtmlReportListener(Charset outputCharset,
                                     ReportCoverage coverage,
                                     ResultOutputStrategy outputStrategy,
                                     Collection<String> mutatorNames,
                                     boolean reportCoverage,
-                                    List<BuildIssue> issues,
+                                    List<BuildMessage> messages,
                                     SourceLocator... locators) {
     this.outputCharset = outputCharset;
     this.coverage = coverage;
@@ -75,7 +75,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
     this.mutatorNames = new HashSet<>(mutatorNames);
     this.css = loadCss();
     this.reportCoverage = reportCoverage;
-    this.issues = issues;
+    this.messages = messages;
   }
 
   private String loadCss() {
@@ -226,7 +226,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
     st.setAttribute("packageSummaries", psd);
     st.setAttribute("outputCharset", this.outputCharset);
     st.setAttribute("showCoverage", this.reportCoverage);
-    st.setAttribute("issues", wrap(this.issues));
+    st.setAttribute("messages", wrap(this.messages));
     try {
       writer.write(st.toString());
       writer.close();
@@ -236,11 +236,11 @@ public class MutationHtmlReportListener implements MutationResultListener {
 
   }
 
-  private List<ConvertedIssue> wrap(List<BuildIssue> issues) {
-    return issues.stream()
+  private List<ConvertedMessage> wrap(List<BuildMessage> messages) {
+    return messages.stream()
             .distinct()
             .sorted()
-            .map(ConvertedIssue::new)
+            .map(ConvertedMessage::new)
             .collect(Collectors.toList());
   }
 
@@ -287,18 +287,18 @@ public class MutationHtmlReportListener implements MutationResultListener {
 }
 
 // wrapper providing StringTemplate friendly accessors
-class ConvertedIssue {
-  private final BuildIssue issue;
-  ConvertedIssue(BuildIssue issue) {
-    this.issue = issue;
+class ConvertedMessage {
+  private final BuildMessage message;
+  ConvertedMessage(BuildMessage message) {
+    this.message = message;
   }
 
   public String getText() {
-    return issue.text();
+    return message.text();
   }
 
   public String getUrl() {
-    return issue.url();
+    return message.url();
   }
 
 }

@@ -2,7 +2,7 @@ package org.pitest.mutationtest.tooling;
 
 import org.pitest.coverage.CoverageSummary;
 import org.pitest.mutationtest.statistics.MutationStatistics;
-import org.pitest.mutationtest.verify.BuildIssue;
+import org.pitest.mutationtest.verify.BuildMessage;
 
 import java.util.List;
 
@@ -11,11 +11,11 @@ public class CombinedStatistics {
   private final MutationStatistics mutationStatistics;
   private final CoverageSummary    coverageSummary;
 
-  private final List<BuildIssue> issues;
+  private final List<BuildMessage> issues;
 
   public CombinedStatistics(MutationStatistics mutationStatistics,
                             CoverageSummary coverageSummary,
-                            List<BuildIssue> issues) {
+                            List<BuildMessage> issues) {
     this.mutationStatistics = mutationStatistics;
     this.coverageSummary = coverageSummary;
     this.issues = issues;
@@ -29,7 +29,7 @@ public class CombinedStatistics {
     return this.coverageSummary;
   }
 
-  public List<BuildIssue> getIssues() {
+  public List<BuildMessage> getIssues() {
     return issues;
   }
 

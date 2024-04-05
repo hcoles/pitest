@@ -1,7 +1,7 @@
 package org.pitest.mutationtest;
 
 import org.junit.Test;
-import org.pitest.mutationtest.verify.BuildIssue;
+import org.pitest.mutationtest.verify.BuildMessage;
 
 import java.util.List;
 
@@ -12,17 +12,17 @@ public class ListenerArgumentsTest {
 
     @Test
     public void removesDuplicateBuildIssues() {
-        List<BuildIssue> issues = asList(BuildIssue.issue("foo"), BuildIssue.issue("foo"));
+        List<BuildMessage> issues = asList(BuildMessage.buildMessage("foo"), BuildMessage.buildMessage("foo"));
         ListenerArguments underTest = new ListenerArguments(null, null, null, null, 0, false, null, issues);
-        assertThat(underTest.issues()).containsExactly(BuildIssue.issue("foo"));
+        assertThat(underTest.issues()).containsExactly(BuildMessage.buildMessage("foo"));
     }
 
     @Test
     public void ordersBuildIssuesByPriority() {
-        BuildIssue a = new BuildIssue("foo", null, 5);
-        BuildIssue b = new BuildIssue("important", null, 0);
-        BuildIssue c = new BuildIssue("bar", null, 4);
-        List<BuildIssue> issues = asList(a,b,c);
+        BuildMessage a = new BuildMessage("foo", null, 5);
+        BuildMessage b = new BuildMessage("important", null, 0);
+        BuildMessage c = new BuildMessage("bar", null, 4);
+        List<BuildMessage> issues = asList(a,b,c);
         ListenerArguments underTest = new ListenerArguments(null, null, null, null, 0, false, null, issues);
         assertThat(underTest.issues()).containsExactly(b, c, a);
     }

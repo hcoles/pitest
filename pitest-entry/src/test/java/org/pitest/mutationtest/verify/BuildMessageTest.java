@@ -10,20 +10,20 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class BuildIssueTest {
+public class BuildMessageTest {
     @Test
     public void obeysHashcodeEqualsContract() {
-        EqualsVerifier.forClass(BuildIssue.class)
+        EqualsVerifier.forClass(BuildMessage.class)
                 .verify();
     }
 
     @Test
     public void sortsZeroPriorityFirst() {
-        BuildIssue a = new BuildIssue("a","",10);
-        BuildIssue b = new BuildIssue("b","",0);
-        BuildIssue c = new BuildIssue("c","",5);
+        BuildMessage a = new BuildMessage("a","",10);
+        BuildMessage b = new BuildMessage("b","",0);
+        BuildMessage c = new BuildMessage("c","",5);
 
-        List<BuildIssue> l = asList(a,b,c);
+        List<BuildMessage> l = asList(a,b,c);
         Collections.sort(l);
         assertThat(l).containsExactly(b,c,a);
     }
