@@ -21,6 +21,7 @@ import org.pitest.coverage.ReportCoverage;
 import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.SourceLocator;
+import org.pitest.mutationtest.verify.BuildMessage;
 import org.pitest.util.FileUtil;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
@@ -58,11 +59,17 @@ public class MutationHtmlReportListener implements MutationResultListener {
   private final Charset                   outputCharset;
   private final boolean reportCoverage;
 
+  private final List<BuildMessage> messages;
+
+  private final boolean arcmutateMissing;
+
   public MutationHtmlReportListener(Charset outputCharset,
                                     ReportCoverage coverage,
                                     ResultOutputStrategy outputStrategy,
                                     Collection<String> mutatorNames,
                                     boolean reportCoverage,
+                                    List<BuildMessage> messages,
+                                    boolean arcmutateMissing,
                                     SourceLocator... locators) {
     this.outputCharset = outputCharset;
     this.coverage = coverage;
@@ -71,6 +78,8 @@ public class MutationHtmlReportListener implements MutationResultListener {
     this.mutatorNames = new HashSet<>(mutatorNames);
     this.css = loadCss();
     this.reportCoverage = reportCoverage;
+    this.messages = messages;
+    this.arcmutateMissing = arcmutateMissing;
   }
 
   private String loadCss() {
@@ -221,6 +230,8 @@ public class MutationHtmlReportListener implements MutationResultListener {
     st.setAttribute("packageSummaries", psd);
     st.setAttribute("outputCharset", this.outputCharset);
     st.setAttribute("showCoverage", this.reportCoverage);
+    st.setAttribute("messages", wrap(this.messages));
+    st.setAttribute("arcmutateMissing", arcmutateMissing);
     try {
       writer.write(st.toString());
       writer.close();
@@ -228,6 +239,14 @@ public class MutationHtmlReportListener implements MutationResultListener {
       e.printStackTrace();
     }
 
+  }
+
+  private List<ConvertedMessage> wrap(List<BuildMessage> messages) {
+    return messages.stream()
+            .distinct()
+            .sorted()
+            .map(ConvertedMessage::new)
+            .collect(Collectors.toList());
   }
 
   private void createPackageIndexPage(final PackageSummaryData psData) {
@@ -268,6 +287,23 @@ public class MutationHtmlReportListener implements MutationResultListener {
     generateAnnotatedSourceFile(packageData.getForSourceFile(metaData
         .getFileName()));
 
+  }
+
+}
+
+// wrapper providing StringTemplate friendly accessors
+class ConvertedMessage {
+  private final BuildMessage message;
+  ConvertedMessage(BuildMessage message) {
+    this.message = message;
+  }
+
+  public String getText() {
+    return message.text();
+  }
+
+  public String getUrl() {
+    return message.url();
   }
 
 }

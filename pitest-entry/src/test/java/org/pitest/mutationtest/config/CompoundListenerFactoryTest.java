@@ -22,6 +22,7 @@ import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 
+import java.util.Collections;
 import java.util.Properties;
 
 import static java.util.Arrays.asList;
@@ -70,7 +71,7 @@ public class CompoundListenerFactoryTest {
 
   private ListenerArguments someArgs() {
     return new ListenerArguments(null, null, null, null,
-            0, false, null);
+            0, false, null, Collections.emptyList());
   }
 
 }

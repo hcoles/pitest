@@ -3,10 +3,14 @@ package org.pitest.mutationtest;
 import org.pitest.coverage.ReportCoverage;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.engine.MutationEngine;
+import org.pitest.mutationtest.verify.BuildMessage;
 import org.pitest.plugin.FeatureSetting;
 import org.pitest.util.ResultOutputStrategy;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Data passed to the listener MutationResultListener factories for use when
@@ -22,6 +26,7 @@ public class ListenerArguments {
   private final boolean              fullMutationMatrix;
   private final ReportOptions        data;
   private final FeatureSetting       setting;
+  private final List<BuildMessage> issues;
 
   public ListenerArguments(ResultOutputStrategy outputStrategy,
                            ReportCoverage coverage,
@@ -29,8 +34,9 @@ public class ListenerArguments {
                            MutationEngine engine,
                            long startTime,
                            boolean fullMutationMatrix,
-                           ReportOptions  data) {
-    this(outputStrategy, coverage, locator, engine, startTime, fullMutationMatrix, data, null);
+                           ReportOptions  data,
+                           List<BuildMessage> issues) {
+    this(outputStrategy, coverage, locator, engine, startTime, fullMutationMatrix, data, null, issues);
   }
 
   ListenerArguments(ResultOutputStrategy outputStrategy,
@@ -40,7 +46,8 @@ public class ListenerArguments {
                            long startTime,
                            boolean fullMutationMatrix,
                            ReportOptions  data,
-                           FeatureSetting setting) {
+                           FeatureSetting setting,
+                           List<BuildMessage> issues) {
     this.outputStrategy = outputStrategy;
     this.coverage = coverage;
     this.locator = locator;
@@ -49,6 +56,10 @@ public class ListenerArguments {
     this.fullMutationMatrix = fullMutationMatrix;
     this.data = data;
     this.setting = setting;
+    this.issues = issues.stream()
+            .distinct()
+            .sorted()
+            .collect(Collectors.toList());
   }
 
   public ResultOutputStrategy getOutputStrategy() {
@@ -83,6 +94,10 @@ public class ListenerArguments {
     return Optional.ofNullable(setting);
   }
 
+  public List<BuildMessage> issues() {
+    return Collections.unmodifiableList(issues);
+  }
+
   public ListenerArguments withSetting(FeatureSetting setting) {
     return new ListenerArguments(outputStrategy,
             coverage,
@@ -91,7 +106,8 @@ public class ListenerArguments {
             startTime,
             fullMutationMatrix,
             data,
-            setting);
+            setting,
+            issues);
   }
 
 }

@@ -117,7 +117,14 @@ public final class ReportAggregator {
     final CodeSource codeSource = this.codeSourceAggregator.createCodeSource();
     final ReportCoverage coverageDatabase = calculateCoverage(codeSource);
 
-    return new MutationHtmlReportListener(outputCharset, coverageDatabase, this.resultOutputStrategy, mutatorNames, partialCoverage, sourceLocator);
+    return new MutationHtmlReportListener(outputCharset,
+            coverageDatabase,
+            this.resultOutputStrategy,
+            mutatorNames,
+            partialCoverage,
+            Collections.emptyList(),
+            true,
+            sourceLocator);
   }
 
   private Collection<Path> asPaths(Collection<File> files) {

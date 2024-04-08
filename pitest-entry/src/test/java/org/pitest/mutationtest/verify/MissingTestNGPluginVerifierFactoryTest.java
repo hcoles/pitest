@@ -17,14 +17,14 @@ public class MissingTestNGPluginVerifierFactoryTest {
     @Test
     public void doesNotDisplayMessageWhenJUnit5NotPresent() {
         v.withCodeSource(codeSourceReturning(ClassName.fromString("not.relevant.Foo")))
-                .issues()
+                .messages()
                 .isEmpty();
     }
 
     @Test
     public void displaysWarningWhenJUnit5PresentWithoutPlugin() {
         v.withCodeSource(codeSourceReturning(ClassName.fromString("org.testng.annotations.Test")))
-                .issues()
+                .messages()
                 .isNotEmpty();
     }
 
@@ -33,7 +33,7 @@ public class MissingTestNGPluginVerifierFactoryTest {
         v.withCodeSource(codeSourceReturning(ClassName.fromString("org.testng.annotations.Test"),
                         ClassName.fromString("org.pitest.testng.TestNGPlugin")
                 ))
-                .issues()
+                .messages()
                 .isEmpty();
     }
 }

@@ -151,6 +151,8 @@ public class ReportOptions {
   private Charset inputEncoding;
   private Charset outputEncoding;
 
+  private boolean arcmutateMissing = true;
+
   // currently used only via maven
   private Map<String,String> environmentVariables = new HashMap<>();
 
@@ -666,6 +668,14 @@ public class ReportOptions {
     return environmentVariables;
   }
 
+  public boolean isArcmutateMissing() {
+    return arcmutateMissing;
+  }
+
+  public void setArcmutateMissing(boolean arcmutateMissing) {
+    this.arcmutateMissing = arcmutateMissing;
+  }
+
   @Override
   public String toString() {
     return new StringJoiner(", ", ReportOptions.class.getSimpleName() + "[", "]")
@@ -714,8 +724,8 @@ public class ReportOptions {
             .add("inputEncoding=" + inputEncoding)
             .add("outputEncoding=" + outputEncoding)
             .add("reportCoverage=" + reportCoverage)
+            .add("arcmutateMissing=" + arcmutateMissing)
             .toString();
   }
-
 
 }

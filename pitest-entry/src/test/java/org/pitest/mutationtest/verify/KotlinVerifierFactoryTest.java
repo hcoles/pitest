@@ -3,7 +3,6 @@ package org.pitest.mutationtest.verify;
 import org.junit.Test;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassName;
-import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.verifier.interceptors.BuildVerifierVerifier;
 
 import static org.pitest.verifier.interceptors.BuildVerifierVerifier.aValidClass;
@@ -22,7 +21,7 @@ public class KotlinVerifierFactoryTest {
     @Test
     public void doesNotDisplayMessageWhenKotlinNotPresent() {
         v.withCodeSource(codeSourceReturning(ClassName.fromString("not.relevant.Foo")))
-                .issues()
+                .messages()
                 .isEmpty();
     }
 
@@ -37,7 +36,7 @@ public class KotlinVerifierFactoryTest {
         clientCode.rawNode().sourceFile = "Foo.kt";
 
         v.withCodeSource(codeSourceForClasses(kotlinMarker, clientCode))
-                .issues()
+                .messages()
                 .isNotEmpty();
     }
 
@@ -54,7 +53,7 @@ public class KotlinVerifierFactoryTest {
         clientCode.rawNode().sourceFile = "Foo.kt";
 
         v.withCodeSource(codeSourceForClasses(kotlinMarker, interceptor, clientCode))
-                .issues()
+                .messages()
                 .isEmpty();
     }
 
@@ -63,7 +62,7 @@ public class KotlinVerifierFactoryTest {
         v.withCodeSource(codeSourceReturning(ClassName.fromString("kotlin.KotlinVersion"),
                         ClassName.fromString("com.groupcdg.pitest.kotlin.KotlinFilterInterceptor")
                 ))
-                .issues()
+                .messages()
                 .isEmpty();
     }
 

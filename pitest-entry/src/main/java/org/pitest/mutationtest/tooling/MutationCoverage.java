@@ -50,6 +50,7 @@ import org.pitest.mutationtest.incremental.NullHistory;
 import org.pitest.mutationtest.statistics.MutationStatistics;
 import org.pitest.mutationtest.statistics.MutationStatisticsListener;
 import org.pitest.mutationtest.statistics.Score;
+import org.pitest.mutationtest.verify.BuildMessage;
 import org.pitest.util.Log;
 import org.pitest.util.StringUtil;
 import org.pitest.util.Timings;
@@ -113,7 +114,7 @@ public class MutationCoverage {
 
     final long t0 = System.nanoTime();
 
-    List<String> issues = verifyBuildSuitableForMutationTesting();
+    List<BuildMessage> issues = verifyBuildSuitableForMutationTesting();
 
     checkExcludedRunners();
 
@@ -142,7 +143,7 @@ public class MutationCoverage {
     return new CombinedStatistics(mutationStatistics, new CoverageSummary(0,0), Collections.emptyList());
   }
 
-  private CombinedStatistics runAnalysis(Runtime runtime, long t0, EngineArguments args, MutationEngine engine, List<String> issues) {
+  private CombinedStatistics runAnalysis(Runtime runtime, long t0, EngineArguments args, MutationEngine engine, List<BuildMessage> issues) {
     History history = this.strategies.history();
     history.initialize();
 
@@ -170,7 +171,7 @@ public class MutationCoverage {
 
     ReportCoverage modifiedCoverage = transformCoverage(coverageData);
     final List<MutationResultListener> config = createConfig(t0, modifiedCoverage, history,
-                stats, engine);
+                stats, engine, issues);
     final MutationAnalysisExecutor mae = new MutationAnalysisExecutor(
         numberOfThreads(), resultInterceptor(), config);
     this.timings.registerStart(Timings.Stage.RUN_MUTATION_TESTS);
@@ -254,14 +255,14 @@ public class MutationCoverage {
                                                     ReportCoverage coverageData,
                                                     History history,
                                                     MutationStatisticsListener stats,
-                                                    MutationEngine engine) {
+                                                    MutationEngine engine, List<BuildMessage> issues) {
     final List<MutationResultListener> ls = new ArrayList<>();
 
     ls.add(stats);
 
     final ListenerArguments args = new ListenerArguments(
         this.strategies.output(), coverageData, new SmartSourceLocator(
-            data.getSourcePaths(), this.data.getInputEncoding()), engine, t0, this.data.isFullMutationMatrix(), data);
+            data.getSourcePaths(), this.data.getInputEncoding()), engine, t0, this.data.isFullMutationMatrix(), data, issues);
 
     final MutationResultListener mutationReportListener = this.strategies
         .listenerFactory().getListener(this.data.getFreeFormProperties(), args);
@@ -279,8 +280,8 @@ public class MutationCoverage {
     return this.strategies.resultInterceptor();
   }
 
-  private List<String> verifyBuildSuitableForMutationTesting() {
-    return this.strategies.buildVerifier().verify();
+  private List<BuildMessage> verifyBuildSuitableForMutationTesting() {
+    return this.strategies.buildVerifier().verifyBuild();
   }
 
   private void printStats(CombinedStatistics combinedStatistics) {
@@ -314,8 +315,8 @@ public class MutationCoverage {
 
     if (!combinedStatistics.getIssues().isEmpty()) {
       ps.println();
-      ps.println("!! The following issues were detected during the run !!");
-      combinedStatistics.getIssues().forEach(ps::println);
+      ps.println("Build messages:- ");
+      combinedStatistics.getIssues().forEach(m -> ps.println("* " + m));
     }
   }
 
