@@ -1,6 +1,7 @@
 package org.pitest.mutationtest.verify;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public final class BuildMessage implements Comparable<BuildMessage> {
     private final String text;
@@ -31,7 +32,8 @@ public final class BuildMessage implements Comparable<BuildMessage> {
 
     @Override
     public String toString() {
-        return text + " (" + url + ")";
+        return text + Optional.ofNullable(url)
+                .map( u -> " (" + u + ")").orElse("");
     }
 
     @Override

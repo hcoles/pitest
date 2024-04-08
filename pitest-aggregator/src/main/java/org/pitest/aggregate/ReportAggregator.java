@@ -123,6 +123,7 @@ public final class ReportAggregator {
             mutatorNames,
             partialCoverage,
             Collections.emptyList(),
+            true,
             sourceLocator);
   }
 

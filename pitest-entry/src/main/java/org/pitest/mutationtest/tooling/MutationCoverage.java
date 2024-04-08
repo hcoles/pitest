@@ -315,8 +315,8 @@ public class MutationCoverage {
 
     if (!combinedStatistics.getIssues().isEmpty()) {
       ps.println();
-      ps.println("!! The following issues were detected during the run !!");
-      combinedStatistics.getIssues().forEach(ps::println);
+      ps.println("Build messages:- ");
+      combinedStatistics.getIssues().forEach(m -> ps.println("* " + m));
     }
   }
 

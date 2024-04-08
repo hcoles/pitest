@@ -61,12 +61,15 @@ public class MutationHtmlReportListener implements MutationResultListener {
 
   private final List<BuildMessage> messages;
 
+  private final boolean arcmutateMissing;
+
   public MutationHtmlReportListener(Charset outputCharset,
                                     ReportCoverage coverage,
                                     ResultOutputStrategy outputStrategy,
                                     Collection<String> mutatorNames,
                                     boolean reportCoverage,
                                     List<BuildMessage> messages,
+                                    boolean arcmutateMissing,
                                     SourceLocator... locators) {
     this.outputCharset = outputCharset;
     this.coverage = coverage;
@@ -76,6 +79,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
     this.css = loadCss();
     this.reportCoverage = reportCoverage;
     this.messages = messages;
+    this.arcmutateMissing = arcmutateMissing;
   }
 
   private String loadCss() {
@@ -227,6 +231,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
     st.setAttribute("outputCharset", this.outputCharset);
     st.setAttribute("showCoverage", this.reportCoverage);
     st.setAttribute("messages", wrap(this.messages));
+    st.setAttribute("arcmutateMissing", arcmutateMissing);
     try {
       writer.write(st.toString());
       writer.close();

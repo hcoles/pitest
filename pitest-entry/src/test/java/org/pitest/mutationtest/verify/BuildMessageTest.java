@@ -27,4 +27,16 @@ public class BuildMessageTest {
         Collections.sort(l);
         assertThat(l).containsExactly(b,c,a);
     }
+
+    @Test
+    public void includesURLInToStringWhenPresent() {
+        BuildMessage underTest = new BuildMessage("text", "https://pitest.org", 0);
+        assertThat(underTest.toString()).isEqualTo("text (https://pitest.org)");
+    }
+
+    @Test
+    public void doesNotIncludeURLInToStringWhenNull() {
+        BuildMessage underTest = new BuildMessage("text", null, 0);
+        assertThat(underTest.toString()).isEqualTo("text");
+    }
 }
