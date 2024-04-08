@@ -8,6 +8,15 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.16.0
+
+* #1311 - Include unmodifiable collections stored directly to fields in the `+funmodifiablecollection` filter for defensive code
+* #1319 - Use environment variables from surefire config
+* #1322 - Automatically add -ea to enable assertions
+* #1321 - Expand BuildVerifier interface
+
+Api change in #1321 is backwards compatible, but plugins written against 1.16.0 may not work with earlier versions.
+
 ## 1.15.8
 
 * #1310 Filter mutations to Collections.unmodifiable*
