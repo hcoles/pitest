@@ -13,7 +13,7 @@
 	<url>https://pitest.org</url>
 
 	<properties>
-		<maven.version>2.2.1</maven.version>
+		<maven.version>3.9.6</maven.version>
 	</properties>
 
 	<build>
@@ -57,7 +57,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-project</artifactId>
+			<artifactId>maven-core</artifactId>
 			<version>${maven.version}</version>
 		</dependency>
 		<dependency>
@@ -65,25 +65,7 @@
 			<artifactId>maven-artifact</artifactId>
 			<version>3.8.6</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-toolchain</artifactId>
-			<version>${maven.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-nop</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-jdk14</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>jcl-over-slf4j</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
@@ -116,7 +98,7 @@
 			<dependency>
 				<groupId>org.apache.maven</groupId>
 				<artifactId>maven-core</artifactId>
-				<version>3.8.6</version>
+				<version>${maven.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

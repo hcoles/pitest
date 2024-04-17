@@ -13,8 +13,8 @@
 	<url>https://pitest.org</url>
 
 	<properties>
-		<scm.version>2.0.1</scm.version>
-		<surefire.version>3.0.0-M7</surefire.version>
+		<scm.version>2.1.0</scm.version>
+		<surefire.version>3.2.5</surefire.version>
 	</properties>
 
 	<build>
