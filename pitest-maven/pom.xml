@@ -14,7 +14,7 @@
 
 	<properties>
 		<scm.version>2.1.0</scm.version>
-		<surefire.version>3.0.0-M7</surefire.version>
+		<surefire.version>3.2.5</surefire.version>
 	</properties>
 
 	<build>
