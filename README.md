@@ -8,6 +8,10 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.16.1
+
+* #1329 Prevent version clashes with aggregate goal when plugins use jackson
+
 ## 1.16.0
 
 * #1311 - Include unmodifiable collections stored directly to fields in the `+funmodifiablecollection` filter for defensive code
