@@ -500,6 +500,8 @@ public class MojoToReportOptionsConverter {
       argLine = replaceFieldForSymbol('$', key, argLine);
     }
 
+    argLine = replaceSettingsField(argLine);
+
     return argLine;
   }
 
@@ -507,6 +509,14 @@ public class MojoToReportOptionsConverter {
     String field = symbol + "{" + key + "}";
     if (argLine.contains(field))  {
       return argLine.replace(field, mojo.getProject().getProperties().getProperty(key, ""));
+    }
+    return argLine;
+  }
+
+  private String replaceSettingsField(String argLine) {
+    String field = "${settings.localRepository}";
+    if (argLine.contains(field))  {
+      return argLine.replace(field, mojo.getSettings().getLocalRepository());
     }
     return argLine;
   }

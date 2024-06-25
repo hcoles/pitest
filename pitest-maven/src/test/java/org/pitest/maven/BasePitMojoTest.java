@@ -30,6 +30,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
@@ -44,6 +45,9 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 
   @Mock
   protected MavenProject        project;
+
+  @Mock
+  protected Settings            settings;
 
   @Mock
   protected RunPitStrategy      executionStrategy;
@@ -118,6 +122,8 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
     setVariableValueToObject(pitMojo, "pluginArtifactMap", pluginArtifacts);
 
     setVariableValueToObject(pitMojo, "project", this.project);
+
+    setVariableValueToObject(pitMojo, "settings", this.settings);
 
     if (pitMojo.getAdditionalClasspathElements() == null) {
       ArrayList<String> elements = new ArrayList<>();
