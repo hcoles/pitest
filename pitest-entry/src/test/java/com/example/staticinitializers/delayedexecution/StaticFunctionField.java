@@ -1,4 +1,4 @@
-package com.example.staticinitializers;
+package com.example.staticinitializers.delayedexecution;
 
 import java.util.function.Function;
 

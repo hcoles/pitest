@@ -1,9 +1,9 @@
-package com.example.staticinitializers;
+package com.example.staticinitializers.delayedexecution;
 
 import java.util.function.Supplier;
 
 public enum EnumFieldSupplier {
-    A(canMutate());
+    A(canMutate()), B(canMutate());
 
     private final Supplier<String> supplier;
 

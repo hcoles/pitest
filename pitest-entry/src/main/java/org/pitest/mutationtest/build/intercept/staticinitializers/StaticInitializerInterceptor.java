@@ -38,7 +38,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
-import static org.pitest.bytecode.analysis.InstructionMatchers.isA;
 import static org.pitest.bytecode.analysis.InstructionMatchers.methodCallNamed;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
 import static org.pitest.bytecode.analysis.OpcodeMatchers.PUTSTATIC;
@@ -62,12 +61,31 @@ class StaticInitializerInterceptor implements MutationInterceptor {
 
   static final SequenceMatcher<AbstractInsnNode> DELAYED_EXECUTION = QueryStart
           .any(AbstractInsnNode.class)
-          .then(returnsDeferredExecutionCode().or(isA(InvokeDynamicInsnNode.class)).and(store(START.write())))
-          .then(enumConstructorCallAndStore().or(QueryStart.match(PUTSTATIC)))
+          // look for calls returning delayed execution types. Unfortunately this is not guarantee that we
+          // store the result to an appropriate type
+          .then(returnsDeferredExecutionCode().or(dynamicallyReturnsDeferredExecutionCode()).and(store(START.write())))
+          // allow for other method calls etc
+          .zeroOrMore(QueryStart.match(anyInstruction()))
+          .then(enumConstructorCallAndStore().or(QueryStart.match(delayedExecutionField())))
           .zeroOrMore(QueryStart.match(anyInstruction()))
           .compile(QueryParams.params(AbstractInsnNode.class)
                   .withIgnores(notAnInstruction())
           );
+
+  private static Match<AbstractInsnNode> delayedExecutionField() {
+    return PUTSTATIC.and(isAUtilFunctionField());
+  }
+
+  private static Match<AbstractInsnNode> isAUtilFunctionField() {
+    return (c,n) -> {
+      FieldInsnNode fieldNode = ((FieldInsnNode) n);
+      return result( fieldNode.desc.startsWith("Ljava/util/function/"), c);
+    };
+  }
+
+  private static Match<AbstractInsnNode> dynamicallyReturnsDeferredExecutionCode() {
+    return (c,n) -> result(n.getOpcode() == Opcodes.INVOKEDYNAMIC && returnDelayedExecutionType(((InvokeDynamicInsnNode) n).desc), c);
+  }
 
   private static Match<AbstractInsnNode> returnsDeferredExecutionCode() {
     return (c,n) -> result(n.getOpcode() == Opcodes.INVOKESTATIC && returnDelayedExecutionType(((MethodInsnNode) n).desc), c);
@@ -111,11 +129,11 @@ class StaticInitializerInterceptor implements MutationInterceptor {
       // We can't see if a method *call* is private from the call site
       // so collect a set of private methods within the class first
       Set<Location> privateMethods = tree.methods().stream()
-              .filter(m -> m.isPrivate())
+              .filter(MethodTree::isPrivate)
               .map(MethodTree::asLocation)
               .collect(Collectors.toSet());
 
-      Set<Call> storedToSupplier = findsCallsStoredToSuppliers(tree);
+      Set<Call> storedToSupplier = findCallsStoredToDelayedExecutionCode(tree);
 
       // Get map of each private method to the private methods it calls
       // Any call to a non private method breaks the chain
@@ -135,17 +153,12 @@ class StaticInitializerInterceptor implements MutationInterceptor {
     }
   }
 
-  private Set<Call> findsCallsStoredToSuppliers(ClassTree tree) {
-     Set<Call> all = new HashSet<>(directClinitCallsToDelayedExecutionCode(tree));
-     all.addAll(storedViaEnumConstructor());
-     return all;
+  private Set<Call> findCallsStoredToDelayedExecutionCode(ClassTree tree) {
+     return new HashSet<>(privateAndClinitCallsToDelayedExecutionCode(tree));
   }
 
-  private Set<Call> storedViaEnumConstructor() {
-return Collections.emptySet();
-  }
 
-  private Set<Call> directClinitCallsToDelayedExecutionCode(ClassTree tree) {
+  private Set<Call> privateAndClinitCallsToDelayedExecutionCode(ClassTree tree) {
     return tree.methods().stream()
             .filter(m -> m.isPrivate() || m.rawNode().name.equals("<clinit>"))
             .flatMap(m -> delayedExecutionCall(m).stream().map(c -> new Call(m.asLocation(), c)))
