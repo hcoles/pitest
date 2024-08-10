@@ -15,18 +15,21 @@
 package org.pitest.mutationtest;
 
 import static org.pitest.functional.prelude.Prelude.putToMap;
+import static org.pitest.mutationtest.DetectionStatus.SURVIVED;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.engine.MutationDetails;
 
@@ -41,8 +44,23 @@ public class MutationStatusMap {
 
   public void setStatusForMutation(final MutationDetails mutation,
       final MutationStatusTestPair status) {
-    this.mutationMap.put(mutation, status);
+    MutationStatusTestPair finalStatus = status;
+    if (status.getStatus().equals(SURVIVED)) {
+
+      List<TestInfo> testsInOrder = mutation.getTestsInOrder();
+      List<String> passingTests = new ArrayList<>();
+      for (TestInfo test : testsInOrder) {
+          passingTests.add(test.getName());
+      }
+      finalStatus = new MutationStatusTestPair(status.getNumberOfTestsRun(),
+              status.getStatus(),
+              status.getKillingTests(),
+              passingTests);
+
+    }
+    this.mutationMap.put(mutation, finalStatus);
   }
+
 
   public void setStatusForMutations(
       final Collection<MutationDetails> mutations, final DetectionStatus status) {

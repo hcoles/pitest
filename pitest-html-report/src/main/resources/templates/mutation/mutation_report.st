@@ -11,7 +11,7 @@
 
 <table class="src">
 
-$sourceFile.lines:{ line | 
+$sourceFile.lines:{ line |
 
 <tr>
 <td class='$line.styles.lineCoverage$'>
@@ -42,7 +42,14 @@ $sourceFile.groups:{ group |
 
 <a name='group$sourceFile$_$group.id$'/> 
 
-$group.mutations: { mutation | <p class='$mutation.status$'><span class='pop'>$i$.<span><b>$i$</b><br/><b>Location : </b>$mutation.details.location$<br/><b>Killed by : </b>$mutation.killingTestDescription$</span></span> $mutation.details.htmlSafeDescription$ &rarr; $mutation.statusDescription$</p> }$
+$group.mutations: { mutation | <p class='$mutation.status$'><span class='pop'>$i$.<span><b>$i$</b><br/><b>Location : </b>$mutation.details.location$<br/><b>Killed by : </b>$mutation.killingTestDescription$</span></span> $mutation.details.htmlSafeDescription$ &rarr; $mutation.statusDescription$</span>
+$if(mutation.survived)$
+<p>Covered by  tests: </p>
+<ul>
+$mutation.succeedingTests: { test | <li>$test$</li> }$
+</ul>
+$endif$
+</p> }$
 </td>
 </tr>
 }$

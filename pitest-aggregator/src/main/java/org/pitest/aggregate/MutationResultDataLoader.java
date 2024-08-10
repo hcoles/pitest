@@ -4,6 +4,7 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -51,10 +52,12 @@ class MutationResultDataLoader extends DataLoader<MutationResult> {
     Location location = new Location(ClassName.fromString(xml.mutatedClass),
             xml.mutatedMethod, xml.methodDescription);
     MutationIdentifier id = new MutationIdentifier(location, xml.indexes, xml.mutator);
+    String[] killingTests = xml.killingTest == null ? new String[0] : new String[] { xml.killingTest };
+    String[] succeedingTests = xml.succeedingTests == null ? new String[0] : xml.succeedingTests.split(",");
     return new MutationResult(new MutationDetails(id,
             xml.sourceFile, xml.description,
             xml.lineNumber, xml.blocks),
-            new MutationStatusTestPair(xml.numberOfTestsRun, DetectionStatus.valueOf(xml.status), xml.killingTest));
+            new MutationStatusTestPair(xml.numberOfTestsRun, DetectionStatus.valueOf(xml.status), Arrays.asList(killingTests), Arrays.asList(succeedingTests)));
   }
 
 }

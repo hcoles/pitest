@@ -66,6 +66,10 @@ public final class MutationResult {
     return getKillingTest().orElse("none");
   }
 
+  public Boolean getSurvived() {
+    return this.status.getStatus() == DetectionStatus.SURVIVED;
+  }
+
   @Override
   public int hashCode() {
     return Objects.hash(details, status);
