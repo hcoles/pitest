@@ -44,12 +44,14 @@ $sourceFile.groups:{ group |
 
 $group.mutations: { mutation | <p class='$mutation.status$'><span class='pop'>$i$.<span><b>$i$</b><br/><b>Location : </b>$mutation.details.location$<br/><b>Killed by : </b>$mutation.killingTestDescription$</span></span> $mutation.details.htmlSafeDescription$ &rarr; $mutation.statusDescription$</span>
 $if(mutation.survived)$
-<p>Covered by  tests: </p>
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('$mutation.id$').style.display=(document.getElementById('$mutation.id$').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="$mutation.id$" style="display:none;">Covered by tests:
 <ul>
-$mutation.succeedingTests: { test | <li>$test$</li> }$
+$mutation.coveringTests: { test | <li>$test$</li> }$
 </ul>
+</div>
 $endif$
-</p> }$
+</div> }$
 </td>
 </tr>
 }$

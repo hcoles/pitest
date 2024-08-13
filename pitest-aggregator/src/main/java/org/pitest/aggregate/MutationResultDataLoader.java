@@ -57,7 +57,7 @@ class MutationResultDataLoader extends DataLoader<MutationResult> {
     return new MutationResult(new MutationDetails(id,
             xml.sourceFile, xml.description,
             xml.lineNumber, xml.blocks),
-            new MutationStatusTestPair(xml.numberOfTestsRun, DetectionStatus.valueOf(xml.status), Arrays.asList(killingTests), Arrays.asList(succeedingTests)));
+            new MutationStatusTestPair(xml.numberOfTestsRun, DetectionStatus.valueOf(xml.status), Arrays.asList(killingTests), Arrays.asList(succeedingTests), Arrays.asList(succeedingTests)));
   }
 
 }

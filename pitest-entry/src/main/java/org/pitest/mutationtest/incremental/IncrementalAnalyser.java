@@ -161,7 +161,8 @@ class IncrementalAnalyser implements MutationAnalyser {
       final List<String> succeedingTests) {
     updatePreanalysedTotal(status);
     return new MutationResult(each, new MutationStatusTestPair(0, status,
-        killingTests, succeedingTests));
+        killingTests, succeedingTests, each.getTestsInOrder().stream()
+            .map(TestInfo::getName).collect(Collectors.toList())));
   }
 
   private void updatePreanalysedTotal(final DetectionStatus status) {

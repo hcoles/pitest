@@ -13,6 +13,7 @@ import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.report.MutationTestResultMother;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,7 +38,7 @@ public class HistoryResultInterceptorTest {
     private MutationResult makeResult() {
         return new MutationResult(
                 MutationTestResultMother.createDetails(), MutationStatusTestPair.notAnalysed(0,
-                DetectionStatus.KILLED));
+                DetectionStatus.KILLED, Collections.emptyList()));
     }
 
 }

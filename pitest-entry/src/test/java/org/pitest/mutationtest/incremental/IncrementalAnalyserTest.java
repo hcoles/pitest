@@ -306,6 +306,7 @@ public class IncrementalAnalyserTest {
                             0,
                             KILLED,
                             singletonList(killingTest),
+                            emptyList(),
                             emptyList())));
 
     when(this.history.getPreviousResult(md2.getId()))
@@ -314,11 +315,12 @@ public class IncrementalAnalyserTest {
                             0,
                             KILLED,
                             singletonList(killingTest),
+                            emptyList(),
                             emptyList())));
 
     when(this.history.getPreviousResult(md3.getId()))
             .thenReturn(Optional.of(
-                    new MutationStatusTestPair(0, SURVIVED, emptyList(), emptyList())));
+                    new MutationStatusTestPair(0, SURVIVED, emptyList(), emptyList(),emptyList())));
 
     when(this.history.getPreviousResult(md4.getId()))
             .thenReturn(Optional.empty());
@@ -414,7 +416,7 @@ public class IncrementalAnalyserTest {
       final String... test) {
     when(this.history.getPreviousResult(any(MutationIdentifier.class)))
     .thenReturn(Optional.of(
-            new MutationStatusTestPair(0, status, asList(test), emptyList())));
+            new MutationStatusTestPair(0, status, asList(test), emptyList(), emptyList())));
   }
 
   private static class LogCatcher extends Handler {

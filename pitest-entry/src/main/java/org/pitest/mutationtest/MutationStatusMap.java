@@ -14,17 +14,14 @@
  */
 package org.pitest.mutationtest;
 
-import static org.pitest.functional.prelude.Prelude.putToMap;
-import static org.pitest.mutationtest.DetectionStatus.SURVIVED;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -44,27 +41,16 @@ public class MutationStatusMap {
 
   public void setStatusForMutation(final MutationDetails mutation,
       final MutationStatusTestPair status) {
-    MutationStatusTestPair finalStatus = status;
-    if (status.getStatus().equals(SURVIVED)) {
-
-      List<TestInfo> testsInOrder = mutation.getTestsInOrder();
-      List<String> passingTests = new ArrayList<>();
-      for (TestInfo test : testsInOrder) {
-          passingTests.add(test.getName());
-      }
-      finalStatus = new MutationStatusTestPair(status.getNumberOfTestsRun(),
-              status.getStatus(),
-              status.getKillingTests(),
-              passingTests);
-
-    }
-    this.mutationMap.put(mutation, finalStatus);
+    this.mutationMap.put(mutation, status);
   }
-
 
   public void setStatusForMutations(
       final Collection<MutationDetails> mutations, final DetectionStatus status) {
-    mutations.forEach(putToMap(this.mutationMap, MutationStatusTestPair.notAnalysed(0, status)));
+      mutations.forEach(mutationDetails -> {
+        List<String> coveringTests = mutationDetails.getTestsInOrder().stream().map(TestInfo::getName).collect(Collectors.toList());
+        MutationStatusTestPair pair = MutationStatusTestPair.notAnalysed(0, status, coveringTests);
+        mutationMap.put(mutationDetails, pair);
+      });
   }
 
   public List<MutationResult> createMutationResults() {
