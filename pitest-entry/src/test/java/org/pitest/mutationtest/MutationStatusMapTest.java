@@ -9,9 +9,13 @@ import static org.pitest.mutationtest.engine.MutationDetailsMother.aMutationDeta
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 
+import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
+import org.pitest.classinfo.ClassName;
+import org.pitest.coverage.TestInfo;
 import org.pitest.mutationtest.LocationMother.MutationIdentifierBuilder;
 import org.pitest.mutationtest.engine.MutationDetails;
 
@@ -23,12 +27,18 @@ public class MutationStatusMapTest {
 
   private MutationDetails   detailsTwo;
 
+  private MutationDetails   aSurvivedMutationDetails;
+
   @Before
   public void setUp() {
     this.testee = new MutationStatusMap();
     final MutationIdentifierBuilder id = aMutationId().withIndex(1);
     this.details = aMutationDetail().withId(id.withIndex(1)).build();
     this.detailsTwo = aMutationDetail().withId(id.withIndex(2)).build();
+
+    TestInfo fooTest = new TestInfo("foo", "foo", 0, Optional.ofNullable(ClassName.fromString("com.foo")), 0);
+    TestInfo barTest = new TestInfo("bar", "bar", 0, Optional.ofNullable(ClassName.fromString("com.foo")), 0);
+    this.aSurvivedMutationDetails = aMutationDetail().withId(id.withIndex(3)).withTestsInOrder(Lists.asList(fooTest, new TestInfo[]{barTest})).build();
   }
 
   @Test
@@ -90,6 +100,18 @@ public class MutationStatusMapTest {
 
     assertThat(this.testee.createMutationResults()).contains(resultOne,
         resultTwo);
+  }
+
+  @Test
+  public void shouldCreateResultsForSurvivedMutations(){
+    final MutationStatusTestPair statusPairOne = new MutationStatusTestPair(42,
+            DetectionStatus.SURVIVED, "foo");
+    this.testee.setStatusForMutation(this.aSurvivedMutationDetails, statusPairOne);
+
+    assertEquals(DetectionStatus.SURVIVED, this.testee.createMutationResults().get(0).getStatus());
+    assertThat(this.testee.createMutationResults().get(0).getKillingTests()).contains("foo");
+    assertThat(this.testee.createMutationResults().get(0).getSucceedingTests()).contains("foo","bar");
+
   }
 
   @Test
