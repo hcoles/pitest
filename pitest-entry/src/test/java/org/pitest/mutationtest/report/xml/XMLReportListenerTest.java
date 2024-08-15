@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -64,12 +65,12 @@ public class XMLReportListenerTest {
     this.testee = new XMLReportListener(this.out, true, false);
     final MutationResult mr = new MutationResult(
             MutationTestResultMother.createDetails(),
-            new MutationStatusTestPair(3, DetectionStatus.KILLED, Arrays.asList("foo", "foo2"), Arrays.asList("bar")));
+            new MutationStatusTestPair(3, DetectionStatus.KILLED, Arrays.asList("foo", "foo2"), Arrays.asList("bar"), Arrays.asList("foo","foo2","bar")));
     this.testee
         .handleMutationResult(MutationTestResultMother.createClassResults(mr));
     final String expected = "<mutation detected='true' status='KILLED' numberOfTestsRun='3'><sourceFile>file</sourceFile>" +
             "<mutatedClass>clazz</mutatedClass><mutatedMethod>method</mutatedMethod><methodDescription>()I</methodDescription><lineNumber>42</lineNumber><mutator>mutator</mutator>" +
-            "<indexes><index>1</index></indexes><blocks><block>0</block></blocks><killingTests>foo|foo2</killingTests><succeedingTests>bar</succeedingTests><description>desc</description></mutation>\n";
+            "<indexes><index>1</index></indexes><blocks><block>0</block></blocks><killingTests>foo|foo2</killingTests><succeedingTests>bar</succeedingTests><coveringTests>foo|foo2|bar</coveringTests><description>desc</description></mutation>\n";
     assertThat(expected).isEqualTo(this.out.toString());
   }
 
@@ -110,7 +111,7 @@ public class XMLReportListenerTest {
   private MutationResult createSurvivingMutant() {
     return new MutationResult(
         MutationTestResultMother.createDetails(),
-        MutationStatusTestPair.notAnalysed(1, DetectionStatus.SURVIVED));
+        MutationStatusTestPair.notAnalysed(1, DetectionStatus.SURVIVED,Arrays.asList("foo","bar")));
   }
 
 }

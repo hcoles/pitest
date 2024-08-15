@@ -46,7 +46,7 @@ public class MutationTestResultMother {
   public static MutationTestResultBuilder aMutationTestResult() {
     return QB.builder(MutationTestResultBuilder.class, seed())
             .withMutationDetails(aMutationDetail())
-            .withStatusTestPair(MutationStatusTestPair.notAnalysed(0, DetectionStatus.SURVIVED));
+            .withStatusTestPair(MutationStatusTestPair.notAnalysed(0, DetectionStatus.SURVIVED, Collections.emptyList()));
   }
 
   private static Generator<MutationTestResultBuilder, MutationResult> seed() {

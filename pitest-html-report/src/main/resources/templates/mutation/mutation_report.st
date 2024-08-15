@@ -11,7 +11,7 @@
 
 <table class="src">
 
-$sourceFile.lines:{ line | 
+$sourceFile.lines:{ line |
 
 <tr>
 <td class='$line.styles.lineCoverage$'>
@@ -42,7 +42,16 @@ $sourceFile.groups:{ group |
 
 <a name='group$sourceFile$_$group.id$'/> 
 
-$group.mutations: { mutation | <p class='$mutation.status$'><span class='pop'>$i$.<span><b>$i$</b><br/><b>Location : </b>$mutation.details.location$<br/><b>Killed by : </b>$mutation.killingTestDescription$</span></span> $mutation.details.htmlSafeDescription$ &rarr; $mutation.statusDescription$</p> }$
+$group.mutations: { mutation | <p class='$mutation.status$'><span class='pop'>$i$.<span><b>$i$</b><br/><b>Location : </b>$mutation.details.location$<br/><b>Killed by : </b>$mutation.killingTestDescription$</span></span> $mutation.details.htmlSafeDescription$ &rarr; $mutation.statusDescription$</span>
+$if(mutation.survived)$
+<a title="Click to view covering tests" class="view-covered-by-tests" onClick="document.getElementById('$mutation.id$').style.display=(document.getElementById('$mutation.id$').style.display == 'block')?'none':'block';">Covering tests</a>
+<div class="covered-tests" id="$mutation.id$" style="display:none;">Covered by tests:
+<ul>
+$mutation.coveringTests: { test | <li>$test$</li> }$
+</ul>
+</div>
+$endif$
+</div> }$
 </td>
 </tr>
 }$

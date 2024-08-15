@@ -5,6 +5,7 @@ import static org.pitest.mutationtest.LocationMother.aMutationId;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -63,7 +64,7 @@ public class MutationTestUnitTest {
     this.tests.add(ClassName.fromString("foo"));
     final MutationMetaData actual = this.testee.call();
     final MutationResult expected = new MutationResult(this.mutations.get(0),
-        MutationStatusTestPair.notAnalysed(0, DetectionStatus.NO_COVERAGE));
+        MutationStatusTestPair.notAnalysed(0, DetectionStatus.NO_COVERAGE, Collections.emptyList()));
     assertThat(actual.getMutations()).contains(expected);
   }
 

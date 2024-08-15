@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.pitest.mutationtest.engine.MutationDetails;
-
 public final class MutationResult {
 
   private final MutationDetails        details;
@@ -30,6 +29,9 @@ public final class MutationResult {
     this.status = status;
   }
 
+  public String getId() {
+    return this.details.getId().toString().replace(" ","-");
+  }
   public MutationDetails getDetails() {
     return this.details;
   }
@@ -44,6 +46,10 @@ public final class MutationResult {
 
   public List<String> getSucceedingTests() {
     return this.status.getSucceedingTests();
+  }
+
+  public List<String> getCoveringTests() {
+    return this.status.getCoveringTests();
   }
 
   public DetectionStatus getStatus() {
@@ -64,6 +70,10 @@ public final class MutationResult {
 
   public String getKillingTestDescription() {
     return getKillingTest().orElse("none");
+  }
+
+  public Boolean getSurvived() {
+    return this.status.getStatus() == DetectionStatus.SURVIVED;
   }
 
   @Override

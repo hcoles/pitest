@@ -45,7 +45,7 @@ class Receive implements ReceiveStrategy {
     private void handleDescribe(final SafeDataInputStream is) {
         final MutationIdentifier mutation = is.read(MutationIdentifier.class);
         this.idMap.put(mutation, MutationStatusTestPair.notAnalysed(1,
-                DetectionStatus.STARTED));
+                DetectionStatus.STARTED,null));
     }
 
 }

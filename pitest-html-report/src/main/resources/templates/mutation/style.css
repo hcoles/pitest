@@ -561,3 +561,14 @@ body{
 .width-100 {
     width: 100%;
 }
+
+.view-covered-by-tests{
+         cursor:pointer;
+         color:blue;
+         text-decoration:underline;
+}
+
+.view-covered-by-tests:hover{
+        text-decoration:none;
+         text-shadow: 1px 1px 1px #555;
+}
