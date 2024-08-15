@@ -41,6 +41,14 @@ public final class MutationStatusTestPair implements Serializable {
       Collections.emptyList(),killingTestToList(killingTest));
   }
 
+  // for backwards compatibility. Remove at next major release
+  @Deprecated
+  public MutationStatusTestPair(final int numberOfTestsRun,
+                                final DetectionStatus status, final List<String> killingTests,
+                                final List<String> succeedingTests) {
+    this(numberOfTestsRun, status, killingTests, succeedingTests, Collections.emptyList());
+  }
+
   public MutationStatusTestPair(final int numberOfTestsRun,
       final DetectionStatus status, final List<String> killingTests,
       final List<String> succeedingTests, final List<String> coveringTests) {
