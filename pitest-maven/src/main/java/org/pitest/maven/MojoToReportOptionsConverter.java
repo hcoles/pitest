@@ -289,7 +289,9 @@ public class MojoToReportOptionsConverter {
       useHistoryFileInTempDir(data);
     } else {
       data.setHistoryInputLocation(this.mojo.getHistoryInputFile());
+      log.info("Will read history at " + data.getHistoryInputLocation());
       data.setHistoryOutputLocation(this.mojo.getHistoryOutputFile());
+      log.info("Will write history at " + data.getHistoryOutputLocation());
     }
   }
 
