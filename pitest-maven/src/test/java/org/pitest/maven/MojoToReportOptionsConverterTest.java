@@ -335,6 +335,17 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     when(this.project.getVersion()).thenReturn("0.1-SNAPSHOT");      
     final ReportOptions actual = parseConfig("<withHistory>true</withHistory>");
     String expected = "com.example.foo.0.1-SNAPSHOT_pitest_history.bin";
+    assertThat(actual.getHistoryInputLocation()).isNotNull();
+    assertThat(actual.getHistoryInputLocation().getAbsolutePath()).endsWith(expected);
+  }
+
+  public void testOverridesExplicitPathsWhenWithHistoryFlagSet() {
+    when(this.project.getGroupId()).thenReturn("com.example");
+    when(this.project.getArtifactId()).thenReturn("foo");
+    when(this.project.getVersion()).thenReturn("0.1-SNAPSHOT");
+    final ReportOptions actual = parseConfig("<historyInputFile>foo.bin</historyInputFile><withHistory>true</withHistory>");
+    String expected = "com.example.foo.0.1-SNAPSHOT_pitest_history.bin";
+    assertThat(actual.getHistoryInputLocation()).isNotNull();
     assertThat(actual.getHistoryInputLocation().getAbsolutePath()).endsWith(expected);
   }
 

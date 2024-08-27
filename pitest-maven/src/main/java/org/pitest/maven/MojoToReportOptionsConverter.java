@@ -285,12 +285,23 @@ public class MojoToReportOptionsConverter {
   }
 
   private void determineHistory(final ReportOptions data) {
+
+    // set explicit history files if configured
+    data.setHistoryInputLocation(this.mojo.getHistoryInputFile());
+    data.setHistoryOutputLocation(this.mojo.getHistoryOutputFile());
+
+    // If withHistory option set, overwrite config with files in temp dir.
+    // This allows a user to configure files for use on ci, but still easily use temp files
+    // for local running
     if (this.mojo.useHistory()) {
       useHistoryFileInTempDir(data);
-    } else {
-      data.setHistoryInputLocation(this.mojo.getHistoryInputFile());
+    }
+
+    if (data.getHistoryInputLocation() != null) {
       log.info("Will read history at " + data.getHistoryInputLocation());
-      data.setHistoryOutputLocation(this.mojo.getHistoryOutputFile());
+    }
+
+    if (data.getHistoryOutputLocation() != null) {
       log.info("Will write history at " + data.getHistoryOutputLocation());
     }
   }
@@ -302,15 +313,16 @@ public class MojoToReportOptionsConverter {
         + project.getArtifactId() + "."
         + project.getVersion() + "_pitest_history.bin";
     File historyFile = new File(tempDir, name);
-    log.info("Will read and write history at " + historyFile);
-    if (this.mojo.getHistoryInputFile() == null) {
-      data.setHistoryInputLocation(historyFile);
+
+    if (mojo.getHistoryInputFile() != null || mojo.getHistoryOutputFile() != null) {
+      log.info("Using withHistory option. This overrides the explicitly set history file paths.");
     }
-    if (this.mojo.getHistoryOutputFile() == null) {
-      data.setHistoryOutputLocation(historyFile);
-    }
+    data.setHistoryInputLocation(historyFile);
+    data.setHistoryOutputLocation(historyFile);
+
   }
-  
+
+
   private ReportOptions updateFromSurefire(ReportOptions option) {
     Collection<Plugin> plugins = lookupPlugin("org.apache.maven.plugins:maven-surefire-plugin");
     if (!this.mojo.isParseSurefireConfig()) {
