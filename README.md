@@ -8,6 +8,12 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.16.2
+
+#1340 Show covering tests for surviving mutants in html report (thanks @vivganes)
+#1342/#1343 Fix misleading logging of history paths (thanks @vivganes)
+#1344 Mutate delayed execution code in enums and singletons
+
 ## 1.16.1
 
 * #1329 Prevent version clashes with aggregate goal when plugins use jackson
