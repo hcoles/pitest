@@ -8,6 +8,7 @@ import com.example.staticinitializers.MethodsCallsEachOtherInLoop;
 import com.example.staticinitializers.NestedEnumWithLambdaInStaticInitializer;
 import com.example.staticinitializers.SecondLevelPrivateMethods;
 import com.example.staticinitializers.SingletonWithWorkInInitializer;
+import com.example.staticinitializers.delayedexecution.EnumMethodReferenceNotStored;
 import com.example.staticinitializers.delayedexecution.EnumMixedFields;
 import com.example.staticinitializers.delayedexecution.StaticFunctionField;
 import com.example.staticinitializers.delayedexecution.StaticSupplierField;
@@ -221,6 +222,16 @@ public class StaticInitializerInterceptorTest {
     @Test
     public void suppressesMutationsForStringsStoredToEnumFields() {
         v.forClass(EnumMixedFields.class)
+                .forMethod("doNotMutate")
+                .forAnyCode()
+                .mutantsAreGenerated()
+                .allMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void filtersMutationsForMethodReferencesUsedInEnumConstructor() {
+        v.forClass(EnumMethodReferenceNotStored.class)
                 .forMethod("doNotMutate")
                 .forAnyCode()
                 .mutantsAreGenerated()
