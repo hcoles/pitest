@@ -31,6 +31,12 @@ public final class MutationStatusTestPair implements Serializable {
 
   private final List<String>    coveringTests;
 
+  @Deprecated
+  // for backwards compatibility. Remove at next major release
+  public static MutationStatusTestPair notAnalysed(int testsRun, DetectionStatus status) {
+    return notAnalysed(testsRun, status, Collections.emptyList());
+  }
+
   public static MutationStatusTestPair notAnalysed(int testsRun, DetectionStatus status, List<String> coveringTests) {
     return new MutationStatusTestPair(testsRun, status, Collections.emptyList(), Collections.emptyList(), coveringTests);
   }

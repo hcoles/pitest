@@ -1,13 +1,18 @@
 package org.pitest.mutationtest.build.intercept.staticinitializers;
 
 import com.example.staticinitializers.BrokenChain;
+import com.example.staticinitializers.delayedexecution.EnumFieldMethodRef;
+import com.example.staticinitializers.delayedexecution.EnumFieldSupplier;
 import com.example.staticinitializers.EnumWithLambdaInConstructor;
 import com.example.staticinitializers.MethodsCallsEachOtherInLoop;
 import com.example.staticinitializers.NestedEnumWithLambdaInStaticInitializer;
 import com.example.staticinitializers.SecondLevelPrivateMethods;
 import com.example.staticinitializers.SingletonWithWorkInInitializer;
+import com.example.staticinitializers.delayedexecution.EnumMethodReferenceNotStored;
+import com.example.staticinitializers.delayedexecution.EnumMixedFields;
+import com.example.staticinitializers.delayedexecution.StaticFunctionField;
+import com.example.staticinitializers.delayedexecution.StaticSupplierField;
 import com.example.staticinitializers.ThirdLevelPrivateMethods;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.mutators.NullMutateEverything;
@@ -146,7 +151,6 @@ public class StaticInitializerInterceptorTest {
     }
 
     @Test
-    @Ignore("temporally disabled while filtering reworked")
     public void filtersMutantsInEnumPrivateMethodsCalledViaMethodRef() {
         v.forClass(EnumWithLambdaInConstructor.class)
                 .forMutantsMatching(inMethodStartingWith("doStuff"))
@@ -156,10 +160,80 @@ public class StaticInitializerInterceptorTest {
     }
 
     @Test
-    @Ignore("temporally disabled while filtering reworked")
     public void filtersMutantsInLambdaCalledFromStaticInitializerInNestedEnum() {
         v.forClass(NestedEnumWithLambdaInStaticInitializer.TOYS.class)
                 .forMutantsMatching(inMethodStartingWith("lambda"))
+                .mutantsAreGenerated()
+                .allMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void doesNotSuppressDownStreamMutationsForCodeStoredInSuppliers() {
+        v.forClass(StaticSupplierField.class)
+                .forMethod("canMutate")
+                .forAnyCode()
+                .mutantsAreGenerated()
+                .noMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void doesNotSuppressDownStreamMutationsForCodeStoredInFunctions() {
+        v.forClass(StaticFunctionField.class)
+                .forMethod("canMutate")
+                .forAnyCode()
+                .mutantsAreGenerated()
+                .noMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void doesNotSuppressDownStreamMutationsForEnumFieldSuppliers() {
+        v.forClass(EnumFieldSupplier.class)
+                .forMethod("canMutate")
+                .forAnyCode()
+                .mutantsAreGenerated()
+                .noMutantsAreFiltered()
+                .verify();
+    }
+
+
+    @Test
+    public void doesNotSuppressDownStreamMutationsForMethodRefsStoredToEnumFields() {
+        v.forClass(EnumFieldMethodRef.class)
+                .forMethod("canMutate")
+                .forAnyCode()
+                .mutantsAreGenerated()
+                .noMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void doesNotSuppressDownStreamMutationsForMethodRefsStoredToEnumFieldsWhenOtherFieldsInitialized() {
+        v.forClass(EnumMixedFields.class)
+                .forMethod("canMutate")
+                .forAnyCode()
+                .mutantsAreGenerated()
+                .noMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void suppressesMutationsForStringsStoredToEnumFields() {
+        v.forClass(EnumMixedFields.class)
+                .forMethod("doNotMutate")
+                .forAnyCode()
+                .mutantsAreGenerated()
+                .allMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void filtersMutationsForMethodReferencesUsedInEnumConstructor() {
+        v.forClass(EnumMethodReferenceNotStored.class)
+                .forMethod("doNotMutate")
+                .forAnyCode()
                 .mutantsAreGenerated()
                 .allMutantsAreFiltered()
                 .verify();
