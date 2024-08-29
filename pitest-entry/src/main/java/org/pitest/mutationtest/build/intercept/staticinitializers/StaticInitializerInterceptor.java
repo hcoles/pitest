@@ -4,8 +4,10 @@ import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.InvokeDynamicInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
+import org.pitest.bytecode.SignatureParser;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
 import org.pitest.classinfo.ClassName;
@@ -21,6 +23,7 @@ import org.pitest.sequence.QueryStart;
 import org.pitest.sequence.SequenceMatcher;
 import org.pitest.sequence.SequenceQuery;
 import org.pitest.sequence.Slot;
+import org.pitest.sequence.SlotRead;
 import org.pitest.sequence.SlotWrite;
 
 import java.util.Arrays;
@@ -53,11 +56,11 @@ import static org.pitest.sequence.Result.result;
  * 1. In a static initializer (i.e <clinit>)
  * 2. In a private method or constructor called from <clinit> or another private method in the call tree
  *
- *
  */
 class StaticInitializerInterceptor implements MutationInterceptor {
 
   static final Slot<AbstractInsnNode> START = Slot.create(AbstractInsnNode.class);
+  static final Slot<Set<String>> DELAYED_EXECUTION_FIELDS = Slot.createSet(String.class);
 
   static final SequenceMatcher<AbstractInsnNode> DELAYED_EXECUTION = QueryStart
           .any(AbstractInsnNode.class)
@@ -66,34 +69,39 @@ class StaticInitializerInterceptor implements MutationInterceptor {
           .then(returnsDeferredExecutionCode().or(dynamicallyReturnsDeferredExecutionCode()).and(store(START.write())))
           // allow for other method calls etc
           .zeroOrMore(QueryStart.match(anyInstruction()))
-          .then(enumConstructorCallAndStore().or(QueryStart.match(delayedExecutionField())))
+          .then(enumConstructorCallAndStore().or(QueryStart.match(delayedExecutionField(DELAYED_EXECUTION_FIELDS.read()))))
           .zeroOrMore(QueryStart.match(anyInstruction()))
           .compile(QueryParams.params(AbstractInsnNode.class)
                   .withIgnores(notAnInstruction())
           );
 
-  private static Match<AbstractInsnNode> delayedExecutionField() {
-    return PUTSTATIC.and(isAUtilFunctionField());
+  private static Match<AbstractInsnNode> delayedExecutionField(SlotRead<Set<String>> delayedFields) {
+    return PUTSTATIC.and(isADelayedExecutionField(delayedFields));
   }
 
-  private static Match<AbstractInsnNode> isAUtilFunctionField() {
+  private static Match<AbstractInsnNode> isADelayedExecutionField(SlotRead<Set<String>> delayedFields) {
     return (c,n) -> {
       FieldInsnNode fieldNode = ((FieldInsnNode) n);
-      return result( fieldNode.desc.startsWith("Ljava/util/function/"), c);
+      return result( c.retrieve(delayedFields).get().contains(fieldNode.name), c);
     };
   }
 
   private static Match<AbstractInsnNode> dynamicallyReturnsDeferredExecutionCode() {
-    return (c,n) -> result(n.getOpcode() == Opcodes.INVOKEDYNAMIC && returnDelayedExecutionType(((InvokeDynamicInsnNode) n).desc), c);
+    return (c,n) -> result(n.getOpcode() == Opcodes.INVOKEDYNAMIC && returnsDelayedExecutionType(((InvokeDynamicInsnNode) n).desc), c);
   }
 
   private static Match<AbstractInsnNode> returnsDeferredExecutionCode() {
-    return (c,n) -> result(n.getOpcode() == Opcodes.INVOKESTATIC && returnDelayedExecutionType(((MethodInsnNode) n).desc), c);
+    return (c,n) -> result(n.getOpcode() == Opcodes.INVOKESTATIC && returnsDelayedExecutionType(((MethodInsnNode) n).desc), c);
   }
 
-  private static boolean returnDelayedExecutionType(String desc) {
+  private static boolean returnsDelayedExecutionType(String desc) {
     int endOfParams = desc.indexOf(')');
     return endOfParams <= 0 || desc.substring(endOfParams + 1).startsWith("Ljava/util/function/");
+  }
+
+
+  private static boolean isADelayedExecutionType(String type) {
+    return type.startsWith("java/util/function/");
   }
 
   private static SequenceQuery<AbstractInsnNode> enumConstructorCallAndStore() {
@@ -126,6 +134,15 @@ class StaticInitializerInterceptor implements MutationInterceptor {
     final Optional<MethodTree> clinit = tree.methods().stream().filter(nameEquals("<clinit>")).findFirst();
 
     if (clinit.isPresent()) {
+
+      // Find delayed execution fields (Function, Supplier, List<Supplier> etc). Full generic signature is available in the
+      // declaration, but not on call.
+      Set<String> delayedExecutionFields = tree.rawNode().fields.stream()
+              .filter(this::isDelayedExecutionField)
+              .map(n -> n.name)
+              .collect(Collectors.toSet());
+
+
       // We can't see if a method *call* is private from the call site
       // so collect a set of private methods within the class first
       Set<Location> privateMethods = tree.methods().stream()
@@ -133,7 +150,7 @@ class StaticInitializerInterceptor implements MutationInterceptor {
               .map(MethodTree::asLocation)
               .collect(Collectors.toSet());
 
-      Set<Call> storedToSupplier = findCallsStoredToDelayedExecutionCode(tree);
+      Set<Call> storedToSupplier = findCallsStoredToDelayedExecutionCode(tree, delayedExecutionFields);
 
       // Get map of each private method to the private methods it calls
       // Any call to a non private method breaks the chain
@@ -153,20 +170,25 @@ class StaticInitializerInterceptor implements MutationInterceptor {
     }
   }
 
-  private Set<Call> findCallsStoredToDelayedExecutionCode(ClassTree tree) {
-     return new HashSet<>(privateAndClinitCallsToDelayedExecutionCode(tree));
+  private boolean isDelayedExecutionField(FieldNode fieldNode) {
+    return SignatureParser.extractTypes(fieldNode.signature).stream()
+                    .anyMatch(StaticInitializerInterceptor::isADelayedExecutionType);
+  }
+
+  private Set<Call> findCallsStoredToDelayedExecutionCode(ClassTree tree, Set<String> delayedExecutionFields) {
+     return new HashSet<>(privateAndClinitCallsToDelayedExecutionCode(tree, delayedExecutionFields));
   }
 
 
-  private Set<Call> privateAndClinitCallsToDelayedExecutionCode(ClassTree tree) {
+  private Set<Call> privateAndClinitCallsToDelayedExecutionCode(ClassTree tree, Set<String> delayedExecutionFields) {
     return tree.methods().stream()
             .filter(m -> m.isPrivate() || m.rawNode().name.equals("<clinit>"))
-            .flatMap(m -> delayedExecutionCall(m).stream().map(c -> new Call(m.asLocation(), c)))
+            .flatMap(m -> delayedExecutionCall(m, delayedExecutionFields).stream().map(c -> new Call(m.asLocation(), c)))
             .collect(Collectors.toSet());
   }
 
-  private List<Location> delayedExecutionCall(MethodTree method) {
-    Context context = Context.start();
+  private List<Location> delayedExecutionCall(MethodTree method, Set<String> delayedExecutionFields) {
+    Context context = Context.start().store(DELAYED_EXECUTION_FIELDS.write(), delayedExecutionFields);
     return DELAYED_EXECUTION.contextMatches(method.instructions(), context).stream()
             .map(c -> c.retrieve(START.read()).get())
             .flatMap(this::nodeToLocation)

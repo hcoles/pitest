@@ -8,9 +8,11 @@ import com.example.staticinitializers.MethodsCallsEachOtherInLoop;
 import com.example.staticinitializers.NestedEnumWithLambdaInStaticInitializer;
 import com.example.staticinitializers.SecondLevelPrivateMethods;
 import com.example.staticinitializers.SingletonWithWorkInInitializer;
+import com.example.staticinitializers.delayedexecution.EnumListOfSuppliers;
 import com.example.staticinitializers.delayedexecution.EnumMethodReferenceNotStored;
 import com.example.staticinitializers.delayedexecution.EnumMixedFields;
 import com.example.staticinitializers.delayedexecution.StaticFunctionField;
+import com.example.staticinitializers.delayedexecution.StaticListOfFunctions;
 import com.example.staticinitializers.delayedexecution.StaticSupplierField;
 import com.example.staticinitializers.ThirdLevelPrivateMethods;
 import org.junit.Test;
@@ -238,6 +240,28 @@ public class StaticInitializerInterceptorTest {
                 .allMutantsAreFiltered()
                 .verify();
     }
+
+    @Test
+    public void mutatesMethodsStoredInListOfSuppliers() {
+        v.forClass(EnumListOfSuppliers.class)
+                .forMethod("canMutate")
+                .forAnyCode()
+                .mutantsAreGenerated()
+                .noMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void mutatesMethodsStoredInStaticListOfFunctions() {
+        v.forClass(StaticListOfFunctions.class)
+                .forMethod("canMutate")
+                .forAnyCode()
+                .mutantsAreGenerated()
+                .noMutantsAreFiltered()
+                .verify();
+    }
+
+
 
     private Predicate<MutationDetails> inMethod(String name, String desc) {
         return m -> m.getMethod().equals(name) && m.getId().getLocation().getMethodDesc().equals(desc);
