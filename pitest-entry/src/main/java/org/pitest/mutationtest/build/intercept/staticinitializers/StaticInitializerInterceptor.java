@@ -2,6 +2,7 @@ package org.pitest.mutationtest.build.intercept.staticinitializers;
 
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
@@ -59,10 +60,12 @@ import static org.pitest.sequence.Result.result;
  */
 class StaticInitializerInterceptor implements MutationInterceptor {
 
-  static final Slot<AbstractInsnNode> START = Slot.create(AbstractInsnNode.class);
-  static final Slot<Set<String>> DELAYED_EXECUTION_FIELDS = Slot.createSet(String.class);
+  private final Set<String> delayedExecutionTypes;
 
-  static final SequenceMatcher<AbstractInsnNode> DELAYED_EXECUTION = QueryStart
+  private static final Slot<AbstractInsnNode> START = Slot.create(AbstractInsnNode.class);
+  private static final Slot<Set<String>> DELAYED_EXECUTION_FIELDS = Slot.createSet(String.class);
+
+  private final SequenceMatcher<AbstractInsnNode> delayedExecution = QueryStart
           .any(AbstractInsnNode.class)
           // look for calls returning delayed execution types. Unfortunately this is not guarantee that we
           // store the result to an appropriate type
@@ -75,6 +78,10 @@ class StaticInitializerInterceptor implements MutationInterceptor {
                   .withIgnores(notAnInstruction())
           );
 
+  StaticInitializerInterceptor(Set<String> delayedExecutionTypes) {
+    this.delayedExecutionTypes = delayedExecutionTypes;
+  }
+
   private static Match<AbstractInsnNode> delayedExecutionField(SlotRead<Set<String>> delayedFields) {
     return PUTSTATIC.and(isADelayedExecutionField(delayedFields));
   }
@@ -86,22 +93,27 @@ class StaticInitializerInterceptor implements MutationInterceptor {
     };
   }
 
-  private static Match<AbstractInsnNode> dynamicallyReturnsDeferredExecutionCode() {
+  private Match<AbstractInsnNode> dynamicallyReturnsDeferredExecutionCode() {
     return (c,n) -> result(n.getOpcode() == Opcodes.INVOKEDYNAMIC && returnsDelayedExecutionType(((InvokeDynamicInsnNode) n).desc), c);
   }
 
-  private static Match<AbstractInsnNode> returnsDeferredExecutionCode() {
+  private Match<AbstractInsnNode> returnsDeferredExecutionCode() {
     return (c,n) -> result(n.getOpcode() == Opcodes.INVOKESTATIC && returnsDelayedExecutionType(((MethodInsnNode) n).desc), c);
   }
 
-  private static boolean returnsDelayedExecutionType(String desc) {
-    int endOfParams = desc.indexOf(')');
-    return endOfParams <= 0 || desc.substring(endOfParams + 1).startsWith("Ljava/util/function/");
+  private boolean returnsDelayedExecutionType(String desc) {
+    Type returnType = Type.getReturnType(desc);
+    // fixme Arrays?
+    if (returnType.getSort() != Type.OBJECT) {
+      return false;
+    }
+
+    return isADelayedExecutionType(returnType.getInternalName());
   }
 
 
-  private static boolean isADelayedExecutionType(String type) {
-    return type.startsWith("java/util/function/");
+  private boolean isADelayedExecutionType(String type) {
+    return delayedExecutionTypes.contains(type);
   }
 
   private static SequenceQuery<AbstractInsnNode> enumConstructorCallAndStore() {
@@ -172,7 +184,7 @@ class StaticInitializerInterceptor implements MutationInterceptor {
 
   private boolean isDelayedExecutionField(FieldNode fieldNode) {
     return SignatureParser.extractTypes(fieldNode.signature).stream()
-                    .anyMatch(StaticInitializerInterceptor::isADelayedExecutionType);
+                    .anyMatch(this::isADelayedExecutionType);
   }
 
   private Set<Call> findCallsStoredToDelayedExecutionCode(ClassTree tree, Set<String> delayedExecutionFields) {
@@ -189,7 +201,7 @@ class StaticInitializerInterceptor implements MutationInterceptor {
 
   private List<Location> delayedExecutionCall(MethodTree method, Set<String> delayedExecutionFields) {
     Context context = Context.start().store(DELAYED_EXECUTION_FIELDS.write(), delayedExecutionFields);
-    return DELAYED_EXECUTION.contextMatches(method.instructions(), context).stream()
+    return delayedExecution.contextMatches(method.instructions(), context).stream()
             .map(c -> c.retrieve(START.read()).get())
             .flatMap(this::nodeToLocation)
             .collect(Collectors.toList());

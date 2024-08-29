@@ -1,6 +1,7 @@
 package org.pitest.mutationtest.build;
 
 import org.pitest.classinfo.ClassByteArraySource;
+import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.plugin.FeatureParameter;
@@ -16,17 +17,23 @@ public final class InterceptorParameters {
   private final ReportOptions data;
   private final ClassByteArraySource source;
   private final CoverageDatabase coverage;
+  private final CodeSource code;
 
   private final TestPrioritiser testPrioritiser;
 
 
-  public InterceptorParameters(FeatureSetting conf, ReportOptions data, CoverageDatabase coverage,
-      ClassByteArraySource source, TestPrioritiser testPrioritiser) {
+  public InterceptorParameters(FeatureSetting conf,
+                               ReportOptions data,
+                               CoverageDatabase coverage,
+                               ClassByteArraySource source,
+                               TestPrioritiser testPrioritiser,
+                               CodeSource code) {
     this.conf = conf;
     this.data = data;
     this.coverage = coverage;
     this.source = source;
     this.testPrioritiser = testPrioritiser;
+    this.code = code;
   }
 
   public ReportOptions data() {
@@ -48,6 +55,10 @@ public final class InterceptorParameters {
 
   public TestPrioritiser testPrioritiser() {
     return this.testPrioritiser;
+  }
+
+  public CodeSource code() {
+    return code;
   }
 
   public Optional<String> getString(FeatureParameter limit) {

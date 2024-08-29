@@ -1,6 +1,8 @@
 package org.pitest.mutationtest.build.intercept.staticinitializers;
 
 import com.example.staticinitializers.BrokenChain;
+import com.example.staticinitializers.delayedexecution.CustomFunction;
+import com.example.staticinitializers.delayedexecution.CustomFunctionNotAnnotated;
 import com.example.staticinitializers.delayedexecution.EnumFieldMethodRef;
 import com.example.staticinitializers.delayedexecution.EnumFieldSupplier;
 import com.example.staticinitializers.EnumWithLambdaInConstructor;
@@ -12,10 +14,13 @@ import com.example.staticinitializers.delayedexecution.EnumListOfSuppliers;
 import com.example.staticinitializers.delayedexecution.EnumMethodReferenceNotStored;
 import com.example.staticinitializers.delayedexecution.EnumMixedFields;
 import com.example.staticinitializers.delayedexecution.StaticFunctionField;
+import com.example.staticinitializers.delayedexecution.StaticListOfFunctionalInterface;
 import com.example.staticinitializers.delayedexecution.StaticListOfFunctions;
+import com.example.staticinitializers.delayedexecution.StaticListOfUnannotatedInterfaces;
 import com.example.staticinitializers.delayedexecution.StaticSupplierField;
 import com.example.staticinitializers.ThirdLevelPrivateMethods;
 import org.junit.Test;
+import org.pitest.mutationtest.FixedCodeSource;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.mutators.NullMutateEverything;
 import org.pitest.verifier.interceptors.InterceptorVerifier;
@@ -25,7 +30,8 @@ import java.util.function.Predicate;
 
 public class StaticInitializerInterceptorTest {
 
-    InterceptorVerifier v = VerifierStart.forInterceptorFactory(new StaticInitializerInterceptorFactory())
+    InterceptorVerifier v = VerifierStart.forInterceptorFactory(new StaticInitializerInterceptorFactory()
+                    , new FixedCodeSource(CustomFunction.class, CustomFunctionNotAnnotated.class))
             .usingMutator(new NullMutateEverything());
 
 
@@ -261,6 +267,25 @@ public class StaticInitializerInterceptorTest {
                 .verify();
     }
 
+    @Test
+    public void recognisesCustomFunctionalInterfaces() {
+        v.forClass(StaticListOfFunctionalInterface.class)
+                .forMethod("canMutate")
+                .forAnyCode()
+                .mutantsAreGenerated()
+                .noMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
+    public void stillMutatesIfClassUsedAsFunctionIsntAnnotated() {
+        v.forClass(StaticListOfUnannotatedInterfaces.class)
+                .forMethod("canMutate")
+                .forAnyCode()
+                .mutantsAreGenerated()
+                .allMutantsAreFiltered()
+                .verify();
+    }
 
 
     private Predicate<MutationDetails> inMethod(String name, String desc) {

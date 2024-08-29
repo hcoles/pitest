@@ -337,7 +337,7 @@ public class MutationCoverage {
             coverageData);
 
     final MutationInterceptor interceptor = this.settings.getInterceptor()
-            .createInterceptor(this.data, coverageData, bas, testPrioritiser)
+            .createInterceptor(this.data, coverageData, bas, testPrioritiser, code)
             .filter(interceptorFilter);
 
     interceptor.initialise(this.code);
