@@ -22,7 +22,7 @@ public class StaticInitializerInterceptorFactory implements MutationInterceptorF
     }
 
     public StaticInitializerInterceptorFactory(Function<CodeSource, Set<String>> delayedExecutionTypes) {
-        this.delayedExecutionTypes = delayedExecutionTypes.andThen(this::jdkFunctionalClasses);
+        this.delayedExecutionTypes = delayedExecutionTypes.andThen(this::functionalInterfaces);
     }
 
     @Override
@@ -43,9 +43,9 @@ public class StaticInitializerInterceptorFactory implements MutationInterceptorF
                 .withDescription("Filters mutations in static initializers and code called only from them");
     }
 
-    private Set<String> jdkFunctionalClasses(Set<String> existing) {
+    private Set<String> functionalInterfaces(Set<String> existing) {
         Set<String> classes = new HashSet<>(existing);
-        try (BufferedReader r = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/jdkfunctionalinterfaces.txt")))) {
+        try (BufferedReader r = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/functional_interfaces.txt")))) {
             String line = r.readLine();
             while (line != null) {
                 classes.add(line);
@@ -53,7 +53,7 @@ public class StaticInitializerInterceptorFactory implements MutationInterceptorF
             }
             return classes;
         } catch (IOException e) {
-            throw new RuntimeException("Could not read embedded jdk class list!");
+            throw new RuntimeException("Could not read embedded list of functional interfaces!");
         }
     }
 }

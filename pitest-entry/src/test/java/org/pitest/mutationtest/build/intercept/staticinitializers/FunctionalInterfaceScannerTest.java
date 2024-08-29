@@ -3,9 +3,6 @@ package org.pitest.mutationtest.build.intercept.staticinitializers;
 import org.junit.Test;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.classinfo.ClassByteArraySource;
-import org.pitest.classinfo.ClassHash;
-import org.pitest.classinfo.ClassName;
-import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.CodeSource;
 import org.pitest.mutationtest.FixedCodeSource;
@@ -13,9 +10,7 @@ import org.pitest.mutationtest.FixedCodeSource;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,17 +30,23 @@ public class FunctionalInterfaceScannerTest {
         assertThat(underTest.apply(codeSourceFor(functional, not))).containsExactly("java/util/function/Function");
     }
 
-    /* not a test
+
+    /*
     @Test
     public void wholeClassPath() throws Exception {
         ClassPath cp = new ClassPath();
         List<String> classes = cp.classNames().stream()
                 .map(n -> source.getBytes(n))
                 .map(b -> ClassTree.fromBytes(b.get()))
+                .filter(ClassTree::isInterface)
                 .flatMap(t -> underTest.apply(codeSourceFor(t)).stream())
+                .distinct()
                 .collect(Collectors.toList());
+
+        System.out.println(classes.stream()
+                .collect(Collectors.joining("\n")));
     }
-     */
+*/
 
     /*
     // not a test and only works with java 9+
