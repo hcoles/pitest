@@ -19,6 +19,7 @@ import com.example.staticinitializers.delayedexecution.StaticListOfFunctions;
 import com.example.staticinitializers.delayedexecution.StaticListOfUnannotatedInterfaces;
 import com.example.staticinitializers.delayedexecution.StaticSupplierField;
 import com.example.staticinitializers.ThirdLevelPrivateMethods;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.pitest.mutationtest.FixedCodeSource;
 import org.pitest.mutationtest.engine.MutationDetails;
@@ -268,6 +269,7 @@ public class StaticInitializerInterceptorTest {
     }
 
     @Test
+    @Ignore("functionality disabled, may get re-introduced")
     public void recognisesCustomFunctionalInterfaces() {
         v.forClass(StaticListOfFunctionalInterface.class)
                 .forMethod("canMutate")

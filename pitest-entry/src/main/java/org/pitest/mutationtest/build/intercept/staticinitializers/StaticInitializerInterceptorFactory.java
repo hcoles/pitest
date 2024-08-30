@@ -1,6 +1,5 @@
 package org.pitest.mutationtest.build.intercept.staticinitializers;
 
-import org.pitest.classpath.CodeSource;
 import org.pitest.mutationtest.build.InterceptorParameters;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
@@ -11,19 +10,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Function;
 
 public class StaticInitializerInterceptorFactory implements MutationInterceptorFactory {
-
-    private final Function<CodeSource, Set<String>> delayedExecutionTypes;
-
-    public StaticInitializerInterceptorFactory() {
-        this(new FunctionalInterfaceScanner());
-    }
-
-    public StaticInitializerInterceptorFactory(Function<CodeSource, Set<String>> delayedExecutionTypes) {
-        this.delayedExecutionTypes = delayedExecutionTypes.andThen(this::functionalInterfaces);
-    }
 
     @Override
     public String description() {
@@ -32,8 +20,7 @@ public class StaticInitializerInterceptorFactory implements MutationInterceptorF
 
     @Override
     public MutationInterceptor createInterceptor(InterceptorParameters params) {
-        Set<String> types = delayedExecutionTypes.apply(params.code());
-        return new StaticInitializerInterceptor(types);
+        return new StaticInitializerInterceptor(functionalInterfaces());
     }
 
     @Override
@@ -43,8 +30,8 @@ public class StaticInitializerInterceptorFactory implements MutationInterceptorF
                 .withDescription("Filters mutations in static initializers and code called only from them");
     }
 
-    private Set<String> functionalInterfaces(Set<String> existing) {
-        Set<String> classes = new HashSet<>(existing);
+    private Set<String> functionalInterfaces() {
+        Set<String> classes = new HashSet<>();
         try (BufferedReader r = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/functional_interfaces.txt")))) {
             String line = r.readLine();
             while (line != null) {
