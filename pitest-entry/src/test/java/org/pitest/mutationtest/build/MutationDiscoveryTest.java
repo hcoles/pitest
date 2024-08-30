@@ -6,6 +6,7 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.mutationtest.EngineArguments;
+import org.pitest.mutationtest.FixedCodeSource;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.build.intercept.javafeatures.AnEnum;
 import org.pitest.mutationtest.build.intercept.javafeatures.ForEachFilterTest.HasForEachLoop;
@@ -277,7 +278,7 @@ public class MutationDiscoveryTest {
     final SettingsFactory settings = new SettingsFactory(this.data,
         PluginServices.makeForContextLoader());
     final MutationInterceptor interceptor = settings.getInterceptor()
-        .createInterceptor(this.data, null, source, null);
+        .createInterceptor(this.data, null, source, null, new FixedCodeSource());
 
     final MutationEngine engine = new GregorEngineFactory().createEngine(
         EngineArguments.arguments().withExcludedMethods(this.data.getExcludedMethods())

@@ -1,6 +1,7 @@
 package org.pitest.mutationtest.build;
 
 import org.pitest.classinfo.ClassByteArraySource;
+import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.plugin.FeatureSelector;
@@ -24,10 +25,11 @@ public class CompoundInterceptorFactory {
       ReportOptions data,
       CoverageDatabase coverage,
       ClassByteArraySource source,
-      TestPrioritiser testPrioritiser
+      TestPrioritiser testPrioritiser,
+      CodeSource code
       ) {
-    final List<MutationInterceptor> interceptors = this.features.getActiveFeatures().stream()
-            .map(toInterceptor(this.features, data, coverage, source, testPrioritiser))
+    List<MutationInterceptor> interceptors = this.features.getActiveFeatures().stream()
+            .map(toInterceptor(this.features, data, coverage, source, testPrioritiser, code))
             .collect(Collectors.toList());
     return new CompoundMutationInterceptor(interceptors);
   }
@@ -38,10 +40,11 @@ public class CompoundInterceptorFactory {
           ReportOptions data,
           CoverageDatabase coverage,
           ClassByteArraySource source,
-          TestPrioritiser testPrioritiser
+          TestPrioritiser testPrioritiser,
+          CodeSource code
           ) {
 
-    return a -> a.createInterceptor(new InterceptorParameters(features.getSettingForFeature(a.provides().name()), data, coverage, source, testPrioritiser));
+    return a -> a.createInterceptor(new InterceptorParameters(features.getSettingForFeature(a.provides().name()), data, coverage, source, testPrioritiser, code));
 
   }
  }

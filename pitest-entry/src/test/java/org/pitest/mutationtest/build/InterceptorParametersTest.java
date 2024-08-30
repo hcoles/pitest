@@ -30,7 +30,7 @@ public class InterceptorParametersTest {
 
   @Test
   public void shouldReturnNoneWhenFeatureSettingsAbsent() {
-    this.testee = new InterceptorParameters(null, null, null, null, null);
+    this.testee = new InterceptorParameters(null, null, null, null, null, null);
     assertThat(this.testee.getString(FeatureParameter.named("foo"))).isEqualTo(Optional.empty());
   }
 
@@ -50,7 +50,7 @@ public class InterceptorParametersTest {
     final Map<String, List<String>> values = new HashMap<>();
     values.put(key, Arrays.asList(vals));
     final FeatureSetting fs = new FeatureSetting(null, null, values);
-    return new InterceptorParameters(fs, null, null,null, null);
+    return new InterceptorParameters(fs, null, null,null, null, null);
   }
 
 }

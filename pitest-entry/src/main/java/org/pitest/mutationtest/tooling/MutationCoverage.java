@@ -65,7 +65,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -337,7 +336,7 @@ public class MutationCoverage {
             coverageData);
 
     final MutationInterceptor interceptor = this.settings.getInterceptor()
-            .createInterceptor(this.data, coverageData, bas, testPrioritiser)
+            .createInterceptor(this.data, coverageData, bas, testPrioritiser, code)
             .filter(interceptorFilter);
 
     interceptor.initialise(this.code);
@@ -377,9 +376,8 @@ public class MutationCoverage {
     return this.strategies.coverage();
   }
 
-  // For reasons not yet understood classes from rt.jar are not resolved for some
-  // projects during static analysis phase. For now fall back to the classloader when
-  // a class not provided by project classpath
+  // Since java 9 rt.jar is no longer on the classpath so jdk classes will not resolve from
+  // the filesystem and must be pulled out via the classloader
   private ClassByteArraySource fallbackToClassLoader(final ClassByteArraySource bas) {
     final ClassByteArraySource clSource = ClassloaderByteArraySource.fromContext();
     return clazz -> {
@@ -387,7 +385,6 @@ public class MutationCoverage {
       if (maybeBytes.isPresent()) {
         return maybeBytes;
       }
-      LOG.log(Level.FINE, "Could not find " + clazz + " on classpath for analysis. Falling back to classloader");
       return clSource.getBytes(clazz);
     };
   }
