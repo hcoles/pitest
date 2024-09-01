@@ -470,6 +470,12 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertThat(actual.getArgLine()).isEqualTo("fooValue barValue");
   }
 
+  public void testEvaluatesLocalRepositoryPropertyInArgLines() {
+    when(this.settings.getLocalRepository()).thenReturn("localRepoValue");
+    ReportOptions actual = parseConfig("<argLine>${settings.localRepository}/jar</argLine>");
+    assertThat(actual.getArgLine()).isEqualTo("localRepoValue/jar");
+  }
+
   public void testAutoAddsKotlinSourceDirsWhenPresent() throws IOException {
     // we're stuck in junit 3 land but can
     // use junit 4's temporary folder rule programatically
