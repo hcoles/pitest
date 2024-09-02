@@ -34,7 +34,6 @@ import org.pitest.util.Verbosity;
 
 import java.io.File;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -50,7 +49,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.pitest.functional.Streams.asStream;
 
@@ -220,7 +218,6 @@ public class MojoToReportOptionsConverter {
     final List<String> sourceRoots = new ArrayList<>();
     sourceRoots.addAll(this.mojo.getProject().getCompileSourceRoots());
     sourceRoots.addAll(this.mojo.getProject().getTestCompileSourceRoots());
-    sourceRoots.addAll(kotlinIfPresent());
 
     data.setSourceDirs(stringsToPaths(sourceRoots));
 
@@ -254,17 +251,6 @@ public class MojoToReportOptionsConverter {
     checkForObsoleteOptions(this.mojo);
 
     return data;
-  }
-
-  // Many maven projects will not have the kotlin sources dirs configured within the maven
-  // model. To work around this, the horrible hack below adds them if they are present
-  private Collection<String> kotlinIfPresent() {
-    Path test = Paths.get(this.mojo.getProject().getBasedir().getAbsolutePath(),"src","test","kotlin" );
-    Path main = Paths.get(this.mojo.getProject().getBasedir().getAbsolutePath(),"src","main","kotlin" );
-    return Stream.of(test, main)
-            .filter(Files::exists)
-            .map(p -> p.toFile().getAbsolutePath())
-            .collect(Collectors.toList());
   }
 
   private void configureVerbosity(ReportOptions data) {

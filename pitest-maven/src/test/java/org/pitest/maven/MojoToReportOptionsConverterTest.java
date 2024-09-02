@@ -470,28 +470,6 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertThat(actual.getArgLine()).isEqualTo("fooValue barValue");
   }
 
-  public void testAutoAddsKotlinSourceDirsWhenPresent() throws IOException {
-    // we're stuck in junit 3 land but can
-    // use junit 4's temporary folder rule programatically
-    TemporaryFolder t = new TemporaryFolder();
-    try {
-      t.create();
-      File base = t.getRoot();
-      when(project.getBasedir()).thenReturn(base);
-
-      Path main = base.toPath().resolve("src").resolve("main").resolve("kotlin");
-      Path test = base.toPath().resolve("src").resolve("test").resolve("kotlin");
-      Files.createDirectories(main);
-      Files.createDirectories(test);
-
-      ReportOptions actual = parseConfig("");
-      assertThat(actual.getSourcePaths()).contains(main);
-    } finally {
-      t.delete();
-    }
-
-  }
-
   private ReportOptions parseConfig(final String xml) {
     try {
       final String pom = createPomWithConfiguration(xml);
