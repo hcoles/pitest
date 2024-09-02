@@ -353,6 +353,12 @@ public class AbstractPitMojo extends AbstractMojo {
   @Parameter(property = "pit.outputEncoding", defaultValue = "${project.reporting.outputEncoding}")
   private String outputEncoding;
 
+  @Parameter(property = "pit.additionalSources", defaultValue = "src/main/kotlin")
+  private List<File> additionalSources;
+
+  @Parameter(property = "pit.additionalTestSources", defaultValue = "src/test/kotlin")
+  private List<File> additionalTestSources;
+
   /**
    * The base directory of a multi-module project. Defaults to the execution
    * directory
@@ -433,6 +439,7 @@ public class AbstractPitMojo extends AbstractMojo {
       MojoFailureException {
 
     switchLogging();
+    augmentConfig();
     RunDecision shouldRun = shouldRun();
 
     if (shouldRun.shouldRun()) {
@@ -465,6 +472,27 @@ public class AbstractPitMojo extends AbstractMojo {
       this.getLog().info("Skipping project because:");
       for (String reason : shouldRun.getReasons()) {
         this.getLog().info("  - " + reason);
+      }
+    }
+  }
+
+  /**
+   * Maven kotlin projects often add the kotlin sources at runtime via the build helper or kotlin p;lugins.
+   * Unfortunately, pitest is often has its maven goal called directly so this
+   * config isn't visible to it. We therefore add them in at runtime ourselves if present.
+   */
+  private void augmentConfig() {
+    for (File source : emptyWithoutNulls(additionalSources)) {
+      if (source.exists() && ! this.project.getCompileSourceRoots().contains(source.getAbsolutePath())) {
+        this.getLog().info("Adding source root " + source);
+        this.project.addCompileSourceRoot(source.getAbsolutePath());
+      }
+    }
+
+    for (File source : emptyWithoutNulls(additionalTestSources)) {
+      if (source.exists() && ! this.project.getTestCompileSourceRoots().contains(source.getAbsolutePath())) {
+        this.getLog().info("Adding test root " + source);
+        this.project.addTestCompileSourceRoot(source.getAbsolutePath());
       }
     }
   }
