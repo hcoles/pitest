@@ -22,6 +22,15 @@ public final class InterceptorParameters {
   private final TestPrioritiser testPrioritiser;
 
 
+  @Deprecated
+  public InterceptorParameters(FeatureSetting conf,
+                               ReportOptions data,
+                               CoverageDatabase coverage,
+                               ClassByteArraySource source,
+                               TestPrioritiser testPrioritiser) {
+    this(conf, data, coverage, source, testPrioritiser, null);
+  }
+
   public InterceptorParameters(FeatureSetting conf,
                                ReportOptions data,
                                CoverageDatabase coverage,
