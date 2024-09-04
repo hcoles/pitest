@@ -1,6 +1,5 @@
 package org.pitest.mutationtest.mocksupport;
 
-import org.pitest.coverage.execute.JavassistCoverageInterceptor;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.environment.TransformationPlugin;
 import org.pitest.util.Glob;

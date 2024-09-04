@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package org.pitest.coverage.execute;
+package org.pitest.mutationtest.mocksupport;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -45,13 +45,8 @@ public final class JavassistCoverageInterceptor {
       final String name) {
 
     try {
-      if (isInstrumentedClass(name)) {
         final byte[] bs = getOriginalBytes(classPath, name);
-        return new ByteArrayInputStream(
-            transformBytes(IsolationUtils.getContextClassLoader(), name, bs));
-      } else {
-        return returnNormalBytes(classPath, name);
-      }
+        return new ByteArrayInputStream(transformBytes(IsolationUtils.getContextClassLoader(), name, bs));
     } catch (final IOException ex) {
       throw Unchecked.translateCheckedException(ex);
     }
@@ -97,10 +92,5 @@ public final class JavassistCoverageInterceptor {
       throw Unchecked.translateCheckedException(e);
     }
   }
-
-  private static boolean isInstrumentedClass(final String name) {
-    return true;
-  }
-
 
 }
