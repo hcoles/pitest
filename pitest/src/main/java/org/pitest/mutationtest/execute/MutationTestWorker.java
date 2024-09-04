@@ -21,7 +21,6 @@ import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
-import org.pitest.mutationtest.mocksupport.JavassistInterceptor;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.TestResult;
 import org.pitest.testapi.TestUnit;
@@ -62,6 +61,7 @@ public class MutationTestWorker {
 
   private final ResetEnvironment                            reset;
 
+
   public MutationTestWorker(HotSwap hotswap,
                             Mutater mutater,
                             ClassLoader loader,
@@ -91,17 +91,13 @@ public class MutationTestWorker {
 
   }
 
-  private void processMutation(final Reporter r,
-      final TimeOutDecoratedTestSource testSource,
-      final MutationDetails mutationDetails) {
+  private void processMutation(Reporter r,
+                               TimeOutDecoratedTestSource testSource,
+                               MutationDetails mutationDetails) {
 
     final MutationIdentifier mutationId = mutationDetails.getId();
     final Mutant mutatedClass = this.mutater.getMutation(mutationId);
 
-    // For the benefit of mocking frameworks such as PowerMock
-    // mess with the internals of Javassist so our mutated class
-    // bytes are returned
-    JavassistInterceptor.setMutant(mutatedClass);
     reset.resetFor(mutatedClass);
 
     if (DEBUG) {
@@ -126,8 +122,8 @@ public class MutationTestWorker {
       final List<TestUnit> relevantTests) {
     final MutationStatusTestPair mutationDetected;
     if ((relevantTests == null) || relevantTests.isEmpty()) {
-      LOG.info(() -> "No test coverage for mutation " + mutationId + " in "
-          + mutatedClass.getDetails().getMethod());
+      LOG.log(Level.WARNING, "No test coverage for mutation " + mutationId + " in " + mutatedClass.getDetails().getMethod()
+              + ". This should have been detected in the outer process so treating as an error");
       mutationDetected =  MutationStatusTestPair.notAnalysed(0, DetectionStatus.RUN_ERROR, Collections.emptyList());
     } else {
       mutationDetected = handleCoveredMutation(mutationId, mutatedClass,
@@ -142,7 +138,7 @@ public class MutationTestWorker {
       final List<TestUnit> relevantTests) {
     final MutationStatusTestPair mutationDetected;
     if (DEBUG) {
-      LOG.fine("" + relevantTests.size() + " relevant test for "
+      LOG.fine(relevantTests.size() + " relevant test for "
           + mutatedClass.getDetails().getMethod());
     }
 

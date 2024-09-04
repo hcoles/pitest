@@ -27,7 +27,7 @@ public class BendJavassistToMyWillTransformerTest {
   @Before
   public void setUp() {
     MockitoAnnotations.openMocks(this);
-    this.testee = new BendJavassistToMyWillTransformer(this.filter, JavassistInputStreamInterceptorAdapater.inputStreamAdapterSupplier(JavassistInterceptor.class));
+    this.testee = new BendJavassistToMyWillTransformer(this.filter, JavassistInputStreamInterceptorAdapter.inputStreamAdapterSupplier(JavassistInterceptor.class));
     final ClassloaderByteArraySource source = new ClassloaderByteArraySource(
         IsolationUtils.getContextClassLoader());
     this.bytes = source.getBytes("java.lang.String").get();

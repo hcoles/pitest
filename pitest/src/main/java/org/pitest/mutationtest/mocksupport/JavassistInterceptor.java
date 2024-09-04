@@ -34,7 +34,7 @@ public final class JavassistInterceptor {
       final String name) {
 
     if (isMutatedClass(name)) {
-      return  new ByteArrayInputStream(
+      return new ByteArrayInputStream(
           mutant.getBytes());
     } else {
       return returnNormalBytes(classPath, name);
@@ -58,7 +58,7 @@ public final class JavassistInterceptor {
         .equals(ClassName.fromString(name));
   }
 
-  public static void setMutant(final Mutant newMutant) {
+  static void setMutant(final Mutant newMutant) {
     mutant = newMutant;
   }
 }

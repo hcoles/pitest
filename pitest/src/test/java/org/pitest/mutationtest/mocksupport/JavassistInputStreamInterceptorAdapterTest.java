@@ -9,7 +9,7 @@ import org.mockito.MockitoAnnotations;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-public class JavassistInputStreamInterceptorAdapaterTest {
+public class JavassistInputStreamInterceptorAdapterTest {
 
   private JavassistInputStreamInterceptorMethodVisitor testee;
 
