@@ -18,20 +18,16 @@ import org.pitest.boot.HotSwapAgent;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.CoverageTransformer;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.config.ClientPluginServices;
 import org.pitest.mutationtest.config.MinionSettings;
 import org.pitest.mutationtest.environment.TransformationPlugin;
-import org.pitest.mutationtest.mocksupport.BendJavassistToMyWillTransformer;
-import org.pitest.mutationtest.mocksupport.JavassistInputStreamInterceptorAdapater;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.ExecutedInDiscovery;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.TestUnitExecutionListener;
 import org.pitest.testapi.execute.FindTestUnits;
 import org.pitest.util.ExitCode;
-import org.pitest.util.Glob;
 import org.pitest.util.Log;
 import org.pitest.util.SafeDataInputStream;
 import sun.pitest.CodeCoverageStore;
@@ -55,7 +51,7 @@ public class CoverageMinion {
 
   public static void main(final String[] args) {
 
-    enablePowerMockSupport();
+    enableTransformations();
 
     ExitCode exitCode = ExitCode.OK;
     Socket s = null;
@@ -81,8 +77,6 @@ public class CoverageMinion {
 
       HotSwapAgent.addTransformer(new CoverageTransformer(
           convertToJVMClassFilter(paramsFromParent.getFilter())));
-
-      enableTransformations();
 
       final List<TestUnit> tus = getTestsFromParent(dis, paramsFromParent, invokeQueue);
 
@@ -129,7 +123,7 @@ public class CoverageMinion {
   private static void enableTransformations() {
     ClientPluginServices plugins = ClientPluginServices.makeForContextLoader();
     for (TransformationPlugin each : plugins.findTransformations()) {
-      HotSwapAgent.addTransformer(each.makeTransformer());
+      HotSwapAgent.addTransformer(each.makeCoverageTransformer());
     }
   }
 
@@ -138,13 +132,6 @@ public class CoverageMinion {
             .filter(t -> !(t instanceof ExecutedInDiscovery))
             .collect(Collectors.toList());
     return toExecute;
-  }
-
-  private static void enablePowerMockSupport() {
-    // Bwahahahahahahaha
-    HotSwapAgent.addTransformer(new BendJavassistToMyWillTransformer(Prelude
-        .or(new Glob("javassist/*")),
-        JavassistInputStreamInterceptorAdapater.inputStreamAdapterSupplier(JavassistCoverageInterceptor.class)));
   }
 
   private static Predicate<String> convertToJVMClassFilter(

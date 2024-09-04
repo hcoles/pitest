@@ -22,17 +22,17 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.pitest.bytecode.ASMVersion;
 
-public class JavassistInputStreamInterceptorAdapater extends ClassVisitor {
+public class JavassistInputStreamInterceptorAdapter extends ClassVisitor {
 
   private final String interceptorClass;
 
-  public JavassistInputStreamInterceptorAdapater(final ClassVisitor arg0, Class<?> interceptor) {
+  public JavassistInputStreamInterceptorAdapter(final ClassVisitor arg0, Class<?> interceptor) {
     super(ASMVersion.ASM_VERSION, arg0);
     this.interceptorClass = classToName(interceptor);
   }
 
   public static Function<ClassWriter, ClassVisitor> inputStreamAdapterSupplier(final Class<?> interceptor) {
-    return a -> new JavassistInputStreamInterceptorAdapater(a, interceptor);
+    return a -> new JavassistInputStreamInterceptorAdapter(a, interceptor);
   }
 
 
@@ -59,8 +59,8 @@ class JavassistInputStreamInterceptorMethodVisitor extends MethodVisitor {
   }
 
   @Override
-  public void visitMethodInsn(final int opcode, final String owner,
-      final String name, final String desc, boolean itf) {
+  public void visitMethodInsn(int opcode, String owner,
+      String name, String desc, boolean itf) {
     if ((opcode == Opcodes.INVOKEINTERFACE)
         && owner.equals("javassist/ClassPath") && name.equals("openClassfile")) {
       this.mv.visitMethodInsn(Opcodes.INVOKESTATIC, this.interceptorClass, name,

@@ -19,7 +19,6 @@ import org.pitest.classinfo.CachingByteArraySource;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.EngineArguments;
 import org.pitest.mutationtest.environment.ResetEnvironment;
 import org.pitest.mutationtest.config.ClientPluginServices;
@@ -27,14 +26,10 @@ import org.pitest.mutationtest.config.MinionSettings;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.environment.TransformationPlugin;
-import org.pitest.mutationtest.mocksupport.BendJavassistToMyWillTransformer;
-import org.pitest.mutationtest.mocksupport.JavassistInputStreamInterceptorAdapater;
-import org.pitest.mutationtest.mocksupport.JavassistInterceptor;
 import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.execute.FindTestUnits;
 import org.pitest.util.ExitCode;
-import org.pitest.util.Glob;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
 import org.pitest.util.SafeDataInputStream;
@@ -130,10 +125,8 @@ public class MutationTestMinion {
   public static void main(final String[] args) {
     LOG.fine(() -> "minion started");
 
-    enablePowerMockSupport();
-    HotSwapAgent.addTransformer(new CatchNewClassLoadersTransformer());
-
     enableTransformations();
+    HotSwapAgent.addTransformer(new CatchNewClassLoadersTransformer());
 
     final int port = Integer.parseInt(args[0]);
 
@@ -165,21 +158,18 @@ public class MutationTestMinion {
   private static List<TestUnit> findTestsForTestClasses(
       final ClassLoader loader, final Collection<ClassName> testClasses,
       final Configuration pitConfig) {
-    final Collection<Class<?>> tcs = testClasses.stream().flatMap(ClassName.nameToClass(loader)).collect(Collectors.toList());
+
+    final Collection<Class<?>> tcs = testClasses.stream()
+            .flatMap(ClassName.nameToClass(loader))
+            .collect(Collectors.toList());
     final FindTestUnits finder = new FindTestUnits(pitConfig);
     return finder.findTestUnitsForAllSuppliedClasses(tcs);
-  }
-
-  private static void enablePowerMockSupport() {
-    // Bwahahahahahahaha
-    HotSwapAgent.addTransformer(new BendJavassistToMyWillTransformer(Prelude
-        .or(new Glob("javassist/*")), JavassistInputStreamInterceptorAdapater.inputStreamAdapterSupplier(JavassistInterceptor.class)));
   }
 
   private static void enableTransformations() {
     ClientPluginServices plugins = ClientPluginServices.makeForContextLoader();
     for (TransformationPlugin each : plugins.findTransformations()) {
-      HotSwapAgent.addTransformer(each.makeTransformer());
+      HotSwapAgent.addTransformer(each.makeMutationTransformer());
     }
   }
 
