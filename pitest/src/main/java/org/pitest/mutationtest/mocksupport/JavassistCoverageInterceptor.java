@@ -21,6 +21,7 @@ import org.pitest.classinfo.ComputeClassWriter;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.AlreadyInstrumentedException;
 import org.pitest.coverage.CoverageClassVisitor;
+import org.pitest.functional.prelude.Prelude;
 import org.pitest.reflection.Reflection;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.StreamUtil;
@@ -32,8 +33,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 public final class JavassistCoverageInterceptor {
+
+  private static final Predicate<String> EXCLUDED_CLASSES = excluded();
+
 
   private static final Map<String, String> COMPUTE_CACHE = new ConcurrentHashMap<>();
 
@@ -41,16 +46,26 @@ public final class JavassistCoverageInterceptor {
 
   }
 
+  // not referenced directly, but called from transformed bytecode
   public static InputStream openClassfile(final Object classPath, // NO_UCD
       final String name) {
 
     try {
         final byte[] bs = getOriginalBytes(classPath, name);
-        return new ByteArrayInputStream(transformBytes(IsolationUtils.getContextClassLoader(), name, bs));
+        if (shouldInclude(name)) {
+          return new ByteArrayInputStream(transformBytes(IsolationUtils.getContextClassLoader(), name, bs));
+        } else {
+          return new ByteArrayInputStream(bs);
+        }
     } catch (final IOException ex) {
       throw Unchecked.translateCheckedException(ex);
     }
 
+  }
+
+
+  private static boolean shouldInclude(String name) {
+    return EXCLUDED_CLASSES.negate().test(name);
   }
 
   private static byte[] getOriginalBytes(final Object classPath,
@@ -79,7 +94,7 @@ public final class JavassistCoverageInterceptor {
           ClassReader.EXPAND_FRAMES);
       return writer.toByteArray();
     } catch (AlreadyInstrumentedException ex) {
-      return null;
+      return classfileBuffer;
     }
   }
 
@@ -93,4 +108,25 @@ public final class JavassistCoverageInterceptor {
     }
   }
 
+    // Classes loaded by pitest's coverage system are not
+    // instrumented unless they are in scope for mutation.
+    // They would however be instrumented here (including pitest's own classes).
+    // We don't have knowlege of which classes are in scope for mutation here
+    // so the best we can do is exclude pitest itself and some common classes.
+    private static Predicate<String> excluded() {
+      return Prelude.or(
+              startsWith("javassist."),
+              startsWith("org.pitest."),
+              startsWith("java."),
+              startsWith("javax."),
+              startsWith("com.sun."),
+              startsWith("org.junit."),
+              startsWith("org.powermock."),
+              startsWith("org.mockito."),
+              startsWith("sun."));
+    }
+
+    private static Predicate<String> startsWith(String start) {
+      return s -> s.startsWith(start);
+    }
 }
