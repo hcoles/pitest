@@ -34,7 +34,7 @@ public class PowerMockTest {
 
     new PowerMockCallFoo().call();
 
-    PowerMockito.verifyStatic();
+    PowerMockito.verifyStatic(PowerMockFoo.class);
     PowerMockFoo.foo();
 
   }
@@ -45,7 +45,7 @@ public class PowerMockTest {
 
     new PowerMockCallsOwnMethod().call();
 
-    PowerMockito.verifyStatic();
+    PowerMockito.verifyStatic(PowerMockCallsOwnMethod.class);
     PowerMockCallsOwnMethod.foo();
 
   }

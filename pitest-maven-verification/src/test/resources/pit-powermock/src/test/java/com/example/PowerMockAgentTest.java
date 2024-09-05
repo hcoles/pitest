@@ -32,7 +32,7 @@ public class PowerMockAgentTest {
 
     new PowerMockAgentCallFoo().call();
 
-    PowerMockito.verifyStatic();
+    PowerMockito.verifyStatic(PowerMockAgentFoo.class);
     PowerMockAgentFoo.foo();
 
   }

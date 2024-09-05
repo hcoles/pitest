@@ -122,9 +122,9 @@ public class PitMojoIT {
   }
 
   @Test
-  @Ignore("test is flakey, possibly due to real non deterministic issue with powermock")
+  //@Ignore("test is flakey, possibly due to real non deterministic issue with powermock")
   public void shouldWorkWithPowerMock() throws Exception {
-    skipIfJavaVersionNotSupportByThirdParty();
+    runForJava8Only();
     File testDir = prepare("/pit-powermock");
     verifier.addCliOption("-DtimeoutConstant=10000");
     verifier.executeGoal("test");
@@ -463,6 +463,11 @@ public class PitMojoIT {
     assertThat(moduleTwoSource).contains("package com.example.two");
     assertThat(moduleThreeSource).contains("package com.example.three");
 
+  }
+
+  private void runForJava8Only() {
+    String javaVersion = System.getProperty("java.version");
+    assumeTrue(javaVersion.startsWith("1.8"));
   }
 
   private void skipIfJavaVersionNotSupportByThirdParty() {

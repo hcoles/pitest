@@ -35,7 +35,7 @@ public class CoverageAnalyser extends MethodNode {
 
   @Override
   public void visitEnd() {
-    final List<Block> blocks = findRequriedProbeLocations();
+    final List<Block> blocks = findRequiredProbeLocations();
 
     this.parent.registerProbes(blocks.size());
 
@@ -49,7 +49,7 @@ public class CoverageAnalyser extends MethodNode {
             this.probeOffset), counter));
   }
 
-  private List<Block> findRequriedProbeLocations() {
+  private List<Block> findRequiredProbeLocations() {
     return ControlFlowAnalyser.analyze(this);
   }
 }

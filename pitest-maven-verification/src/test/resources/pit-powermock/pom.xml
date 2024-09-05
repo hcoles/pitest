@@ -17,10 +17,10 @@
 			<artifactId>powermock-module-junit4</artifactId>
 			<version>${powermock.version}</version>
 			<scope>test</scope>
-		</dependency>
+          </dependency>
 		<dependency>
 			<groupId>org.powermock</groupId>
-			<artifactId>powermock-api-mockito</artifactId>
+			<artifactId>powermock-api-mockito2</artifactId>
 			<version>${powermock.version}</version>
 			<scope>test</scope>
 		</dependency>
@@ -70,7 +70,7 @@
 	
 	<properties>
 		<junit.version>4.13.1</junit.version>	
-		<powermock.version>1.7.3</powermock.version>
+		<powermock.version>2.0.9</powermock.version>
 	</properties>
 
 </project>
