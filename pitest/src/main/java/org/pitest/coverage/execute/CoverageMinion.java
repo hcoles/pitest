@@ -34,6 +34,7 @@ import sun.pitest.CodeCoverageStore;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.lang.instrument.ClassFileTransformer;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -123,7 +124,10 @@ public class CoverageMinion {
   private static void enableTransformations() {
     ClientPluginServices plugins = ClientPluginServices.makeForContextLoader();
     for (TransformationPlugin each : plugins.findTransformations()) {
-      HotSwapAgent.addTransformer(each.makeCoverageTransformer());
+      ClassFileTransformer transformer = each.makeCoverageTransformer();
+      if (transformer != null) {
+        HotSwapAgent.addTransformer(transformer);
+      }
     }
   }
 

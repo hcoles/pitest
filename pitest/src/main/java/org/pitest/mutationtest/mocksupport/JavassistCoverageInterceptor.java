@@ -115,8 +115,12 @@ public final class JavassistCoverageInterceptor {
     // so the best we can do is exclude pitest itself and some common classes.
     private static Predicate<String> excluded() {
       return Prelude.or(
+              startsWith("org.objenesis."),
+              startsWith("net.bytebuddy."),
               startsWith("javassist."),
               startsWith("org.pitest."),
+              startsWith("com.groupcdg."),
+              startsWith("com.arcmutate."),
               startsWith("java."),
               startsWith("javax."),
               startsWith("com.sun."),

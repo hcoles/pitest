@@ -5,7 +5,18 @@ import org.pitest.plugin.ClientClasspathPlugin;
 import java.lang.instrument.ClassFileTransformer;
 
 public interface TransformationPlugin extends ClientClasspathPlugin {
-    ClassFileTransformer makeCoverageTransformer();
-    ClassFileTransformer makeMutationTransformer();
+
+    @Deprecated
+    default ClassFileTransformer makeTransformer() {
+        return makeMutationTransformer();
+    }
+
+    default ClassFileTransformer makeCoverageTransformer() {
+        return null;
+    }
+
+    default ClassFileTransformer makeMutationTransformer() {
+        return null;
+    }
 
 }

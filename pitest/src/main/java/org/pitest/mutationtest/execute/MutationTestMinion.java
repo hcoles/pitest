@@ -37,6 +37,7 @@ import org.pitest.util.SafeDataInputStream;
 import javax.management.NotificationListener;
 import javax.management.openmbean.CompositeData;
 import java.io.IOException;
+import java.lang.instrument.ClassFileTransformer;
 import java.lang.management.MemoryNotificationInfo;
 import java.net.Socket;
 import java.util.Collection;
@@ -169,7 +170,10 @@ public class MutationTestMinion {
   private static void enableTransformations() {
     ClientPluginServices plugins = ClientPluginServices.makeForContextLoader();
     for (TransformationPlugin each : plugins.findTransformations()) {
-      HotSwapAgent.addTransformer(each.makeMutationTransformer());
+      ClassFileTransformer transformer = each.makeMutationTransformer();
+      if (transformer != null) {
+        HotSwapAgent.addTransformer(transformer);
+      }
     }
   }
 
