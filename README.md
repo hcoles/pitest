@@ -8,7 +8,12 @@ Read all about it at https://pitest.org
 
 ## Releases
 
-## 1.16.2
+## 1.17.0
+
+* #1348 Extend transformation extension point
+* #1349 Improve powermock stability 
+
+## 1.16.3
 
 * #1345 Improved delayed execution detection in static initialization code
 * #1347 Auto add standard kotlin source dirs for maven projects
