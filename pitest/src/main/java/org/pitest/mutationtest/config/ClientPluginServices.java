@@ -20,15 +20,15 @@ public class ClientPluginServices {
     return new ClientPluginServices(IsolationUtils.getContextClassLoader());
   }
 
-  Collection<? extends TestPluginFactory> findTestFrameworkPlugins() {
+  public Collection<? extends TestPluginFactory> findTestFrameworkPlugins() {
     return ServiceLoader.load(TestPluginFactory.class, this.loader);
   }
 
-  Collection<? extends MutationEngineFactory> findMutationEngines() {
+  public Collection<? extends MutationEngineFactory> findMutationEngines() {
     return ServiceLoader.load(MutationEngineFactory.class, this.loader);
   }
 
-  Collection<? extends EnvironmentResetPlugin> findResets() {
+  public Collection<? extends EnvironmentResetPlugin> findResets() {
     return ServiceLoader.load(EnvironmentResetPlugin.class, this.loader);
   }
 
