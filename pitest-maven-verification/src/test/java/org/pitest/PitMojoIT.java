@@ -361,21 +361,6 @@ public class PitMojoIT {
   }
 
   @Test
-  @Ignore("yatspec is not available on maven central. Repo currently down")
-  public void shouldWorkWithYatspec() throws Exception {
-    File testDir = prepare("/pit-263-yatspec");
-    verifier.executeGoal("test");
-    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
-
-    String actual = readResults(testDir);
-    assertThat(actual)
-            .contains(
-                    "<mutation detected='true' status='KILLED' numberOfTestsRun='1'><sourceFile>SomeClass.java</sourceFile>");
-    assertThat(actual).doesNotContain("status='NO_COVERAGE'");
-    assertThat(actual).doesNotContain("status='RUN_ERROR'");
-  }
-
-  @Test
   // note this test depends on the junit5 plugin
   public void shouldWorkWithQuarkus() throws Exception {
     assumeTrue(CurrentRuntime.version() >= 11);
@@ -463,6 +448,31 @@ public class PitMojoIT {
     assertThat(moduleTwoSource).contains("package com.example.two");
     assertThat(moduleThreeSource).contains("package com.example.three");
 
+  }
+
+  @Test
+  public void handlesTestsInSeparateModulesWhenConfigured()
+          throws Exception {
+      File testDir = prepare("/pit-cross-module-tests");
+
+    verifier.executeGoal("test");
+    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+
+    verifier.executeGoal("org.pitest:pitest-maven:report-aggregate-module");
+
+    File siteParentDir = buildFilePath(testDir, "target", "pit-reports");
+    assertThat(buildFilePath(siteParentDir, "index.html")).exists();
+    String projectReportsHtmlContents = FileUtils
+            .readFileToString(buildFilePath(testDir, "target", "pit-reports",
+                    "index.html"));
+
+    assertTrue("miss data of subModule 1",
+            projectReportsHtmlContents
+                    .contains("<a href=\"./org.example1/index.html\">org.example1</a>"));
+
+    assertTrue("coverage included",
+            projectReportsHtmlContents
+                    .contains("85%"));
   }
 
   private void runForJava8Only() {
