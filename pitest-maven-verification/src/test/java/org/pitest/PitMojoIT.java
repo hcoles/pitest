@@ -455,7 +455,7 @@ public class PitMojoIT {
           throws Exception {
       File testDir = prepare("/pit-cross-module-tests");
 
-    verifier.executeGoal("test");
+    verifier.executeGoal("install");
     verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
 
     verifier.executeGoal("org.pitest:pitest-maven:report-aggregate-module");

@@ -111,6 +111,7 @@ public class EntryPoint {
     final LaunchOptions launchOptions = new LaunchOptions(ja,
         settings.getJavaExecutable(), createJvmArgs(data), environmentVariables)
         .usingClassPathJar(data.useClasspathJar());
+
     final ProjectClassPaths cps = data.getMutationClassPaths();
 
     final CodeSource code = settings.createCodeSource(cps);

@@ -17,23 +17,20 @@ package org.pitest.maven;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Build;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.util.Unchecked;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -41,6 +38,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -92,9 +90,9 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
   }
 
   public void testUsesSourceDirectoriesFromProject() {
-    when(this.project.getCompileSourceRoots()).thenReturn(Arrays.asList("src"));
+    when(this.project.getCompileSourceRoots()).thenReturn(asList("src"));
     when(this.project.getTestCompileSourceRoots()).thenReturn(
-        Arrays.asList("tst"));
+        asList("tst"));
     final ReportOptions actual = parseConfig("");
     assertThat(actual.getSourcePaths()).containsExactly(Paths.get("src"), Paths.get("tst"));
   }
@@ -125,7 +123,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         "                      <param>bar</param>" + //
         "                  </mutators>";
     final ReportOptions actual = parseConfig(xml);
-    assertEquals(Arrays.asList("foo", "bar"), actual.getMutators());
+    assertEquals(asList("foo", "bar"), actual.getMutators());
   }
   
   public void testParsesListOfFeatures() {
@@ -205,7 +203,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         "                      <param>foo.bar</param>" + //
         "                  </avoidCallsTo>";
     final ReportOptions actual = parseConfig(xml);
-    assertEquals(Arrays.asList("foo", "bar", "foo.bar"),
+    assertEquals(asList("foo", "bar", "foo.bar"),
         actual.getLoggingClasses());
   }
 
@@ -244,7 +242,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
 
   public void testDefaultsToHtmlReportWhenNoOutputFormatsSpecified() {
     final ReportOptions actual = parseConfig("");
-    assertEquals(new HashSet<>(Arrays.asList("HTML")),
+    assertEquals(new HashSet<>(asList("HTML")),
         actual.getOutputFormats());
   }
 
@@ -254,7 +252,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         "                      <param>CSV</param>" + //
         "                  </outputFormats>";
     final ReportOptions actual = parseConfig(xml);
-    assertEquals(new HashSet<>(Arrays.asList("HTML", "CSV")),
+    assertEquals(new HashSet<>(asList("HTML", "CSV")),
         actual.getOutputFormats());
   }
 
@@ -276,19 +274,19 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
 
   public void testParsesTestGroupsToExclude() {
     final ReportOptions actual = parseConfig("<excludedGroups><value>foo</value><value>bar</value></excludedGroups>");
-    assertEquals(Arrays.asList("foo", "bar"), actual.getGroupConfig()
+    assertEquals(asList("foo", "bar"), actual.getGroupConfig()
         .getExcludedGroups());
   }
 
   public void testParsesTestGroupsToInclude() {
     final ReportOptions actual = parseConfig("<includedGroups><value>foo</value><value>bar</value></includedGroups>");
-    assertEquals(Arrays.asList("foo", "bar"), actual.getGroupConfig()
+    assertEquals(asList("foo", "bar"), actual.getGroupConfig()
         .getIncludedGroups());
   }
 
   public void testParsesTestMethodsToInclude() {
     final ReportOptions actual = parseConfig("<includedTestMethods><value>foo</value><value>bar</value></includedTestMethods>");
-    assertEquals(Arrays.asList("foo", "bar"), actual
+    assertEquals(asList("foo", "bar"), actual
             .getIncludedTestMethods());
   }
 
@@ -388,7 +386,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     artifacts.add(dependency);
     when(this.project.getArtifacts()).thenReturn(artifacts);
     when(this.project.getTestClasspathElements()).thenReturn(
-        Arrays.asList("group" + sep + "artifact" + sep + "1.0.0" + sep
+        asList("group" + sep + "artifact" + sep + "1.0.0" + sep
             + "group-artifact-1.0.0.jar"));
 
     final ReportOptions actual = parseConfig("<classpathDependencyExcludes>"
@@ -468,6 +466,35 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     // in an argline from surefire it will not have been escaped.
     ReportOptions actual = parseConfig("<argLine>${FOO} ${BAR}</argLine>");
     assertThat(actual.getArgLine()).isEqualTo("fooValue barValue");
+  }
+
+  public void testAddsModulesToMutationPathWhenCrossModule() {
+    MavenProject dependedOn = project("com.example", "foo");
+    MavenProject notDependedOn = project("com.example", "bar");
+
+    when(session.getProjects()).thenReturn(asList(dependedOn, notDependedOn));
+
+    Dependency dependency = new Dependency();
+    dependency.setGroupId("com.example");
+    dependency.setArtifactId("foo");
+    when(project.getDependencies()).thenReturn(asList(dependency));
+
+    final ReportOptions actual = parseConfig("<crossModule>true</crossModule>");
+
+    assertThat(actual.getCodePaths()).contains("foobuild");
+    assertThat(actual.getCodePaths()).doesNotContain("barbuild");
+  }
+
+  private static MavenProject project(String group, String artefact) {
+    MavenProject dependedOn = new MavenProject();
+    dependedOn.setGroupId(group);
+    dependedOn.setArtifactId(artefact);
+
+    Build build = new Build();
+    build.setOutputDirectory(artefact + "build");
+    dependedOn.setBuild(build);
+
+    return dependedOn;
   }
 
   private ReportOptions parseConfig(final String xml) {

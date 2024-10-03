@@ -27,6 +27,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
@@ -44,6 +45,9 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 
   @Mock
   protected MavenProject        project;
+
+  @Mock
+  protected MavenSession        session;
 
   @Mock
   protected RunPitStrategy      executionStrategy;
@@ -118,6 +122,7 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
     setVariableValueToObject(pitMojo, "pluginArtifactMap", pluginArtifacts);
 
     setVariableValueToObject(pitMojo, "project", this.project);
+    setVariableValueToObject(pitMojo, "session", this.session);
 
     if (pitMojo.getAdditionalClasspathElements() == null) {
       ArrayList<String> elements = new ArrayList<>();
