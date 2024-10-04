@@ -120,6 +120,8 @@ public class ScmMojo extends AbstractPitMojo {
   @Override
   protected Optional<CombinedStatistics> analyse() throws MojoExecutionException {
 
+    this.getLog().warn("The scmMutationCoverage goal is deprecated and will be removed in a future pitest release.");
+
     if (scmRootDir == null) {
       this.scmRootDir = findScmRootDir();
     }
