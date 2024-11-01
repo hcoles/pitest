@@ -18,8 +18,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.logging.Log;
 
@@ -97,8 +95,11 @@ public class ReportGenerationContext {
 
   @Override
   public String toString() {
-    return ToStringBuilder.reflectionToString(this,
-        ToStringStyle.MULTI_LINE_STYLE);
+    return "ReportGenerationContext{"
+            + "locale=" + locale
+            + ", reportsDataDirectory=" + reportsDataDirectory
+            + ", siteDirectory=" + siteDirectory
+            + ", sourceDataFormats=" + sourceDataFormats
+            + '}';
   }
-
 }
