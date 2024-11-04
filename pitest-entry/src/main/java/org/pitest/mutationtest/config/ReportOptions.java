@@ -33,12 +33,12 @@ import org.pitest.util.Unchecked;
 import org.pitest.util.Verbosity;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -502,8 +502,7 @@ public class ReportOptions {
     try {
       if (this.historyInputLocation.exists()
           && (this.historyInputLocation.length() > 0)) {
-        return Optional.ofNullable(new InputStreamReader(new FileInputStream(
-            this.historyInputLocation), StandardCharsets.UTF_8));
+        return Optional.of(new InputStreamReader(Files.newInputStream(this.historyInputLocation.toPath()), StandardCharsets.UTF_8));
       }
       return Optional.empty();
     } catch (final IOException ex) {

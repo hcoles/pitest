@@ -8,6 +8,7 @@ import org.pitest.classinfo.TestToClassMapper;
 import org.pitest.functional.Streams;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,7 +37,7 @@ public class DefaultCodeSource implements CodeSource {
     }
 
     public Set<ClassName> getCodeUnderTestNames() {
-        return this.classPath.code().stream().collect(Collectors.toSet());
+        return new HashSet<>(this.classPath.code());
     }
 
     public Set<ClassName> getTestClassNames() {

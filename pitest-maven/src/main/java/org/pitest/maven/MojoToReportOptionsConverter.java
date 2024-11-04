@@ -16,6 +16,7 @@ package org.pitest.maven;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -43,18 +44,20 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.pitest.functional.Streams.asStream;
 
 public class MojoToReportOptionsConverter {
 
-  private final AbstractPitMojo                 mojo;
+  private final AbstractPitMojo         mojo;
   private final Predicate<Artifact>     dependencyFilter;
   private final Log                     log;
   private final SurefireConfigConverter surefireConverter;
@@ -85,6 +88,8 @@ public class MojoToReportOptionsConverter {
     autoAddJUnitPlatform(classPath);
     removeExcludedDependencies(classPath);
 
+    addCrossModuleDirsToClasspath(classPath);
+
     ReportOptions option = parseReportOptions(classPath);
     ReportOptions withSureFire = updateFromSurefire(option);
 
@@ -98,6 +103,15 @@ public class MojoToReportOptionsConverter {
     }
     return effective;
 
+  }
+
+  private void addCrossModuleDirsToClasspath(List<String> classPath) {
+    // Add the output directories modules we depend on to the start of the classpath.
+    // If we resolve cross project classes from a jar, the path match
+    // will fail. This is only an issue when running the pitest goal directly.
+    if (mojo.isCrossModule()) {
+      classPath.addAll(0, crossModuleDependencies());
+    }
   }
 
   /**
@@ -176,10 +190,22 @@ public class MojoToReportOptionsConverter {
     final ReportOptions data = new ReportOptions();
 
     if (this.mojo.getProject().getBuild() != null) {
+
+      List<String> codePaths = new ArrayList<>();
+      codePaths.add(this.mojo.getProject().getBuild()
+              .getOutputDirectory());
+
+      if (mojo.isCrossModule()) {
+        codePaths.addAll(crossModuleDependencies());
+      }
+
       this.log.info("Mutating from "
-          + this.mojo.getProject().getBuild().getOutputDirectory());
+              + String.join(",", codePaths));
+
       data.setCodePaths(Collections.singleton(this.mojo.getProject().getBuild()
           .getOutputDirectory()));
+
+      data.setCodePaths(codePaths);
     }
 
     data.setUseClasspathJar(this.mojo.isUseClasspathJar());
@@ -215,9 +241,7 @@ public class MojoToReportOptionsConverter {
       data.setLoggingClasses(this.mojo.getAvoidCallsTo());
     }
 
-    final List<String> sourceRoots = new ArrayList<>();
-    sourceRoots.addAll(this.mojo.getProject().getCompileSourceRoots());
-    sourceRoots.addAll(this.mojo.getProject().getTestCompileSourceRoots());
+    final List<String> sourceRoots = determineSourceRoots();
 
     data.setSourceDirs(stringsToPaths(sourceRoots));
 
@@ -251,6 +275,41 @@ public class MojoToReportOptionsConverter {
     checkForObsoleteOptions(this.mojo);
 
     return data;
+  }
+
+  private List<String> determineSourceRoots() {
+    final List<String> sourceRoots = new ArrayList<>();
+    sourceRoots.addAll(this.mojo.getProject().getCompileSourceRoots());
+    sourceRoots.addAll(this.mojo.getProject().getTestCompileSourceRoots());
+    if (mojo.isCrossModule()) {
+      List<String> otherRoots = dependedOnProjects().stream()
+              .flatMap(p -> p.getCompileSourceRoots().stream())
+              .collect(Collectors.toList());
+
+      sourceRoots.addAll(otherRoots);
+    }
+    return sourceRoots;
+  }
+
+  private Collection<String> crossModuleDependencies() {
+    return dependedOnProjects().stream()
+            .map(MavenProject::getBuild)
+            .map(Build::getOutputDirectory)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+  }
+
+  private List<MavenProject> dependedOnProjects() {
+    // strip version from dependencies
+    Set<String> inScope = this.mojo.getProject().getDependencies().stream()
+            .map(p -> p.getGroupId() + ":" + p.getArtifactId())
+            .collect(Collectors.toSet());
+
+
+    return this.mojo.allProjects().stream()
+            .filter(p -> inScope.contains(p.getGroupId() + ":" + p.getArtifactId()))
+            .collect(Collectors.toList());
+
   }
 
   private void configureVerbosity(ReportOptions data) {
@@ -384,6 +443,8 @@ public class MojoToReportOptionsConverter {
   }
 
   private Collection<String> findOccupiedTestPackages() {
+    // use only the tests within current project, even if in
+    // cross module mode
     String outputDirName = this.mojo.getProject().getBuild()
         .getTestOutputDirectory();
     if (outputDirName != null) {
@@ -430,10 +491,12 @@ public class MojoToReportOptionsConverter {
   }
 
   private Collection<String> findOccupiedPackages() {
-    String outputDirName = this.mojo.getProject().getBuild()
-        .getOutputDirectory();
-    File outputDir = new File(outputDirName);
-    return findOccupiedPackagesIn(outputDir);
+    return Stream.concat(Stream.of(mojo.getProject()), dependedOnProjects().stream())
+            .distinct()
+            .map(p -> new File(p.getBuild().getOutputDirectory()))
+            .flatMap(f -> findOccupiedPackagesIn(f).stream())
+            .distinct()
+            .collect(Collectors.toList());
   }
   
   public static Collection<String> findOccupiedPackagesIn(File dir) {

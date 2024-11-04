@@ -333,6 +333,13 @@ public class AbstractPitMojo extends AbstractMojo {
   private boolean                     skipTests;
 
   /**
+   * Mutate code outside current module
+   */
+  @Parameter(property = "crossModule", defaultValue = "false")
+  private boolean                     crossModule;
+
+
+  /**
    * When set will ignore failing tests when computing coverage. Otherwise, the
    * run will fail. If parseSurefireConfig is true, will be overridden from
    * surefire configuration property testFailureIgnore
@@ -739,7 +746,7 @@ public class AbstractPitMojo extends AbstractMojo {
       decision.addReason("Packaging is POM.");
     }
 
-    if (!notEmptyProject.test(project)) {
+    if (!notEmptyProject.test(project) && !crossModule) {
       decision.addReason("Project has either no tests or no production code.");
     }
 
@@ -814,6 +821,14 @@ public class AbstractPitMojo extends AbstractMojo {
 
   public RepositorySystem repositorySystem() {
     return repositorySystem;
+  }
+
+  public boolean isCrossModule() {
+    return crossModule;
+  }
+
+  public List<MavenProject> allProjects() {
+    return session.getProjects();
   }
 
   static class RunDecision {
