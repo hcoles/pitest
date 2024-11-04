@@ -8,6 +8,13 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.17.1
+
+* #1353 Warn about future SCM goal removal
+* #1355 Upgrade ASM for java 24 support
+* #1359 Remove use of reflection based toString generator
+* #1361 Initial support for cross module tests in maven
+
 ## 1.17.0
 
 * #1348 Extend transformation extension point
