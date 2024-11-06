@@ -14,8 +14,10 @@ import org.pitest.mutationtest.engine.MutationDetails;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ExcludedAnnotationInterceptor implements MutationInterceptor {
 
@@ -38,18 +40,56 @@ public class ExcludedAnnotationInterceptor implements MutationInterceptor {
     this.skipClass = clazz.annotations().stream()
         .anyMatch(avoidedAnnotation());
     if (!this.skipClass) {
-      final List<Predicate<MutationDetails>> methods = clazz.methods().stream()
+      // 1. Collect methods with avoided annotations
+      final List<MethodTree> avoidedMethods = clazz.methods().stream()
           .filter(hasAvoidedAnnotation())
+          .collect(Collectors.toList());
+
+      final Set<String> avoidedMethodNames = avoidedMethods.stream()
+          .map(method -> method.rawNode().name)
+          .collect(Collectors.toSet());
+
+      // 2. Collect lambda methods with being inside avoided methods
+      final List<MethodTree> lambdaMethods = clazz.methods().stream()
+          .filter(MethodTree::isGeneratedLambdaMethod)
+          .filter(lambdaMethod -> {
+            String lambdaName = lambdaMethod.rawNode().name; // e.g., lambda$fooWithLambdas$0
+            String enclosingMethodName = extractEnclosingMethodName(lambdaName);
+
+            return avoidedMethodNames.contains(enclosingMethodName);
+          })
+          .collect(Collectors.toList());
+
+      // 3. Merge the two lists into a single list and cast MethodTree to Predicate<MutationDetails>
+      final List<Predicate<MutationDetails>> mutationPredicates = Stream.concat(avoidedMethods.stream(), lambdaMethods.stream())
           .map(AnalysisFunctions.matchMutationsInMethod())
           .collect(Collectors.toList());
-      this.annotatedMethodMatcher = Prelude.or(methods);
+
+      this.annotatedMethodMatcher = Prelude.or(mutationPredicates);
     }
+  }
+
+  /**
+   * TODO: maybe move to MethodTree class?? WDYT?
+   * Extracts the enclosing method name from a lambda method's name.
+   * Assumes lambda methods follow the naming convention: lambda$enclosingMethodName$number
+   *
+   * @param lambdaName The name of the lambda method (e.g., "lambda$fooWithLambdas$0")
+   * @return The name of the enclosing method (e.g., "fooWithLambdas")
+   */
+  private String extractEnclosingMethodName(String lambdaName) {
+    int firstDollar = lambdaName.indexOf('$');
+    int secondDollar = lambdaName.indexOf('$', firstDollar + 1);
+
+    if (firstDollar != -1 && secondDollar != -1) {
+      return lambdaName.substring(firstDollar + 1, secondDollar);
+    }
+    return lambdaName;
   }
 
   private Predicate<MethodTree> hasAvoidedAnnotation() {
     return methodTree ->
-        // count also lambda generated methods
-        methodTree.isGeneratedLambdaMethod() || methodTree.annotations().stream().anyMatch(avoidedAnnotation());
+        methodTree.annotations().stream().anyMatch(avoidedAnnotation());
   }
 
   private Predicate<AnnotationNode> avoidedAnnotation() {

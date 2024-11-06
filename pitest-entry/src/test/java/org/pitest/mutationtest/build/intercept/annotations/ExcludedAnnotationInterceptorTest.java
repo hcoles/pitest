@@ -71,8 +71,11 @@ public class ExcludedAnnotationInterceptorTest {
   public void shouldFilterMethodsWithGeneratedAnnotationAndLambdasInside() {
     final List<MutationDetails> mutations = this.mutator.findMutations(ClassName.fromClass(ClassAnnotatedWithGeneratedWithLambdas.class));
     final Collection<MutationDetails> actual = runWithTestee(mutations, ClassAnnotatedWithGeneratedWithLambdas.class);
-    assertThat(actual).hasSize(1);
-    assertThat(actual.iterator().next().getId().getLocation().getMethodName()).isEqualTo("bar");
+    assertThat(actual).hasSize(3);
+
+    for (MutationDetails mutationDetails : actual) {
+       assertThat(mutationDetails.getId().getLocation().getMethodName()).isIn("barWithLambdas", "lambda$barWithLambdas$2", "lambda$barWithLambdas$3");
+    }
   }
 
   @Test
@@ -154,15 +157,6 @@ class OverloadedMethods {
 class ClassAnnotatedWithGeneratedWithLambdas {
 
   @TestGeneratedAnnotation
-  public void foo() {
-      System.out.println("don't mutate me");
-  }
-
-  public void bar() {
-    System.out.println("mutate me");
-  }
-
-  @TestGeneratedAnnotation
   public void fooWithLambdas() {
     System.out.println("don't mutate me");
 
@@ -172,6 +166,18 @@ class ClassAnnotatedWithGeneratedWithLambdas {
         Runnable anotherOne = () -> {
           System.out.println("don't mutate me also recursive lambdas");
         };
+    };
+  }
+
+  public void barWithLambdas() {
+    System.out.println("mutate me");
+
+    Runnable runnable = () -> {
+      System.out.println("mutate me also in lambdas");
+
+      Runnable anotherOne = () -> {
+        System.out.println("mutate me also recursive lambdas");
+      };
     };
   }
 }
