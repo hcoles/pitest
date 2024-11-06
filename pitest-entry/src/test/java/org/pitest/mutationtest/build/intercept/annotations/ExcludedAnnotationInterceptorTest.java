@@ -67,6 +67,22 @@ public class ExcludedAnnotationInterceptorTest {
     assertThat(actual.iterator().next().getId().getLocation().getMethodName()).isEqualTo("bar");
   }
 
+  @Test
+  public void shouldFilterMethodsWithGeneratedAnnotationAndLambdasInside() {
+    final List<MutationDetails> mutations = this.mutator.findMutations(ClassName.fromClass(ClassAnnotatedWithGeneratedWithLambdas.class));
+    final Collection<MutationDetails> actual = runWithTestee(mutations, ClassAnnotatedWithGeneratedWithLambdas.class);
+    assertThat(actual).hasSize(1);
+    assertThat(actual.iterator().next().getId().getLocation().getMethodName()).isEqualTo("bar");
+  }
+
+  @Test
+  public void shouldHandleOverloadedMethods() {
+    final List<MutationDetails> mutations = this.mutator.findMutations(ClassName.fromClass(OverloadedMethods.class));
+    final Collection<MutationDetails> actual = runWithTestee(mutations, OverloadedMethods.class);
+    // Assume only one overloaded version is annotated
+    assertThat(actual).hasSize(2); // Assuming three methods: two overloaded (one annotated) and one regular
+  }
+
   private Collection<MutationDetails> runWithTestee(
       Collection<MutationDetails> input, Class<?> clazz) {
     this.testee.begin(treeFor(clazz));
@@ -81,7 +97,6 @@ public class ExcludedAnnotationInterceptorTest {
     final ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
     return ClassTree.fromBytes(source.getBytes(clazz.getName()).get());
   }
-
 
 }
 
@@ -118,6 +133,47 @@ class MethodAnnotatedWithGenerated {
 @Retention(value=RetentionPolicy.CLASS)
 @interface AnotherTestAnnotation {
 
+}
+
+class OverloadedMethods {
+  public void foo(int x) {
+    System.out.println("mutate me");
+  }
+
+  @TestGeneratedAnnotation
+  public void foo(String x) {
+    System.out.println("don't mutate me");
+  }
+
+  public void bar() {
+    System.out.println("mutate me");
+  }
+}
+
+
+class ClassAnnotatedWithGeneratedWithLambdas {
+
+  @TestGeneratedAnnotation
+  public void foo() {
+      System.out.println("don't mutate me");
+  }
+
+  public void bar() {
+    System.out.println("mutate me");
+  }
+
+  @TestGeneratedAnnotation
+  public void fooWithLambdas() {
+    System.out.println("don't mutate me");
+
+    Runnable runnable = () -> {
+      System.out.println("don't mutate me also in lambdas");
+
+        Runnable anotherOne = () -> {
+          System.out.println("don't mutate me also recursive lambdas");
+        };
+    };
+  }
 }
 
 

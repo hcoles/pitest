@@ -24,7 +24,6 @@ public class ExcludedAnnotationInterceptor implements MutationInterceptor {
   private boolean skipClass;
   private Predicate<MutationDetails> annotatedMethodMatcher;
 
-
   ExcludedAnnotationInterceptor(List<String> configuredAnnotations) {
     this.configuredAnnotations = configuredAnnotations;
   }
@@ -43,13 +42,15 @@ public class ExcludedAnnotationInterceptor implements MutationInterceptor {
           .filter(hasAvoidedAnnotation())
           .map(AnalysisFunctions.matchMutationsInMethod())
           .collect(Collectors.toList());
+
       this.annotatedMethodMatcher = Prelude.or(methods);
     }
   }
 
   private Predicate<MethodTree> hasAvoidedAnnotation() {
-    return a -> a.annotations().stream()
-        .anyMatch(avoidedAnnotation());
+    return methodTree ->
+        // count also lambda generated methods
+        methodTree.isGeneratedLambdaMethod() || methodTree.annotations().stream().anyMatch(avoidedAnnotation());
   }
 
   private Predicate<AnnotationNode> avoidedAnnotation() {
