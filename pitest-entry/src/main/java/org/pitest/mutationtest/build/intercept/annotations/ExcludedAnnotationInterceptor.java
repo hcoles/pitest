@@ -4,6 +4,7 @@ import org.objectweb.asm.tree.AnnotationNode;
 import org.pitest.bytecode.analysis.AnalysisFunctions;
 import org.pitest.bytecode.analysis.ClassTree;
 import org.pitest.bytecode.analysis.MethodTree;
+import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.InterceptorType;
@@ -14,6 +15,7 @@ import org.pitest.mutationtest.engine.MutationDetails;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -40,9 +42,9 @@ public class ExcludedAnnotationInterceptor implements MutationInterceptor {
     this.skipClass = clazz.annotations().stream()
         .anyMatch(avoidedAnnotation());
     if (!this.skipClass) {
-      // 1. Collect methods with avoided annotations
+      // 1. Collect methods with avoided annotations or that override such methods
       final List<MethodTree> avoidedMethods = clazz.methods().stream()
-          .filter(hasAvoidedAnnotation())
+          .filter(hasAvoidedAnnotationOrOverridesMethodWithAvoidedAnnotation(clazz))
           .collect(Collectors.toList());
 
       final Set<String> avoidedMethodNames = avoidedMethods.stream()
@@ -87,9 +89,70 @@ public class ExcludedAnnotationInterceptor implements MutationInterceptor {
     return lambdaName;
   }
 
-  private Predicate<MethodTree> hasAvoidedAnnotation() {
+  /**
+   * Creates a predicate that checks if a method has an avoided annotation or overrides a method
+   * in its superclass hierarchy that has an avoided annotation.
+   *
+   * @param clazz The class tree of the current class.
+   * @return A predicate that returns true if the method should be avoided.
+   */
+  private Predicate<MethodTree> hasAvoidedAnnotationOrOverridesMethodWithAvoidedAnnotation(ClassTree clazz) {
     return methodTree ->
-        methodTree.annotations().stream().anyMatch(avoidedAnnotation());
+        methodTree.annotations().stream().anyMatch(avoidedAnnotation())
+            || isOverridingMethodWithAvoidedAnnotation(methodTree, clazz);
+  }
+
+  /**
+   * Checks if the given method overrides a method in its superclass hierarchy that has an avoided annotation.
+   *
+   * @param method The method to check.
+   * @param clazz  The class tree of the current class.
+   * @return True if the method overrides an annotated method; false otherwise.
+   */
+  private boolean isOverridingMethodWithAvoidedAnnotation(MethodTree method, ClassTree clazz) {
+    String methodName = method.rawNode().name;
+    String methodDesc = method.rawNode().desc;
+    return isMethodInSuperClassWithAvoidedAnnotation(methodName, methodDesc, clazz);
+  }
+
+  /**
+   * Recursively checks if a method with the given name and descriptor exists in the superclass hierarchy
+   * and has an avoided annotation.
+   *
+   * @param methodName The name of the method to search for.
+   * @param methodDesc The descriptor of the method to search for.
+   * @param clazz      The class tree of the current class or superclass.
+   * @return True if an annotated method is found in the superclass hierarchy; false otherwise.
+   */
+  private boolean isMethodInSuperClassWithAvoidedAnnotation(String methodName, String methodDesc, ClassTree clazz) {
+    String superClassName = clazz.rawNode().superName;
+    if (superClassName == null || superClassName.equals("java/lang/Object")) {
+      return false;
+    }
+
+    ClassloaderByteArraySource source = ClassloaderByteArraySource.fromContext();
+    Optional<byte[]> superClassBytes = source.getBytes(superClassName.replace('/', '.'));
+    if (!superClassBytes.isPresent()) {
+      return false;
+    }
+
+    ClassTree superClassTree = ClassTree.fromBytes(superClassBytes.get());
+
+    Optional<MethodTree> superMethod = superClassTree.methods().stream()
+        .filter(m -> m.rawNode().name.equals(methodName) && m.rawNode().desc.equals(methodDesc))
+        .findFirst();
+
+    if (superMethod.isPresent()) {
+      if (superMethod.get().annotations().stream().anyMatch(avoidedAnnotation())) {
+        return true;
+      } else {
+        // continue recursion to check superclass chain
+        return isMethodInSuperClassWithAvoidedAnnotation(methodName, methodDesc, superClassTree);
+      }
+    } else {
+      //  method not found in this superclass, continue searching up the hierarchy
+      return false;
+    }
   }
 
   private Predicate<AnnotationNode> avoidedAnnotation() {
