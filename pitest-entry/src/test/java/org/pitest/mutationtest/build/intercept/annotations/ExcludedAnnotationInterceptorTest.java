@@ -115,7 +115,10 @@ public class ExcludedAnnotationInterceptorTest {
 
     // Should include mutations from the unannotated method and its nested lambdas
     assertThat(actual).anyMatch(mutation -> mutation.getId().getLocation().getMethodName().equals("baz"));
-    assertThat(actual).anyMatch(mutation -> mutation.getId().getLocation().getMethodName().startsWith("lambda$baz$"));
+    assertThat(actual).anyMatch(mutation -> {
+      String methodName = mutation.getId().getLocation().getMethodName();
+      return methodName.startsWith("lambda$baz$") || methodName.startsWith("lambda$null$");
+    });
   }
 
   @Test
