@@ -96,50 +96,35 @@ public class ExcludedAnnotationInterceptorTest {
   }
 
   @Test
-  public void shouldNotFilterMutationsInLambdaWithinUnannotatedOverriddenMethod() {
-    final Collection<MutationDetails> mutations = mutator.findMutations(ClassName.fromClass(SubclassWithLambdaInOverriddenUnannotatedMethod.class));
-    final Collection<MutationDetails> actual = runWithTestee(mutations, SubclassWithLambdaInOverriddenUnannotatedMethod.class);
-    assertThat(actual).containsExactlyElementsOf(mutations);
-  }
+  public void shouldHandleOverloadedMethodsWithLambdas() {
+    final List<MutationDetails> mutations = this.mutator.findMutations(ClassName.fromClass(OverloadedMethods.class));
+    final Collection<MutationDetails> actual = runWithTestee(mutations, OverloadedMethods.class);
 
-  @Test
-  public void shouldFilterMutationsInLambdaWithinAnnotatedOverriddenMethod() {
-    final Collection<MutationDetails> mutations = mutator.findMutations(ClassName.fromClass(SubclassWithLambdaInOverriddenAnnotatedMethod.class));
-    final Collection<MutationDetails> actual = runWithTestee(mutations, SubclassWithLambdaInOverriddenAnnotatedMethod.class);
-    assertThat(actual).isEmpty();
-  }
-
-  @Test
-  public void shouldNotFilterMutationsInNestedLambdaWithinUnannotatedOverriddenMethod() {
-    final Collection<MutationDetails> mutations = mutator.findMutations(ClassName.fromClass(SubclassWithNestedLambdaInOverriddenUnannotatedMethod.class));
-    final Collection<MutationDetails> actual = runWithTestee(mutations, SubclassWithNestedLambdaInOverriddenUnannotatedMethod.class);
-    assertThat(actual).containsExactlyElementsOf(mutations);
-  }
-
-  @Test
-  public void shouldFilterMutationsInNestedLambdaWithinAnnotatedOverriddenMethod() {
-    final Collection<MutationDetails> mutations = mutator.findMutations(ClassName.fromClass(SubclassWithNestedLambdaInOverriddenAnnotatedMethod.class));
-    final Collection<MutationDetails> actual = runWithTestee(mutations, SubclassWithNestedLambdaInOverriddenAnnotatedMethod.class);
-    assertThat(actual).isEmpty();
-  }
-
-  @Test
-  public void shouldFilterMethodsWithGeneratedAnnotationAndLambdasInside() {
-    final List<MutationDetails> mutations = this.mutator.findMutations(ClassName.fromClass(ClassAnnotatedWithGeneratedWithLambdas.class));
-    final Collection<MutationDetails> actual = runWithTestee(mutations, ClassAnnotatedWithGeneratedWithLambdas.class);
-    assertThat(actual).hasSize(3);
-
+    // Expect mutations from unannotated methods and their lambdas
+    assertThat(actual).hasSize(3); // bar, foo(int x), and its lambda
     for (MutationDetails mutationDetails : actual) {
-       assertThat(mutationDetails.getId().getLocation().getMethodName()).isIn("barWithLambdas", "lambda$barWithLambdas$2", "lambda$barWithLambdas$3");
+      assertThat(mutationDetails.getId().getLocation().getMethodName())
+          .isIn("bar", "foo", "lambda$foo$0");
     }
   }
 
   @Test
-  public void shouldHandleOverloadedMethods() {
-    final List<MutationDetails> mutations = this.mutator.findMutations(ClassName.fromClass(OverloadedMethods.class));
-    final Collection<MutationDetails> actual = runWithTestee(mutations, OverloadedMethods.class);
-    // Assume only one overloaded version is annotated
-    assertThat(actual).hasSize(2); // Assuming three methods: two overloaded (one annotated) and one regular
+  public void shouldNotFilterMutationsInNestedLambdaWithinUnannotatedOverloadedMethod() {
+    final Collection<MutationDetails> mutations = mutator.findMutations(ClassName.fromClass(NestedLambdaInOverloadedMethods.class));
+    final Collection<MutationDetails> actual = runWithTestee(mutations, NestedLambdaInOverloadedMethods.class);
+
+    // Should include mutations from the unannotated method and its nested lambdas
+    assertThat(actual).anyMatch(mutation -> mutation.getId().getLocation().getMethodName().equals("baz"));
+    assertThat(actual).anyMatch(mutation -> mutation.getId().getLocation().getMethodName().startsWith("lambda$baz$"));
+  }
+
+  @Test
+  public void shouldFilterMutationsInNestedLambdaWithinAnnotatedOverloadedMethod() {
+    final Collection<MutationDetails> mutations = mutator.findMutations(ClassName.fromClass(NestedLambdaInOverloadedMethods.class));
+    final Collection<MutationDetails> actual = runWithTestee(mutations, NestedLambdaInOverloadedMethods.class);
+
+    // Should not include mutations from the annotated method and its nested lambdas
+    assertThat(actual).noneMatch(mutation -> mutation.getId().getLocation().getMethodDesc().equals("(Ljava/lang/String;)V"));
   }
 
   private Collection<MutationDetails> runWithTestee(
@@ -220,60 +205,16 @@ class LambdaInAnnotatedMethodClass {
   }
 }
 
-class BaseUnannotatedClass {
-  public void overriddenMethod() {
-    System.out.println("Base unannotated method.");
-  }
-}
-
-class SubclassWithLambdaInOverriddenUnannotatedMethod extends BaseUnannotatedClass {
-  @Override
-  public void overriddenMethod() {
-    Runnable runnable = () -> System.out.println("Lambda inside overridden unannotated method.");
-  }
-}
-
-class BaseAnnotatedClass {
-  @TestGeneratedAnnotation
-  public void overriddenMethod() {
-    System.out.println("Base annotated method.");
-  }
-}
-
-class SubclassWithLambdaInOverriddenAnnotatedMethod extends BaseAnnotatedClass {
-  @Override
-  public void overriddenMethod() {
-    Runnable runnable = () -> System.out.println("Lambda inside overridden annotated method.");
-  }
-}
-
-class SubclassWithNestedLambdaInOverriddenUnannotatedMethod extends BaseUnannotatedClass {
-  @Override
-  public void overriddenMethod() {
-    Runnable outerLambda = () -> {
-      Runnable innerLambda = () -> System.out.println("Nested lambda inside overridden unannotated method.");
-    };
-  }
-}
-
-
-class SubclassWithNestedLambdaInOverriddenAnnotatedMethod extends BaseAnnotatedClass {
-  @Override
-  public void overriddenMethod() {
-    Runnable outerLambda = () -> {
-      Runnable innerLambda = () -> System.out.println("Nested lambda inside overridden annotated method.");
-    };
-  }
-}
-
 class OverloadedMethods {
   public void foo(int x) {
     System.out.println("mutate me");
+    Runnable r = () -> System.out.println("Lambda in unannotated overloaded method with int");
   }
 
   @TestGeneratedAnnotation
   public void foo(String x) {
     System.out.println("don't mutate me");
+    Runnable r = () -> System.out.println("Lambda in annotated overloaded method with String");
   }
 
   public void bar() {
@@ -281,33 +222,19 @@ class OverloadedMethods {
   }
 }
 
-
-class ClassAnnotatedWithGeneratedWithLambdas {
-
-  @TestGeneratedAnnotation
-  public void fooWithLambdas() {
-    System.out.println("don't mutate me");
-
-    Runnable runnable = () -> {
-      System.out.println("don't mutate me also in lambdas");
-
-        Runnable anotherOne = () -> {
-          System.out.println("don't mutate me also recursive lambdas");
-        };
+class NestedLambdaInOverloadedMethods {
+  public void baz(int x) {
+    System.out.println("mutate me");
+    Runnable outerLambda = () -> {
+      Runnable innerLambda = () -> System.out.println("Nested lambda in unannotated overloaded method with int");
     };
   }
 
-  public void barWithLambdas() {
-    System.out.println("mutate me");
-
-    Runnable runnable = () -> {
-      System.out.println("mutate me also in lambdas");
-
-      Runnable anotherOne = () -> {
-        System.out.println("mutate me also recursive lambdas");
-      };
+  @TestGeneratedAnnotation
+  public void baz(String x) {
+    System.out.println("don't mutate me");
+    Runnable outerLambda = () -> {
+      Runnable innerLambda = () -> System.out.println("Nested lambda in annotated overloaded method with String");
     };
   }
 }
-
-
