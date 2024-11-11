@@ -37,6 +37,10 @@ public class Verifier {
         return new Verifier(sample, interceptor, mutator, match.and(m -> m.getMethod().equals(name)));
     }
 
+    public Verifier forMethod(String name, String desc) {
+        return new Verifier(sample, interceptor, mutator, match.and(m -> m.getMethod().equals(name)).and(m -> m.getId().getLocation().getMethodDesc().equals(desc)));
+    }
+
     public MutantVerifier forAnyCode() {
         return forMutantsMatching(m -> true);
     }
