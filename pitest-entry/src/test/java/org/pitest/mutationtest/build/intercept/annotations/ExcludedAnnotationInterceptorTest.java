@@ -30,6 +30,7 @@ public class ExcludedAnnotationInterceptorTest {
   public void shouldNotFilterMutationsWhenNoAnnotations() {
     v.forClass(UnAnnotated.class)
             .forAnyCode()
+            .mutantsAreGenerated()
             .noMutantsAreFiltered()
             .verify();
   }
@@ -38,6 +39,7 @@ public class ExcludedAnnotationInterceptorTest {
   public void shouldFilterAllMutationsForClassesWithGeneratedAnnotation() {
     v.forClass(AnnotatedWithGenerated.class)
             .forAnyCode()
+            .mutantsAreGenerated()
             .allMutantsAreFiltered()
             .verify();
   }
@@ -46,6 +48,7 @@ public class ExcludedAnnotationInterceptorTest {
   public void shouldFilterAllMutationsForClassesWithDoNoMutateAnnotation() {
     v.forClass(AnnotatedWithDoNotMutate.class)
             .forAnyCode()
+            .mutantsAreGenerated()
             .allMutantsAreFiltered()
             .verify();
   }
@@ -55,12 +58,14 @@ public class ExcludedAnnotationInterceptorTest {
     v.forClass(MethodAnnotatedWithGenerated.class)
             .forMethod("foo")
             .forAnyCode()
+            .mutantsAreGenerated()
             .allMutantsAreFiltered()
             .verify();
 
     v.forClass(MethodAnnotatedWithGenerated.class)
             .forMethod("bar")
             .forAnyCode()
+            .mutantsAreGenerated()
             .noMutantsAreFiltered()
             .verify();
 
@@ -70,6 +75,7 @@ public class ExcludedAnnotationInterceptorTest {
   public void shouldNotFilterMutationsInUnannotatedMethod() {
     v.forClass(UnannotatedMethodClass.class)
             .forAnyCode()
+            .mutantsAreGenerated()
             .noMutantsAreFiltered()
             .verify();
   }
@@ -77,9 +83,10 @@ public class ExcludedAnnotationInterceptorTest {
   @Test
   public void shouldFilterMutationsInAnnotatedMethod() {
     v.forClass(UnannotatedMethodClass.class)
-            .forMethod("annotatedMethod")
+            .forMethod("unannotatedMethod")
             .forAnyCode()
-            .allMutantsAreFiltered()
+            .mutantsAreGenerated()
+            .noMutantsAreFiltered()
             .verify();
   }
 
@@ -87,6 +94,7 @@ public class ExcludedAnnotationInterceptorTest {
   public void shouldNotFilterMutationsInLambdaWithinUnannotatedMethod() {
     v.forClass(LambdaInUnannotatedMethodClass.class)
             .forAnyCode()
+            .mutantsAreGenerated()
             .noMutantsAreFiltered()
             .verify();
   }
@@ -95,6 +103,7 @@ public class ExcludedAnnotationInterceptorTest {
   public void shouldFilterMutationsInLambdaWithinAnnotatedMethod() {
     v.forClass(LambdaInAnnotatedMethodClass.class)
             .forMutantsMatching( m -> !m.getMethod().equals("<init>"))
+            .mutantsAreGenerated()
             .allMutantsAreFiltered()
             .verify();
   }
@@ -104,24 +113,28 @@ public class ExcludedAnnotationInterceptorTest {
     v.forClass(OverloadedMethods.class)
             .forMethod("foo", "(Ljava/lang/String;)V")
             .forAnyCode()
+            .mutantsAreGenerated()
             .allMutantsAreFiltered()
             .verify();
 
     v.forClass(OverloadedMethods.class)
             .forMethod("lambda$foo$1", "()V")
             .forAnyCode()
+            .mutantsAreGenerated()
             .allMutantsAreFiltered()
             .verify();
 
     v.forClass(OverloadedMethods.class)
             .forMethod("lambda$foo$0", "()V")
             .forAnyCode()
+            .mutantsAreGenerated()
             .noMutantsAreFiltered()
             .verify();
 
     v.forClass(OverloadedMethods.class)
             .forMethod("bar")
             .forAnyCode()
+            .mutantsAreGenerated()
             .noMutantsAreFiltered()
             .verify();
 
@@ -132,30 +145,35 @@ public class ExcludedAnnotationInterceptorTest {
     v.forClass(NestedLambdaInOverloadedMethods.class)
             .forMethod("baz", "(Ljava/lang/String;)V")
             .forAnyCode()
+            .mutantsAreGenerated()
             .allMutantsAreFiltered()
             .verify();
 
     v.forClass(NestedLambdaInOverloadedMethods.class)
             .forMethod("lambda$baz$3")
             .forAnyCode()
+            .mutantsAreGenerated()
             .allMutantsAreFiltered()
             .verify();
 
     v.forClass(NestedLambdaInOverloadedMethods.class)
             .forMethod("lambda$baz$2")
             .forAnyCode()
+            //.mutantsAreGenerated() no check as java8 produces different bytecode
             .allMutantsAreFiltered()
             .verify();
 
     v.forClass(NestedLambdaInOverloadedMethods.class)
             .forMethod("lambda$baz$0")
             .forAnyCode()
+            //.mutantsAreGenerated() no check as java8 produces different bytecode
             .noMutantsAreFiltered()
             .verify();
 
     v.forClass(NestedLambdaInOverloadedMethods.class)
             .forMethod("lambda$baz$1")
             .forAnyCode()
+            .mutantsAreGenerated()
             .noMutantsAreFiltered()
             .verify();
 
@@ -165,6 +183,7 @@ public class ExcludedAnnotationInterceptorTest {
   public void shouldFilterMutationsInNestedLambdaWithinAnnotatedOverloadedMethod() {
     v.forClass(NestedLambdaInOverloadedMethods.class)
             .forMutantsMatching(mutation -> mutation.getId().getLocation().getMethodDesc().equals("(Ljava/lang/String;)V"))
+            .mutantsAreGenerated()
             .allMutantsAreFiltered()
             .verify();
   }
