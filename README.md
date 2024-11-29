@@ -8,6 +8,10 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.17.2
+
+* #1362 Exclude lambdas in methods excluded by annotation (thanks @see-quick)
+
 ## 1.17.1
 
 * #1353 Warn about future SCM goal removal
