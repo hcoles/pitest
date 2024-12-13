@@ -24,6 +24,7 @@ import joptsimple.util.KeyValuePair;
 import org.pitest.classpath.ClassPath;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.config.ConfigOption;
+import org.pitest.mutationtest.config.ExecutionMode;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
@@ -54,6 +55,7 @@ import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH;
 import static org.pitest.mutationtest.config.ConfigOption.CLASSPATH_FILE;
 import static org.pitest.mutationtest.config.ConfigOption.CODE_PATHS;
 import static org.pitest.mutationtest.config.ConfigOption.COVERAGE_THRESHOLD;
+import static org.pitest.mutationtest.config.ConfigOption.DRY_RUN;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_GROUPS;
 import static org.pitest.mutationtest.config.ConfigOption.EXCLUDED_METHOD;
@@ -152,6 +154,7 @@ public class OptionsParser {
   private final OptionSpec<File>                     projectBaseSpec;
   private final OptionSpec<String>                   inputEncoding;
   private final OptionSpec<String>                   outputEncoding;
+  private final ArgumentAcceptingOptionSpec<Boolean> dryRunSpec;
 
   public OptionsParser(Predicate<String> dependencyFilter) {
 
@@ -407,6 +410,12 @@ public class OptionsParser {
     this.projectBaseSpec = parserAccepts(PROJECT_BASE)
             .withRequiredArg().ofType(File.class);
 
+    this.dryRunSpec = parserAccepts(DRY_RUN)
+            .withOptionalArg()
+            .ofType(Boolean.class)
+            .defaultsTo(VERBOSE.getDefault(Boolean.class))
+            .describedAs("enable or disable dry run mode");
+
   }
 
   private OptionSpecBuilder parserAccepts(final ConfigOption option) {
@@ -506,6 +515,8 @@ public class OptionsParser {
 
     setEncoding(data, userArgs);
 
+    configureExecutionMode(data, userArgs);
+
     if (userArgs.has(projectBaseSpec)) {
       data.setProjectBase(this.projectBaseSpec.value(userArgs).toPath());
     }
@@ -531,6 +542,14 @@ public class OptionsParser {
       data.setVerbosity(Verbosity.fromString(this.verbositySpec.value(userArgs)));
     }
 
+  }
+
+  private void configureExecutionMode(ReportOptions data, OptionSet userArgs) {
+    boolean isDryRun = (userArgs.has(this.dryRunSpec) && !userArgs.hasArgument(this.dryRunSpec))
+            || this.dryRunSpec.value(userArgs);
+    if (isDryRun) {
+      data.setExecutionMode(ExecutionMode.DRY_RUN);
+    }
   }
 
   private void setClassPath(final OptionSet userArgs, final ReportOptions data) {

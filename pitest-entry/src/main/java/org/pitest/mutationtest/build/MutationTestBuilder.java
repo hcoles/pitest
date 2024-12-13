@@ -18,6 +18,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.History;
 import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
+import org.pitest.mutationtest.config.ExecutionMode;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
@@ -31,16 +32,19 @@ import static java.util.Comparator.comparing;
 
 public class MutationTestBuilder {
 
+  private final ExecutionMode mode;
   private final MutationSource   mutationSource;
   private final History analyser;
   private final WorkerFactory    workerFactory;
   private final MutationGrouper  grouper;
 
-  public MutationTestBuilder(final WorkerFactory workerFactory,
-                             final History analyser,
-                             final MutationSource mutationSource,
-                             final MutationGrouper grouper) {
+  public MutationTestBuilder(ExecutionMode mode,
+                             WorkerFactory workerFactory,
+                             History analyser,
+                             MutationSource mutationSource,
+                             MutationGrouper grouper) {
 
+    this.mode = mode;
     this.mutationSource = mutationSource;
     this.analyser = analyser;
     this.workerFactory = workerFactory;
@@ -109,7 +113,10 @@ public class MutationTestBuilder {
   }
 
   private MutationAnalysisUnit makeUnanalysedUnit(
-      final Collection<MutationDetails> needAnalysis) {
+      Collection<MutationDetails> needAnalysis) {
+    if (mode == ExecutionMode.DRY_RUN) {
+      return new DryRunUnit(needAnalysis);
+    }
     return new MutationTestUnit(needAnalysis, this.workerFactory);
   }
 

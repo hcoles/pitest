@@ -28,6 +28,7 @@ import org.eclipse.aether.resolution.ArtifactResult;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.DirectoryClassPathRoot;
 import org.pitest.functional.FCollection;
+import org.pitest.mutationtest.config.ExecutionMode;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.Glob;
@@ -270,6 +271,10 @@ public class MojoToReportOptionsConverter {
 
     if (this.mojo.getProjectBase() != null) {
       data.setProjectBase(FileSystems.getDefault().getPath(this.mojo.getProjectBase()));
+    }
+
+    if (this.mojo.isDryRun()) {
+      data.setExecutionMode(ExecutionMode.DRY_RUN);
     }
 
     checkForObsoleteOptions(this.mojo);

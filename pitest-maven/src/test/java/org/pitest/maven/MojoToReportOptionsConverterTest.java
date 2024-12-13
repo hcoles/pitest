@@ -47,6 +47,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.pitest.mutationtest.config.ExecutionMode.DRY_RUN;
 import static org.pitest.util.Verbosity.DEFAULT;
 import static org.pitest.util.Verbosity.QUIET;
 import static org.pitest.util.Verbosity.VERBOSE;
@@ -483,6 +484,11 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
 
     assertThat(actual.getCodePaths()).contains("foobuild");
     assertThat(actual.getCodePaths()).doesNotContain("barbuild");
+  }
+
+  public void testSetsDryRunMode() {
+    ReportOptions actual = parseConfig("<dryRun>true</dryRun>");
+    assertThat(actual.mode()).isEqualTo(DRY_RUN);
   }
 
   private static MavenProject project(String group, String artefact) {

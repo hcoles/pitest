@@ -153,6 +153,8 @@ public class ReportOptions {
 
   private boolean arcmutateMissing = true;
 
+  private ExecutionMode mode = ExecutionMode.NORMAL;
+
   // currently used only via maven
   private Map<String,String> environmentVariables = new HashMap<>();
 
@@ -675,9 +677,18 @@ public class ReportOptions {
     this.arcmutateMissing = arcmutateMissing;
   }
 
+  public ExecutionMode mode() {
+    return mode;
+  }
+
+  public void setExecutionMode(ExecutionMode mode) {
+    this.mode = mode;
+  }
+
   @Override
   public String toString() {
     return new StringJoiner(", ", ReportOptions.class.getSimpleName() + "[", "]")
+            .add("mode=" + mode)
             .add("targetClasses=" + targetClasses)
             .add("excludedMethods=" + excludedMethods)
             .add("excludedClasses=" + excludedClasses)

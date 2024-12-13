@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.pitest.mutationtest.DetectionStatus.KILLED;
 import static org.pitest.mutationtest.DetectionStatus.MEMORY_ERROR;
 import static org.pitest.mutationtest.DetectionStatus.NON_VIABLE;
+import static org.pitest.mutationtest.DetectionStatus.NOT_STARTED;
 import static org.pitest.mutationtest.DetectionStatus.NO_COVERAGE;
 import static org.pitest.mutationtest.DetectionStatus.SURVIVED;
 import static org.pitest.mutationtest.DetectionStatus.TIMED_OUT;
@@ -68,6 +69,7 @@ import org.pitest.mutationtest.build.MutationTestBuilder;
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.build.WorkerFactory;
 import org.pitest.mutationtest.config.DefaultDependencyPathPredicate;
+import org.pitest.mutationtest.config.ExecutionMode;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.mutationtest.engine.MutationEngine;
@@ -202,7 +204,19 @@ public class TestMutationTesting {
     verifyLineNumbers(111);
   }
 
-  private void run(final Class<?> clazz, final Class<?> test,
+  @Test
+  public void dryRunModeMarksMutantsAsNotStarted() {
+    run(OneMutationOnly.class, OneMutationFullTest.class, ExecutionMode.DRY_RUN,
+            "PRIMITIVE_RETURNS");
+    verifyResults(NOT_STARTED);
+  }
+
+  private void run(Class<?> clazz, Class<?> test,
+                   final String ... mutators) {
+    run (clazz, test,ExecutionMode.NORMAL, mutators);
+  }
+
+  private void run(Class<?> clazz, Class<?> test, ExecutionMode mode,
       final String ... mutators) {
 
     final ReportOptions data = new ReportOptions();
@@ -219,15 +233,16 @@ public class TestMutationTesting {
     final JavaAgent agent = new JarCreatingJarFinder();
 
     try {
-      createEngineAndRun(data, agent, Arrays.asList(mutators));
+      createEngineAndRun(data, mode, agent, Arrays.asList(mutators));
     } finally {
       agent.close();
     }
   }
 
-  private void createEngineAndRun(final ReportOptions data,
-      final JavaAgent agent,
-      final Collection<String> mutators) {
+  private void createEngineAndRun(ReportOptions data,
+      ExecutionMode mode,
+      JavaAgent agent,
+      Collection<String> mutators) {
 
     final CoverageOptions coverageOptions = createCoverageOptions(data);
 
@@ -278,7 +293,7 @@ public class TestMutationTesting {
 
 
 
-    final MutationTestBuilder builder = new MutationTestBuilder(wf,
+    final MutationTestBuilder builder = new MutationTestBuilder(mode, wf,
         new NullHistory(), source, new DefaultGrouper(0));
 
     final List<MutationAnalysisUnit> tus = builder

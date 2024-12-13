@@ -366,6 +366,9 @@ public class AbstractPitMojo extends AbstractMojo {
   @Parameter(property = "pit.additionalTestSources", defaultValue = "src/test/kotlin")
   private List<File> additionalTestSources;
 
+  @Parameter(property = "pit.dryRun", defaultValue = "false")
+  private boolean dryRun;
+
   /**
    * The base directory of a multi-module project. Defaults to the execution
    * directory
@@ -829,6 +832,10 @@ public class AbstractPitMojo extends AbstractMojo {
 
   public List<MavenProject> allProjects() {
     return session.getProjects();
+  }
+
+  public boolean isDryRun() {
+    return this.dryRun;
   }
 
   static class RunDecision {

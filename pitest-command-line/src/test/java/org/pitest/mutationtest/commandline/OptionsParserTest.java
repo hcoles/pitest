@@ -40,6 +40,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.mutationtest.config.ConfigOption;
+import org.pitest.mutationtest.config.ExecutionMode;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
@@ -702,6 +703,34 @@ public class OptionsParserTest {
             "--outputEncoding", "US-ASCII");
     assertThat(actual.getOutputEncoding()).isEqualTo(StandardCharsets.US_ASCII);
   }
+
+  @Test
+  public void defaultsToNormalExecution() {
+    final ReportOptions actual = parseAddingRequiredArgs("");
+    assertThat(actual.mode()).isEqualTo(ExecutionMode.NORMAL);
+  }
+
+  @Test
+  public void parsesShortFormDryRun() {
+    final ReportOptions actual = parseAddingRequiredArgs(
+            "--dryRun");
+    assertThat(actual.mode()).isEqualTo(ExecutionMode.DRY_RUN);
+  }
+
+  @Test
+  public void parsesLongFormDryRunFalse() {
+    ReportOptions actual = parseAddingRequiredArgs(
+            "--dryRun=false");
+    assertThat(actual.mode()).isEqualTo(ExecutionMode.NORMAL);
+  }
+
+  @Test
+  public void parsesLongFormDryRunTrue() {
+    ReportOptions actual = parseAddingRequiredArgs(
+            "--dryRun=true");
+    assertThat(actual.mode()).isEqualTo(ExecutionMode.DRY_RUN);
+  }
+
 
   private String getNonCanonicalGregorEngineClassPath() {
     final String gregorEngineClassPath = GregorMutationEngine.class
