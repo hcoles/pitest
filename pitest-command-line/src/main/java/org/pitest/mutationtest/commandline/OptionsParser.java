@@ -457,21 +457,16 @@ public class OptionsParser {
     data.setArgLine(this.argLine.value(userArgs));
 
     data.addChildJVMArgs(this.jvmArgsProcessor.values(userArgs));
-    data.setFullMutationMatrix(
-            (userArgs.has(this.fullMutationMatrixSpec) && !userArgs.hasArgument(this.fullMutationMatrixSpec))
-                    || this.fullMutationMatrixSpec.value(userArgs));
-    data.setDetectInlinedCode(
-            (userArgs.has(this.detectInlinedCode) && !userArgs.hasArgument(this.detectInlinedCode))
-                    || this.detectInlinedCode.value(userArgs));
-    data.setIncludeLaunchClasspath(
-            (userArgs.has(this.includeLaunchClasspathSpec) && !userArgs.hasArgument(this.includeLaunchClasspathSpec))
-                    || this.includeLaunchClasspathSpec.value(userArgs));
-    data.setUseClasspathJar(
-            (userArgs.has(this.useClasspathJarSpec) && !userArgs.hasArgument(this.useClasspathJarSpec))
-                    || this.useClasspathJarSpec.value(userArgs));
-    data.setShouldCreateTimestampedReports(
-            (userArgs.has(this.timestampedReportsSpec) && !userArgs.hasArgument(this.timestampedReportsSpec))
-                    || this.timestampedReportsSpec.value(userArgs));
+    data.setFullMutationMatrix(booleanValue(fullMutationMatrixSpec, userArgs));
+
+    data.setDetectInlinedCode(booleanValue(detectInlinedCode, userArgs));
+
+    data.setIncludeLaunchClasspath(booleanValue(includeLaunchClasspathSpec, userArgs));
+
+    data.setUseClasspathJar(booleanValue(useClasspathJarSpec, userArgs));
+
+    data.setShouldCreateTimestampedReports(booleanValue(timestampedReportsSpec, userArgs));
+
     data.setNumberOfThreads(this.threadsSpec.value(userArgs));
     data.setTimeoutFactor(this.timeoutFactorSpec.value(userArgs));
     data.setTimeoutConstant(this.timeoutConstSpec.value(userArgs));
@@ -484,12 +479,10 @@ public class OptionsParser {
     configureVerbosity(data, userArgs);
 
     data.addOutputFormats(this.outputFormatSpec.values(userArgs));
-    data.setFailWhenNoMutations(
-            (userArgs.has(this.failWhenNoMutations) && !userArgs.hasArgument(this.failWhenNoMutations))
-                    || this.failWhenNoMutations.value(userArgs));
-    data.setSkipFailingTests(
-            (userArgs.has(this.skipFailingTests) && !userArgs.hasArgument(this.skipFailingTests))
-                    || this.skipFailingTests.value(userArgs));
+    data.setFailWhenNoMutations(booleanValue(failWhenNoMutations, userArgs));
+
+    data.setSkipFailingTests(booleanValue(skipFailingTests, userArgs));
+
     data.setCodePaths(this.codePaths.values(userArgs));
     data.setMutationUnitSize(this.mutationUnitSizeSpec.value(userArgs));
     data.setHistoryInputLocation(this.historyInputSpec.value(userArgs));
@@ -500,9 +493,7 @@ public class OptionsParser {
     data.setCoverageThreshold(this.coverageThreshHoldSpec.value(userArgs));
     data.setMutationEngine(this.mutationEngine.value(userArgs));
     data.setFreeFormProperties(listToProperties(this.pluginPropertiesSpec.values(userArgs)));
-    data.setExportLineCoverage(
-            (userArgs.has(this.exportLineCoverageSpec) && !userArgs.hasArgument(this.exportLineCoverageSpec))
-                    || this.exportLineCoverageSpec.value(userArgs));
+    data.setExportLineCoverage(booleanValue(exportLineCoverageSpec, userArgs));
 
     setClassPath(userArgs, data);
 
@@ -534,9 +525,7 @@ public class OptionsParser {
   }
 
   private void configureVerbosity(ReportOptions data, OptionSet userArgs) {
-    boolean isVerbose = (userArgs.has(this.verboseSpec) && !userArgs.hasArgument(this.verboseSpec))
-            || this.verboseSpec.value(userArgs);
-    if (isVerbose) {
+    if (booleanValue(verboseSpec, userArgs)) {
       data.setVerbosity(Verbosity.VERBOSE);
     } else {
       data.setVerbosity(Verbosity.fromString(this.verbositySpec.value(userArgs)));
@@ -545,12 +534,11 @@ public class OptionsParser {
   }
 
   private void configureExecutionMode(ReportOptions data, OptionSet userArgs) {
-    boolean isDryRun = (userArgs.has(this.dryRunSpec) && !userArgs.hasArgument(this.dryRunSpec))
-            || this.dryRunSpec.value(userArgs);
-    if (isDryRun) {
+    if (booleanValue(dryRunSpec, userArgs)) {
       data.setExecutionMode(ExecutionMode.DRY_RUN);
     }
   }
+
 
   private void setClassPath(final OptionSet userArgs, final ReportOptions data) {
 
@@ -607,5 +595,9 @@ public class OptionsParser {
     }
   }
 
+  private boolean booleanValue(ArgumentAcceptingOptionSpec<Boolean> spec, OptionSet userArgs) {
+    return (userArgs.has(spec) && !userArgs.hasArgument(spec))
+            || spec.value(userArgs);
+  }
 
 }
