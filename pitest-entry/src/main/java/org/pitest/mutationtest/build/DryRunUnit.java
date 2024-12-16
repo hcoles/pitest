@@ -42,4 +42,9 @@ public class DryRunUnit implements MutationAnalysisUnit {
         return Integer.MAX_VALUE;
     }
 
+    @Override
+    public Collection<MutationDetails> mutants() {
+        return mutations;
+    }
+
 }

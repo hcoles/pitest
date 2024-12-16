@@ -10,9 +10,16 @@ import java.util.function.Predicate;
 public interface History {
 
     void initialize();
+
+    default Predicate<ClassName> limitTests(List<MutationDetails> mutants) {
+        return limitTests();
+    }
+
+    @Deprecated
     default Predicate<ClassName> limitTests() {
         return c -> true;
     }
+
     void processCoverage(CoverageDatabase coverageData);
 
     List<MutationResult> analyse(List<MutationDetails> mutationsForClasses);
