@@ -3,10 +3,13 @@ package org.pitest.mutationtest.build;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
 import org.pitest.mutationtest.MutationMetaData;
+import org.pitest.mutationtest.engine.MutationDetails;
 
 public class AnalyisPriorityComparatorTest {
 
@@ -48,6 +51,11 @@ public class AnalyisPriorityComparatorTest {
       @Override
       public MutationMetaData call() throws Exception {
         return null;
+      }
+
+      @Override
+      public Collection<MutationDetails> mutants() {
+        return Collections.emptyList();
       }
 
     };

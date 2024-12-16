@@ -43,6 +43,7 @@ import org.pitest.mutationtest.build.TestPrioritiser;
 import org.pitest.mutationtest.build.WorkerFactory;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
+import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.execute.MutationAnalysisExecutor;
 import org.pitest.mutationtest.incremental.HistoryListener;
@@ -133,7 +134,15 @@ public class MutationCoverage {
       return emptyStatistics();
     }
 
-    return runAnalysis(runtime, t0, args, engine, issues);
+    // Extract mutants from analysis units. Advanced history implementations can
+    // use this data to reduce the number of tests run during coverage.
+    // This is list of mutants is potentially larger than the one finally
+    // assessed, as no filters have been run across it.
+    List<MutationDetails> unfilteredMutants = preScanMutations.stream()
+            .flatMap(unit -> unit.mutants().stream())
+            .collect(Collectors.toList());
+
+    return runAnalysis(runtime, t0, args, engine, issues, unfilteredMutants);
 
   }
 
@@ -142,11 +151,11 @@ public class MutationCoverage {
     return new CombinedStatistics(mutationStatistics, new CoverageSummary(0,0), Collections.emptyList());
   }
 
-  private CombinedStatistics runAnalysis(Runtime runtime, long t0, EngineArguments args, MutationEngine engine, List<BuildMessage> issues) {
+  private CombinedStatistics runAnalysis(Runtime runtime, long t0, EngineArguments args, MutationEngine engine, List<BuildMessage> issues, List<MutationDetails> unfilteredMutants) {
     History history = this.strategies.history();
     history.initialize();
 
-    CoverageDatabase coverageData = coverage().calculateCoverage(history.limitTests());
+    CoverageDatabase coverageData = coverage().calculateCoverage(history.limitTests(unfilteredMutants));
     history.processCoverage(coverageData);
 
     LOG.fine("Used memory after coverage calculation "
@@ -154,7 +163,6 @@ public class MutationCoverage {
     LOG.fine("Free Memory after coverage calculation "
         + (runtime.freeMemory() / MB) + " mb");
 
-    final MutationStatisticsListener stats = new MutationStatisticsListener();
 
     this.timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
     final List<MutationAnalysisUnit> tus = buildMutationTests(coverageData, history,
@@ -169,8 +177,10 @@ public class MutationCoverage {
         + " mb");
 
     ReportCoverage modifiedCoverage = transformCoverage(coverageData);
+    final MutationStatisticsListener stats = new MutationStatisticsListener();
     final List<MutationResultListener> config = createConfig(t0, modifiedCoverage, history,
                 stats, engine, issues);
+
     final MutationAnalysisExecutor mae = new MutationAnalysisExecutor(
         numberOfThreads(), resultInterceptor(), config);
     this.timings.registerStart(Timings.Stage.RUN_MUTATION_TESTS);
@@ -353,7 +363,8 @@ public class MutationCoverage {
     final MutationGrouper grouper = this.settings.getMutationGrouper().makeFactory(
         this.data.getFreeFormProperties(), this.code,
         this.data.getNumberOfThreads(), this.data.getMutationUnitSize());
-    final MutationTestBuilder builder = new MutationTestBuilder(wf, history,
+
+    final MutationTestBuilder builder = new MutationTestBuilder(data.mode(), wf, history,
         source, grouper);
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());

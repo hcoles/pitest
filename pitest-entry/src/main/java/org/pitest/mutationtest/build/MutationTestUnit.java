@@ -62,6 +62,11 @@ public class MutationTestUnit implements MutationAnalysisUnit {
     return this.availableMutations.size();
   }
 
+  @Override
+  public Collection<MutationDetails> mutants() {
+    return availableMutations;
+  }
+
   private void runTestsInSeperateProcess(final MutationStatusMap mutations)
       throws IOException, InterruptedException {
     while (mutations.hasUnrunMutations()) {

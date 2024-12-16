@@ -503,6 +503,19 @@ public class PitestTaskTest {
     verify(this.arg).setValue("--argLine=-Dfoo=\"bar\"");
   }
 
+  @Test
+  public void passesDryRunFlagToJavaTask() {
+    this.pitestTask.setDryRun("true");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--dryRun=true");
+  }
+
+  @Test
+  public void defaultDryRunToFalse() {
+    this.pitestTask.execute(this.java);
+    verify(this.arg, never()).setValue("--dryRun=true");
+  }
+
   private static class PathMatcher implements ArgumentMatcher<Path> {
 
     private final String[] expectedPaths;

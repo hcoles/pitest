@@ -254,7 +254,12 @@ public enum ConfigOption {
   /**
    * Source file encoding
    */
-  OUTPUT_ENCODING("outputEncoding", Charset.defaultCharset().name());
+  OUTPUT_ENCODING("outputEncoding", Charset.defaultCharset().name()),
+
+  /**
+   * Flag to indicate if dry run mode should be enabled
+   */
+  DRY_RUN("dryRun", false);
 
   private final String       text;
   private final Serializable defaultValue;

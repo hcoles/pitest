@@ -268,16 +268,19 @@ public class PitestTask extends Task { // NO_UCD (test only)
     this.setOption(ConfigOption.ARG_LINE, value);
   }
 
+  public void setUseClasspathJar(String value) {
+    this.setOption(ConfigOption.USE_CLASSPATH_JAR, value);
+  }
+
+  public void setDryRun(String value) {
+    this.setOption(ConfigOption.DRY_RUN, value);
+  }
+
   private void setOption(final ConfigOption option, final String value) {
     if (!"".equals(value)) {
       this.options.put(option.getParamName(), value);
     }
   }
-
-  public void setUseClasspathJar(String value) {
-    this.setOption(ConfigOption.USE_CLASSPATH_JAR, value);
-  }
-
 
 
 }
