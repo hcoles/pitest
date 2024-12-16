@@ -8,6 +8,12 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.17.3
+
+* #1369 Dry Run Support
+
+Maven users can now gather coverage information and generate mutants, but skip the mutant analysis stage by running setting the 'pit.dryRun' flag to true. 
+
 ## 1.17.2
 
 * #1362 Exclude lambdas in methods excluded by annotation (thanks @see-quick)
