@@ -469,6 +469,12 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertThat(actual.getArgLine()).isEqualTo("fooValue barValue");
   }
 
+  public void testEvaluatesLocalRepositoryPropertyInArgLines() {
+    when(this.settings.getLocalRepository()).thenReturn("localRepoValue");
+    ReportOptions actual = parseConfig("<argLine>${settings.localRepository}/jar</argLine>");
+    assertThat(actual.getArgLine()).isEqualTo("localRepoValue/jar");
+  }
+
   public void testAddsModulesToMutationPathWhenCrossModule() {
     MavenProject dependedOn = project("com.example", "foo");
     MavenProject notDependedOn = project("com.example", "bar");

@@ -7,6 +7,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Settings;
 import org.eclipse.aether.RepositorySystem;
 import org.pitest.coverage.CoverageSummary;
 import org.pitest.mutationtest.config.PluginServices;
@@ -401,6 +402,9 @@ public class AbstractPitMojo extends AbstractMojo {
   @Parameter(property = "project", readonly = true, required = true)
   private MavenProject                project;
 
+  @Parameter(property = "settings", readonly = true, required = true)
+  private Settings                    settings;
+
   /**
    * <i>Internal</i>: Map of plugin artifacts.
    */
@@ -666,6 +670,10 @@ public class AbstractPitMojo extends AbstractMojo {
 
   public MavenProject getProject() {
     return this.project;
+  }
+
+  public Settings getSettings() {
+    return this.settings;
   }
 
   public Map<String, Artifact> getPluginArtifactMap() {
