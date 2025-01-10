@@ -7,12 +7,18 @@ import static org.pitest.util.PercentageCalculator.getPercentage;
  */
 public final class CoverageSummary {
 
+  private final int numberOfTests;
   private final int numberOfLines;
   private final int numberOfCoveredLines;
 
-  public CoverageSummary(final int numberOfLines, final int numberOfCoveredLines) {
+  public CoverageSummary(int numberOfLines, int numberOfCoveredLines, int numberOfTests) {
     this.numberOfLines = numberOfLines;
     this.numberOfCoveredLines = numberOfCoveredLines;
+    this.numberOfTests = numberOfTests;
+  }
+
+  public int getNumberOfTests() {
+    return this.numberOfTests;
   }
 
   public int getNumberOfLines() {

@@ -42,14 +42,15 @@ public class CoverageData implements CoverageDatabase {
 
   private final Map<BlockLocation, Set<TestInfo>> blockCoverage = new LinkedHashMap<>();
   private final LegacyClassCoverage legacyClassCoverage;
-
   private final CodeSource code;
+  private final int testCount;
 
   private final List<Description> failingTestDescriptions = new ArrayList<>();
 
-  public CoverageData(final CodeSource code, final LineMap lm) {
+  public CoverageData(CodeSource code, LineMap lm, int testCount) {
     this.code = code;
     this.legacyClassCoverage = new LegacyClassCoverage(code, lm);
+    this.testCount = testCount;
   }
 
   public void calculateClassCoverage(final CoverageResult cr) {
@@ -74,6 +75,11 @@ public class CoverageData implements CoverageDatabase {
   @Override
   public Collection<TestInfo> getTestsForBlockLocation(BlockLocation location) {
     return this.blockCoverage.getOrDefault(location, Collections.emptySet());
+  }
+
+  @Override
+  public int testCount() {
+    return testCount;
   }
 
   public boolean allTestsGreen() {

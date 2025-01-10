@@ -90,7 +90,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
       this.timings.registerEnd(Timings.Stage.SCAN_CLASS_PATH);
 
       final CoverageData coverage = new CoverageData(this.code, new LineMapper(
-          this.code));
+          this.code), tests.size());
 
       this.timings.registerStart(Timings.Stage.COVERAGE);
       if (tests.isEmpty()) {

@@ -7,6 +7,8 @@ import java.util.Collection;
 
 public interface CoverageDatabase extends ReportCoverage {
 
+  int testCount();
+
   Collection<TestInfo> getTestsForClass(ClassName clazz);
 
   Collection<TestInfo> getTestsForBlockLocation(BlockLocation location);
