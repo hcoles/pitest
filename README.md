@@ -8,6 +8,11 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.17.4
+
+* #1333 Expand ${settings.localRepository} in <argLine> (thanks @martinoconnor)
+* #1373 report test count
+
 ## 1.17.3
 
 * #1369 Dry Run Support
