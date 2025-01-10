@@ -19,6 +19,11 @@ public class NoCoverage implements CoverageDatabase {
     }
 
     @Override
+    public int testCount() {
+        return 0;
+    }
+
+    @Override
     public Collection<TestInfo> getTestsForClass(ClassName clazz) {
         return Collections.emptyList();
     }

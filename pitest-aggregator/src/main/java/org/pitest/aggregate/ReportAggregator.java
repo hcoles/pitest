@@ -138,7 +138,7 @@ public final class ReportAggregator {
       Collection<BlockLocation> coverageData = this.blockCoverageLoader.loadData().stream()
               .map(BlockCoverage::getBlock)
               .collect(Collectors.toList());
-      CoverageData cd = new CoverageData(codeSource, new LineMapper(codeSource));
+      CoverageData cd = new CoverageData(codeSource, new LineMapper(codeSource), 0);
       cd.loadBlockDataOnly(coverageData);
 
       return transformCoverage(cd);

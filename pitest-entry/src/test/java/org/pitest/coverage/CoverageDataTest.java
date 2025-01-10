@@ -70,7 +70,7 @@ public class CoverageDataTest {
     when(this.lm.mapLines(any(ClassName.class))).thenReturn(
         new HashMap<>());
     when(this.code.findTestee(any())).thenReturn(Optional.empty());
-    this.testee = new CoverageData(this.code, this.lm);
+    this.testee = new CoverageData(this.code, this.lm, 42);
   }
 
   @Test
@@ -195,7 +195,7 @@ public class CoverageDataTest {
     ClassTree barClass = treeFor(com.example.a.b.c.Bar.class);
     when(this.code.codeTrees()).thenReturn(Stream.of(fooClass, barClass));
 
-    this.testee = new CoverageData(this.code, this.lm);
+    this.testee = new CoverageData(this.code, this.lm, 0);
 
     assertThat(this.testee.getClassesForFile("Bar.java", "com.example.a.b.c"))
             .containsExactly(new ClassLines(barClass.name(), Collections.emptySet()));
@@ -209,11 +209,16 @@ public class CoverageDataTest {
 
     when(this.code.codeTrees()).thenReturn(classes.stream());
 
-    this.testee = new CoverageData(this.code, this.lm);
+    this.testee = new CoverageData(this.code, this.lm, 0);
 
     assertThat(this.testee.getClassesForFile("Foo.java", "com.example.a.b.c"))
             .containsExactly(new ClassLines(foo1Class.name(), Collections.emptySet()));
 
+  }
+
+  @Test
+  public void reportsTestCount() {
+    assertThat(testee.testCount()).isEqualTo(42);
   }
 
   private CoverageResult makeCoverageResult(final String clazz,

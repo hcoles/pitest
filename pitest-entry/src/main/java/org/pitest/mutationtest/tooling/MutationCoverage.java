@@ -148,7 +148,7 @@ public class MutationCoverage {
 
   private CombinedStatistics emptyStatistics() {
     MutationStatistics mutationStatistics = new MutationStatistics(emptyList(),0,0,0,0, emptySet());
-    return new CombinedStatistics(mutationStatistics, new CoverageSummary(0,0), Collections.emptyList());
+    return new CombinedStatistics(mutationStatistics, new CoverageSummary(0,0, 0), Collections.emptyList());
   }
 
   private CombinedStatistics runAnalysis(Runtime runtime, long t0, EngineArguments args, MutationEngine engine, List<BuildMessage> issues, List<MutationDetails> unfilteredMutants) {
@@ -191,7 +191,7 @@ public class MutationCoverage {
 
     MutationStatistics mutationStats = stats.getStatistics();
     CombinedStatistics combined = new CombinedStatistics(mutationStats,
-            createSummary(modifiedCoverage, mutationStats.mutatedClasses()), issues);
+            createSummary(coverageData.testCount(), modifiedCoverage, mutationStats.mutatedClasses()), issues);
 
     printStats(combined);
 
@@ -204,7 +204,7 @@ public class MutationCoverage {
     return strategies.coverageTransformer().transform(coverageData);
   }
 
-  private CoverageSummary createSummary(ReportCoverage modifiedCoverage, Set<ClassName> mutatedClasses) {
+  private CoverageSummary createSummary(int numberOfTests, ReportCoverage modifiedCoverage, Set<ClassName> mutatedClasses) {
     List<ClassName> examinedClasses = this.code.getCodeUnderTestNames().stream()
             .filter(mutatedClasses::contains)
             .collect(Collectors.toList());
@@ -218,7 +218,7 @@ public class MutationCoverage {
             .mapToInt(c -> modifiedCoverage.getCoveredLines(c).size())
             .sum();
 
-    return new CoverageSummary(numberOfCodeLines, coveredLines);
+    return new CoverageSummary(numberOfCodeLines, coveredLines, numberOfTests);
   }
 
   private Predicate<MutationInterceptor> allInterceptors() {
@@ -318,6 +318,7 @@ public class MutationCoverage {
     if (coverage != null) {
       ps.println(String.format(">> Line Coverage (for mutated classes only): %d/%d (%d%%)", coverage.getNumberOfCoveredLines(),
               coverage.getNumberOfLines(), coverage.getCoverage()));
+      ps.println(String.format(">> %d tests examined", coverage.getNumberOfTests()));
     }
 
     stats.report(ps);
