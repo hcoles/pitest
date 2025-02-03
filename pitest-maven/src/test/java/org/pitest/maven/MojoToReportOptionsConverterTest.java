@@ -512,7 +512,7 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
   private ReportOptions parseConfig(final String xml) {
     try {
       final String pom = createPomWithConfiguration(xml);
-      final AbstractPitMojo mojo = createPITMojo(pom);
+      final PitMojo mojo = createPITMojo(pom);
       Predicate<Artifact> filter = Mockito.mock(Predicate.class);
       when(
           this.surefireConverter.update(any(ReportOptions.class),
