@@ -14,8 +14,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - title: "JDK 8"
-            java: 8
           - title: "JDK 11"
             java: 11
           - title: "JDK 18"
