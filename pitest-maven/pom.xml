@@ -123,27 +123,6 @@
 			<artifactId>maven-reporting-impl</artifactId>
 			<version>3.1.0</version>
 		</dependency>
-	    <dependency>
-	        <groupId>backport-util-concurrent</groupId>
-	        <artifactId>backport-util-concurrent</artifactId>
-	        <version>3.1</version>
-	    </dependency>
-		<dependency>
-			<groupId>org.apache.maven.scm</groupId>
-			<artifactId>maven-scm-api</artifactId>
-			<version>${scm.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven.scm</groupId>
-			<artifactId>maven-scm-manager-plexus</artifactId>
-			<version>${scm.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven.scm</groupId>
-			<artifactId>maven-scm-providers-standard</artifactId>
-			<version>${scm.version}</version>
-			<type>pom</type>
-		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.surefire</groupId>
 			<artifactId>surefire-booter</artifactId>

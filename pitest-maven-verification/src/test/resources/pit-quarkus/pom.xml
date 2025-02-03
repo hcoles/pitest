@@ -113,7 +113,7 @@
         <artifactId>pitest-maven</artifactId>
         <version>${pit.version}</version>
         <configuration>
-          <timeoutConstant>10000</timeoutConstant>
+          <timeoutConstant>20000</timeoutConstant>
           <exportLineCoverage>true</exportLineCoverage>
           <outputFormats><value>XML</value></outputFormats>
           <timestampedReports>false</timestampedReports>
