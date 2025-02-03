@@ -19,6 +19,7 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +40,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.classpath.ClassPath;
 import org.pitest.mutationtest.config.PluginServices;
-
-import edu.emory.mathcs.backport.java.util.Collections;
 
 public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 
