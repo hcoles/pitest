@@ -27,7 +27,7 @@ public class PitMojoTest extends BasePitMojoTest {
   @Mock
   private MavenProject executionProject;
 
-  private AbstractPitMojo testee;
+  private PitMojo testee;
 
   @Override
   public void setUp() throws Exception {
@@ -161,7 +161,7 @@ public class PitMojoTest extends BasePitMojoTest {
 
   public void testConfigureEnvironmentVariable() throws Exception {
 
-    AbstractPitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
+    PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
         + "                    <environmentVariables>\n"
         + "                        <DISPLAY>:20</DISPLAY>\n"
         + "                    </environmentVariables>"));
@@ -171,7 +171,7 @@ public class PitMojoTest extends BasePitMojoTest {
 
   public void testEmptyTargetClassIsIgnored() throws Exception{
 
-    AbstractPitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
+    PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
         + "  <targetClasses>\n"
         + "    <targetClass>net.example.ClassName</targetClass>\n"
         + "    <targetClass>net.example.Other</targetClass>\n"
@@ -185,7 +185,7 @@ public class PitMojoTest extends BasePitMojoTest {
 
   public void testEmptyTargetTestIsIgnored() throws Exception{
 
-    AbstractPitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
+    PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
         + "  <targetTests>\n"
         + "    <targetTest>net.example.ClassNameTest</targetTest>\n"
         + "    <targetTest>net.example.OtherTest</targetTest>\n"
@@ -200,7 +200,7 @@ public class PitMojoTest extends BasePitMojoTest {
 
   public void testEmptyExcludedMethodIsIgnored() throws Exception{
 
-    AbstractPitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
+    PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
         + "  <excludedMethods>\n"
         + "    <excludedMethod>*method1</excludedMethod>\n"
         + "    <excludedMethod>*method2</excludedMethod>\n"
@@ -214,7 +214,7 @@ public class PitMojoTest extends BasePitMojoTest {
 
   public void testEmptyExcludedClassIsIgnored() throws Exception{
 
-    AbstractPitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
+    PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
         + "  <excludedClasses>\n"
         + "    <excludedClass>net.example.BadClass</excludedClass>\n"
         + "    <excludedClass>net.example.WorstClass</excludedClass>\n"
@@ -228,7 +228,7 @@ public class PitMojoTest extends BasePitMojoTest {
 
   public void testEmptyAvoidCallsToValueIsIgnored() throws Exception{
 
-    AbstractPitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
+    PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
         + "  <avoidCallsTo>\n"
         + "    <avoidCallsTo>net.example.methodA</avoidCallsTo>\n"
         + "    <avoidCallsTo>net.example.methodB</avoidCallsTo>\n"
@@ -242,7 +242,7 @@ public class PitMojoTest extends BasePitMojoTest {
 
   public void testEmptyMutatorIsIgnored() throws Exception{
 
-    AbstractPitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
+    PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
         + "  <mutators>\n"
         + "    <mutator>MUTATOR_1</mutator>\n"
         + "    <mutator>MUTATOR_2</mutator>\n"
@@ -256,7 +256,7 @@ public class PitMojoTest extends BasePitMojoTest {
 
   public void testEmptyExcludedTestClassIsIgnored() throws Exception {
 
-    AbstractPitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
+    PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
         + "  <excludedTestClasses>\n"
         + "    <excludedTestClass>TestClass1</excludedTestClass>\n"
         + "    <excludedTestClass>TestClass2</excludedTestClass>\n"
@@ -270,7 +270,7 @@ public class PitMojoTest extends BasePitMojoTest {
 
   public void testEmptyJvmArgIsIgnored() throws Exception {
 
-    AbstractPitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
+    PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
         + "  <jvmArgs>\n"
         + "    <jvmArg>-Dnet.sample.param=42</jvmArg>\n"
         + "    <jvmArg>-Dnet.sample.fun=true</jvmArg>\n"
@@ -284,7 +284,7 @@ public class PitMojoTest extends BasePitMojoTest {
 
   public void testEmptyOutputFormatIsIgnored() throws Exception {
 
-    AbstractPitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
+    PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
         + "  <outputFormats>\n"
         + "    <outputFormat>XML</outputFormat>\n"
         + "    <outputFormat>HTML</outputFormat>\n"
@@ -298,7 +298,7 @@ public class PitMojoTest extends BasePitMojoTest {
 
   public void testEmptyExcludedGroupIsIgnored() throws Exception {
 
-    AbstractPitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
+    PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
         + "  <excludedGroups>\n"
         + "    <excludedGroup>REDS</excludedGroup>\n"
         + "    <excludedGroup>GREENS</excludedGroup>\n"
@@ -312,7 +312,7 @@ public class PitMojoTest extends BasePitMojoTest {
 
   public void testEmptyIncludedGroupIsIgnored() throws Exception {
 
-    AbstractPitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
+    PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
         + "  <includedGroups>\n"
         + "    <includedGroup>YELLOWS</includedGroup>\n"
         + "    <includedGroup>PURPLES</includedGroup>\n"
@@ -326,7 +326,7 @@ public class PitMojoTest extends BasePitMojoTest {
 
   public void testEmptyIncludedTestMethodIsIgnored() throws Exception {
 
-    AbstractPitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
+    PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
         + "  <includedTestMethods>\n"
         + "    <includedTestMethod>testA</includedTestMethod>\n"
         + "    <includedTestMethod>testB</includedTestMethod>\n"
@@ -340,7 +340,7 @@ public class PitMojoTest extends BasePitMojoTest {
 
   public void testEmptyAdditionalClasspathElementIsIgnored() throws Exception {
 
-    AbstractPitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
+    PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
         + "  <additionalClasspathElements>\n"
         + "    <additionalClasspathElement>stuff.jar</additionalClasspathElement>\n"
         + "    <additionalClasspathElement>thing.jar</additionalClasspathElement>\n"
@@ -354,7 +354,7 @@ public class PitMojoTest extends BasePitMojoTest {
 
   public void testEmptyClasspathDependencyExcludeIsIgnored() throws Exception {
 
-    AbstractPitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
+    PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
         + "  <classpathDependencyExcludes>\n"
         + "    <classpathDependencyExclude>bad.jar</classpathDependencyExclude>\n"
         + "    <classpathDependencyExclude>unwanted.jar</classpathDependencyExclude>\n"
@@ -368,7 +368,7 @@ public class PitMojoTest extends BasePitMojoTest {
 
   public void testEmptyExcludedRunnerIsIgnored() throws Exception {
 
-    AbstractPitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
+    PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
         + "  <excludedRunners>\n"
         + "    <excludedRunner>SimpleRunner</excludedRunner>\n"
         + "    <excludedRunner>FastRunner</excludedRunner>\n"
@@ -382,7 +382,7 @@ public class PitMojoTest extends BasePitMojoTest {
 
   public void testEmptyFeatureIsIgnored() throws Exception {
 
-    AbstractPitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
+    PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
         + "  <features>\n"
         + "    <feature>DO_THAT_THING</feature>\n"
         + "    <feature>BE_AWESOME</feature>\n"
@@ -396,7 +396,7 @@ public class PitMojoTest extends BasePitMojoTest {
 
   public void testCombinesFeaturesAndExtraFeatures() throws Exception {
 
-    AbstractPitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
+    PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
             + "  <features>\n"
             + "    <feature>FEATURE</feature>\n"
             + "  </features>\n"

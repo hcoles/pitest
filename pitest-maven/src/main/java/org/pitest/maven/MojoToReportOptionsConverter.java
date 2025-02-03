@@ -58,12 +58,12 @@ import static org.pitest.functional.Streams.asStream;
 
 public class MojoToReportOptionsConverter {
 
-  private final AbstractPitMojo         mojo;
+  private final PitMojo mojo;
   private final Predicate<Artifact>     dependencyFilter;
   private final Log                     log;
   private final SurefireConfigConverter surefireConverter;
 
-  public MojoToReportOptionsConverter(final AbstractPitMojo mojo,
+  public MojoToReportOptionsConverter(final PitMojo mojo,
       SurefireConfigConverter surefireConverter,
       Predicate<Artifact> dependencyFilter) {
     this.mojo = mojo;
@@ -327,7 +327,7 @@ public class MojoToReportOptionsConverter {
 
   }
 
-  private void checkForObsoleteOptions(AbstractPitMojo mojo) {
+  private void checkForObsoleteOptions(PitMojo mojo) {
     if (mojo.getMaxMutationsPerClass() > 0) {
       throw new IllegalArgumentException("The max mutations per class argument is no longer supported, "
               + "use features=+CLASSLIMIT(limit[" + mojo.getMaxMutationsPerClass() + "]) instead");
