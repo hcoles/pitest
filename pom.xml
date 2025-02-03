@@ -99,16 +99,13 @@
 				</property>
 			</activation>
 			<modules>
-				<module>pitest-java8-verification</module>
-                <module>pitest-maven-verification</module>
-				<!-- disabled until working with java 9+ -->
-				<!-- <module>pitest-groovy-verification</module> -->
+                            <module>pitest-maven-verification</module>
 			</modules>
 		</profile>
 		<profile>
 			<id>verification-modern</id>
 			<activation>
-				<jdk>[17,18,19]</jdk>
+				<jdk>[17,18,19,21]</jdk>
 				<property>
 					<name>!skipTests</name>
 				</property>
