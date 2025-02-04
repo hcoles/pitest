@@ -74,7 +74,7 @@ public class ConstructorCallMutatorTest {
     static class HasConstructorCall implements Callable<String> {
         @Override
         public String call() throws Exception {
-            final Integer i = Integer.valueOf(12);
+            final Integer i = new Integer(12);
             return "" + (i == null);
         }
     }
