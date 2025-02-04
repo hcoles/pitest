@@ -145,7 +145,6 @@ public class ReportOptions {
 
   private String                         testPlugin                     = "";
   
-  private boolean                        useClasspathJar;
 
   private Path                           projectBase;
   private Charset inputEncoding;
@@ -625,14 +624,6 @@ public class ReportOptions {
             this.getIncludedTestMethods(), this.skipFailingTests());
   }
 
-  public boolean useClasspathJar() {
-    return useClasspathJar;
-  }
-
-  public void setUseClasspathJar(boolean useClasspathJar) {
-    this.useClasspathJar = useClasspathJar;
-  }
-
   public Path getProjectBase() {
     return projectBase;
   }
@@ -729,7 +720,6 @@ public class ReportOptions {
             .add("excludedRunners=" + excludedRunners)
             .add("includedTestMethods=" + includedTestMethods)
             .add("testPlugin='" + testPlugin + "'")
-            .add("useClasspathJar=" + useClasspathJar)
             .add("projectBase=" + projectBase)
             .add("inputEncoding=" + inputEncoding)
             .add("outputEncoding=" + outputEncoding)

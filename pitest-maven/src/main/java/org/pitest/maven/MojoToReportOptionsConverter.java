@@ -209,7 +209,6 @@ public class MojoToReportOptionsConverter {
       data.setCodePaths(codePaths);
     }
 
-    data.setUseClasspathJar(this.mojo.isUseClasspathJar());
     data.setClassPathElements(classPath);
 
     data.setFailWhenNoMutations(shouldFailWhenNoMutations());
