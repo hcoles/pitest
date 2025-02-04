@@ -5,7 +5,6 @@ import org.pitest.classinfo.ClassHash;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.Repository;
 import org.pitest.classinfo.TestToClassMapper;
-import org.pitest.functional.Streams;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -63,7 +62,7 @@ public class DefaultCodeSource implements CodeSource {
 
     public Collection<ClassHash> fetchClassHashes(final Collection<ClassName> classes) {
         return classes.stream()
-                .flatMap(c -> Streams.fromOptional(classRepository.fetchClassHash(c)))
+                .flatMap(c -> classRepository.fetchClassHash(c).stream())
                 .collect(Collectors.toList());
     }
 
