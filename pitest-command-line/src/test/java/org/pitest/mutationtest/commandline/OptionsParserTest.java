@@ -350,14 +350,6 @@ public class OptionsParserTest {
     assertTrue(actual.contains("/etc/bar"));
   }
 
-  @Test
-  public void alsoSetsUseClasspathJarWhenClasspathFileProvided() {
-    final ClassLoader classLoader = getClass().getClassLoader();
-    final File classPathFile = new File(classLoader.getResource("testClassPathFile.txt").getFile());
-    final ReportOptions ro = parseAddingRequiredArgs("--classPathFile",
-            classPathFile.getAbsolutePath());
-    assertThat(ro.useClasspathJar()).isTrue();
-  }
 
   @Test
   public void shouldFailWhenNoMutationsSetByDefault() {
@@ -621,28 +613,10 @@ public class OptionsParserTest {
     assertEquals("2", actual.getFreeFormProperties().getProperty("bar"));
   }
 
-  @Test
-  public void shouldDefaultToNotUsingAClasspathJar() {
-    final ReportOptions actual = parseAddingRequiredArgs();
-    assertFalse(actual.useClasspathJar());
-  }
 
   @Test
-  public void shouldUseClasspathJarWhenFlagSet() {
-    final ReportOptions actual = parseAddingRequiredArgs("--useClasspathJar");
-    assertTrue(actual.useClasspathJar());
-  }
-
-  @Test
-  public void shouldUseClasspathJarWhenTrueSupplied() {
-    final ReportOptions actual = parseAddingRequiredArgs("--useClasspathJar=true");
-    assertTrue(actual.useClasspathJar());
-  }
-
-  @Test
-  public void shouldNotUseClasspathJarWhenFalseSupplied() {
-    final ReportOptions actual = parseAddingRequiredArgs("--useClasspathJar=false");
-    assertFalse(actual.useClasspathJar());
+  public void shouldNotErrorWhenLegacyClasspathJarWhenFlagSet() {
+    assertThatCode(() -> parseAddingRequiredArgs("--useClasspathJar")).doesNotThrowAnyException();
   }
 
   @Test

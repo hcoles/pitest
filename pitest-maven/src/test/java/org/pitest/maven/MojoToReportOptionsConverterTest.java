@@ -416,14 +416,11 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertEquals("bar", actual.getFreeFormProperties().get("bar"));
   }
 
-  public void testDoesNotUseClasspathJarByDefault() {
-    final ReportOptions actual = parseConfig("");
-    assertFalse(actual.useClasspathJar());
-  }  
-  
-  public void testParsesUseClasspathJar() {
-    final ReportOptions actual = parseConfig("<useClasspathJar>true</useClasspathJar>");
-    assertTrue(actual.useClasspathJar());
+
+  public void testLegacyClasspathJarParamDoesNotCauseError() {
+    assertThatCode(() -> parseConfig("<useClasspathJar>true</useClasspathJar>"))
+            .doesNotThrowAnyException();
+
   }
 
   public void testFailsIfObsoleteMaxMutationsParameterUsed() {

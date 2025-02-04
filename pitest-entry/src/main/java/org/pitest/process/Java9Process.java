@@ -26,6 +26,10 @@ public class Java9Process implements WrappingProcess {
     private final Class<?>    minionClass;
     private JavaProcess       process;
 
+    private final long pid = ProcessHandle.current().pid();
+
+    private static int       counter = 0;
+
     public Java9Process(int port, ProcessArgs args, Class<?> minionClass) {
         this.port = port;
         this.processArgs = args;
@@ -65,6 +69,10 @@ public class Java9Process implements WrappingProcess {
 
     public void destroy() {
         this.process.destroy();
+    }
+
+    public JavaProcess getProcess() {
+        return this.process;
     }
 
     private ProcessBuilder createProcessBuilder(String javaProc,
@@ -116,7 +124,13 @@ public class Java9Process implements WrappingProcess {
     }
 
     private Path createArgsFile(List<String> cmd) throws IOException {
-        Path args = Files.createTempFile("pitest-args", ".args");
+        // To avoid conflicts with running analysis, we use the PID as part of the file name
+        // To prevent conflicts between multiple threads counter is used
+        // All files should be deleted on process exit, although some garbage may be left
+        // if the process is killed. Files are however created in the system temp directory
+        // so should be cleaned up on reboot
+        String name = "pitest-args-" + pid + "-" + nextCounter();
+        Path args = Files.createTempFile(name, ".args");
         args.toFile().deleteOnExit();
         Files.write(args, cmd);
         return args;
@@ -143,7 +157,8 @@ public class Java9Process implements WrappingProcess {
         return a -> a.toLowerCase().startsWith("-javaagent");
     }
 
-    public JavaProcess getProcess() {
-        return this.process;
+    private static synchronized int nextCounter() {
+        return counter++;
     }
+
 }

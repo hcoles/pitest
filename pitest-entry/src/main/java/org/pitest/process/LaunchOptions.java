@@ -25,30 +25,20 @@ public class LaunchOptions {
   private final List<String>          childJVMArgs;
   private final JavaExecutableLocator javaExecutable;
   private final Map<String, String>   environmentVariables;
-  private final boolean               usingClassPathJar;
 
   public LaunchOptions(JavaAgent javaAgentFinder) {
     this(javaAgentFinder, new DefaultJavaExecutableLocator(), Collections
         .emptyList(), new HashMap<>());
   }
-  
-  public LaunchOptions(JavaAgent javaAgentFinder,
-                       JavaExecutableLocator javaExecutable,
-                       List<String> childJVMArgs,
-                       Map<String, String> environmentVariables) {
-    this(javaAgentFinder, javaExecutable, childJVMArgs, environmentVariables, false);
-  }
 
   public LaunchOptions(JavaAgent javaAgentFinder,
                        JavaExecutableLocator javaExecutable,
                        List<String> childJVMArgs,
-                       Map<String, String> environmentVariables,
-                       boolean usingClassPathJar) {
+                       Map<String, String> environmentVariables) {
     this.javaAgentFinder = javaAgentFinder;
     this.childJVMArgs = childJVMArgs;
     this.javaExecutable = javaExecutable;
     this.environmentVariables = environmentVariables;
-    this.usingClassPathJar = usingClassPathJar;
   }
 
   public JavaAgent getJavaAgentFinder() {
@@ -67,11 +57,4 @@ public class LaunchOptions {
     return this.environmentVariables;
   }
 
-  public LaunchOptions usingClassPathJar(boolean useJar) {
-    return new LaunchOptions(javaAgentFinder, javaExecutable, childJVMArgs, environmentVariables, useJar);
-  }
-  
-  public boolean useClasspathJar() {
-    return usingClassPathJar;
-  }
 }

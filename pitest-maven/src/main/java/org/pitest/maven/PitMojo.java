@@ -423,9 +423,7 @@ public final class PitMojo extends AbstractMojo {
   
   
   /**
-   * Communicate the classpath using a temporary jar with a classpath
-   * manifest. This allows support of very large classpaths but may cause
-   * issues with certain libraries.
+   * Unused since 1.18.0. Temporarily left in place
    */
   @Parameter(property = "useClasspathJar", defaultValue = "false")
   private boolean                     useClasspathJar;
@@ -822,10 +820,6 @@ public final class PitMojo extends AbstractMojo {
     ArrayList<String> consolidated = emptyWithoutNulls(features);
     consolidated.addAll(emptyWithoutNulls(extraFeatures));
     return consolidated;
-  }
-
-  public boolean isUseClasspathJar() {
-    return this.useClasspathJar;
   }
 
   public String getVerbosity() {

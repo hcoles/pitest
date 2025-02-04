@@ -35,7 +35,6 @@ public final class ProcessArgs {
   private File                workingDir = null;
   private String              javaExecutable;
   private Map<String, String> environmentVariables;
-  private boolean             useClasspathJar = false;
 
   private ProcessArgs(final String launchClassPath) {
     this.launchClassPath = launchClassPath;
@@ -92,16 +91,12 @@ public final class ProcessArgs {
     return this.javaExecutable;
   }
 
-  public boolean useClasspathJar() {
-    return useClasspathJar;
-  }
-  
+
   public ProcessArgs andLaunchOptions(final LaunchOptions launchOptions) {
     this.jvmArgs = launchOptions.getChildJVMArgs();
     this.javaAgentFinder = launchOptions.getJavaAgentFinder();
     this.javaExecutable = launchOptions.getJavaExecutable();
     this.environmentVariables = launchOptions.getEnvironmentVariables();
-    this.useClasspathJar = launchOptions.useClasspathJar();
     return this;
   }
 

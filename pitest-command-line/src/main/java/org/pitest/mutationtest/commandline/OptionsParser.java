@@ -148,8 +148,12 @@ public class OptionsParser {
   private final ArgumentAcceptingOptionSpec<Boolean> exportLineCoverageSpec;
   private final OptionSpec<String>                   javaExecutable;
   private final OptionSpec<KeyValuePair>             pluginPropertiesSpec;
+
+  // unused but temporarily retained
   private final OptionSpec<String>                   testPluginSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> includeLaunchClasspathSpec;
+
+  // unused but temporarily retained
   private final ArgumentAcceptingOptionSpec<Boolean> useClasspathJarSpec;
   private final OptionSpec<File>                     projectBaseSpec;
   private final OptionSpec<String>                   inputEncoding;
@@ -463,8 +467,6 @@ public class OptionsParser {
 
     data.setIncludeLaunchClasspath(booleanValue(includeLaunchClasspathSpec, userArgs));
 
-    data.setUseClasspathJar(booleanValue(useClasspathJarSpec, userArgs));
-
     data.setShouldCreateTimestampedReports(booleanValue(timestampedReportsSpec, userArgs));
 
     data.setNumberOfThreads(this.threadsSpec.value(userArgs));
@@ -559,7 +561,7 @@ public class OptionsParser {
         LOG.warning("Unable to read class path file:" + this.classPathFile.value(userArgs).getAbsolutePath() + " - "
                 + ioe.getMessage());
       }
-      data.setUseClasspathJar(true);
+
     }
     elements.addAll(this.additionalClassPathSpec.values(userArgs));
     data.setClassPathElements(elements);
