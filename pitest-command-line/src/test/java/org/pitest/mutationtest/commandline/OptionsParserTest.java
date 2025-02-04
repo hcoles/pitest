@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -94,7 +94,7 @@ public class OptionsParserTest {
   public void shouldParseCommaSeparatedListOfSourceDirectories() {
     final ReportOptions actual = parseAddingRequiredArgs("--sourceDirs",
         "foo/bar,bar/far");
-    assertThat(actual.getSourcePaths()).containsExactly(Paths.get("foo/bar"), Paths.get(("bar/far")));
+    assertThat(actual.getSourcePaths()).containsExactly(Path.of("foo/bar"), Path.of(("bar/far")));
   }
 
   @Test

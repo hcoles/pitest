@@ -136,7 +136,7 @@ public class MojoToReportOptionsConverter {
     }
 
     Optional<Artifact> maybeJUnitPlatform = findJUnitArtifact(junitDependencies);
-    if (!maybeJUnitPlatform.isPresent()) {
+    if (maybeJUnitPlatform.isEmpty()) {
       this.log.debug("JUnit 5 not on classpath");
       return;
     }

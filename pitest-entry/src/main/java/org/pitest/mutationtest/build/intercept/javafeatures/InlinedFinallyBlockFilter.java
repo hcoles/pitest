@@ -171,7 +171,7 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
 
   private boolean isInFinallyBlock(MutationDetails m) {
     Optional<MethodTree> maybeMethod = currentClass.method(m.getId().getLocation());
-    if (!maybeMethod.isPresent()) {
+    if (maybeMethod.isEmpty()) {
       return false;
     }
     MethodTree method = maybeMethod.get();

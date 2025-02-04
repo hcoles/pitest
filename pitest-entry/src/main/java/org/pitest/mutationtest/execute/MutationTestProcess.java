@@ -57,7 +57,7 @@ public class MutationTestProcess {
 
       // While the monitored process reports being alive, keep polling
       // the monitoring thread to see if it has finished.
-      while (!maybeExit.isPresent() && this.process.isAlive()) {
+      while (maybeExit.isEmpty() && this.process.isAlive()) {
         maybeExit = this.thread.waitToFinish(10);
       }
 

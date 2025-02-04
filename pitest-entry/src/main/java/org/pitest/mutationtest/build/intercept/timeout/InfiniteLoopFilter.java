@@ -56,7 +56,7 @@ public abstract class InfiniteLoopFilter implements MutationInterceptor {
       Collection<MutationDetails> mutations, Mutater m) {
 
     final Optional<MethodTree> maybeMethod = this.currentClass.method(location);
-    if (!maybeMethod.isPresent()) {
+    if (maybeMethod.isEmpty()) {
       return Collections.emptyList();
     }
     MethodTree method = maybeMethod.get();

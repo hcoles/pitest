@@ -28,7 +28,7 @@ public class ParseResult {
   }
 
   public boolean isOk() {
-    return !this.errorMessage.isPresent();
+    return this.errorMessage.isEmpty();
   }
 
   public ReportOptions getOptions() {

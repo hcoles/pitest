@@ -157,7 +157,7 @@ public class EntryPoint {
 
   private History pickHistoryStore(CodeSource code, ReportOptions data, Optional<WriterFactory> historyWriter, HistoryFactory factory) {
     final Optional<Reader> reader = data.createHistoryReader();
-    if (!reader.isPresent() && !historyWriter.isPresent()) {
+    if (reader.isEmpty() && historyWriter.isEmpty()) {
       return new NullHistory();
     }
     FeatureParser parser = new FeatureParser();

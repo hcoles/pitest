@@ -386,7 +386,7 @@ public class IncrementalAnalyserTest {
       protected boolean matchesSafely(final MutationResult item,
                                       final Description mismatchDescription) {
         Optional<String> itemKillingTest = item.getKillingTest();
-        if (!itemKillingTest.isPresent()) {
+        if (itemKillingTest.isEmpty()) {
           mismatchDescription
                   .appendText("a mutation result with no killing test");
           return false;

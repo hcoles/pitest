@@ -136,7 +136,7 @@ class IncrementalAnalyser implements MutationAnalyser {
             .findFirst();
 
     // last killing test is no longer available
-    if (!maybeKillingTest.isPresent()) {
+    if (maybeKillingTest.isEmpty()) {
       return analyseFromScratch(mutation);
     }
 
