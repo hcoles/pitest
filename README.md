@@ -8,6 +8,14 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.18.0
+
+* #1380 Update minimum supported Java runtime to 11
+* #1379 Fully remove deprecated scm maven goal 
+* #1275 Pass process parameters by file
+* #1381 Adopt features from Java 11 by (thanks @timtebeek)
+* #1382 Ensure agent jar files removed at end of session
+
 ## 1.17.4
 
 * #1333 Expand ${settings.localRepository} in <argLine> (thanks @martinoconnor)
