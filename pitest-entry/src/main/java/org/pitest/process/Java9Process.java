@@ -1,7 +1,6 @@
 package org.pitest.process;
 
 import static java.util.Arrays.asList;
-import static org.pitest.functional.prelude.Prelude.or;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -13,8 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-
-import org.pitest.functional.FCollection;
+import java.util.stream.Collectors;
 
 /**
  * Process for java 9+, using file to pass all parameters
@@ -138,8 +136,9 @@ public class Java9Process implements WrappingProcess {
 
     private static void addLaunchJavaAgents(List<String> cmd) {
         RuntimeMXBean rt = ManagementFactory.getRuntimeMXBean();
-        List<String> agents = FCollection.filter(rt.getInputArguments(),
-                or(isJavaAgentParam(), isEnvironmentSetting()));
+        List<String> agents = rt.getInputArguments().stream()
+                .filter(isJavaAgentParam().or(isEnvironmentSetting()))
+                .collect(Collectors.toList());
         cmd.addAll(agents);
     }
 
