@@ -47,7 +47,7 @@ public abstract class RegionInterceptor implements MutationInterceptor {
             final int instruction = a.getInstructionIndex();
             final Optional<MethodTree> method = this.currentClass.method(a.getId().getLocation());
 
-            if (!method.isPresent()) {
+            if (method.isEmpty()) {
                 return false;
             }
 

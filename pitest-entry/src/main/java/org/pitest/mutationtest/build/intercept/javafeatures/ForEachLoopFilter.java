@@ -191,7 +191,7 @@ public class ForEachLoopFilter implements MutationInterceptor {
     return a -> {
       final int instruction = a.getInstructionIndex();
       final Optional<MethodTree> maybeMethod = currentClass.method(a.getId().getLocation());
-      if (!maybeMethod.isPresent()) {
+      if (maybeMethod.isEmpty()) {
         return false;
       }
       MethodTree method = maybeMethod.get();

@@ -88,7 +88,7 @@ public final class ClassInfo implements ClassHash {
 
   private boolean descendsFrom(final ClassName clazz) {
 
-    if (!this.getSuperClass().isPresent()) {
+    if (this.getSuperClass().isEmpty()) {
       return false;
     }
 

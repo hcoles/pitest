@@ -41,7 +41,7 @@ class PrioritisingTestConfiguration implements Configuration {
 
     private static List<Configuration> pickChildren(List<Configuration> configs) {
         List<Configuration> working = configs.stream()
-                .filter(c -> !c.verifyEnvironment().isPresent())
+                .filter(c -> c.verifyEnvironment().isEmpty())
                 .sorted(byPriority())
                 .collect(Collectors.toList());
         // We don't have a working config, let it report errors later

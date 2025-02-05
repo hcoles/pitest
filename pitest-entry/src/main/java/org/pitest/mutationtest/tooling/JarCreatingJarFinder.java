@@ -59,7 +59,7 @@ public class JarCreatingJarFinder implements JavaAgent {
 
   @Override
   public Optional<String> getJarLocation() {
-    if (!this.location.isPresent()) {
+    if (this.location.isEmpty()) {
       this.location = createJar();
     }
     return this.location;

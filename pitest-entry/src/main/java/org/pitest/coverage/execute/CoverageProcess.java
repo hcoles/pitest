@@ -34,7 +34,7 @@ public class CoverageProcess {
   public ExitCode waitToDie() {
     try {
       Optional<ExitCode> maybeExit = this.crt.waitToFinish(5);
-      while (!maybeExit.isPresent() && this.process.isAlive()) {
+      while (maybeExit.isEmpty() && this.process.isAlive()) {
         maybeExit = this.crt.waitToFinish(10);
       }
 

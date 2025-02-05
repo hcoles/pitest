@@ -3,6 +3,7 @@ package org.pitest.util;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class FileUtil {
 
@@ -24,7 +25,7 @@ public class FileUtil {
 
   public static String randomFilename() {
     return System.currentTimeMillis()
-        + ("" + Math.random()).replaceAll("\\.", "");
+        + ("" + ThreadLocalRandom.current().nextDouble()).replaceAll("\\.", "");
   }
 
 }

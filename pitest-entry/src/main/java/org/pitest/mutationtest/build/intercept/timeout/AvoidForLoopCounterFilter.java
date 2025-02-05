@@ -160,7 +160,7 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
     return a -> {
       final int instruction = a.getInstructionIndex();
       Optional<MethodTree> maybeMethod = AvoidForLoopCounterFilter.this.currentClass.method(a.getId().getLocation());
-      if (!maybeMethod.isPresent()) {
+      if (maybeMethod.isEmpty()) {
         return false;
       }
       MethodTree method = maybeMethod.get();
@@ -182,8 +182,7 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
     Context context = Context.start(DEBUG);
     return MUTATED_FOR_COUNTER.contextMatches(method.instructions(), context).stream()
             .map(c -> c.retrieve(MUTATED_INSTRUCTION.read()))
-            .filter(Optional::isPresent)
-            .map(Optional::get)
+            .flatMap(Optional::stream)
             .collect(Collectors.toSet());
   }
 
