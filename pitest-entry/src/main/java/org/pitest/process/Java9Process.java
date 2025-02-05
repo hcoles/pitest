@@ -1,6 +1,5 @@
 package org.pitest.process;
 
-import static java.util.Arrays.asList;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -11,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
  * Process for java 9+, using file to pass all parameters
  */
 public class Java9Process implements WrappingProcess {
+
+    private static final Map<Optional<String>, Path> CACHE = new ConcurrentHashMap<>();
 
     private final int         port;
     private final ProcessArgs processArgs;
@@ -31,12 +33,12 @@ public class Java9Process implements WrappingProcess {
     }
 
     public void start() throws IOException {
-        String[] args = { "" + this.port };
+        String args =  "" + this.port;
 
         ProcessBuilder processBuilder = createProcessBuilder(
                 this.processArgs.getJavaExecutable(),
                 this.processArgs.getJvmArgs(),
-                this.minionClass, asList(args),
+                this.minionClass, args,
                 this.processArgs.getJavaAgentFinder(),
                 this.processArgs.getLaunchClassPath());
 
@@ -70,21 +72,23 @@ public class Java9Process implements WrappingProcess {
     }
 
     private ProcessBuilder createProcessBuilder(String javaProc,
-                                                List<String> args, Class<?> mainClass, List<String> programArgs,
+                                                List<String> args, Class<?> mainClass, String programArgs,
                                                 JavaAgent javaAgent, String classPath) {
-        List<String> cmd = createLaunchArgs(javaAgent, args, mainClass,
-                programArgs, classPath);
+        List<String> fileArgs = createLaunchArgs(javaAgent, args, classPath);
 
-        removeJacocoAgent(cmd);
+        removeJacocoAgent(fileArgs);
 
-        try {
-            // all arguments are passed via a temporary file, thereby avoiding command line length limits
-            Path argsFile = createArgsFile(cmd);
-            return new ProcessBuilder(asList(javaProc, "@" + argsFile.toFile().getAbsolutePath()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
+        // All arguments are passed via a temporary file, thereby avoiding command line length limits
+        Path argsFile = CACHE.computeIfAbsent(javaAgent.getJarLocation(), j -> createArgsFile(fileArgs));
+
+        List<String> cmd = new ArrayList<>();
+        cmd.add(javaProc);
+        cmd.add("@" + argsFile.toFile().getAbsolutePath());
+        cmd.add(mainClass.getName());
+        cmd.add(programArgs);
+
+        return new ProcessBuilder(cmd);
     }
     private void removeJacocoAgent(List<String> cmd) {
         removeFromClassPath(cmd, line -> line.startsWith("-javaagent") && line.contains("jacoco"));
@@ -98,8 +102,7 @@ public class Java9Process implements WrappingProcess {
         }
     }
 
-    private List<String> createLaunchArgs(JavaAgent agentJarLocator, List<String> args, Class<?> mainClass,
-                                          List<String> programArgs, String classPath) {
+    private List<String> createLaunchArgs(JavaAgent agentJarLocator, List<String> args, String classPath) {
 
         List<String> cmd = new ArrayList<>();
 
@@ -112,20 +115,22 @@ public class Java9Process implements WrappingProcess {
 
         addLaunchJavaAgents(cmd);
 
-        cmd.add(mainClass.getName());
-        cmd.addAll(programArgs);
         return cmd;
     }
 
-    private Path createArgsFile(List<String> cmd) throws IOException {
-        // All files should be deleted on process exit, although some garbage may be left
-        // if the process is killed. Files are however created in the system temp directory
-        // so should be cleaned up on reboot
-        String name = "pitest-args-";
-        Path args = Files.createTempFile(name, ".args");
-        args.toFile().deleteOnExit();
-        Files.write(args, cmd);
-        return args;
+    private Path createArgsFile(List<String> cmd) {
+       try {
+           // All files should be deleted on process exit, although some garbage may be left
+           // if the process is killed. Files are however created in the system temp directory
+           // so should be cleaned up on reboot
+           String name = "pitest-args-";
+           Path args = Files.createTempFile(name, ".args");
+           args.toFile().deleteOnExit();
+           Files.write(args, cmd);
+           return args;
+       } catch (IOException e) {
+           throw new RuntimeException(e);
+       }
     }
 
     private static void addPITJavaAgent(JavaAgent agentJarLocator,
