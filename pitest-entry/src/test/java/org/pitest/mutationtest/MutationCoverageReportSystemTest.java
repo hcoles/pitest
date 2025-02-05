@@ -43,7 +43,6 @@ import org.pitest.SystemTest;
 import org.pitest.classpath.ClassPath;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.engine.gregor.Generated;
-import org.pitest.util.FileUtil;
 import org.pitest.util.IsolationUtils;
 
 import com.example.BeforeAfterClassTest;
@@ -233,7 +232,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
   public void shouldMutateClassesSuppliedToAlternateClassPath()
       throws IOException {
     // yes, this is horrid
-    final String location = FileUtil.randomFilename() + ".jar";
+    final String location = ("" + Math.random()).replaceAll("\\.", "") + ".jar";
     try {
       try (FileOutputStream fos = new FileOutputStream(location)) {
         final InputStream stream = IsolationUtils.getContextClassLoader()

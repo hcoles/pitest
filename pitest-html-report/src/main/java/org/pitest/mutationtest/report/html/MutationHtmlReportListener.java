@@ -22,16 +22,17 @@ import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.SourceLocator;
 import org.pitest.mutationtest.verify.BuildMessage;
-import org.pitest.util.FileUtil;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
 import org.pitest.util.ResultOutputStrategy;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -83,9 +84,9 @@ public class MutationHtmlReportListener implements MutationResultListener {
   }
 
   private String loadCss() {
-    try {
-      return FileUtil.readToString(IsolationUtils.getContextClassLoader()
-          .getResourceAsStream("templates/mutation/style.css"));
+    try (InputStream is = IsolationUtils.getContextClassLoader()
+                .getResourceAsStream("templates/mutation/style.css")) {
+      return new String(is.readAllBytes(), StandardCharsets.UTF_8);
     } catch (final IOException e) {
       Log.getLogger().log(Level.SEVERE, "Error while loading css", e);
     }
