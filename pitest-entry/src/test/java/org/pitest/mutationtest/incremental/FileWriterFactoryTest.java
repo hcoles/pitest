@@ -8,13 +8,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 
 import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
-import org.pitest.util.FileUtil;
 import org.pitest.util.PitError;
 
 public class FileWriterFactoryTest {
@@ -33,7 +33,7 @@ public class FileWriterFactoryTest {
     writer.write("test");
     writerFactory.close();
 
-    final String content = FileUtil.readToString(new FileInputStream(file));
+    final String content = Files.readString(file.toPath());
     assertThat(content, equalTo("test"));
   }
 
@@ -57,7 +57,7 @@ public class FileWriterFactoryTest {
     writer.write("test");
     writerFactory.close();
 
-    final String content = FileUtil.readToString(new FileInputStream(file));
+    final String content = Files.readString(file.toPath());
     assertThat(content, equalTo("test"));
   }
 

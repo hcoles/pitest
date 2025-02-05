@@ -238,7 +238,7 @@ public class HistoryTest {
                     @Override
                     public Collection<ClassHash> fetchClassHashes(Collection<ClassName> classes) {
                         return classes.stream()
-                                .flatMap(c -> Streams.fromOptional(fetchClassHash(c)))
+                                .flatMap(c -> fetchClassHash(c).stream())
                                 .collect(Collectors.toList());
                     }
 

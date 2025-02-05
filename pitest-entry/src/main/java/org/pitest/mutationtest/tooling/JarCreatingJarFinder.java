@@ -27,7 +27,6 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classpath.ClassPathByteArraySource;
 import java.util.Optional;
 import org.pitest.process.JavaAgent;
-import org.pitest.util.FileUtil;
 import org.pitest.util.PitError;
 import org.pitest.util.Unchecked;
 
@@ -68,10 +67,14 @@ public class JarCreatingJarFinder implements JavaAgent {
   private Optional<String> createJar() {
     try {
 
-      final File randomName = File.createTempFile(FileUtil.randomFilename(),
+      final File randomName = File.createTempFile("pitest-agent",
           ".jar");
+
       final FileOutputStream fos = new FileOutputStream(randomName);
       createJarFromClassPathResources(fos, randomName.getAbsolutePath());
+
+      randomName.deleteOnExit();
+
       return Optional.ofNullable(randomName.getAbsolutePath());
 
     } catch (final IOException ex) {
