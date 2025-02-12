@@ -8,6 +8,10 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.18.1
+
+* #1386 Handle spaces in agents and variables inherited from launch
+
 ## 1.18.0
 
 * #1380 Update minimum supported Java runtime to 11
