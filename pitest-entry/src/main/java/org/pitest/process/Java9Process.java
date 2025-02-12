@@ -84,6 +84,7 @@ public class Java9Process implements WrappingProcess {
 
         List<String> cmd = new ArrayList<>();
         cmd.add(javaProc);
+        addLaunchJavaAgentsAndEnvironmentVariables(cmd);
         cmd.add("@" + argsFile.toFile().getAbsolutePath());
         cmd.add(mainClass.getName());
         cmd.add(programArgs);
@@ -113,8 +114,6 @@ public class Java9Process implements WrappingProcess {
 
         cmd.addAll(args);
 
-        addLaunchJavaAgentsAndEnvironmentVariables(cmd);
-
         return cmd;
     }
 
@@ -136,29 +135,15 @@ public class Java9Process implements WrappingProcess {
     private static void addPITJavaAgent(JavaAgent agentJarLocator,
                                         List<String> cmd) {
         final Optional<String> jarLocation = agentJarLocator.getJarLocation();
-        jarLocation.ifPresent(l -> cmd.add("-javaagent:\"" + l + "\""));
+        jarLocation.ifPresent(l -> cmd.add("-javaagent:" + l));
     }
 
     private static void addLaunchJavaAgentsAndEnvironmentVariables(List<String> cmd) {
         RuntimeMXBean rt = ManagementFactory.getRuntimeMXBean();
         List<String> agents = rt.getInputArguments().stream()
                 .filter(isJavaAgentParam().or(isEnvironmentSetting()))
-                .map(Java9Process::escapeSpaces)
                 .collect(Collectors.toList());
         cmd.addAll(agents);
-    }
-
-    static String escapeSpaces(String line) {
-        if (!line.contains(" ")) {
-            return line;
-        }
-        if (line.startsWith("-D")) {
-            return line.replace("=", "=\"") + "\"";
-        }
-        if (line.startsWith("-javaagent")) {
-            return line.replace("-javaagent:", "-javaagent:\"") + "\"";
-        }
-        return line;
     }
 
     private static Predicate<String> isEnvironmentSetting() {
