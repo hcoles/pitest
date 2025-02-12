@@ -84,6 +84,7 @@ public class Java9Process implements WrappingProcess {
 
         List<String> cmd = new ArrayList<>();
         cmd.add(javaProc);
+        addLaunchJavaAgentsAndEnvironmentVariables(cmd);
         cmd.add("@" + argsFile.toFile().getAbsolutePath());
         cmd.add(mainClass.getName());
         cmd.add(programArgs);
@@ -113,8 +114,6 @@ public class Java9Process implements WrappingProcess {
 
         cmd.addAll(args);
 
-        addLaunchJavaAgents(cmd);
-
         return cmd;
     }
 
@@ -139,7 +138,7 @@ public class Java9Process implements WrappingProcess {
         jarLocation.ifPresent(l -> cmd.add("-javaagent:" + l));
     }
 
-    private static void addLaunchJavaAgents(List<String> cmd) {
+    private static void addLaunchJavaAgentsAndEnvironmentVariables(List<String> cmd) {
         RuntimeMXBean rt = ManagementFactory.getRuntimeMXBean();
         List<String> agents = rt.getInputArguments().stream()
                 .filter(isJavaAgentParam().or(isEnvironmentSetting()))
