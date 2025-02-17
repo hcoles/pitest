@@ -108,8 +108,8 @@ public class Java9Process implements WrappingProcess {
         List<String> cmd = new ArrayList<>();
 
         cmd.add("-classpath");
-        cmd.add(classPath);
-
+        cmd.add(classPath.replace(" ", "\" \""));
+        
         addPITJavaAgent(agentJarLocator, cmd);
 
         cmd.addAll(args);
@@ -153,5 +153,6 @@ public class Java9Process implements WrappingProcess {
     private static Predicate<String> isJavaAgentParam() {
         return a -> a.toLowerCase().startsWith("-javaagent");
     }
+
 
 }

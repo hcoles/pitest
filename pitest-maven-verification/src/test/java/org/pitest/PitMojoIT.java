@@ -101,6 +101,19 @@ public class PitMojoIT {
   }
 
   @Test
+  public void shouldHandleSpacesInProjectPath() throws Exception {
+    File testDir = prepare("/pit spaces in path");
+    verifier.executeGoal("test");
+    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+
+    String firstRun = readCoverage(testDir);
+    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+
+    String secondRun = readCoverage(testDir);
+    assertEquals(firstRun, secondRun);
+  }
+
+  @Test
   public void shouldExcludeSpecifiedJUnitCategories() throws Exception {
     File testDir = prepare("/pit-junit-categories");
     verifier.executeGoal("test");
