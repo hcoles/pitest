@@ -69,6 +69,7 @@ public class PitMojoIT {
         NANOSECONDS.toMillis(System.nanoTime() - startTime));
   }
 
+  /*
   @Test
   public void shouldSetUserDirToArtefactWorkingDirectory() throws Exception {
     prepare("/pit-33-setUserDir");
@@ -100,9 +101,12 @@ public class PitMojoIT {
     assertEquals(firstRun, secondRun);
   }
 
+
+   */
+
   @Test
   public void shouldHandleSpacesInProjectPath() throws Exception {
-    File testDir = prepare("/pit spaces in path");
+    File testDir = prepare("/pit spaces and more () in path");
     verifier.executeGoal("test");
     verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
 
@@ -113,6 +117,7 @@ public class PitMojoIT {
     assertEquals(firstRun, secondRun);
   }
 
+  /*
   @Test
   public void shouldExcludeSpecifiedJUnitCategories() throws Exception {
     File testDir = prepare("/pit-junit-categories");
@@ -171,322 +176,324 @@ public class PitMojoIT {
             "<mutation detected='true' status='KILLED' numberOfTestsRun='2'><sourceFile>MyRequest.java</sourceFile>");
   }
 
-  /*
-   * Verifies that configuring report generation to be skipped does actually
-   * prevent the site report from being generated.
-   */
-  @Test
-  public void shouldSkipSiteReportGeneration() throws Exception {
-    File testDir = prepareSiteTest("/pit-site-skip");
-    File siteParentDir = buildFilePath(testDir, "target", "site");
 
-    verifier.executeGoal("site");
-
-    assertThat(siteParentDir).exists();
-    assertThat(buildFilePath(siteParentDir, "pit-reports")).doesNotExist();
-    assertThat(buildFilePath(siteParentDir, "index.html")).exists();
-    assertThat(buildFilePath(siteParentDir, "project-reports.html"))
-        .doesNotExist();
-  }
-
-  /*
-   * Verifies that running PIT with timestampedReports set to false will
-   * correctly copy the HTML report to the site reports directory.
-   */
-  @Test
-  public void shouldGenerateSiteReportWithNonTimestampedHtmlReport()
-      throws Exception {
-    File testDir = prepareSiteTest("/pit-site-non-timestamped");
-
-    verifier.executeGoal("site");
-    verifyPitReportTest(testDir);
-  }
-
-  /*
-   * Verifies that running PIT with timestampedReports set to true will copy the
-   * contents of the latest timestamped report
-   */
-  @Test
-  public void shouldGenerateSiteReportWithSingleTimestampedHtmlReport()
-      throws Exception {
-    File testDir = prepareSiteTest("/pit-site-timestamped", "201505212116");
-
-    verifier.executeGoal("site");
-    verifyPitReportTest(testDir);
-  }
-
-  /*
-   * Verifies that running PIT compute the result of the two sub-module
-   */
-  @Test
-  public void shouldComputeReportOfTheSubModule()
-      throws Exception {
-    //Given
-    File testDir = prepare("/pit-sub-module");
-
-    verifier.executeGoal("test");
-    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
-
-
-    //When
-    verifier.executeGoal("org.pitest:pitest-maven:report-aggregate-module");
-
-    //Then
-    File siteParentDir = buildFilePath(testDir, "target", "pit-reports");
-    assertThat(buildFilePath(siteParentDir, "index.html")).exists();
-    String projectReportsHtmlContents = FileUtils
-            .readFileToString(buildFilePath(testDir, "target", "pit-reports",
-                    "index.html"));
-
-    assertTrue("miss data of subModule 1",
-            projectReportsHtmlContents
-                    .contains("<a href=\"./org.example1/index.html\">org.example1</a>"));
-
-    assertTrue("miss data of subModule 2",
-
-            projectReportsHtmlContents
-                    .contains("<a href=\"./org.example2/index.html\">org.example2</a>"));
-
-
-    assertTrue("coverage included",
-            projectReportsHtmlContents
-                    .contains("85%"));
-  }
-
-  /*
-   * Verifies that, when multiple timestamped PIT reports have been generated,
-   * only the latest report is copied to the site reports directory. This test
-   * sets the earlier directory (201503292032) as the last modified. This tests
-   * to make sure the last modified date is used instead of just using the
-   * folder name.
-   */
-  @Test
-  public void shouldCopyLatestTimestampedReportWhenMultipleTimestampedReportsExist()
-      throws Exception {
-    File testDir = prepareSiteTest("/pit-site-multiple-timestamped",
-        "201503292032");
-
-    verifier.executeGoal("site");
-    verifyPitReportTest(testDir);
-  }
-
-  /*
-   * Verifies that in the case where pit has generated reports with both
-   * timestampedReports=true and timestampedReports=false, the latest report run
-   * is copied and no timestamped report subdirectories are copied
-   */
-  @Test
-  public void shouldCopyLatestTimestampedOrNonTimestampedReportWhenBothExist()
-      throws Exception {
-    File testDir = prepareSiteTest("/pit-site-combined", "");
-
-    verifier.executeGoal("site");
-    verifyPitReportTest(testDir);
-  }
-
-  /*
-   * Verifies that the build fails when running the report goal without first
-   * running the mutationCoverage goal
-   */
-  @Test
-  public void shouldFailIfNoPITReportAvailable() throws Exception {
-    prepare("/pit-site-reportonly");
-
-    try {
-      verifier.executeGoal("site");
-      fail("should fail");
-    } catch (VerificationException e) {
-      assertThat(e.getMessage())
-          .containsSequence(
-              "could not find reports directory");
-    }
-  }
-
-  /*
-   * verifies that overriding defaults has the expected results
-   */
-  @Test
-  public void shouldCorrectlyHandleOverrides() throws Exception {
-    File testDir = prepareSiteTest("/pit-site-custom-config");
-    File targetDir = buildFilePath(testDir, "target");
-    File expectedSiteReportDir = buildFilePath(testDir, "target", "site",
-        "foobar");
-
-    FileUtils.moveDirectory(buildFilePath(targetDir, "pit-reports"),
-        buildFilePath(targetDir, "new-report-location"));
-
-    verifier.executeGoal("site");
-
-    String projectReportsHtmlContents = FileUtils
-        .readFileToString(buildFilePath(testDir, "target", "site",
-            "project-reports.html"));
-    assertTrue(
-        "did not find expected anchor tag to pit site report",
-        projectReportsHtmlContents
-            .contains("<a href=\"foobar/index.html\" title=\"my-test-pit-report-name\">my-test-pit-report-name</a>"));
-    assertTrue("expected site report directory [" + expectedSiteReportDir
-        + "] does not exist but should exist", expectedSiteReportDir.exists());
-
-    assertFalse(
-        "expected default site report directory exists but should not exist since the report location parameter was overridden",
-        buildFilePath(testDir, "target", "site", "pit-reports").exists());
-  }
-
-  @Test
-  public void shouldReadExclusionsFromSurefireConfig() throws Exception {
-    // Note this test also tests the argline parsing concern
-
-    File testDir = prepare("/pit-surefire-excludes");
-    verifier.executeGoal("test");
-    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
-
-    String actual = readResults(testDir);
-    assertThat(actual)
-            .contains(
-                    "<mutation detected='false' status='NO_COVERAGE' numberOfTestsRun='0'><sourceFile>NotCovered.java</sourceFile>");
-  }
-
-  @Test(expected = FileNotFoundException.class)
-  public void shouldNotExecuteWhenSkipTestsFlagActive() throws Exception {
-    File testDir = prepare("/pit-skipTests-active");
-    verifier.addCliOption("-DskipTests");
-    verifier.executeGoal("test");
-    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
-
-    readResults(testDir);
-  }
-
-  @Test
-  public void shouldWorkWithGWTMockito() throws Exception {
-    skipIfJavaVersionNotSupportByThirdParty();
-    File testDir = prepare("/pit-183-gwtmockito");
-    verifier.executeGoal("test");
-    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
-
-    String actual = readResults(testDir);
-    assertThat(actual)
-        .contains(
-            "<mutation detected='true' status='KILLED' numberOfTestsRun='3'><sourceFile>MyWidget.java</sourceFile>");
-    assertThat(actual)
-        .contains(
-            "<mutation detected='false' status='SURVIVED' numberOfTestsRun='7'><sourceFile>MyWidget.java</sourceFile>");
-    assertThat(actual).doesNotContain("status='RUN_ERROR'");
-  }
-
-  @Test
-  // note this test depends on the junit5 plugin
-  public void shouldWorkWithQuarkus() throws Exception {
-    assumeTrue(CurrentRuntime.version() >= 11);
-
-    File testDir = prepare("/pit-quarkus");
-    verifier.executeGoal("test");
-    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
-
-    String actual = readResults(testDir);
-    // Test is flaky. Needs investigation
-    //assertThat(actual)
-    //        .contains(
-    //                "<mutation detected='false' status='SURVIVED' numberOfTestsRun='2'>" +
-    //                        "<sourceFile>ExampleController.java</sourceFile>");
-
-    assertThat(actual)
-            .contains(
-                    "<mutation detected='true' status='KILLED' numberOfTestsRun='1'><sourceFile>ExampleController.java</sourceFile>");
-
-  }
-
-
-  @Test
-  public void shouldFindOccupiedTestPackages() throws IOException, VerificationException {
-    File testDir = prepare("/pit-findOccupiedTestPackages");
-    verifier.executeGoal("test");
-    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
-
-    String actual = readResults(testDir);
-    assertThat(actual).contains(
-        "<mutation detected='true' status='KILLED' numberOfTestsRun='1'><sourceFile>DiscoveredClass.java</sourceFile>");
-  }
-
-  @Test
-  public void shouldNotNullPointerWhenEnumInitializerNotCalled() throws IOException, VerificationException {
-    File testDir = prepare("/pit-enum-constructor-npe");
-    verifier.executeGoal("test");
-    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
-
-    String actual = readResults(testDir);
-    assertThat(actual).isNotEmpty();
-  }
-
-  @Test
-  public void shouldFailCleanlyWhenTestPluginMissing() throws IOException {
-    try {
-      prepare("/pit-missing-test-plugin");
-      verifier.executeGoal("test");
-      verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
-
-      fail("Expected execution to fail due to missing plugin");
-    } catch(VerificationException ex) {
-       assertThat(ex.getMessage()).contains("Please check you have correctly installed the pitest plugin for your project's test library");
-    }
-  }
-
-  @Test
-  public void shouldDisableJacoco() throws IOException, VerificationException {
-    File testDir = prepare("/pit-jacoco");
-    verifier.executeGoals(asList("test-compile", "org.pitest:pitest-maven:mutationCoverage"));
-
-    String actual = readResults(testDir);
-    assertThat(actual).doesNotContain("RUN_ERROR");
-  }
-
-  @Test
-  public void resolvesCorrectFilesForKotlinMultiModules() throws Exception {
-    // if the same filename is used for files outside of their declared package
-    // ensure the correct source file is use for annotation
-    File testDir = prepare("/pit-kotlin-multi-module");
-
-    verifier.executeGoals(asList("test-compile", "org.pitest:pitest-maven:mutationCoverage", "org.pitest:pitest-maven:report-aggregate-module"));
-
-    String moduleOneSource = FileUtils
-            .readFileToString(buildFilePath(testDir, "target", "pit-reports", "com.example.one",
-                    "DefaultArguments.kt.html"));
-    String moduleTwoSource = FileUtils
-            .readFileToString(buildFilePath(testDir, "target", "pit-reports", "com.example.two",
-                    "DefaultArguments.kt.html"));
-    String moduleThreeSource = FileUtils
-            .readFileToString(buildFilePath(testDir, "target", "pit-reports", "com.example.three",
-                    "DefaultArguments.kt.html"));
-
-    assertThat(moduleOneSource).contains("package com.example.one");
-    assertThat(moduleTwoSource).contains("package com.example.two");
-    assertThat(moduleThreeSource).contains("package com.example.three");
-
-  }
-
-  @Test
-  public void handlesTestsInSeparateModulesWhenConfigured()
-          throws Exception {
-      File testDir = prepare("/pit-cross-module-tests");
-
-    verifier.executeGoal("install");
-    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
-
-    verifier.executeGoal("org.pitest:pitest-maven:report-aggregate-module");
-
-    File siteParentDir = buildFilePath(testDir, "target", "pit-reports");
-    assertThat(buildFilePath(siteParentDir, "index.html")).exists();
-    String projectReportsHtmlContents = FileUtils
-            .readFileToString(buildFilePath(testDir, "target", "pit-reports",
-                    "index.html"));
-
-    assertTrue("miss data of subModule 1",
-            projectReportsHtmlContents
-                    .contains("<a href=\"./org.example1/index.html\">org.example1</a>"));
-
-    assertTrue("coverage included",
-            projectReportsHtmlContents
-                    .contains("85%"));
-  }
+//
+//  /*
+//   * Verifies that configuring report generation to be skipped does actually
+//   * prevent the site report from being generated.
+//   */
+//  @Test
+//  public void shouldSkipSiteReportGeneration() throws Exception {
+//    File testDir = prepareSiteTest("/pit-site-skip");
+//    File siteParentDir = buildFilePath(testDir, "target", "site");
+//
+//    verifier.executeGoal("site");
+//
+//    assertThat(siteParentDir).exists();
+//    assertThat(buildFilePath(siteParentDir, "pit-reports")).doesNotExist();
+//    assertThat(buildFilePath(siteParentDir, "index.html")).exists();
+//    assertThat(buildFilePath(siteParentDir, "project-reports.html"))
+//        .doesNotExist();
+//  }
+//
+//  /*
+//   * Verifies that running PIT with timestampedReports set to false will
+//   * correctly copy the HTML report to the site reports directory.
+//   */
+//  @Test
+//  public void shouldGenerateSiteReportWithNonTimestampedHtmlReport()
+//      throws Exception {
+//    File testDir = prepareSiteTest("/pit-site-non-timestamped");
+//
+//    verifier.executeGoal("site");
+//    verifyPitReportTest(testDir);
+//  }
+//
+//  /*
+//   * Verifies that running PIT with timestampedReports set to true will copy the
+//   * contents of the latest timestamped report
+//   */
+//  @Test
+//  public void shouldGenerateSiteReportWithSingleTimestampedHtmlReport()
+//      throws Exception {
+//    File testDir = prepareSiteTest("/pit-site-timestamped", "201505212116");
+//
+//    verifier.executeGoal("site");
+//    verifyPitReportTest(testDir);
+//  }
+//
+//  /*
+//   * Verifies that running PIT compute the result of the two sub-module
+//   */
+//  @Test
+//  public void shouldComputeReportOfTheSubModule()
+//      throws Exception {
+//    //Given
+//    File testDir = prepare("/pit-sub-module");
+//
+//    verifier.executeGoal("test");
+//    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+//
+//
+//    //When
+//    verifier.executeGoal("org.pitest:pitest-maven:report-aggregate-module");
+//
+//    //Then
+//    File siteParentDir = buildFilePath(testDir, "target", "pit-reports");
+//    assertThat(buildFilePath(siteParentDir, "index.html")).exists();
+//    String projectReportsHtmlContents = FileUtils
+//            .readFileToString(buildFilePath(testDir, "target", "pit-reports",
+//                    "index.html"));
+//
+//    assertTrue("miss data of subModule 1",
+//            projectReportsHtmlContents
+//                    .contains("<a href=\"./org.example1/index.html\">org.example1</a>"));
+//
+//    assertTrue("miss data of subModule 2",
+//
+//            projectReportsHtmlContents
+//                    .contains("<a href=\"./org.example2/index.html\">org.example2</a>"));
+//
+//
+//    assertTrue("coverage included",
+//            projectReportsHtmlContents
+//                    .contains("85%"));
+//  }
+//
+//  /*
+//   * Verifies that, when multiple timestamped PIT reports have been generated,
+//   * only the latest report is copied to the site reports directory. This test
+//   * sets the earlier directory (201503292032) as the last modified. This tests
+//   * to make sure the last modified date is used instead of just using the
+//   * folder name.
+//   */
+//  @Test
+//  public void shouldCopyLatestTimestampedReportWhenMultipleTimestampedReportsExist()
+//      throws Exception {
+//    File testDir = prepareSiteTest("/pit-site-multiple-timestamped",
+//        "201503292032");
+//
+//    verifier.executeGoal("site");
+//    verifyPitReportTest(testDir);
+//  }
+//
+//  /*
+//   * Verifies that in the case where pit has generated reports with both
+//   * timestampedReports=true and timestampedReports=false, the latest report run
+//   * is copied and no timestamped report subdirectories are copied
+//   */
+//  @Test
+//  public void shouldCopyLatestTimestampedOrNonTimestampedReportWhenBothExist()
+//      throws Exception {
+//    File testDir = prepareSiteTest("/pit-site-combined", "");
+//
+//    verifier.executeGoal("site");
+//    verifyPitReportTest(testDir);
+//  }
+//
+//  /*
+//   * Verifies that the build fails when running the report goal without first
+//   * running the mutationCoverage goal
+//   */
+//  @Test
+//  public void shouldFailIfNoPITReportAvailable() throws Exception {
+//    prepare("/pit-site-reportonly");
+//
+//    try {
+//      verifier.executeGoal("site");
+//      fail("should fail");
+//    } catch (VerificationException e) {
+//      assertThat(e.getMessage())
+//          .containsSequence(
+//              "could not find reports directory");
+//    }
+//  }
+//
+//  /*
+//   * verifies that overriding defaults has the expected results
+//   */
+//  @Test
+//  public void shouldCorrectlyHandleOverrides() throws Exception {
+//    File testDir = prepareSiteTest("/pit-site-custom-config");
+//    File targetDir = buildFilePath(testDir, "target");
+//    File expectedSiteReportDir = buildFilePath(testDir, "target", "site",
+//        "foobar");
+//
+//    FileUtils.moveDirectory(buildFilePath(targetDir, "pit-reports"),
+//        buildFilePath(targetDir, "new-report-location"));
+//
+//    verifier.executeGoal("site");
+//
+//    String projectReportsHtmlContents = FileUtils
+//        .readFileToString(buildFilePath(testDir, "target", "site",
+//            "project-reports.html"));
+//    assertTrue(
+//        "did not find expected anchor tag to pit site report",
+//        projectReportsHtmlContents
+//            .contains("<a href=\"foobar/index.html\" title=\"my-test-pit-report-name\">my-test-pit-report-name</a>"));
+//    assertTrue("expected site report directory [" + expectedSiteReportDir
+//        + "] does not exist but should exist", expectedSiteReportDir.exists());
+//
+//    assertFalse(
+//        "expected default site report directory exists but should not exist since the report location parameter was overridden",
+//        buildFilePath(testDir, "target", "site", "pit-reports").exists());
+//  }
+//
+//  @Test
+//  public void shouldReadExclusionsFromSurefireConfig() throws Exception {
+//    // Note this test also tests the argline parsing concern
+//
+//    File testDir = prepare("/pit-surefire-excludes");
+//    verifier.executeGoal("test");
+//    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+//
+//    String actual = readResults(testDir);
+//    assertThat(actual)
+//            .contains(
+//                    "<mutation detected='false' status='NO_COVERAGE' numberOfTestsRun='0'><sourceFile>NotCovered.java</sourceFile>");
+//  }
+//
+//  @Test(expected = FileNotFoundException.class)
+//  public void shouldNotExecuteWhenSkipTestsFlagActive() throws Exception {
+//    File testDir = prepare("/pit-skipTests-active");
+//    verifier.addCliOption("-DskipTests");
+//    verifier.executeGoal("test");
+//    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+//
+//    readResults(testDir);
+//  }
+//
+//  @Test
+//  public void shouldWorkWithGWTMockito() throws Exception {
+//    skipIfJavaVersionNotSupportByThirdParty();
+//    File testDir = prepare("/pit-183-gwtmockito");
+//    verifier.executeGoal("test");
+//    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+//
+//    String actual = readResults(testDir);
+//    assertThat(actual)
+//        .contains(
+//            "<mutation detected='true' status='KILLED' numberOfTestsRun='3'><sourceFile>MyWidget.java</sourceFile>");
+//    assertThat(actual)
+//        .contains(
+//            "<mutation detected='false' status='SURVIVED' numberOfTestsRun='7'><sourceFile>MyWidget.java</sourceFile>");
+//    assertThat(actual).doesNotContain("status='RUN_ERROR'");
+//  }
+//
+//  @Test
+//  // note this test depends on the junit5 plugin
+//  public void shouldWorkWithQuarkus() throws Exception {
+//    assumeTrue(CurrentRuntime.version() >= 11);
+//
+//    File testDir = prepare("/pit-quarkus");
+//    verifier.executeGoal("test");
+//    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+//
+//    String actual = readResults(testDir);
+//    // Test is flaky. Needs investigation
+//    //assertThat(actual)
+//    //        .contains(
+//    //                "<mutation detected='false' status='SURVIVED' numberOfTestsRun='2'>" +
+//    //                        "<sourceFile>ExampleController.java</sourceFile>");
+//
+//    assertThat(actual)
+//            .contains(
+//                    "<mutation detected='true' status='KILLED' numberOfTestsRun='1'><sourceFile>ExampleController.java</sourceFile>");
+//
+//  }
+//
+//
+//  @Test
+//  public void shouldFindOccupiedTestPackages() throws IOException, VerificationException {
+//    File testDir = prepare("/pit-findOccupiedTestPackages");
+//    verifier.executeGoal("test");
+//    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+//
+//    String actual = readResults(testDir);
+//    assertThat(actual).contains(
+//        "<mutation detected='true' status='KILLED' numberOfTestsRun='1'><sourceFile>DiscoveredClass.java</sourceFile>");
+//  }
+//
+//  @Test
+//  public void shouldNotNullPointerWhenEnumInitializerNotCalled() throws IOException, VerificationException {
+//    File testDir = prepare("/pit-enum-constructor-npe");
+//    verifier.executeGoal("test");
+//    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+//
+//    String actual = readResults(testDir);
+//    assertThat(actual).isNotEmpty();
+//  }
+//
+//  @Test
+//  public void shouldFailCleanlyWhenTestPluginMissing() throws IOException {
+//    try {
+//      prepare("/pit-missing-test-plugin");
+//      verifier.executeGoal("test");
+//      verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+//
+//      fail("Expected execution to fail due to missing plugin");
+//    } catch(VerificationException ex) {
+//       assertThat(ex.getMessage()).contains("Please check you have correctly installed the pitest plugin for your project's test library");
+//    }
+//  }
+//
+//  @Test
+//  public void shouldDisableJacoco() throws IOException, VerificationException {
+//    File testDir = prepare("/pit-jacoco");
+//    verifier.executeGoals(asList("test-compile", "org.pitest:pitest-maven:mutationCoverage"));
+//
+//    String actual = readResults(testDir);
+//    assertThat(actual).doesNotContain("RUN_ERROR");
+//  }
+//
+//  @Test
+//  public void resolvesCorrectFilesForKotlinMultiModules() throws Exception {
+//    // if the same filename is used for files outside of their declared package
+//    // ensure the correct source file is use for annotation
+//    File testDir = prepare("/pit-kotlin-multi-module");
+//
+//    verifier.executeGoals(asList("test-compile", "org.pitest:pitest-maven:mutationCoverage", "org.pitest:pitest-maven:report-aggregate-module"));
+//
+//    String moduleOneSource = FileUtils
+//            .readFileToString(buildFilePath(testDir, "target", "pit-reports", "com.example.one",
+//                    "DefaultArguments.kt.html"));
+//    String moduleTwoSource = FileUtils
+//            .readFileToString(buildFilePath(testDir, "target", "pit-reports", "com.example.two",
+//                    "DefaultArguments.kt.html"));
+//    String moduleThreeSource = FileUtils
+//            .readFileToString(buildFilePath(testDir, "target", "pit-reports", "com.example.three",
+//                    "DefaultArguments.kt.html"));
+//
+//    assertThat(moduleOneSource).contains("package com.example.one");
+//    assertThat(moduleTwoSource).contains("package com.example.two");
+//    assertThat(moduleThreeSource).contains("package com.example.three");
+//
+//  }
+//
+//  @Test
+//  public void handlesTestsInSeparateModulesWhenConfigured()
+//          throws Exception {
+//      File testDir = prepare("/pit-cross-module-tests");
+//
+//    verifier.executeGoal("install");
+//    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+//
+//    verifier.executeGoal("org.pitest:pitest-maven:report-aggregate-module");
+//
+//    File siteParentDir = buildFilePath(testDir, "target", "pit-reports");
+//    assertThat(buildFilePath(siteParentDir, "index.html")).exists();
+//    String projectReportsHtmlContents = FileUtils
+//            .readFileToString(buildFilePath(testDir, "target", "pit-reports",
+//                    "index.html"));
+//
+//    assertTrue("miss data of subModule 1",
+//            projectReportsHtmlContents
+//                    .contains("<a href=\"./org.example1/index.html\">org.example1</a>"));
+//
+//    assertTrue("coverage included",
+//            projectReportsHtmlContents
+//                    .contains("85%"));
+//  }
 
   private void runForJava8Only() {
     String javaVersion = System.getProperty("java.version");

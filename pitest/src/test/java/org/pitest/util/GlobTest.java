@@ -95,4 +95,18 @@ public class GlobTest {
     assertFalse(glob.matches("foodatabinding.Foo"));
     assertFalse(glob.matches("databinding.fooFoo"));
   }
+
+  @Test
+  public void escapesParentheses() {
+    final Glob glob = new Glob("some () path");
+    assertTrue(glob.matches("some () path"));
+    assertFalse(glob.matches("some path"));
+  }
+
+  @Test
+  public void escapesSquareBrackets() {
+    final Glob glob = new Glob("some [] path");
+    assertTrue(glob.matches("some [] path"));
+    assertFalse(glob.matches("some path"));
+  }
 }
