@@ -52,10 +52,10 @@ public class PluginServicesTest {
     assertThat(testee.findHistory()).isEmpty();
   }
 
-  private PluginServices createWithFeatures(MutationInterceptorFactory ... features) {
-    Services loader = Mockito.mock(Services.class);
-    when(loader.load(MutationInterceptorFactory.class)).thenReturn(asList(features));
-    return new PluginServices(loader);
+
+  @Test
+  public void noMutatorInfosProvidedByDefault() {
+    assertThat(testee.findMutatorInfos()).isEmpty();
   }
 
   private static Predicate<Object> theClass(final Class<?> clss) {
