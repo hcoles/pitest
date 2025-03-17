@@ -11,6 +11,7 @@ import org.pitest.mutationtest.build.MutationGrouperFactory;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
 import org.pitest.mutationtest.build.TestPrioritiserFactory;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.mutationtest.engine.gregor.MutatorInfo;
 import org.pitest.mutationtest.environment.EnvironmentResetPlugin;
 import org.pitest.mutationtest.environment.TransformationPlugin;
 import org.pitest.mutationtest.verify.BuildVerifierFactory;
@@ -61,6 +62,7 @@ public class PluginServices {
     l.addAll(findCodeSources());
     l.addAll(findHistory());
     l.addAll(findCoverageExport());
+    l.addAll(findStandAloneMutatorInfos());
     return l;
   }
 
@@ -139,6 +141,22 @@ public class PluginServices {
   public List<CoverageExporterFactory> findCoverageExport() {
     return new ArrayList<>(load(CoverageExporterFactory.class));
   }
+
+  public List<MutatorInfo> findMutatorInfos() {
+    List<MutatorInfo> combined = findMutationOperators().stream()
+            .filter(p -> p instanceof MutatorInfo)
+            .map(MutatorInfo.class::cast)
+            .collect(Collectors.toList());
+
+    List<MutatorInfo> info = findStandAloneMutatorInfos();
+    info.addAll(combined);
+    return info;
+  }
+
+  List<MutatorInfo> findStandAloneMutatorInfos() {
+    return new ArrayList<>(load(MutatorInfo.class));
+  }
+
   public Collection<ProvidesFeature> findFeatures() {
     return findToolClasspathPlugins().stream()
             .filter(p -> p instanceof ProvidesFeature)
