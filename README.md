@@ -8,6 +8,11 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.19.0
+
+* #1394 handle parenthesis in paths
+* #1395 New extension point - mutator urls
+
 ## 1.18.2
 
 * #1387 Quote classpath entries to handle spaces
