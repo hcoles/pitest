@@ -17,6 +17,7 @@ import org.pitest.sequence.SlotRead;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.debug;
@@ -38,6 +39,11 @@ import static org.pitest.sequence.QueryStart.any;
 import static org.pitest.sequence.QueryStart.match;
 import static org.pitest.sequence.Result.result;
 
+/**
+ * Filters conditional logic and method calls generated for try-with-resources blocks
+ * Duplicate inlined mutations are left in place to be handled by the InlinedFinallyBlockFilter
+ * any mutants filtered here by accident will break the inlined filter logic.
+ */
 public class TryWithResourcesFilter extends RegionInterceptor {
 
   private static final boolean DEBUG = false;
@@ -47,9 +53,19 @@ public class TryWithResourcesFilter extends RegionInterceptor {
   private static final Slot<AbstractInsnNode> START = Slot.create(AbstractInsnNode.class);
   private static final Slot<AbstractInsnNode> END = Slot.create(AbstractInsnNode.class);
 
+  private static final SequenceMatcher<AbstractInsnNode> SUPPRESS =
+  javac11SuppressSequence()
+          .compile(QueryParams.params(AbstractInsnNode.class)
+                  .withIgnores(notAnInstruction().or(aLabel().and(isLabel(HANDLERS.read()).negate())))
+                  .withDebug(DEBUG)
+          );
 
   private static final SequenceMatcher<AbstractInsnNode> TRY_WITH_RESOURCES =
-          javac11()
+          // java 11+ generated blocks are checked individually
+          javac11CloseSequence()
+          // earlier versions of javac and ecj are handled as one continuous block
+          // however this will result in user code being incorrectly filtered
+          // this should be revisited
           .or(javac())
           .or(ecj())
           .compile(QueryParams.params(AbstractInsnNode.class)
@@ -57,23 +73,23 @@ public class TryWithResourcesFilter extends RegionInterceptor {
                   .withDebug(DEBUG)
           );
 
-  private static SequenceQuery<AbstractInsnNode> javac11() {
+  private static SequenceQuery<AbstractInsnNode> javac11CloseSequence() {
     return any(AbstractInsnNode.class)
             .zeroOrMore(match(anyInstruction()))
             .then(closeSequence(true))
             .zeroOrMore(match(anyInstruction()))
             .then(isLabel(HANDLERS.read()).and(debug("handler")))
-            .then(ASTORE)
-            .then(ALOAD)
-            .then(closeSequence(false))
-            .then(GOTO)
+            .zeroOrMore(match(anyInstruction()));
+  }
+
+  private static SequenceQuery<AbstractInsnNode> javac11SuppressSequence() {
+    return any(AbstractInsnNode.class)
+            .zeroOrMore(match(anyInstruction()))
             .then(isLabel(HANDLERS.read()).and(debug("handler")))
             .then(ASTORE)
             .then(ALOAD)
             .then(ALOAD)
-            .then(addSuppressedMethodCall().and(debug("add suppressed")))
-            .then(ALOAD)
-            .then(ATHROW.and(recordPoint(END, true)))
+            .then(addSuppressedMethodCall().and(recordPoint(START,true)).and(debug("add suppressed")))
             .zeroOrMore(match(anyInstruction()));
   }
 
@@ -169,6 +185,7 @@ public class TryWithResourcesFilter extends RegionInterceptor {
             .then(omittedNullCheckSequence(false));
   }
 
+
   private static SequenceQuery<AbstractInsnNode> omittedNullCheckSequence(boolean record) {
     return QueryStart.match(ALOAD.and(recordPoint(START, record)))
             .then(IFNULL)
@@ -193,10 +210,10 @@ public class TryWithResourcesFilter extends RegionInterceptor {
 
   private static SequenceQuery<AbstractInsnNode> closeSequence(boolean record) {
     // javac may (or may not) generate a null check before the close
-    return match(closeMethodCall().and(recordPoint(START, record)))
+    return match(closeMethodCall().and(recordPoint(START, record)).and(recordPoint(END, record)))
             .or(match(IFNULL.and(recordPoint(START, record)))
                     .then(ALOAD)
-                    .then(closeMethodCall()));
+                    .then(closeMethodCall().and(recordPoint(END, record))));
   }
 
 
@@ -212,11 +229,24 @@ public class TryWithResourcesFilter extends RegionInterceptor {
             .map(t -> t.handler)
             .collect(Collectors.toList());
 
+
+    return Stream.concat(suppress(method, handlers), tryWithResources(method, handlers))
+            .collect(Collectors.toList());
+  }
+
+  private Stream<Region> tryWithResources(MethodTree method, List<LabelNode> handlers) {
     Context context = Context.start(DEBUG);
     context = context.store(HANDLERS.write(), handlers);
     return TRY_WITH_RESOURCES.contextMatches(method.instructions(), context).stream()
-            .map(c -> new Region(c.retrieve(START.read()).get(), c.retrieve(END.read()).get()))
-            .collect(Collectors.toList());
+            .map(c -> new Region(c.retrieve(START.read()).get(), c.retrieve(END.read()).get()));
+  }
+
+  private Stream<Region> suppress(MethodTree method, List<LabelNode> handlers) {
+    Context context = Context.start(DEBUG);
+    context = context.store(HANDLERS.write(), handlers);
+    return SUPPRESS.contextMatches(method.instructions(), context).stream()
+            .map(c -> c.retrieve(START.read()).get())
+            .map(n -> new Region(n, n));
   }
 
 
