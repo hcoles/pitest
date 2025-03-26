@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Deprecated
 public class FilterTester {
 
   private static final Collection<String> COMPILERS = Arrays.asList("javac", "javac11", "ecj", "aspectj");
