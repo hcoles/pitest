@@ -36,6 +36,7 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
 import org.junit.runner.manipulation.Filterable;
+import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Parameterized;
 import org.pitest.functional.FCollection;
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
@@ -46,6 +47,7 @@ import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.TestUnitExecutionListener;
 import org.pitest.testapi.TestUnitFinder;
 import org.pitest.util.IsolationUtils;
+import org.pitest.util.Log;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
@@ -71,6 +73,9 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
 
     if (isExcluded(runner) || isNotARunnableTest(runner, clazz.getName()) || !isIncluded(clazz)) {
+      if (Log.verbosity().showMinionOutput() && runner instanceof ErrorReportingRunner) {
+        showJUnitErrors(clazz, runner);
+      }
       return Collections.emptyList();
     }
 
@@ -82,6 +87,14 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
       return Collections.singletonList(new AdaptedJUnitTestUnit(
           clazz, Optional.empty()));
     }
+  }
+
+  private void showJUnitErrors(Class<?> clazz, Runner runner) {
+    RunNotifier notifier = new RunNotifier();
+    DebugListener debugListener = new DebugListener();
+    notifier.addListener(debugListener);
+    runner.run(notifier);
+    Log.getLogger().fine("Cannot find tests in " + clazz + " : " + debugListener.problems());
   }
 
   private List<TestUnit> filterUnitsByMethod(List<TestUnit> filteredUnits) {
