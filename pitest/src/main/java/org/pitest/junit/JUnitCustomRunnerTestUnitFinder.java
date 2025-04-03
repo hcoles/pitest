@@ -94,7 +94,8 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
     DebugListener debugListener = new DebugListener();
     notifier.addListener(debugListener);
     runner.run(notifier);
-    Log.getLogger().fine("Cannot find tests in " + clazz + " : " + debugListener.problems());
+    debugListener.problems()
+            .ifPresent( msg -> Log.getLogger().fine("Cannot find tests in " + clazz + " : " + msg));
   }
 
   private List<TestUnit> filterUnitsByMethod(List<TestUnit> filteredUnits) {
