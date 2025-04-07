@@ -8,6 +8,11 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.19.1
+
+* #1399 Do not filter user code in try with resources 
+* #1401 Extract errors when JUnit4 classes cannot be loaded
+
 ## 1.19.0
 
 * #1394 handle parenthesis in paths
