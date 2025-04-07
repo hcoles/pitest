@@ -1,12 +1,15 @@
 package org.pitest.mutationtest.autoconfig;
 
 import org.junit.Test;
+import org.pitest.mutationtest.config.ConfigUpdaterVerifier;
 import org.pitest.mutationtest.config.ReportOptions;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class EnableAssertionsTest {
     EnableAssertions underTest = new EnableAssertions();
+
+    ConfigUpdaterVerifier v = ConfigUpdaterVerifier.confirmFactory(underTest);
 
     @Test
     public void addsEAFlag() {
@@ -23,6 +26,11 @@ public class EnableAssertionsTest {
 
     @Test
     public void featureIsOnByDefault() {
-        assertThat(underTest.provides().isOnByDefault()).isTrue();
+        v.isOnByDefault();
+    }
+
+    @Test
+    public void isOnChain() {
+        v.isOnChain();
     }
 }
