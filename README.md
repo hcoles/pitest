@@ -8,6 +8,10 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.19.2
+
+* #1404 Switch to central distribution before sonatype EOL
+
 ## 1.19.1
 
 * #1399 Do not filter user code in try with resources 
