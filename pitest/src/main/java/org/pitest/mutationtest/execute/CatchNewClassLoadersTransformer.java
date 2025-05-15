@@ -2,12 +2,14 @@ package org.pitest.mutationtest.execute;
 
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.classinfo.ClassName;
+import org.pitest.util.Log;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.security.ProtectionDomain;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.logging.Logger;
 
 /**
  * Pitest mainly inserts mutants by calling Instrumentation.redefineClasses using
@@ -28,6 +30,8 @@ import java.util.WeakHashMap;
  */
 public class CatchNewClassLoadersTransformer implements ClassFileTransformer {
 
+    private static final Logger LOG = Log.getLogger();
+
     private static String targetClass;
     private static byte[] currentMutant;
 
@@ -38,6 +42,9 @@ public class CatchNewClassLoadersTransformer implements ClassFileTransformer {
     public static synchronized void setMutant(String className, byte[] mutant) {
         targetClass = className;
         currentMutant = mutant;
+
+        logClassloaders();
+
         for (ClassLoader each : CLASS_LOADERS.keySet()) {
             final Class<?> clazz = checkClassForLoader(each, className);
             if (clazz != null) {
@@ -81,6 +88,12 @@ public class CatchNewClassLoadersTransformer implements ClassFileTransformer {
         // Only gwtmockito has been identified so far as a loader not to transform
         // but there will be others
         return !loader.getClass().getName().startsWith("com.google.gwtmockito.");
+    }
+
+    private static void logClassloaders() {
+        if (CLASS_LOADERS.size() > 1) {
+            LOG.fine("Accumulated " + CLASS_LOADERS.size() + " classloaders");
+        }
     }
 
 }
