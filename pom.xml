@@ -99,7 +99,7 @@
 				</property>
 			</activation>
 			<modules>
-                            <module>pitest-maven-verification</module>
+				<module>pitest-maven-verification</module>
 			</modules>
 		</profile>
 		<profile>
@@ -403,5 +403,12 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>central</id>
+			<url>https://central.sonatype.com/repository/maven-snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 </project>
