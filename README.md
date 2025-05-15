@@ -8,6 +8,10 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.19.3
+
+* #1407 Log number of active classloaders
+
 ## 1.19.2
 
 * #1404 Switch to central distribution before sonatype EOL
