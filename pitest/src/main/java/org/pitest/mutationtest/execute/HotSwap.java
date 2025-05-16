@@ -20,7 +20,7 @@ class HotSwap {
       // trigger loading for the current loader
       Class<?> clazz = Class.forName(clazzName.asJavaName(), false, loader);
 
-      // will still need to explicitly swap it... not clear why the transformed does not do this
+      // we still need to explicitly swap it... not clear why the transformer does not do this
       return HotSwapAgent.hotSwap(clazz, mutantBytes);
 
     } catch (final ClassNotFoundException e) {
