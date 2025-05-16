@@ -59,7 +59,9 @@ public class CatchNewClassLoadersTransformer implements ClassFileTransformer {
                             final ProtectionDomain protectionDomain, final byte[] classfileBuffer) {
 
         if (className.equals(targetClass) && shouldTransform(loader)) {
-            CLASS_LOADERS.put(loader, null);
+            if (CLASS_LOADERS.put(loader, null) == null) {
+                LOG.fine("Classloader " + loader + " loads target " + className);
+            }
             // we might be mid-mutation so return the mutated bytes
             return currentMutant;
         }
