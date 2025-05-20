@@ -7,6 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class ExampleService {
 
     public boolean doStuff(String s) {
+        System.out.println("this survives");
         return s.equals("foo");
     }
 

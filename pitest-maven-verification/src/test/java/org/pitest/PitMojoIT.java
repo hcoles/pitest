@@ -380,22 +380,27 @@ public class PitMojoIT {
   @Test
   // note this test depends on the junit5 plugin
   public void shouldWorkWithQuarkus() throws Exception {
-    assumeTrue(CurrentRuntime.version() >= 11);
+    assumeTrue(CurrentRuntime.version() >= 17);
 
     File testDir = prepare("/pit-quarkus");
     verifier.executeGoal("test");
     verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
 
     String actual = readResults(testDir);
+
+    assertThat(actual)
+            .contains(
+                    "<mutation detected='true' status='KILLED' numberOfTestsRun='1'><sourceFile>ExampleController.java</sourceFile>");
+
+    assertThat(actual)
+            .contains(
+                    "status='SURVIVED'");
+
     // Test is flaky. Needs investigation
     //assertThat(actual)
     //        .contains(
     //                "<mutation detected='false' status='SURVIVED' numberOfTestsRun='2'>" +
     //                        "<sourceFile>ExampleController.java</sourceFile>");
-
-    assertThat(actual)
-            .contains(
-                    "<mutation detected='true' status='KILLED' numberOfTestsRun='1'><sourceFile>ExampleController.java</sourceFile>");
 
   }
 

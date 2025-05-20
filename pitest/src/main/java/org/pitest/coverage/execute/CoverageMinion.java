@@ -164,10 +164,12 @@ public class CoverageMinion {
   private static List<TestUnit> discoverTests(Configuration testPlugin, List<ClassName> classes, CoveragePipe invokeQueue) {
     TestUnitExecutionListener listener = new CoverageTestExecutionListener(invokeQueue);
     FindTestUnits finder = new FindTestUnits(testPlugin, listener);
+
     List<TestUnit> tus = finder
         .findTestUnitsForAllSuppliedClasses(classes.stream()
                 .flatMap(ClassName.nameToClass())
                 .collect(Collectors.toList()));
+
     LOG.info(() -> "Found " + tus.size() + " tests");
     return tus;
   }

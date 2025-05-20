@@ -59,7 +59,9 @@ public class CatchNewClassLoadersTransformer implements ClassFileTransformer {
                             final ProtectionDomain protectionDomain, final byte[] classfileBuffer) {
 
         if (className.equals(targetClass) && shouldTransform(loader)) {
-            CLASS_LOADERS.put(loader, null);
+            if (shouldStore(loader)) {
+                CLASS_LOADERS.put(loader, null);
+            }
             // we might be mid-mutation so return the mutated bytes
             return currentMutant;
         }
@@ -84,6 +86,13 @@ public class CatchNewClassLoadersTransformer implements ClassFileTransformer {
 
     }
 
+    private boolean shouldStore(ClassLoader loader) {
+        // quarkus generates large numbers of ParentLastURLClassLoaders. They need to be
+        // transformed when first encountered, but do not seem to be used to load the mutated
+        // class in subsequent tests. Re-transforming them would introduce a significant performance hit.
+        return !loader.getClass().getName().equals("io.quarkus.test.junit.classloading.ParentLastURLClassLoader");
+    }
+
     private boolean shouldTransform(ClassLoader loader) {
         // Only gwtmockito has been identified so far as a loader not to transform
         // but there will be others
@@ -91,9 +100,13 @@ public class CatchNewClassLoadersTransformer implements ClassFileTransformer {
     }
 
     private static void logClassloaders() {
-        if (CLASS_LOADERS.size() > 1) {
+        int count = CLASS_LOADERS.size();
+        if (count > 20) {
+            LOG.warning("Accumulated " + CLASS_LOADERS.size() + " classloaders, this will likely degrade performance. Please report this as an issue.");
+        } else if (count > 1) {
             LOG.fine("Accumulated " + CLASS_LOADERS.size() + " classloaders");
         }
+
     }
 
 }
