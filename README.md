@@ -8,6 +8,12 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.19.4
+
+* #1409 Support Quarkus 3.22 and above
+
+Note Quarkus support also requires version 1.2.3 or above of the pitest JUnit 5 plugin.
+
 ## 1.19.3
 
 * #1407 Log number of active classloaders
