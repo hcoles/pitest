@@ -404,6 +404,26 @@ public class PitMojoIT {
 
   }
 
+  @Test
+  public void shouldWorkWithOlderQuarkusVersions() throws Exception {
+    assumeTrue(CurrentRuntime.version() >= 17);
+
+    File testDir = prepare("/pit-quarkus", "-Dquarkus.platform.version=3.21.4");
+    verifier.executeGoal("test");
+    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+
+    String actual = readResults(testDir);
+
+    assertThat(actual)
+            .contains(
+                    "<mutation detected='true' status='KILLED' numberOfTestsRun='1'><sourceFile>ExampleController.java</sourceFile>");
+
+    assertThat(actual)
+            .contains(
+                    "status='SURVIVED'");
+
+  }
+
 
   @Test
   public void shouldFindOccupiedTestPackages() throws IOException, VerificationException {
@@ -522,7 +542,7 @@ public class PitMojoIT {
     return FileUtils.readFileToString(coverage);
   }
 
-  private File prepare(String testPath) throws IOException,
+  private File prepare(String testPath, String ... options) throws IOException,
           VerificationException {
     String path = ResourceExtractor.extractResourcePath(getClass(), testPath,
             testFolder.getRoot(), true).getAbsolutePath();
@@ -532,6 +552,11 @@ public class PitMojoIT {
     verifier.setDebug(true);
     verifier.getCliOptions().add("-Dverbose=true");
     verifier.getCliOptions().add("-Dpit.version=" + VERSION);
+
+    for (String option : options) {
+      verifier.getCliOptions().add(option);
+    }
+
     verifier.getCliOptions().add(
             "-Dthreads=" + (Runtime.getRuntime().availableProcessors()));
 

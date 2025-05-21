@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Pitest mainly inserts mutants by calling Instrumentation.redefineClasses using
@@ -35,8 +36,14 @@ public class CatchNewClassLoadersTransformer implements ClassFileTransformer {
     private static String targetClass;
     private static byte[] currentMutant;
 
+    //
+    // Storage was introduced to support Quarkus, however they changed their classloading strategy in
+    // 3.22.2 so it is no longer necessary. As storage runs the risk of performance degradation if too
+    // many classloaders are encountered removing this shouldn be investigated once older versions of
+    // quarkus are out of circulation.
+    //
     // What we want is a ConcurrentWeakHasSet, since that doesn't exist without writing one ourselves
-    // we'll abuse a WeakHashMap and live with the synchronization
+    // we'll abuse a WeakHashMap and live with the synchronization.
     static final Map<ClassLoader, Object> CLASS_LOADERS = Collections.synchronizedMap(new WeakHashMap<>());
 
     public static synchronized void setMutant(String className, byte[] mutant) {
@@ -101,8 +108,9 @@ public class CatchNewClassLoadersTransformer implements ClassFileTransformer {
 
     private static void logClassloaders() {
         int count = CLASS_LOADERS.size();
-        if (count > 20) {
+        if (count > 30) {
             LOG.warning("Accumulated " + CLASS_LOADERS.size() + " classloaders, this will likely degrade performance. Please report this as an issue.");
+            LOG.warning("Accumulated classloaders = " + CLASS_LOADERS.keySet().stream().map(Object::toString).collect(Collectors.joining("\n")));
         } else if (count > 1) {
             LOG.fine("Accumulated " + CLASS_LOADERS.size() + " classloaders");
         }
