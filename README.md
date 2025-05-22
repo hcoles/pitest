@@ -1,4 +1,4 @@
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.pitest/pitest/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.pitest/pitest)
+[![Maven Central Version](https://img.shields.io/maven-central/v/org.pitest/pitest)](https://central.sonatype.com/artifact/org.pitest/pitest)
 ![Build Statis](https://github.com/hcoles/pitest/workflows/CI/badge.svg?branch=master)
 [![Build Status](https://dev.azure.com/henrycoles/pitest/_apis/build/status/hcoles.pitest?branchName=master)](https://dev.azure.com/henrycoles/pitest/_build/latest?definitionId=3&branchName=master)
 
