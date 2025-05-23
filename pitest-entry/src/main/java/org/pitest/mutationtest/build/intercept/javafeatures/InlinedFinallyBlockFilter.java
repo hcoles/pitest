@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static java.util.function.Predicate.isEqual;
+import static java.util.stream.Collectors.joining;
 import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.isInstruction;
 import static org.pitest.bytecode.analysis.InstructionMatchers.notAnInstruction;
@@ -194,7 +195,12 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
 
   private boolean isPossibleToCorrectInlining(List<MutationDetails> mutationsInHandlerBlock) {
     if (mutationsInHandlerBlock.size() > 1) {
-      LOG.warning("Found more than one mutation similar on same line in a finally block. Can't correct for inlining.");
+      LOG.warning("Found more than one mutation similar on same line in a finally block. "
+              + "Can't correct for inlining.\n\t"
+              + mutationsInHandlerBlock
+              .stream()
+              .map(Object::toString)
+              .collect(joining("\n\t")));
       return false;
     }
 
