@@ -8,6 +8,10 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.19.5
+
+* #1412 Catch and log empty methods in filters
+
 ## 1.19.4
 
 * #1409 Support Quarkus 3.22 and above
