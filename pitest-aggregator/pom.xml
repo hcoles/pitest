@@ -5,8 +5,10 @@
 		<artifactId>pitest-parent</artifactId>
 		<version>${revision}</version>
 	</parent>
+	<name>pitest-aggregator</name>
 	<artifactId>pitest-aggregator</artifactId>
 	<description>Aggregates the output of report XML documents into a new combined HTML report</description>
+	<url>https://pitest.org</url>
 	<build>
 		<plugins>
 			<plugin>
