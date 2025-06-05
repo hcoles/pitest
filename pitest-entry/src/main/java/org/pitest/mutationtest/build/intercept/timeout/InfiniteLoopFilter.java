@@ -21,6 +21,7 @@ import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.sequence.SequenceMatcher;
+import org.pitest.util.Log;
 
 public abstract class InfiniteLoopFilter implements MutationInterceptor {
 
@@ -60,6 +61,10 @@ public abstract class InfiniteLoopFilter implements MutationInterceptor {
       return Collections.emptyList();
     }
     MethodTree method = maybeMethod.get();
+    if (method.instructions().isEmpty()) {
+      Log.getLogger().warning(method.asLocation() + " has no instructions");
+      return Collections.emptyList();
+    }
 
     //  give up if our matcher thinks loop is already infinite
     if (infiniteLoopMatcher().matches(method.instructions())) {

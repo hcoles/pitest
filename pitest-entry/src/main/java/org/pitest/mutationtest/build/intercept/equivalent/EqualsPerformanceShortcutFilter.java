@@ -26,6 +26,7 @@ import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.sequence.QueryParams;
 import org.pitest.sequence.QueryStart;
 import org.pitest.sequence.SequenceMatcher;
+import org.pitest.util.Log;
 
 public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
 
@@ -92,6 +93,11 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
   }
 
   private boolean shortCutEquals(MethodTree tree, MutationDetails a, Mutater m) {
+    if (tree.instructions().isEmpty()) {
+      Log.getLogger().warning(tree.asLocation() + " has no instructions");
+      return false;
+    }
+
     if (!mutatesAConditionalJump(tree, a.getInstructionIndex())) {
       return false;
     }
