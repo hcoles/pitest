@@ -46,6 +46,7 @@ import org.pitest.sequence.SequenceMatcher;
 import org.pitest.sequence.SequenceQuery;
 import org.pitest.sequence.Slot;
 import org.pitest.sequence.SlotWrite;
+import org.pitest.util.Log;
 
 /**
  * Removes mutants that affect for loop counters as these have
@@ -164,6 +165,10 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
         return false;
       }
       MethodTree method = maybeMethod.get();
+      if (method.instructions().isEmpty()) {
+        Log.getLogger().warning(method.asLocation() + " has no instructions");
+        return false;
+      }
 
       final AbstractInsnNode mutatedInstruction = method.instruction(instruction);
 
