@@ -115,6 +115,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
       for (String msg : testStats.messages()) {
         LOG.info(msg);
       }
+      testStats.end();
 
       verifyBuildSuitableForMutationTesting(coverage);
 

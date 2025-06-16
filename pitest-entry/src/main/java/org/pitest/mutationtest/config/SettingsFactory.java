@@ -5,7 +5,9 @@ import org.pitest.classpath.CodeSourceFactory;
 import org.pitest.classpath.DefaultCodeSource;
 import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CompoundCoverageExporterFactory;
+import org.pitest.coverage.CompoundTestStatListener;
 import org.pitest.coverage.CoverageExporter;
+import org.pitest.coverage.TestStatListener;
 import org.pitest.mutationtest.HistoryFactory;
 import org.pitest.mutationtest.build.CoverageTransformer;
 import org.pitest.mutationtest.build.CoverageTransformerFactory;
@@ -69,6 +71,14 @@ public class SettingsFactory {
     } else {
       return new NullCoverageExporter();
     }
+  }
+
+  public TestStatListener createTestStatListener() {
+    ResultOutputStrategy outputStrategy = getOutputStrategy();
+    List<TestStatListener> listeners = plugins.findTestStatListeners().stream()
+            .map(f -> f.createTestListener(outputStrategy))
+            .collect(Collectors.toList());
+    return new CompoundTestStatListener(listeners);
   }
 
   public MutationEngineFactory createEngine() {

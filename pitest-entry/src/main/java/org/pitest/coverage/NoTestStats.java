@@ -11,4 +11,9 @@ public class NoTestStats implements TestStatListener {
     public List<String> messages() {
         return List.of();
     }
+
+    @Override
+    public void end() {
+
+    }
 }

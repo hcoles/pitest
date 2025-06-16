@@ -30,6 +30,11 @@ public class BasicStatListener implements TestStatListener {
                 "Largest test (" + largestTest.test().getName() + ") covered " + largestTest.stat() + " blocks"
                 );
     }
+
+    @Override
+    public void end() {
+
+    }
 }
 
 class TestStat {

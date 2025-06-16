@@ -6,4 +6,6 @@ public interface TestStatListener {
     void accept(CoverageResult cr);
 
     List<String> messages();
+
+    void end();
 }

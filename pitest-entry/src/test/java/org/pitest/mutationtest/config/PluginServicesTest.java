@@ -2,6 +2,7 @@ package org.pitest.mutationtest.config;
 
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.pitest.coverage.BasicTestStatListenerFactory;
 import org.pitest.functional.FCollection;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.build.InterceptorParameters;
@@ -33,6 +34,12 @@ public class PluginServicesTest {
   public void shouldListCSVReportAsToolClasspathPlugin() {
     assertTrue(FCollection.contains(this.testee.findToolClasspathPlugins(),
         theClass(CSVReportFactory.class)));
+  }
+
+  @Test
+  public void shouldListBasicStatsAsToolClasspathPlugin() {
+    assertTrue(FCollection.contains(this.testee.findToolClasspathPlugins(),
+            theClass(BasicTestStatListenerFactory.class)));
   }
 
   @Test

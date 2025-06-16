@@ -4,7 +4,6 @@ import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.classpath.CodeSource;
 import org.pitest.classpath.ProjectClassPaths;
-import org.pitest.coverage.BasicStatListener;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.TestStatListener;
 import org.pitest.coverage.execute.CoverageOptions;
@@ -117,7 +116,7 @@ public class EntryPoint {
 
     final CodeSource code = settings.createCodeSource(cps);
 
-    TestStatListener stats = new BasicStatListener();
+    TestStatListener stats = settings.createTestStatListener();
     final Timings timings = new Timings(stats);
     final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
         baseDir, coverageOptions, launchOptions, code,
