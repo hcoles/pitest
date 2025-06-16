@@ -44,6 +44,7 @@ import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.ClassLines;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
+import org.pitest.coverage.NoTestStats;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.History;
@@ -223,7 +224,7 @@ public class MutationCoverageReportTest {
 
     this.testee = new MutationCoverage(strategies, null, this.code, this.data,
         new SettingsFactory(this.data, PluginServices.makeForContextLoader()),
-        new Timings());
+        new Timings(new NoTestStats()));
     try {
       return this.testee.runReport();
     } catch (final IOException e) {

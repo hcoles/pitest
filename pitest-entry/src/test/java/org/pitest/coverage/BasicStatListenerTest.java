@@ -37,7 +37,7 @@ public class BasicStatListenerTest {
         testee.accept(cr3);
 
         assertThat(testee.messages())
-                .contains("Slowest test (Description [testClass=bar, name=foo]) took 20 ms");
+                .contains("Slowest test (foo) took 20 ms");
     }
 
     @Test
@@ -61,7 +61,7 @@ public class BasicStatListenerTest {
         testee.accept(cr3);
 
         assertThat(testee.messages())
-                .contains("Largest test (Description [testClass=bar, name=foo]) covered 4 blocks");
+                .contains("Largest test (foo) covered 4 blocks");
     }
 
 }

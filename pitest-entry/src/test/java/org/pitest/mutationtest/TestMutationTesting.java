@@ -257,7 +257,7 @@ public class TestMutationTesting {
     final ProjectClassPaths cps = new ProjectClassPaths(data.getClassPath(),
         data.createClassesFilter(), pf);
 
-    final Timings timings = new Timings();
+    final Timings timings = new Timings(new NoTestStats());
     final CodeSource code = new DefaultCodeSource(cps);
 
     final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(

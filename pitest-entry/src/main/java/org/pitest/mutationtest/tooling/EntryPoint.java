@@ -117,8 +117,8 @@ public class EntryPoint {
 
     final CodeSource code = settings.createCodeSource(cps);
 
-    final Timings timings = new Timings();
     TestStatListener stats = new BasicStatListener();
+    final Timings timings = new Timings(stats);
     final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
         baseDir, coverageOptions, launchOptions, code,
         settings.createCoverageExporter(), stats, timings, data.getVerbosity());

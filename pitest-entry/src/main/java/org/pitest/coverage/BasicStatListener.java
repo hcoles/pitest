@@ -12,22 +12,22 @@ public class BasicStatListener implements TestStatListener {
 
     @Override
     public void accept(CoverageResult cr) {
-        if (cr.getExecutionTime() > slowestTest.stat()) {
+        if (cr.getExecutionTime() >= slowestTest.stat()) {
             slowestTest = new TestStat(cr.getExecutionTime(), cr.getTestUnitDescription());
         }
 
-        if (cr.getNumberOfCoveredBlocks() > largestTest.stat()) {
+        if (cr.getNumberOfCoveredBlocks() >= largestTest.stat()) {
             largestTest = new TestStat(cr.getNumberOfCoveredBlocks(), cr.getTestUnitDescription());
         }
     }
 
     @Override
     public List<String> messages() {
-        if (slowestTest.stat() == 0 && largestTest.stat() == 0) {
+        if (slowestTest.stat() == 0) {
             return Collections.emptyList();
         }
-        return List.of("Slowest test (" + slowestTest.test() + ") took " + slowestTest.stat() + " ms",
-                "Largest test (" + largestTest.test() + ") covered " + largestTest.stat() + " blocks"
+        return List.of("Slowest test (" + slowestTest.test().getName() + ") took " + slowestTest.stat() + " ms",
+                "Largest test (" + largestTest.test().getName() + ") covered " + largestTest.stat() + " blocks"
                 );
     }
 }
