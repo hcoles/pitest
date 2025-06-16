@@ -17,6 +17,7 @@ import org.pitest.classpath.DefaultCodeSource;
 import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageGenerator;
+import org.pitest.coverage.NoTestStats;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
 import org.pitest.coverage.export.NullCoverageExporter;
@@ -117,8 +118,8 @@ public abstract class ReportTestBase {
       final CodeSource code = new DefaultCodeSource(cps);
 
       final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
-          null, coverageOptions, launchOptions, code,
-          new NullCoverageExporter(), timings, Verbosity.DEFAULT);
+                null, coverageOptions, launchOptions, code,
+                new NullCoverageExporter(), new NoTestStats(), timings, Verbosity.DEFAULT);
 
       final History history = new NullHistory();
 
