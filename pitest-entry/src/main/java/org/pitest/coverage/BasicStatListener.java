@@ -7,11 +7,19 @@ import java.util.List;
 
 public class BasicStatListener implements TestStatListener {
 
+    // arbitrary limit to gauge number of slow tests
+    private static final int SLOW_LIMIT = 2000;
+
+    private int slowTestCount = 0;
     private TestStat slowestTest = new TestStat(0, null);
     private TestStat largestTest = new TestStat(0, null);
 
     @Override
     public void accept(CoverageResult cr) {
+        if (cr.getExecutionTime() > SLOW_LIMIT) {
+            slowTestCount = slowTestCount + 1;
+        }
+
         if (cr.getExecutionTime() >= slowestTest.stat()) {
             slowestTest = new TestStat(cr.getExecutionTime(), cr.getTestUnitDescription());
         }
@@ -26,7 +34,9 @@ public class BasicStatListener implements TestStatListener {
         if (slowestTest.stat() == 0) {
             return Collections.emptyList();
         }
-        return List.of("Slowest test (" + slowestTest.test().getName() + ") took " + slowestTest.stat() + " ms",
+        return List.of(
+                slowTestCount + " tests took longer than " + SLOW_LIMIT + " ms",
+                "Slowest test (" + slowestTest.test().getName() + ") took " + slowestTest.stat() + " ms",
                 "Largest test (" + largestTest.test().getName() + ") covered " + largestTest.stat() + " blocks"
                 );
     }

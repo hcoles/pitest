@@ -64,4 +64,31 @@ public class BasicStatListenerTest {
                 .contains("Largest test (foo) covered 4 blocks");
     }
 
+    @Test
+    public void reportsNumberOfVerySlowTests() {
+        CoverageResult cr1 = CoverageMother.aCoverageResult()
+                .withExecutionTime(2000)
+                .build();
+
+        CoverageResult cr2 = CoverageMother.aCoverageResult()
+                .withExecutionTime(2001)
+                .build();
+
+        CoverageResult cr3 = CoverageMother.aCoverageResult()
+                .withExecutionTime(1999)
+                .build();
+
+        CoverageResult cr4 = CoverageMother.aCoverageResult()
+                .withExecutionTime(2001)
+                .build();
+
+        testee.accept(cr1);
+        testee.accept(cr2);
+        testee.accept(cr3);
+        testee.accept(cr4);
+
+        assertThat(testee.messages())
+                .contains("2 tests took longer than 2000 ms");
+    }
+
 }
