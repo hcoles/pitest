@@ -14,6 +14,8 @@
  */
 package org.pitest.util;
 
+import org.pitest.coverage.TestStatListener;
+
 import java.io.PrintStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -23,7 +25,11 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class Timings {
 
-  public enum Stage {
+    public Timings(TestStatListener testStats) {
+        this.testStats = testStats;
+    }
+
+    public enum Stage {
     MUTATION_PRE_SCAN("pre-scan for mutations"),
     BUILD_MUTATION_TESTS("build mutation tests"),
     RUN_MUTATION_TESTS("run mutation analysis"),
@@ -42,6 +48,7 @@ public class Timings {
     }
   }
 
+  private final TestStatListener testStats;
   private final Map<Stage, TimeSpan> timings = new LinkedHashMap<>();
 
   public void registerStart(final Stage stage) {
@@ -62,6 +69,10 @@ public class Timings {
     ps.println(StringUtil.separatorLine());
     ps.println("> Total " + " : " + new TimeSpan(0, MILLISECONDS.toNanos(total)));
     ps.println(StringUtil.separatorLine());
+
+    for (String each : testStats.messages()) {
+      ps.println("> " + each);
+    }
   }
 
 }

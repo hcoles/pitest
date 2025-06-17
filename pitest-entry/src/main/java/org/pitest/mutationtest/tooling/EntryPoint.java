@@ -5,6 +5,7 @@ import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.classpath.CodeSource;
 import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageGenerator;
+import org.pitest.coverage.TestStatListener;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
 import org.pitest.mutationtest.History;
@@ -115,10 +116,11 @@ public class EntryPoint {
 
     final CodeSource code = settings.createCodeSource(cps);
 
-    final Timings timings = new Timings();
+    TestStatListener stats = settings.createTestStatListener();
+    final Timings timings = new Timings(stats);
     final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(
         baseDir, coverageOptions, launchOptions, code,
-        settings.createCoverageExporter(), timings, data.getVerbosity());
+        settings.createCoverageExporter(), stats, timings, data.getVerbosity());
 
     final Optional<WriterFactory> maybeWriter = data.createHistoryWriter();
     WriterFactory historyWriter = maybeWriter.orElse(new NullWriterFactory());

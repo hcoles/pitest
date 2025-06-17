@@ -55,6 +55,7 @@ import org.pitest.classpath.PathFilter;
 import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
+import org.pitest.coverage.NoTestStats;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
 import org.pitest.coverage.export.NullCoverageExporter;
@@ -256,12 +257,12 @@ public class TestMutationTesting {
     final ProjectClassPaths cps = new ProjectClassPaths(data.getClassPath(),
         data.createClassesFilter(), pf);
 
-    final Timings timings = new Timings();
+    final Timings timings = new Timings(new NoTestStats());
     final CodeSource code = new DefaultCodeSource(cps);
 
     final CoverageGenerator coverageGenerator = new DefaultCoverageGenerator(
-        null, coverageOptions, launchOptions, code, new NullCoverageExporter(),
-        timings, Verbosity.DEFAULT);
+            null, coverageOptions, launchOptions, code, new NullCoverageExporter(),
+            new NoTestStats(), timings, Verbosity.DEFAULT);
 
     final CoverageDatabase coverageData = coverageGenerator.calculateCoverage(c -> true);
 

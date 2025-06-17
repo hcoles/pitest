@@ -22,6 +22,7 @@ import org.pitest.coverage.CoverageData;
 import org.pitest.coverage.CoverageExporter;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.CoverageResult;
+import org.pitest.coverage.TestStatListener;
 import org.pitest.coverage.analysis.LineMapper;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
@@ -59,19 +60,25 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
   private final CodeSource       code;
   private final Timings          timings;
   private final File             workingDir;
+  private final TestStatListener testStats;
   private final CoverageExporter exporter;
   private final Verbosity        verbosity;
 
-  public DefaultCoverageGenerator(final File workingDir,
-      final CoverageOptions coverageOptions, final LaunchOptions launchOptions,
-      final CodeSource code, final CoverageExporter exporter,
-      final Timings timings, Verbosity verbosity) {
+  public DefaultCoverageGenerator(File workingDir,
+                                  CoverageOptions coverageOptions,
+                                  LaunchOptions launchOptions,
+                                  CodeSource code,
+                                  CoverageExporter exporter,
+                                  TestStatListener testStats,
+                                  Timings timings,
+                                  Verbosity verbosity) {
     this.coverageOptions = coverageOptions;
     this.code = code;
     this.launchOptions = launchOptions;
     this.timings = timings;
     this.workingDir = workingDir;
     this.exporter = exporter;
+    this.testStats = testStats;
     this.verbosity = verbosity;
   }
 
@@ -105,6 +112,10 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
       final long time = NANOSECONDS.toSeconds(System.nanoTime() - t0);
 
       LOG.info("Calculated coverage in " + time + " seconds.");
+      for (String msg : testStats.messages()) {
+        LOG.info(msg);
+      }
+      testStats.end();
 
       verifyBuildSuitableForMutationTesting(coverage);
 
@@ -128,8 +139,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     }
   }
 
-  private void gatherCoverageData(List<String> tests,
-      final CoverageData coverage) throws IOException, InterruptedException {
+  private void gatherCoverageData(List<String> tests, CoverageData coverage) throws IOException, InterruptedException {
 
     final Consumer<CoverageResult> handler = resultProcessor(coverage);
 
@@ -176,8 +186,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     return a -> LOG.fine("MINION : " + a);
   }
 
-  private Consumer<CoverageResult> resultProcessor(
-      final CoverageData coverage) {
+  private Consumer<CoverageResult> resultProcessor(CoverageData coverage) {
     return new Consumer<CoverageResult>() {
       private final String[] spinner = new String[] { "\u0008/", "\u0008-",
           "\u0008\\", "\u0008|" };
@@ -185,6 +194,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
       @Override
       public void accept(final CoverageResult cr) {
+        testStats.accept(cr);
         if (cr.isGreenTest() || !coverageOptions.getPitConfig().skipFailingTests()) {
           coverage.calculateClassCoverage(cr);
         }
