@@ -8,6 +8,11 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.19.6
+
+* #1413 Bump asm to 9.8
+* #1414 Show basic test stats
+
 ## 1.19.5
 
 * #1412 Catch and log empty methods in filters
