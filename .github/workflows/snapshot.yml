@@ -24,7 +24,7 @@ jobs:
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
       - name: Publish JARs
-        run: mvn -B deploy -DskipTests=true
+        run: mvn -B -Psnapshot deploy -DskipTests=true -Drevision=dev-SNAPSHOT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
