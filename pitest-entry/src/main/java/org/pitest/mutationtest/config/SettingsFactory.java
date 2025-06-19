@@ -8,6 +8,7 @@ import org.pitest.coverage.CompoundCoverageExporterFactory;
 import org.pitest.coverage.CompoundTestStatListener;
 import org.pitest.coverage.CoverageExporter;
 import org.pitest.coverage.TestStatListener;
+import org.pitest.coverage.TestStatListenerFactory;
 import org.pitest.mutationtest.HistoryFactory;
 import org.pitest.mutationtest.build.CoverageTransformer;
 import org.pitest.mutationtest.build.CoverageTransformerFactory;
@@ -75,7 +76,13 @@ public class SettingsFactory {
 
   public TestStatListener createTestStatListener() {
     ResultOutputStrategy outputStrategy = getOutputStrategy();
-    List<TestStatListener> listeners = plugins.findTestStatListeners().stream()
+
+    final FeatureParser parser = new FeatureParser();
+    List<TestStatListenerFactory> available = plugins.findTestStatListeners();
+    FeatureSelector<TestStatListenerFactory> features = new FeatureSelector<>(parser.parseFeatures(this.options.getFeatures()), available);
+    List<TestStatListenerFactory> enabled = features.getActiveFeatures();
+
+    List<TestStatListener> listeners = enabled.stream()
             .map(f -> f.createTestListener(outputStrategy))
             .collect(Collectors.toList());
     return new CompoundTestStatListener(listeners);
