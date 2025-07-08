@@ -8,6 +8,10 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.20.0
+
+* #1415 Extension point for test stat listeners
+
 ## 1.19.6
 
 * #1413 Bump asm to 9.8
