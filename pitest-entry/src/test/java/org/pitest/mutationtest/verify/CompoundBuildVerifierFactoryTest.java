@@ -25,6 +25,15 @@ public class CompoundBuildVerifierFactoryTest {
         assertThat(underTest.create(new BuildVerifierArguments(aCodeSource(), new ReportOptions())).verifyBuild())
                 .containsExactly(buildMessage("one"), buildMessage("two"), buildMessage("three"));
     }
+    @Test
+    public void removesDuplicateMessage() {
+        CompoundBuildVerifierFactory underTest = new CompoundBuildVerifierFactory(asList(
+                factoryFor(buildVerifier(asList("one", "one"))),
+                factoryFor(buildVerifier(asList("two", "two")))));
+
+        assertThat(underTest.create(new BuildVerifierArguments(aCodeSource(), new ReportOptions())).verifyBuild())
+                .containsExactly(buildMessage("one"), buildMessage("two"));
+    }
 
     private BuildVerifierFactory factoryFor(BuildVerifier bv) {
         BuildVerifierFactory vs = Mockito.mock(BuildVerifierFactory.class);
