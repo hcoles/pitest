@@ -16,6 +16,7 @@ public class CompoundBuildVerifierFactory implements BuildVerifierFactory {
         List<BuildMessage> issues = verifiers.stream()
                 .map(f -> f.create(args))
                 .flatMap(v -> v.verifyBuild().stream())
+                .distinct()
                 .collect(Collectors.toList());
 
         return new BuildVerifier() {
