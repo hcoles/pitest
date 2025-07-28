@@ -8,6 +8,12 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.20.1
+
+* #1417 Update dependencies
+* #1418 Filter build messages with the same content
+* #1419 Prevent re-evaluation of suite classes
+
 ## 1.20.0
 
 * #1415 Extension point for test stat listeners
