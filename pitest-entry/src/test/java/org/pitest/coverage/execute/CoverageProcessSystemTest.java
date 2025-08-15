@@ -38,6 +38,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
@@ -277,9 +278,13 @@ public class CoverageProcessSystemTest {
   private void runCoverageProcess(final Class<?> test,
       final List<CoverageResult> coveredClasses) throws IOException,
       InterruptedException {
-    final Consumer<CoverageResult> handler = a -> coveredClasses.add(a);
+    final Consumer<CoverageResult> handler = coveredClasses::add;
 
-    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(), excludeTests(), TestPluginArguments.defaults(), VERBOSE);
+    final CoverageOptions sa = new CoverageOptions(coverOnlyTestees(),
+            excludeTests(),
+            TestPluginArguments.defaults(),
+            VERBOSE,
+            Collections.emptyList());
 
     final JarCreatingJarFinder agent = new JarCreatingJarFinder();
     try {
