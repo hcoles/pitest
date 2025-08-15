@@ -71,7 +71,7 @@ public class MutationTestMinion {
       final MinionArguments paramsFromParent = this.dis
           .read(MinionArguments.class);
 
-      enableTransformations(paramsFromParent.featureString);
+      enableTransformations(paramsFromParent.featureStrings);
 
       configureVerbosity(paramsFromParent);
 
@@ -84,7 +84,7 @@ public class MutationTestMinion {
 
       final MutationEngine engine = createEngine(paramsFromParent.engine, paramsFromParent.engineArgs);
 
-      final ResetEnvironment reset = this.plugins.createReset();
+      final ResetEnvironment reset = this.plugins.createReset(paramsFromParent.featureStrings);
 
       final MutationTestWorker worker = new MutationTestWorker(hotswap,
           engine.createMutator(byteSource), loader, reset, paramsFromParent.fullMutationMatrix);

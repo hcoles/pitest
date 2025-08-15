@@ -30,8 +30,13 @@ public class ClientPluginServices {
     return ServiceLoader.load(MutationEngineFactory.class, this.loader);
   }
 
-  public Collection<? extends EnvironmentResetPlugin> findResets() {
-    return ServiceLoader.load(EnvironmentResetPlugin.class, this.loader);
+  public Collection<? extends EnvironmentResetPlugin> findResets(Collection<String> featureStrings) {
+    Collection<EnvironmentResetPlugin> available = ServiceLoader.load(EnvironmentResetPlugin.class, this.loader);
+    final FeatureParser parser = new FeatureParser();
+
+    FeatureSelector<EnvironmentResetPlugin> features = new FeatureSelector<>(parser.parseFeatures(featureStrings), available);
+    return features.getActiveFeatures();
+
   }
 
   public Collection<TransformationPlugin> findTransformations(Collection<String> featureStrings) {
