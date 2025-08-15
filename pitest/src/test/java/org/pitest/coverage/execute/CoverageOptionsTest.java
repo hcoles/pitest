@@ -1,5 +1,6 @@
 package org.pitest.coverage.execute;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.pitest.util.Verbosity.DEFAULT;
 
@@ -12,18 +13,18 @@ public class CoverageOptionsTest {
 
   TestPluginArguments pitConfig = TestPluginArguments.defaults();
 
-  CoverageOptions testee = new CoverageOptions(Collections.singletonList("*"), Collections.<String>emptyList(), this.pitConfig, DEFAULT);
+  CoverageOptions testee = new CoverageOptions(Collections.singletonList("*"), emptyList(), this.pitConfig, DEFAULT, emptyList());
 
   @Test
   public void shouldIncludeTargettedClasses() {
-    this.testee = new CoverageOptions(Collections.singletonList("com.example.*"), Collections.<String>emptyList(), this.pitConfig, DEFAULT);
+    this.testee = new CoverageOptions(Collections.singletonList("com.example.*"), emptyList(), this.pitConfig, DEFAULT, emptyList());
 
     assertThat(this.testee.getFilter().test("com.example.Foo")).isTrue();
   }
 
   @Test
   public void shouldExcludeExcludedClasses() {
-    this.testee = new CoverageOptions(Collections.singletonList("com.example.*"), Collections.singletonList("com.example.NotMe"), this.pitConfig, DEFAULT);
+    this.testee = new CoverageOptions(Collections.singletonList("com.example.*"), Collections.singletonList("com.example.NotMe"), this.pitConfig, DEFAULT, emptyList());
 
     assertThat(this.testee.getFilter().test("com.example.Foo")).isTrue();
     assertThat(this.testee.getFilter().test("com.example.NotMe")).isFalse();

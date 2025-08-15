@@ -34,11 +34,13 @@ public class CoverageOptions implements Serializable {
   private final Collection<String>      exclude;
   private final Verbosity verbosity;
   private final TestPluginArguments pitConfig;
+  private final Collection<String> features;
 
 
   public CoverageOptions(final Collection<String> include, final Collection<String> exclude,
-      final TestPluginArguments pitConfig, final Verbosity verbose) {
-    Objects.requireNonNull(pitConfig);
+                         final TestPluginArguments pitConfig, final Verbosity verbose, Collection<String> features) {
+      this.features = features;
+      Objects.requireNonNull(pitConfig);
     this.include = include;
     this.exclude = exclude;
     this.verbosity = verbose;
@@ -57,6 +59,10 @@ public class CoverageOptions implements Serializable {
 
   public TestPluginArguments getPitConfig() {
     return this.pitConfig;
+  }
+
+  public Collection<String> features() {
+    return features;
   }
 
   private static Predicate<String> commonClasses() {
