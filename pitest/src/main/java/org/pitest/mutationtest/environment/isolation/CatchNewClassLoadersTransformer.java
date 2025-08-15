@@ -1,7 +1,8 @@
-package org.pitest.mutationtest.execute;
+package org.pitest.mutationtest.environment.isolation;
 
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.classinfo.ClassName;
+import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.util.Log;
 
 import java.lang.instrument.ClassFileTransformer;
@@ -33,7 +34,7 @@ public class CatchNewClassLoadersTransformer implements ClassFileTransformer {
 
     private static final Logger LOG = Log.getLogger();
 
-    private static String targetClass;
+    private static ClassName targetClass;
     private static byte[] currentMutant;
 
     //
@@ -46,16 +47,16 @@ public class CatchNewClassLoadersTransformer implements ClassFileTransformer {
     // we'll abuse a WeakHashMap and live with the synchronization.
     static final Map<ClassLoader, Object> CLASS_LOADERS = Collections.synchronizedMap(new WeakHashMap<>());
 
-    public static synchronized void setMutant(String className, byte[] mutant) {
-        targetClass = className;
-        currentMutant = mutant;
+    public static synchronized void setMutant(Mutant mutant) {
+        targetClass = mutant.getDetails().getClassName();
+        currentMutant = mutant.getBytes();
 
         logClassloaders();
 
         for (ClassLoader each : CLASS_LOADERS.keySet()) {
-            final Class<?> clazz = checkClassForLoader(each, className);
+            final Class<?> clazz = checkClassForLoader(each, targetClass);
             if (clazz != null) {
-                HotSwapAgent.hotSwap(clazz, mutant);
+                HotSwapAgent.hotSwap(clazz, mutant.getBytes());
             }
         }
     }
@@ -65,7 +66,7 @@ public class CatchNewClassLoadersTransformer implements ClassFileTransformer {
                             final Class<?> classBeingRedefined,
                             final ProtectionDomain protectionDomain, final byte[] classfileBuffer) {
 
-        if (className.equals(targetClass) && shouldTransform(loader)) {
+        if (className.equals(targetClass.asInternalName()) && shouldTransform(loader)) {
             if (shouldStore(loader)) {
                 CLASS_LOADERS.put(loader, null);
             }
@@ -76,9 +77,9 @@ public class CatchNewClassLoadersTransformer implements ClassFileTransformer {
         return null;
     }
 
-    private static Class<?> checkClassForLoader(ClassLoader loader, String className) {
+    private static Class<?> checkClassForLoader(ClassLoader loader, ClassName className) {
         try {
-            Class<?> clazz = Class.forName(ClassName.fromString(className).asJavaName(), false, loader);
+            Class<?> clazz = Class.forName(className.asJavaName(), false, loader);
             // loaded by parent
             if (clazz.getClassLoader() != loader) {
                 return null;
