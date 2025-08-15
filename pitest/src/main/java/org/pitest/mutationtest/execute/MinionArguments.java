@@ -36,7 +36,7 @@ public class MinionArguments implements Serializable {
   final Verbosity verbosity;
   final boolean                     fullMutationMatrix;
   final TestPluginArguments         pitConfig;
-  final Collection<String>          featureString;
+  final Collection<String>          featureStrings;
 
   public MinionArguments(Collection<MutationDetails> mutations,
                          Collection<ClassName> tests,
@@ -46,7 +46,7 @@ public class MinionArguments implements Serializable {
                          Verbosity verbosity,
                          boolean fullMutationMatrix,
                          TestPluginArguments pitConfig,
-                         Collection<String> featureString) {
+                         Collection<String> featureStrings) {
     this.mutations = mutations;
     this.testClasses = tests;
     this.engine = engine;
@@ -55,7 +55,7 @@ public class MinionArguments implements Serializable {
     this.verbosity = verbosity;
     this.fullMutationMatrix = fullMutationMatrix;
     this.pitConfig = pitConfig;
-    this.featureString = featureString;
+    this.featureStrings = featureStrings;
   }
 
   public Verbosity verbosity() {

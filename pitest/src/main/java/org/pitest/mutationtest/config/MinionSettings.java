@@ -10,6 +10,7 @@ import org.pitest.mutationtest.environment.ResetEnvironment;
 import org.pitest.testapi.Configuration;
 import org.pitest.util.PitError;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,11 +24,11 @@ public class MinionSettings {
     this.plugins = plugins;
   }
 
-  public ResetEnvironment createReset() {
-    List<ResetEnvironment> resets = this.plugins.findResets().stream()
+  public ResetEnvironment createReset(Collection<String> featureStrings) {
+    List<ResetEnvironment> resets = this.plugins.findResets(featureStrings).stream()
             .map(EnvironmentResetPlugin::make)
             .collect(Collectors.toList());
-    
+
     return new CompositeReset(resets);
   }
 
