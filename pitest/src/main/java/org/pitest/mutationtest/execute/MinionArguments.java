@@ -36,11 +36,17 @@ public class MinionArguments implements Serializable {
   final Verbosity verbosity;
   final boolean                     fullMutationMatrix;
   final TestPluginArguments         pitConfig;
+  final Collection<String>          featureString;
 
-  public MinionArguments(final Collection<MutationDetails> mutations,
-      final Collection<ClassName> tests, final String engine, final EngineArguments engineArgs,
-      final TimeoutLengthStrategy timeoutStrategy, final Verbosity verbosity, final boolean fullMutationMatrix,
-      final TestPluginArguments pitConfig) {
+  public MinionArguments(Collection<MutationDetails> mutations,
+                         Collection<ClassName> tests,
+                         String engine,
+                         EngineArguments engineArgs,
+                         TimeoutLengthStrategy timeoutStrategy,
+                         Verbosity verbosity,
+                         boolean fullMutationMatrix,
+                         TestPluginArguments pitConfig,
+                         Collection<String> featureString) {
     this.mutations = mutations;
     this.testClasses = tests;
     this.engine = engine;
@@ -49,6 +55,7 @@ public class MinionArguments implements Serializable {
     this.verbosity = verbosity;
     this.fullMutationMatrix = fullMutationMatrix;
     this.pitConfig = pitConfig;
+    this.featureString = featureString;
   }
 
   public Verbosity verbosity() {

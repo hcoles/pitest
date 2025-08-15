@@ -71,6 +71,8 @@ public class MutationTestMinion {
       final MinionArguments paramsFromParent = this.dis
           .read(MinionArguments.class);
 
+      enableTransformations(paramsFromParent.featureString);
+
       configureVerbosity(paramsFromParent);
 
       final ClassLoader loader = IsolationUtils.getContextClassLoader();
@@ -126,8 +128,6 @@ public class MutationTestMinion {
   public static void main(final String[] args) {
     LOG.fine(() -> "minion started");
 
-    enableTransformations();
-
     final int port = Integer.parseInt(args[0]);
 
     Socket s = null;
@@ -166,9 +166,9 @@ public class MutationTestMinion {
     return finder.findTestUnitsForAllSuppliedClasses(tcs);
   }
 
-  private static void enableTransformations() {
+  private static void enableTransformations(Collection<String> featureString) {
     ClientPluginServices plugins = ClientPluginServices.makeForContextLoader();
-    for (TransformationPlugin each : plugins.findTransformations()) {
+    for (TransformationPlugin each : plugins.findTransformations(featureString)) {
       ClassFileTransformer transformer = each.makeMutationTransformer();
       if (transformer != null) {
         HotSwapAgent.addTransformer(transformer);

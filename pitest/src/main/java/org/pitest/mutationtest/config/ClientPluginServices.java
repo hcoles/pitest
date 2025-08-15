@@ -5,6 +5,8 @@ import java.util.Collection;
 import org.pitest.mutationtest.environment.EnvironmentResetPlugin;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.environment.TransformationPlugin;
+import org.pitest.plugin.FeatureParser;
+import org.pitest.plugin.FeatureSelector;
 import org.pitest.testapi.TestPluginFactory;
 import org.pitest.util.IsolationUtils;
 import org.pitest.util.ServiceLoader;
@@ -32,8 +34,12 @@ public class ClientPluginServices {
     return ServiceLoader.load(EnvironmentResetPlugin.class, this.loader);
   }
 
-  public Collection<TransformationPlugin> findTransformations() {
-    return ServiceLoader.load(TransformationPlugin.class, this.loader);
+  public Collection<TransformationPlugin> findTransformations(Collection<String> featureStrings) {
+    Collection<TransformationPlugin> available = ServiceLoader.load(TransformationPlugin.class, this.loader);
+
+    final FeatureParser parser = new FeatureParser();
+    FeatureSelector<TransformationPlugin> features = new FeatureSelector<>(parser.parseFeatures(featureStrings), available);
+    return features.getActiveFeatures();
   }
 
 }

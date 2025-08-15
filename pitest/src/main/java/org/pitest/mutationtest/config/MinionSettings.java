@@ -25,7 +25,9 @@ public class MinionSettings {
 
   public ResetEnvironment createReset() {
     List<ResetEnvironment> resets = this.plugins.findResets().stream()
-            .map(EnvironmentResetPlugin::make).collect(Collectors.toList());
+            .map(EnvironmentResetPlugin::make)
+            .collect(Collectors.toList());
+    
     return new CompositeReset(resets);
   }
 
