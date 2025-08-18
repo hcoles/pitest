@@ -116,6 +116,18 @@ public class PitMojoIT {
 
 
   @Test
+  public void shouldRunWhenModulesAddedViaArgsFile() throws Exception {
+    File testDir = prepare("/pit-adds-modules-via-file");
+    verifier.executeGoal("test-compile");
+    verifier.executeGoal("org.pitest:pitest-maven:mutationCoverage");
+
+    String actual = readResults(testDir);
+    assertThat(actual)
+            .contains(
+                    "<mutation detected='false'");
+  }
+
+  @Test
   public void shouldExcludeSpecifiedJUnitCategories() throws Exception {
     File testDir = prepare("/pit-junit-categories");
     verifier.executeGoal("test");
