@@ -2,6 +2,7 @@ package org.pitest.process;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.nio.file.Files;
@@ -72,12 +73,12 @@ public class Java9Process implements WrappingProcess {
     }
 
     private ProcessBuilder createProcessBuilder(String javaProc,
-                                                List<String> args, Class<?> mainClass, String programArgs,
+                                                List<String> unsanitisedArgs, Class<?> mainClass, String programArgs,
                                                 JavaAgent javaAgent, String classPath) {
-        List<String> fileArgs = createLaunchArgs(javaAgent, args, classPath);
+
+        List<String> fileArgs = createLaunchArgs(javaAgent, unsanitisedArgs, classPath);
 
         removeJacocoAgent(fileArgs);
-
 
         // All arguments are passed via a temporary file, thereby avoiding command line length limits
         Path argsFile = CACHE.computeIfAbsent(javaAgent.getJarLocation(), j -> createArgsFile(fileArgs));
@@ -86,11 +87,21 @@ public class Java9Process implements WrappingProcess {
         cmd.add(javaProc);
         addLaunchJavaAgentsAndEnvironmentVariables(cmd);
         cmd.add("@" + argsFile.toFile().getAbsolutePath());
+
         cmd.add(mainClass.getName());
         cmd.add(programArgs);
 
         return new ProcessBuilder(cmd);
     }
+
+    private List<String> removeArgFiles(List<String> args) {
+        return args.stream()
+                .map(String::trim)
+                .filter(a -> !a.startsWith("@"))
+                .collect(Collectors.toList());
+    }
+
+
     private void removeJacocoAgent(List<String> cmd) {
         removeFromClassPath(cmd, line -> line.startsWith("-javaagent") && line.contains("jacoco"));
     }
@@ -105,17 +116,41 @@ public class Java9Process implements WrappingProcess {
 
     private List<String> createLaunchArgs(JavaAgent agentJarLocator, List<String> args, String classPath) {
 
+        // remove other arg files from the command line
+        List<String> argsWithoutArgFiles = removeArgFiles(args);
+
         List<String> cmd = new ArrayList<>();
 
         cmd.add("-classpath");
         cmd.add(classPath.replace(" ", "\" \""));
         
         addPITJavaAgent(agentJarLocator, cmd);
+        cmd.addAll(argsWithoutArgFiles);
 
-        cmd.addAll(args);
+        // We could pass the existing argfiles through as is, however
+        // they may be designed for the module pass. As we don't properly
+        // support the module path yet, the best we can do is strip
+        // add-modules lines out. Since we're already creating an args file
+        // we can append the existing files onto it with filtering.
+        List<String> existing = findArgsFiles(args).stream()
+                .flatMap(f -> readFile(f).stream())
+                .filter(l -> !l.trim().startsWith("--add-modules"))
+                .collect(Collectors.toList());
+
+
+        cmd.addAll(existing);
 
         return cmd;
     }
+
+    private static List<String> readFile(String f) {
+        try {
+            return Files.readAllLines(Path.of(f));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
 
     private Path createArgsFile(List<String> cmd) {
        try {
@@ -154,5 +189,11 @@ public class Java9Process implements WrappingProcess {
         return a -> a.toLowerCase().startsWith("-javaagent");
     }
 
-
+    private List<String> findArgsFiles(List<String> args) {
+        return args.stream()
+                .map(String::trim)
+                .filter(a -> a.startsWith("@"))
+                .map(a -> a.substring(1))
+                .collect(Collectors.toList());
+    }
 }
