@@ -8,6 +8,10 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.20.2
+
+* #1422 Handle args files in the argLine
+
 ## 1.20.1
 
 * #1417 Update dependencies
