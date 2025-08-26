@@ -117,11 +117,24 @@ public class SettingsFactory {
   }
 
   public MutationGrouperFactory getMutationGrouper() {
-    // Grouping behaviour is important. We cannot have more than 1 class mutated within
-    // a JVM or else the last mutation will poison the next. This restriction can only
-    // be removed if the hotswap functionality is reworked.
-    // Grouping behaviour is therefore hard coded for now.
-    return new DefaultMutationGrouperFactory();
+    // Grouping behaviour is important. Without additional work to ensure a JVM is
+    // not poisoned, grouping mutations from different classes together will result
+    // in incorrect results. Implement with care.
+    final FeatureParser parser = new FeatureParser();
+    Collection<MutationGrouperFactory> available = this.plugins.findGroupers();
+    FeatureSelector<MutationGrouperFactory> features = new FeatureSelector<>(parser.parseFeatures(this.options.getFeatures()), available);
+    List<MutationGrouperFactory> enabled = features.getActiveFeatures();
+
+    if (enabled.isEmpty()) {
+      return new DefaultMutationGrouperFactory();
+    }
+
+    if (enabled.size() > 1) {
+      throw new RuntimeException("Only one grouper may be enabled");
+    }
+
+    return enabled.get(0);
+
   }
 
   public CodeSource createCodeSource(ProjectClassPaths classPath) {
@@ -199,7 +212,7 @@ public class SettingsFactory {
   public CoverageOptions createCoverageOptions() {
     return new CoverageOptions(
         this.options.getTargetClasses(), this.options.getExcludedClasses(),
-        this.options.createMinionSettings(), this.options.getVerbosity());
+        this.options.createMinionSettings(), this.options.getVerbosity(), this.options.getFeatures());
   }
 
   public CompoundInterceptorFactory getInterceptor() {
