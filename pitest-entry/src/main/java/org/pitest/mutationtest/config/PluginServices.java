@@ -97,7 +97,7 @@ public class PluginServices {
     return load(TestPluginFactory.class);
   }
 
-  Collection<? extends MutationGrouperFactory> findGroupers() {
+  Collection<MutationGrouperFactory> findGroupers() {
     return load(MutationGrouperFactory.class);
   }
 

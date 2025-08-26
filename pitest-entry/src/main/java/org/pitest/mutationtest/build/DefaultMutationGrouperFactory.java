@@ -3,6 +3,7 @@ package org.pitest.mutationtest.build;
 import java.util.Properties;
 
 import org.pitest.classpath.CodeSource;
+import org.pitest.plugin.Feature;
 
 public class DefaultMutationGrouperFactory implements MutationGrouperFactory {
 
@@ -17,4 +18,11 @@ public class DefaultMutationGrouperFactory implements MutationGrouperFactory {
     return new DefaultGrouper(unitSize);
   }
 
+  @Override
+  public Feature provides() {
+    return Feature.named("defaultgrouper")
+            .asInternalFeature()
+            .withOnByDefault(true)
+            .withDescription(description());
+  }
 }
