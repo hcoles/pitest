@@ -65,6 +65,8 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 
   Properties properties = new Properties();
 
+  Map<String, Artifact> pluginArtifacts = new HashMap<>();
+
   @Override
   protected void setUp() throws Exception {
     super.setUp();
@@ -121,7 +123,6 @@ public abstract class BasePitMojoTest extends AbstractMojoTestCase {
 
     configureMojo(pitMojo, pluginConfiguration);
 
-    final Map<String, Artifact> pluginArtifacts = new HashMap<>();
     setVariableValueToObject(pitMojo, "pluginArtifactMap", pluginArtifacts);
 
     setVariableValueToObject(pitMojo, "project", this.project);

@@ -15,7 +15,9 @@
 package org.pitest.maven;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -31,6 +33,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -396,6 +399,35 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertFalse(actual.getClassPathElements().contains(
         "group" + sep + "artifact" + sep + "1.0.0" + sep
         + "group-artifact-1.0.0.jar"));
+  }
+
+  public void testAutoAddsJunitPlatformDependencies() {
+    final ArtifactHandler artifactHandler = Mockito.mock(ArtifactHandler.class);
+    final Artifact junitArtifact = new DefaultArtifact("org.junit.platform", "junit-platform-engine", "1.12.2", "test", "jar", null, artifactHandler);
+    final String artifactPath = String.format("/home/user/.m2/repository/%s/%s/%s/%s-%s.jar",
+          junitArtifact.getGroupId().replace(".", "/"), junitArtifact.getArtifactId(), junitArtifact.getVersion(), junitArtifact.getArtifactId(), junitArtifact.getVersion());
+    junitArtifact.setFile(new File(artifactPath));
+    pluginArtifacts.put("junit-platform", junitArtifact);
+
+    final ReportOptions actual = parseConfig("");
+    assertThat(actual.getClassPathElements()).contains(artifactPath);
+  }
+
+  public void testAutoAddsJunitJupiterDependencies() {
+    final ArtifactHandler artifactHandler = Mockito.mock(ArtifactHandler.class);
+    final Artifact junitEngineArtifact = new DefaultArtifact("org.junit.jupiter", "junit-jupiter-engine", "5.12.2", "test", "jar", null, artifactHandler);
+    final Artifact junitParamsArtifact = new DefaultArtifact("org.junit.jupiter", "junit-jupiter-params", "5.12.2", "test", "jar", null, artifactHandler);
+    final List<String> expectedArtifactPaths = new ArrayList<>();
+    for (Artifact artifact : Arrays.asList(junitEngineArtifact, junitParamsArtifact)) {
+        final String artifactPath = String.format("/home/user/.m2/repository/%s/%s/%s/%s-%s.jar",
+                artifact.getGroupId().replace(".", "/"), artifact.getArtifactId(), artifact.getVersion(), artifact.getArtifactId(), artifact.getVersion());
+        artifact.setFile(new File(artifactPath));
+        pluginArtifacts.put(artifact.getArtifactId(), artifact);
+        expectedArtifactPaths.add(artifactPath);
+    }
+
+    final ReportOptions actual = parseConfig("");
+    assertThat(actual.getClassPathElements()).containsAll(expectedArtifactPaths);
   }
 
   public void testParsesSurefireConfigWhenFlagSet() {
