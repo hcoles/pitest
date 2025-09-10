@@ -417,9 +417,12 @@ public class MojoToReportOptionsConverter {
       classPath.add(dependency.getFile().getAbsolutePath());
     }
 
-    // If the user as explicitly added junit platform classes to the pitest classpath, trust that they
-    // know what they're doing and add them in
-    this.mojo.getPluginArtifactMap().values().stream().filter(a -> a.getGroupId().equals("org.junit.platform"))
+    // If the user as explicitly added junit platform or jupiter dependencies to the pitest classpath,
+    // trust that they know what they're doing and add them in
+    this.mojo.getPluginArtifactMap().values().stream()
+            .filter(a -> a.getGroupId().equals("org.junit.platform") || a.getGroupId().equals("org.junit.jupiter"))
+            .peek(a -> this.log.info("Adding JUnit " + a.getGroupId() + ":"
+                    + a.getArtifactId() + " to SUT classpath"))
             .forEach(dependency -> classPath.add(dependency.getFile().getAbsolutePath()));
   }
 
