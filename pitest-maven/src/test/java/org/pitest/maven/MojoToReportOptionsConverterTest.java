@@ -404,13 +404,17 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
   public void testAutoAddsJunitPlatformDependencies() {
     final ArtifactHandler artifactHandler = Mockito.mock(ArtifactHandler.class);
     final Artifact junitArtifact = new DefaultArtifact("org.junit.platform", "junit-platform-engine", "1.12.2", "test", "jar", null, artifactHandler);
-    final String artifactPath = String.format("/home/user/.m2/repository/%s/%s/%s/%s-%s.jar",
-          junitArtifact.getGroupId().replace(".", "/"), junitArtifact.getArtifactId(), junitArtifact.getVersion(), junitArtifact.getArtifactId(), junitArtifact.getVersion());
-    junitArtifact.setFile(new File(artifactPath));
+    final File artifactFile = new File(String.format("/home/user/.m2/repository/%s/%s/%s/%s-%s.jar",
+            junitArtifact.getGroupId().replace(".", "/"),
+            junitArtifact.getArtifactId(),
+            junitArtifact.getVersion(),
+            junitArtifact.getArtifactId(),
+            junitArtifact.getVersion())).getAbsoluteFile();
+    junitArtifact.setFile(artifactFile);
     pluginArtifacts.put("junit-platform", junitArtifact);
 
     final ReportOptions actual = parseConfig("");
-    assertThat(actual.getClassPathElements()).contains(artifactPath);
+    assertThat(actual.getClassPathElements()).contains(artifactFile.toString());
   }
 
   public void testAutoAddsJunitJupiterDependencies() {
@@ -419,11 +423,15 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     final Artifact junitParamsArtifact = new DefaultArtifact("org.junit.jupiter", "junit-jupiter-params", "5.12.2", "test", "jar", null, artifactHandler);
     final List<String> expectedArtifactPaths = new ArrayList<>();
     for (Artifact artifact : Arrays.asList(junitEngineArtifact, junitParamsArtifact)) {
-        final String artifactPath = String.format("/home/user/.m2/repository/%s/%s/%s/%s-%s.jar",
-                artifact.getGroupId().replace(".", "/"), artifact.getArtifactId(), artifact.getVersion(), artifact.getArtifactId(), artifact.getVersion());
-        artifact.setFile(new File(artifactPath));
+        final File artifactFile = new File(String.format("/home/user/.m2/repository/%s/%s/%s/%s-%s.jar",
+                artifact.getGroupId().replace(".", "/"),
+                artifact.getArtifactId(),
+                artifact.getVersion(),
+                artifact.getArtifactId(),
+                artifact.getVersion())).getAbsoluteFile();
+        artifact.setFile(artifactFile);
         pluginArtifacts.put(artifact.getArtifactId(), artifact);
-        expectedArtifactPaths.add(artifactPath);
+        expectedArtifactPaths.add(artifactFile.toString());
     }
 
     final ReportOptions actual = parseConfig("");
