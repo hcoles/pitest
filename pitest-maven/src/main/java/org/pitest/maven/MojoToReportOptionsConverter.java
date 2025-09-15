@@ -22,9 +22,13 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.graph.DefaultDependencyNode;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
+import org.eclipse.aether.resolution.DependencyRequest;
+import org.eclipse.aether.resolution.DependencyResolutionException;
+import org.eclipse.aether.resolution.DependencyResult;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.DirectoryClassPathRoot;
 import org.pitest.functional.FCollection;
@@ -86,7 +90,9 @@ public class MojoToReportOptionsConverter {
 
     classPath.addAll(this.mojo.getAdditionalClasspathElements());
 
-    autoAddJUnitPlatform(classPath);
+    autoAddJUnitPlatformLauncher(classPath);
+    autoAddJUnitPlatformEngine(classPath);
+    autoAddJupiterEngine(classPath);
     removeExcludedDependencies(classPath);
 
     addCrossModuleDirsToClasspath(classPath);
@@ -125,13 +131,22 @@ public class MojoToReportOptionsConverter {
    *
    * @param classPath classpath to modify
    */
-  private void autoAddJUnitPlatform(List<String> classPath) {
+  private void autoAddJUnitPlatformLauncher(List<String> classPath) {
+    autoAddJUnitPlatformArtifact(classPath, "junit-platform-launcher");
+  }
+
+  private void autoAddJUnitPlatformEngine(List<String> classPath) {
+    autoAddJUnitPlatformArtifact(classPath, "junit-platform-engine");
+  }
+
+
+  private void autoAddJUnitPlatformArtifact(List<String> classPath, String artifactId) {
     List<Artifact> junitDependencies = this.mojo.getProject().getArtifacts().stream()
             .filter(a -> a.getGroupId().equals("org.junit.platform"))
             .collect(Collectors.toList());
 
-    // If the launcher has been manually added to the dependencies, there is nothing to do
-    if (junitDependencies.stream().anyMatch(a -> a.getArtifactId().equals("junit-platform-launcher"))) {
+    // If the artifact has been manually added to the dependencies, there is nothing to do
+    if (junitDependencies.stream().anyMatch(a -> a.getArtifactId().equals(artifactId))) {
       return;
     }
 
@@ -144,24 +159,67 @@ public class MojoToReportOptionsConverter {
     // Look for platform engine or platform commons on classpath
     Artifact toMatch = maybeJUnitPlatform.get();
 
-    // Assume that platform launcher has been released with same version number as engine and commons
-    DefaultArtifact platformLauncher = new DefaultArtifact(toMatch.getGroupId(), "junit-platform-launcher", "jar",
+    // Assume that artifact has been released with same version number as engine and commons
+    DefaultArtifact platformLauncher = new DefaultArtifact(toMatch.getGroupId(), artifactId, "jar",
             toMatch.getVersion());
 
+    addArtifact(classPath, platformLauncher);
+  }
+
+  private void autoAddJupiterEngine(List<String> classPath) {
+    List<Artifact> junitDependencies = this.mojo.getProject().getArtifacts().stream()
+            .filter(a -> a.getGroupId().equals("org.junit.jupiter"))
+            .collect(Collectors.toList());
+
+    // If the engine has been manually added to the dependencies, there is nothing to do
+    if (junitDependencies.stream().anyMatch(a -> a.getArtifactId().equals("junit-jupiter-engine"))) {
+      return;
+    }
+
+    Optional<Artifact> maybeApi = this.mojo.getProject().getArtifacts().stream()
+            .filter(a -> a.getArtifactId().equals("junit-jupiter-api"))
+            .findFirst();
+
+    if (maybeApi.isEmpty()) {
+      return;
+    }
+
+    // Look for platform engine or platform commons on classpath
+    Artifact toMatch = maybeApi.get();
+
+    // Assume that engine has been released with same version number as api
+    DefaultArtifact platformLauncher = new DefaultArtifact(toMatch.getGroupId(), "junit-jupiter-engine", "jar",
+            toMatch.getVersion());
+
+    addArtifact(classPath, platformLauncher);
+
+  }
+
+  private void addArtifact(List<String> classPath, DefaultArtifact platformLauncher) {
     try {
+
       ArtifactRequest r = new ArtifactRequest();
       r.setArtifact(platformLauncher);
-      
+
       r.setRepositories(this.mojo.getProject().getRemotePluginRepositories());
       ArtifactResult resolved = this.mojo.repositorySystem().resolveArtifact(mojo.session().getRepositorySession(), r);
 
       this.log.info("Auto adding " + resolved + " to classpath.");
       classPath.add(resolved.getArtifact().getFile().getAbsolutePath());
-    } catch (ArtifactResolutionException e) {
+
+      // get any transitive dependencies,
+      // although this doesn't seem to be neccesary for current releases of junit
+      DependencyRequest dependencyRequest = new DependencyRequest(new DefaultDependencyNode(platformLauncher), null);
+      DependencyResult transitive = this.mojo.repositorySystem().resolveDependencies(mojo.session().getRepositorySession(), dependencyRequest);
+      for (ArtifactResult result : transitive.getArtifactResults()) {
+        this.log.info("Auto adding " + result + " to classpath.");
+        classPath.add(result.getArtifact().getFile().getAbsolutePath());
+      }
+
+    } catch (DependencyResolutionException | ArtifactResolutionException e) {
       this.log.error("Could not resolve " + platformLauncher);
       throw new RuntimeException(e);
     }
-
   }
 
   private static Optional<Artifact> findJUnitArtifact(List<Artifact> junitDependencies) {
@@ -460,8 +518,9 @@ public class MojoToReportOptionsConverter {
   }
 
   private Collection<Artifact> filteredDependencies() {
-    return FCollection.filter(this.mojo.getPluginArtifactMap().values(),
-        this.dependencyFilter);
+    return this.mojo.getPluginArtifactMap().values().stream()
+            .filter(this.dependencyFilter)
+            .collect(Collectors.toList());
   }
 
   private Collection<String> determineMutators() {

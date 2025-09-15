@@ -350,7 +350,7 @@ public class PitMojoIT {
 
   @Test
   public void shouldReadExclusionsFromSurefireConfig() throws Exception {
-    // Note this test also tests the argline parsing concern
+    // Note this test also tests the argline parsing concern and junit5 classpath resoloution
 
     File testDir = prepare("/pit-surefire-excludes");
     verifier.executeGoal("test");
