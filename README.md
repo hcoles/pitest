@@ -8,6 +8,10 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.20.3
+
+* #1426 auto add junit engines when missing from classpath
+
 ## 1.20.2
 
 * #1422 Handle args files in the argLine
