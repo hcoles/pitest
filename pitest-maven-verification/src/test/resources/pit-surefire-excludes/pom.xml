@@ -7,12 +7,13 @@
 	<version>1.0-SNAPSHOT</version>
 	<name>surefire-excludes</name>
 	<dependencies>
-            <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.1</version>
-            <scope>test</scope>
-            </dependency>
+		<!-- include api only, other dependencies should auto add -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>5.13.4</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<properties>
 		<a.value>isSet</a.value>
@@ -24,16 +25,16 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.4</version>
+				<version>3.10.1</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>11</source>
+					<target>11</target>
 				</configuration>
 			</plugin>
 		       <plugin>
 		  	<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-surefire-plugin</artifactId>
-			<version>2.18.1</version>
+			<version>3.1.2</version>
 			<configuration>
 			  <excludes>
 			    <exclude>**/FailingTest.java</exclude>
@@ -58,6 +59,14 @@
                     </mutators>
                     <verbose>true</verbose>
                 </configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-junit5-plugin</artifactId>
+						<version>1.2.3</version>
+					</dependency>
+				</dependencies>
+
 			</plugin>
 		</plugins>
 	</build>
