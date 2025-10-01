@@ -61,6 +61,13 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
   @Override
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
+
+    // skip for mutations to annotations on interfaces
+    // to avoid generating empty method warnings.
+    if (this.currentClass.isInterface()) {
+      return mutations;
+    }
+
    final List<MutationDetails> doNotTouch = mutations.stream()
            .filter(inEqualsMethod().negate())
            .collect(Collectors.toList());

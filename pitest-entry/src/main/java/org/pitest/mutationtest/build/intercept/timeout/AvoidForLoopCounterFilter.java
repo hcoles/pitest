@@ -49,7 +49,7 @@ import org.pitest.sequence.SlotWrite;
 import org.pitest.util.Log;
 
 /**
- * Removes mutants that affect for loop counters as these have
+ * Removes mutants that effect for loop counters as these have
  * a high chance of timing out.
  */
 public class AvoidForLoopCounterFilter implements MutationInterceptor {
@@ -152,6 +152,13 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
   @Override
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
+
+    // skip for mutations to annotations on interfaces
+    // to avoid generating empty method warnings.
+    if (this.currentClass.isInterface()) {
+      return mutations;
+    }
+
     return mutations.stream()
             .filter(mutatesAForLoopCounter().negate())
             .collect(Collectors.toList());
