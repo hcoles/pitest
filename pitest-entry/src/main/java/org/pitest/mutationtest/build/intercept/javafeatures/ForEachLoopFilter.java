@@ -184,6 +184,13 @@ public class ForEachLoopFilter implements MutationInterceptor {
   @Override
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
+
+    // skip for mutations to annotations on interfaces
+    // to avoid generating empty method warnings.
+    if (this.currentClass.isInterface()) {
+      return mutations;
+    }
+
     return mutations.stream().filter(mutatesIteratorLoopPlumbing().negate())
             .collect(Collectors.toList());
   }
