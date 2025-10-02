@@ -14,18 +14,22 @@
  */
 package org.pitest.junit;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.pitest.testapi.TestGroupConfig.emptyConfig;
 
 import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.pitest.testapi.NullExecutionListener;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestUnit;
 
 public class ParameterisedJUnitTestFinderTest {
@@ -34,7 +38,7 @@ public class ParameterisedJUnitTestFinderTest {
 
   @Before
   public void setup() {
-    this.testee = new ParameterisedJUnitTestFinder();
+    this.testee = new ParameterisedJUnitTestFinder(emptyConfig());
   }
 
   @RunWith(Parameterized.class)
@@ -72,8 +76,75 @@ public class ParameterisedJUnitTestFinderTest {
     assertTrue(actual.isEmpty());
   }
 
+  @Test
+  public void includesSuppliedCategories() {
+    setConfig(emptyConfig()
+            .withIncludedGroups(ACategory.class.getName()));
+    final Collection<TestUnit> actual = findWithTestee(Tagged.class);
+    assertThat(actual).hasSize(2);
+  }
+
+  @Test
+  public void excludesSuppliedCategories() {
+    setConfig(emptyConfig()
+            .withIncludedGroups(ACategory.class.getName())
+            .withExcludedGroups(AnotherCategory.class.getName()));
+    final Collection<TestUnit> actual = findWithTestee(Tagged.class);
+    assertThat(actual).isEmpty();
+  }
+
+  @Test
+  public void excludesInheritedCategories() {
+    setConfig(emptyConfig()
+            .withIncludedGroups(ACategory.class.getName())
+            .withExcludedGroups(AnotherCategory.class.getName()));
+    final Collection<TestUnit> actual = findWithTestee(IndirectlyTagged.class);
+    assertThat(actual).isEmpty();
+  }
+
+  private void setConfig(TestGroupConfig config) {
+    this.testee = new ParameterisedJUnitTestFinder(config);
+  }
+
+
   private Collection<TestUnit> findWithTestee(final Class<?> clazz) {
     return this.testee.findTestUnits(clazz, new NullExecutionListener());
   }
+
+  interface ACategory {
+
+  }
+
+  interface AnotherCategory {
+
+  }
+
+  @Category({ACategory.class, AnotherCategory.class})
+  @RunWith(Parameterized.class)
+  public static class Tagged {
+    @Parameterized.Parameter
+    public String vt;
+    @Parameterized.Parameter(1)
+    public String vtp;
+
+    @Parameterized.Parameters(name = "P {1}")
+    public static Iterable<Object[]> versions() {
+      return Arrays.asList(new Object[][] {
+              {"foo-1.4", "1.4"},
+              {"foo-2.4", "2.4"}
+      });
+    }
+
+    @Test
+    public void aTest() {
+    }
+  }
+
+  public static class IndirectlyTagged extends Tagged {
+    @Test
+    public void anotherTest() {
+    }
+  }
+
 
 }
