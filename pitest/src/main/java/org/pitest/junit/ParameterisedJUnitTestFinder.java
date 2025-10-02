@@ -19,19 +19,30 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
+import org.junit.experimental.categories.Category;
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runners.Parameterized;
 import org.pitest.functional.FCollection;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.pitest.junit.adapter.AdaptedJUnitTestUnit;
+import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.TestUnitExecutionListener;
 import org.pitest.testapi.TestUnitFinder;
 
 public class ParameterisedJUnitTestFinder implements TestUnitFinder {
-  @Override
+  private final TestGroupConfig config;
+
+    public ParameterisedJUnitTestFinder(TestGroupConfig config) {
+        this.config = config;
+    }
+
+    @Override
   public List<TestUnit> findTestUnits(final Class<?> clazz, TestUnitExecutionListener unused) {
 
     final Runner runner = AdaptedJUnitTestUnit.createRunner(clazz);
@@ -40,7 +51,7 @@ public class ParameterisedJUnitTestFinder implements TestUnitFinder {
       return Collections.emptyList();
     }
 
-    if (isParameterizedTest(runner)) {
+    if (isParameterizedTest(runner) && isIncluded(clazz)) {
       return handleParameterizedTest(clazz, runner.getDescription());
     }
 
@@ -65,6 +76,38 @@ public class ParameterisedJUnitTestFinder implements TestUnitFinder {
 
   private boolean isParameterizedTest(final Runner runner) {
     return Parameterized.class.isAssignableFrom(runner.getClass());
+  }
+
+  private boolean isIncluded(final Class<?> a) {
+    return isIncludedCategory(a) && !isExcludedCategory(a);
+  }
+
+
+  private boolean isIncludedCategory(final Class<?> a) {
+    final List<String> included = this.config.getIncludedGroups();
+    return included.isEmpty() || !Collections.disjoint(included, getCategories(a));
+  }
+
+  private boolean isExcludedCategory(final Class<?> a) {
+    final List<String> excluded = this.config.getExcludedGroups();
+    return !excluded.isEmpty() && !Collections.disjoint(excluded, getCategories(a));
+  }
+
+  private List<String> getCategories(final Class<?> a) {
+    final Category c = a.getAnnotation(Category.class);
+    return Stream.of(c)
+            .flatMap(toCategoryNames())
+            .collect(Collectors.toList());
+  }
+
+  private Function<Category, Stream<String>> toCategoryNames() {
+    return a -> {
+      if (a == null) {
+        return Stream.empty();
+      }
+      return Stream.of(a.value())
+              .map(Class::getName);
+    };
   }
 
 }

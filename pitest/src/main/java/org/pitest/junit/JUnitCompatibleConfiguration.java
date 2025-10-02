@@ -53,7 +53,7 @@ public class JUnitCompatibleConfiguration implements Configuration {
   public TestUnitFinder testUnitFinder() {
     return new CompoundTestUnitFinder(Arrays.asList(
         new JUnitCustomRunnerTestUnitFinder(this.config, this.excludedRunners, this.includedTestMethods),
-        new ParameterisedJUnitTestFinder()));
+        new ParameterisedJUnitTestFinder(this.config)));
   }
 
   @Override
