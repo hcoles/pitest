@@ -8,6 +8,15 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.20.5
+
+* #1428 Support categories for junit4 parametrised tests
+* #1429 Bump asm to 9.9
+
+## 1.20.4
+
+* #1427 Disable empty method warnings for interfaces
+
 ## 1.20.3
 
 * #1426 auto add junit engines when missing from classpath
