@@ -21,7 +21,6 @@ import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.sequence.SequenceMatcher;
-import org.pitest.util.Log;
 
 public abstract class InfiniteLoopFilter implements MutationInterceptor {
 
@@ -44,12 +43,6 @@ public abstract class InfiniteLoopFilter implements MutationInterceptor {
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
 
-    // skip for mutations to annotations on interfaces
-    // to avoid generating empty method warnings.
-    if (this.currentClass.isInterface()) {
-      return mutations;
-    }
-
     final Map<Location,Collection<MutationDetails>> buckets = FCollection.bucket(mutations, mutationToLocation());
 
     final List<MutationDetails> willTimeout = new ArrayList<>();
@@ -69,7 +62,7 @@ public abstract class InfiniteLoopFilter implements MutationInterceptor {
     }
     MethodTree method = maybeMethod.get();
     if (method.instructions().isEmpty()) {
-      Log.getLogger().warning(method.asLocation() + " has no instructions");
+      // occurs for mutations to annotations on interfaces
       return Collections.emptyList();
     }
 

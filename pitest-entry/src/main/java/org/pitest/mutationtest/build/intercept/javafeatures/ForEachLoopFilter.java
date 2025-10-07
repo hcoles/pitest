@@ -49,7 +49,6 @@ import org.pitest.sequence.QueryStart;
 import org.pitest.sequence.SequenceMatcher;
 import org.pitest.sequence.SequenceQuery;
 import org.pitest.sequence.Slot;
-import org.pitest.util.Log;
 
 public class ForEachLoopFilter implements MutationInterceptor {
 
@@ -185,12 +184,6 @@ public class ForEachLoopFilter implements MutationInterceptor {
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
 
-    // skip for mutations to annotations on interfaces
-    // to avoid generating empty method warnings.
-    if (this.currentClass.isInterface()) {
-      return mutations;
-    }
-
     return mutations.stream().filter(mutatesIteratorLoopPlumbing().negate())
             .collect(Collectors.toList());
   }
@@ -205,7 +198,7 @@ public class ForEachLoopFilter implements MutationInterceptor {
       MethodTree method = maybeMethod.get();
 
       if (method.instructions().isEmpty()) {
-        Log.getLogger().warning(method.asLocation() + " has no instructions");
+        // occurs for mutations to annotations on interfaces
         return false;
       }
 

@@ -26,7 +26,6 @@ import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.sequence.QueryParams;
 import org.pitest.sequence.QueryStart;
 import org.pitest.sequence.SequenceMatcher;
-import org.pitest.util.Log;
 
 public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
 
@@ -62,12 +61,6 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
 
-    // skip for mutations to annotations on interfaces
-    // to avoid generating empty method warnings.
-    if (this.currentClass.isInterface()) {
-      return mutations;
-    }
-
    final List<MutationDetails> doNotTouch = mutations.stream()
            .filter(inEqualsMethod().negate())
            .collect(Collectors.toList());
@@ -101,7 +94,7 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
 
   private boolean shortCutEquals(MethodTree tree, MutationDetails a, Mutater m) {
     if (tree.instructions().isEmpty()) {
-      Log.getLogger().warning(tree.asLocation() + " has no instructions");
+      // occurs for mutations to annotations on interfaces
       return false;
     }
 
