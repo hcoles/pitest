@@ -46,7 +46,6 @@ import org.pitest.sequence.SequenceMatcher;
 import org.pitest.sequence.SequenceQuery;
 import org.pitest.sequence.Slot;
 import org.pitest.sequence.SlotWrite;
-import org.pitest.util.Log;
 
 /**
  * Removes mutants that effect for loop counters as these have
@@ -153,12 +152,6 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
   public Collection<MutationDetails> intercept(
       Collection<MutationDetails> mutations, Mutater m) {
 
-    // skip for mutations to annotations on interfaces
-    // to avoid generating empty method warnings.
-    if (this.currentClass.isInterface()) {
-      return mutations;
-    }
-
     return mutations.stream()
             .filter(mutatesAForLoopCounter().negate())
             .collect(Collectors.toList());
@@ -173,7 +166,7 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
       }
       MethodTree method = maybeMethod.get();
       if (method.instructions().isEmpty()) {
-        Log.getLogger().warning(method.asLocation() + " has no instructions");
+        // occurs for mutations to annotations on interfaces
         return false;
       }
 
