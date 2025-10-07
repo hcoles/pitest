@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
@@ -52,8 +53,6 @@ public class CoverageMinion {
 
   public static void main(final String[] args) {
 
-    enableTransformations();
-
     ExitCode exitCode = ExitCode.OK;
     Socket s = null;
     CoveragePipe invokeQueue = null;
@@ -68,6 +67,7 @@ public class CoverageMinion {
           s.getInputStream());
 
       final CoverageOptions paramsFromParent = dis.read(CoverageOptions.class);
+      enableTransformations(paramsFromParent.features());
 
       configureVerbosity(paramsFromParent);
 
@@ -121,9 +121,9 @@ public class CoverageMinion {
 
   }
 
-  private static void enableTransformations() {
+  private static void enableTransformations(Collection<String> features) {
     ClientPluginServices plugins = ClientPluginServices.makeForContextLoader();
-    for (TransformationPlugin each : plugins.findTransformations()) {
+    for (TransformationPlugin each : plugins.findTransformations(features)) {
       ClassFileTransformer transformer = each.makeCoverageTransformer();
       if (transformer != null) {
         HotSwapAgent.addTransformer(transformer);

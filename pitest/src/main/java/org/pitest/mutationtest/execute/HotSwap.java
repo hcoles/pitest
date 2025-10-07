@@ -13,10 +13,6 @@ class HotSwap {
 
   public Boolean insertClass(final ClassName clazzName, ClassLoader loader, final byte[] mutantBytes) {
     try {
-      // Some frameworks (eg quarkus) run tests in non delegating
-      // classloaders. Need to make sure these are transformed too
-      CatchNewClassLoadersTransformer.setMutant(clazzName.asInternalName(), mutantBytes);
-
       // trigger loading for the current loader
       Class<?> clazz = Class.forName(clazzName.asJavaName(), false, loader);
 
