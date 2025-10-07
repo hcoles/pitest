@@ -8,6 +8,10 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.20.6
+
+* #1431 Fix performance regression
+
 ## 1.20.5
 
 * #1428 Support categories for junit4 parametrised tests
