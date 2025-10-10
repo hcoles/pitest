@@ -10,6 +10,15 @@ public class MethodTreeTest {
     ClassloaderByteArraySource bytes = ClassloaderByteArraySource.fromContext();
 
     @Test
+    public void retrievesInstructionsWithinMethod() {
+        var clazz = loadClass(MethodTreeTest.class.getName());
+        var method = findMethod(clazz, "retrievesInstructionsWithinMethod");
+        assertThat(method.instructionForIndex(0)).isNotEmpty();
+        assertThat(method.instructionForIndex(-1)).isEmpty();
+        assertThat(method.instructionForIndex(Integer.MAX_VALUE)).isEmpty();
+    }
+
+    @Test
     public void recognisesAbstractMethods() {
         var clazz = loadClass(Bar.class.getName());
         var isAbstract = findMethod(clazz, "foo");

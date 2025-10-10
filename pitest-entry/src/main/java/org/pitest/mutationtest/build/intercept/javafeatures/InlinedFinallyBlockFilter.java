@@ -184,10 +184,13 @@ public class InlinedFinallyBlockFilter implements MutationInterceptor {
       return false;
     }
 
-    AbstractInsnNode mutatedInstruction = method.instruction(m.getInstructionIndex());
+    var mutatedInstruction = method.instructionForIndex(m.getInstructionIndex());
+    if (mutatedInstruction.isEmpty()) {
+      return false;
+    }
 
     Context context = Context.start(DEBUG);
-    context = context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction);
+    context = context.store(MUTATED_INSTRUCTION.write(), mutatedInstruction.get());
     context = context.store(HANDLERS.write(), handlers);
     return IS_IN_HANDLER.matches(method.instructions(), context);
   }

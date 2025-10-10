@@ -170,7 +170,12 @@ public class AvoidForLoopCounterFilter implements MutationInterceptor {
         return false;
       }
 
-      final AbstractInsnNode mutatedInstruction = method.instruction(instruction);
+      var maybeIns = method.instructionForIndex(instruction);
+      if (maybeIns.isEmpty()) {
+        return false;
+      }
+
+      var mutatedInstruction = maybeIns.get();
 
       // performance hack
       if (!(mutatedInstruction instanceof IincInsnNode)) {
