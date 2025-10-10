@@ -44,8 +44,10 @@ public class InfiniteIteratorLoopFilter extends InfiniteLoopFilter {
 
   @Override
   boolean couldCauseInfiniteLoop(MethodTree method, MutationDetails each) {
-    final AbstractInsnNode instruction = method.instruction(each.getInstructionIndex());
-    return isIteratorNext(instruction);
+    var instruction = method.instructionForIndex(each.getInstructionIndex());
+    return instruction
+            .map(this::isIteratorNext)
+            .orElse(false);
   }
 
   private static SequenceQuery<AbstractInsnNode> doesNotBreakIteratorLoop() {

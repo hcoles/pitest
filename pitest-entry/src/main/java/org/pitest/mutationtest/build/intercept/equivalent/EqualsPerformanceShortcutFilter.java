@@ -112,8 +112,10 @@ public class EqualsPerformanceShortcutFilter implements MutationInterceptor {
   }
 
   private boolean mutatesAConditionalJump(MethodTree tree, int index) {
-    final AbstractInsnNode mutatedInsns = tree.instruction(index);
-    return InstructionMatchers.aConditionalJump().asPredicate().test(mutatedInsns);
+    var mutatedInsns = tree.instructionForIndex(index);
+    return mutatedInsns
+            .map(n -> InstructionMatchers.aConditionalJump().asPredicate().test(n))
+            .orElse(false);
   }
 
   private Predicate<MutationDetails> inEqualsMethod() {

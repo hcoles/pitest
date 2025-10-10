@@ -202,11 +202,14 @@ public class ForEachLoopFilter implements MutationInterceptor {
         return false;
       }
 
-      final AbstractInsnNode mutatedInstruction = method.instruction(instruction);
+      var mutatedInstruction = method.instructionForIndex(instruction);
+      if (mutatedInstruction.isEmpty()) {
+        return false;
+      }
 
       Set<AbstractInsnNode> toAvoid = cache.computeIfAbsent(method, this::findLoopInstructions);
 
-      return toAvoid.contains(mutatedInstruction);
+      return toAvoid.contains(mutatedInstruction.get());
     };
   }
 

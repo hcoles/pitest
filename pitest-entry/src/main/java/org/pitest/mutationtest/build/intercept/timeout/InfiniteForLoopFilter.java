@@ -53,8 +53,10 @@ public class InfiniteForLoopFilter extends InfiniteLoopFilter {
 
   @Override
   boolean couldCauseInfiniteLoop(MethodTree method, MutationDetails each) {
-    final AbstractInsnNode instruction = method.instruction(each.getInstructionIndex());
-    return instruction.getOpcode() == Opcodes.IINC;
+    var instruction = method.instructionForIndex(each.getInstructionIndex());
+    return instruction
+            .map(i -> i.getOpcode() == Opcodes.IINC)
+            .orElse(false);
   }
 
   private static SequenceQuery<AbstractInsnNode> countingLoopWithoutWriteConditionalAtStart() {
