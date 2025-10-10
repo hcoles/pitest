@@ -8,6 +8,11 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.20.7
+
+* #1432 Bump commons-text to 1.14.0 
+* #1433 Expand MethodTree api 
+
 ## 1.20.6
 
 * #1431 Fix performance regression
