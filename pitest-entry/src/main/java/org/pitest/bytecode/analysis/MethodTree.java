@@ -70,6 +70,11 @@ public class MethodTree {
     return (this.rawNode.access & Opcodes.ACC_PRIVATE) != 0;
   }
 
+  public boolean isAbstract() {
+    return (this.rawNode.access & Opcodes.ACC_ABSTRACT) != 0;
+  }
+
+
   public boolean returns(ClassName clazz) {
     return this.rawNode.desc.endsWith("L" + clazz.asInternalName() + ";");
   }
