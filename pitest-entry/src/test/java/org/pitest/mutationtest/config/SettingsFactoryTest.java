@@ -7,12 +7,10 @@ import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 import org.pitest.coverage.CompoundTestStatListener;
 import org.pitest.coverage.CoverageExporter;
-import org.pitest.coverage.TestInfo;
 import org.pitest.coverage.execute.CoverageOptions;
-import org.pitest.coverage.export.DefaultCoverageExporter;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
-import org.pitest.mutationtest.incremental.DefaultHistoryFactory;
+import org.pitest.mutationtest.incremental.ErroringHistoryFactory;
 import org.pitest.plugin.Feature;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.PitError;
@@ -185,9 +183,9 @@ public class SettingsFactoryTest {
   }
 
   @Test
-  public void producesDefaultHistoryStore() {
+  public void producesNullHistoryStore() {
 
-    assertThat(this.testee.createHistory()).isInstanceOf(DefaultHistoryFactory.class);
+    assertThat(this.testee.createHistory()).isInstanceOf(ErroringHistoryFactory.class);
   }
 
   @Test
