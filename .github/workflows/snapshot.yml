@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - master
+permissions:
+  contents: read
+  actions: read
 jobs:
   snapshot:
     runs-on: ubuntu-latest

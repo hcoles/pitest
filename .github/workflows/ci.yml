@@ -6,6 +6,10 @@ on:
   pull_request:
     branches-ignore:
       - 'release'
+permissions:
+  contents: read
+  actions: read
+  checks: read
 jobs:
   supported-jdk:
     name: ${{ matrix.title }}
