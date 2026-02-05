@@ -42,6 +42,7 @@ import java.util.stream.Stream;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 public class HistoryTest {
 
@@ -49,88 +50,13 @@ public class HistoryTest {
     public TemporaryFolder root = new TemporaryFolder();
 
     @Test
-    public void sameResultsWhenNoChanges() throws Exception {
-        Project project = createProject(root, ClassA.class, ClassATest.class);
-        AnalysisResult run1 = runPitest(project);
-        AnalysisResult run2 = runPitest(project);
-
-        assertSameNumberOfMutationsKilled(run1, run2);
-        assertThat(numberOfTestsRun(run2)).isEqualTo(0);
-    }
-
-
-    @Test
-    public void sameResultWhenCodeUnderTestTouched() throws Exception {
-        Project project = createProject(root, ClassA.class, ClassATest.class);
-
-        AnalysisResult run1 = runPitest(project);
-
-        project.modifyClass(ClassA.class);
-
-        AnalysisResult run2 = runPitest(project);
-
-        assertSameNumberOfMutationsKilled(run1, run2);
-        assertThat(numberOfTestsRun(run2)).isGreaterThan(0);
-    }
-
-    @Test
-    public void testsReRunWhenTestAltered() throws Exception {
-        Project project = createProject(root, ClassA.class, ClassATest.class);
-
-        runPitest(project);
-
-        project.modifyClass(ClassATest.class);
-
-        AnalysisResult run2 = runPitest(project);
-
-        assertThat(numberOfTestsRun(run2)).isGreaterThan(0);
-    }
-
-
-    @Test
-    public void mutationsUncoveredWhenTestRemoved() throws Exception {
-        Project project = createProject(root, ClassA.class, ClassATest.class);
-        AnalysisResult run1 = runPitest(project);
-
-        project.removeTest(ClassATest.class);
-
-        AnalysisResult run2 = runPitest(project);
-
-        assertThat(getTotalDetectedMutations(run2)).isEqualTo(0);
-        assertThat(run1).isNotEqualTo(run2);
-    }
-
-    @Test
-    public void mutationsKilledWhenTestAdded() throws Exception {
-        Project project = createProject(root, ClassA.class);
-        AnalysisResult run1 = runPitest(project);
-
-        project.addTest(ClassATest.class);
-
-        AnalysisResult run2 = runPitest(project);
-
-        assertThat(getTotalDetectedMutations(run2)).isEqualTo(1);
-        assertThat(run1).isNotEqualTo(run2);
-    }
-
-    @Test
-    public void prioritisesLastKillingTest() throws Exception {
+    public void errorsWhenHistoryActivatedWithoutAPlugin() throws Exception {
         Project project = createProject(root, ClassA.class, UselessTest1.class, UselessTest2.class, SlowKillingTest.class);
-        AnalysisResult run1 = runPitest(project);
-
-        project.modifyClass(ClassA.class);
-
-        AnalysisResult run2 = runPitest(project);
-
-        assertThat(numberOfTestsRun(run2)).isLessThan(numberOfTestsRun(run1));
+        assertThatCode(() ->runPitest(project)).hasMessageContaining("no history plugin");
     }
 
 
-    private static long getTotalDetectedMutations(AnalysisResult run2) {
-        return run2.getStatistics().get().getMutationStatistics().getTotalDetectedMutations();
-    }
-
-    private AnalysisResult runPitest(Project project) throws IOException {
+    private AnalysisResult runPitest(Project project) {
         EntryPoint entryPoint = new EntryPoint();
         ReportOptions data = new ReportOptions();
         data.setReportDir(project.reportsDir());
@@ -259,13 +185,4 @@ public class HistoryTest {
         return new Project(project, asList(c), asList(tests));
     }
 
-    private void assertSameNumberOfMutationsKilled(AnalysisResult r, AnalysisResult r2) {
-        long detected1 = getTotalDetectedMutations(r);
-        long detected2 = getTotalDetectedMutations(r2);
-        assertThat(detected1).isEqualTo(detected2);
-    }
-
-    private static long numberOfTestsRun(AnalysisResult r) {
-        return r.getStatistics().get().getMutationStatistics().getNumberOfTestsRun();
-    }
 }
