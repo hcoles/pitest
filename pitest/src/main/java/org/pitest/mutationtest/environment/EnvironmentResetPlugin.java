@@ -6,7 +6,7 @@ import org.pitest.plugin.ProvidesFeature;
 
 public interface EnvironmentResetPlugin extends ClientClasspathPlugin, ProvidesFeature {
 
-    ResetEnvironment make();
+    ResetEnvironment make(ResetArguments args);
 
     @Override
     // provide default feature for backwards compatibility

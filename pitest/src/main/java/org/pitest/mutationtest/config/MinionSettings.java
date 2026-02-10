@@ -4,8 +4,8 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.help.PitHelpError;
 import org.pitest.junit.NullConfiguration;
 import org.pitest.mutationtest.environment.CompositeReset;
-import org.pitest.mutationtest.environment.EnvironmentResetPlugin;
 import org.pitest.mutationtest.MutationEngineFactory;
+import org.pitest.mutationtest.environment.ResetArguments;
 import org.pitest.mutationtest.environment.ResetEnvironment;
 import org.pitest.testapi.Configuration;
 import org.pitest.util.PitError;
@@ -24,9 +24,9 @@ public class MinionSettings {
     this.plugins = plugins;
   }
 
-  public ResetEnvironment createReset(Collection<String> featureStrings) {
+  public ResetEnvironment createReset(Collection<String> featureStrings, ResetArguments args) {
     List<ResetEnvironment> resets = this.plugins.findResets(featureStrings).stream()
-            .map(EnvironmentResetPlugin::make)
+            .map(p -> p.make(args))
             .collect(Collectors.toList());
 
     return new CompositeReset(resets);

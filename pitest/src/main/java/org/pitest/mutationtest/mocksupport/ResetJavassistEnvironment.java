@@ -1,13 +1,15 @@
 package org.pitest.mutationtest.mocksupport;
 
+import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.environment.EnvironmentResetPlugin;
+import org.pitest.mutationtest.environment.ResetArguments;
 import org.pitest.mutationtest.environment.ResetEnvironment;
 import org.pitest.plugin.Feature;
 
 public class ResetJavassistEnvironment implements EnvironmentResetPlugin {
     @Override
-    public ResetEnvironment make() {
-        return JavassistInterceptor::setMutant;
+    public ResetEnvironment make(ResetArguments unused) {
+        return new JavassistReset();
     }
 
     @Override
@@ -20,5 +22,12 @@ public class ResetJavassistEnvironment implements EnvironmentResetPlugin {
     @Override
     public String description() {
         return "Reset environment for javassist";
+    }
+}
+
+class JavassistReset implements ResetEnvironment {
+    @Override
+    public void resetFor(Mutant mutatedClass, ClassLoader unused) {
+        JavassistInterceptor.setMutant(mutatedClass);
     }
 }

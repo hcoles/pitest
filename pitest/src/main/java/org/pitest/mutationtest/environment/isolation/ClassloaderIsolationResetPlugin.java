@@ -1,13 +1,15 @@
 package org.pitest.mutationtest.environment.isolation;
 
+import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.environment.EnvironmentResetPlugin;
+import org.pitest.mutationtest.environment.ResetArguments;
 import org.pitest.mutationtest.environment.ResetEnvironment;
 import org.pitest.plugin.Feature;
 
 public class ClassloaderIsolationResetPlugin implements EnvironmentResetPlugin {
     @Override
-    public ResetEnvironment make() {
-        return CatchNewClassLoadersTransformer::setMutant;
+    public ResetEnvironment make(ResetArguments unused) {
+        return new CatchNewClassLoadersReset();
     }
 
     @Override
@@ -21,5 +23,11 @@ public class ClassloaderIsolationResetPlugin implements EnvironmentResetPlugin {
                 .withOnByDefault(true)
                 .withDescription(description());
     }
-    
+}
+
+class CatchNewClassLoadersReset implements ResetEnvironment {
+    @Override
+    public void resetFor(Mutant mutatedClass, ClassLoader unused) {
+        CatchNewClassLoadersTransformer.setMutant(mutatedClass);
+    }
 }

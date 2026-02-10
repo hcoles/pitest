@@ -20,6 +20,7 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.mutationtest.EngineArguments;
+import org.pitest.mutationtest.environment.ResetArguments;
 import org.pitest.mutationtest.environment.ResetEnvironment;
 import org.pitest.mutationtest.config.ClientPluginServices;
 import org.pitest.mutationtest.config.MinionSettings;
@@ -84,7 +85,7 @@ public class MutationTestMinion {
 
       final MutationEngine engine = createEngine(paramsFromParent.engine, paramsFromParent.engineArgs);
 
-      final ResetEnvironment reset = this.plugins.createReset(paramsFromParent.featureStrings);
+      final ResetEnvironment reset = this.plugins.createReset(paramsFromParent.featureStrings, new ResetArguments(byteSource));
 
       final MutationTestWorker worker = new MutationTestWorker(hotswap,
           engine.createMutator(byteSource), loader, reset, paramsFromParent.fullMutationMatrix);
