@@ -2,14 +2,17 @@ package org.pitest.mutationtest.environment;
 
 import org.pitest.mutationtest.engine.Mutant;
 
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CompositeReset implements ResetEnvironment {
     private final List<ResetEnvironment> children;
 
     public CompositeReset(List<ResetEnvironment> children) {
-        this.children = Collections.unmodifiableList(children);
+        this.children = children.stream()
+                .sorted(Comparator.comparingInt(ResetEnvironment::priority))
+                .collect(Collectors.toList());
     }
 
     @Override

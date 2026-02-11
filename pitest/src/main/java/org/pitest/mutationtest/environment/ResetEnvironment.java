@@ -6,4 +6,7 @@ public interface ResetEnvironment {
 
     void resetFor(Mutant mutatedClass, ClassLoader loader);
 
+    default int priority() {
+        return 10;
+    }
  }
