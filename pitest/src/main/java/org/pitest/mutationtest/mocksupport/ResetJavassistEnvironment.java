@@ -30,4 +30,9 @@ class JavassistReset implements ResetEnvironment {
     public void resetFor(Mutant mutatedClass, ClassLoader unused) {
         JavassistInterceptor.setMutant(mutatedClass);
     }
+
+    @Override
+    public void finishFor(Mutant mutatedClass, ClassLoader loader) {
+        JavassistInterceptor.reset();
+    }
 }

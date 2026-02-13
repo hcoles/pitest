@@ -111,6 +111,8 @@ public class MutationTestWorker {
     final MutationStatusTestPair mutationDetected = handleMutation(
         mutationDetails, mutatedClass, relevantTests);
 
+    reset.finishFor(mutatedClass, this.loader);
+
     r.report(mutationId, mutationDetected);
     if (DEBUG) {
       LOG.fine("Mutation " + mutationId + " detected = " + mutationDetected);

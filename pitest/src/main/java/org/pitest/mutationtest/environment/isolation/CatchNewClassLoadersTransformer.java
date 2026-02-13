@@ -47,6 +47,11 @@ public class CatchNewClassLoadersTransformer implements ClassFileTransformer {
     // we'll abuse a WeakHashMap and live with the synchronization.
     static final Map<ClassLoader, Object> CLASS_LOADERS = Collections.synchronizedMap(new WeakHashMap<>());
 
+    public static synchronized void reset() {
+        targetClass = null;
+        currentMutant = null;
+    }
+
     public static synchronized void setMutant(Mutant mutant) {
         targetClass = mutant.getDetails().getClassName();
         currentMutant = mutant.getBytes();

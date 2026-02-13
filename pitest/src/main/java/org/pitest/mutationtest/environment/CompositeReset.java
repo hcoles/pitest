@@ -21,4 +21,11 @@ public class CompositeReset implements ResetEnvironment {
           each.resetFor(mutatedClass, loader);
       }
     }
+
+    @Override
+    public void finishFor(Mutant mutatedClass, ClassLoader loader) {
+        for (ResetEnvironment each : children) {
+            each.finishFor(mutatedClass, loader);
+        }
+    }
 }

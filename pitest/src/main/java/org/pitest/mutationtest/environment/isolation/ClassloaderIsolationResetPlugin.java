@@ -30,4 +30,9 @@ class CatchNewClassLoadersReset implements ResetEnvironment {
     public void resetFor(Mutant mutatedClass, ClassLoader unused) {
         CatchNewClassLoadersTransformer.setMutant(mutatedClass);
     }
+
+    @Override
+    public void finishFor(Mutant mutatedClass, ClassLoader loader) {
+        CatchNewClassLoadersTransformer.reset();
+    }
 }
