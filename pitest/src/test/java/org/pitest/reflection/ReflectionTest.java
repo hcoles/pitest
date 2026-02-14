@@ -14,7 +14,7 @@
  */
 package org.pitest.reflection;
 
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -41,27 +41,27 @@ public class ReflectionTest {
   public void allMethodsShouldReturnPublicMethodsDeclaredByParent() {
     final Set<Method> actual = Reflection.allMethods(Child.class);
     final Method expected = Reflection.publicMethod(Parent.class, "foo");
-    assertTrue(actual.contains(expected));
+    assertThat(actual).contains(expected);
   }
 
   @Test
   public void publicFieldsReturnsFieldsDeclaredInParent() throws Exception {
     final Set<Field> actual = Reflection.publicFields(Child.class);
     final Field expected = Parent.class.getField("first");
-    assertTrue(actual.contains(expected));
+    assertThat(actual).contains(expected);
   }
 
   @Test
   public void publicFieldsReturnsFieldsDeclaredInChild() throws Exception {
     final Set<Field> actual = Reflection.publicFields(Child.class);
     final Field expected = Child.class.getField("second");
-    assertTrue(actual.contains(expected));
+    assertThat(actual).contains(expected);
   }
 
   @Test
   public void publicFieldsReturnsStaticFields() throws Exception {
     final Set<Field> actual = Reflection.publicFields(Child.class);
     final Field expected = Child.class.getField("third");
-    assertTrue(actual.contains(expected));
+    assertThat(actual).contains(expected);
   }
 }
