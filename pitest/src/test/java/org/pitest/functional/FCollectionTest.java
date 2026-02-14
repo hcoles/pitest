@@ -1,9 +1,6 @@
 package org.pitest.functional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,20 +36,20 @@ public class FCollectionTest {
   @Test
   public void shouldReturnsAllEntriesWhenFilteredOnTrue() {
     final List<Integer> expected = this.is;
-    assertEquals(expected, FCollection.filter(this.is,  i -> true));
+    assertThat(FCollection.filter(this.is,  i -> true)).isEqualTo(expected);
   }
 
   @Test
   public void shouldReturnEmptyListWhenFilteredOnFalse() {
     final List<Integer> expected = Collections.emptyList();
-    assertEquals(expected, FCollection.filter(this.is, False.instance()));
+    assertThat(FCollection.filter(this.is, False.instance())).isEqualTo(expected);
   }
 
   @Test
   public void shouldReturnOnlyMatchesToPredicate() {
     final Predicate<Integer> p = a -> a <= 2;
     final List<Integer> expected = Arrays.asList(1, 2);
-    assertEquals(expected, FCollection.filter(this.is, p));
+    assertThat(FCollection.filter(this.is, p)).isEqualTo(expected);
   }
 
   @Test
@@ -62,17 +59,17 @@ public class FCollectionTest {
 
     this.is.forEach(e);
 
-    assertEquals(this.is, actual);
+    assertThat(actual).isEqualTo(this.is);
   }
 
   @Test
   public void shouldApplyMapToAllItems() {
-    assertEquals(this.is, FCollection.map(this.is, Prelude.id()));
+    assertThat(FCollection.map(this.is, Prelude.id())).isEqualTo(this.is);
   }
 
   @Test
   public void mapShouldTreatNullAsAnEmptyIterable() {
-    assertEquals(Collections.emptyList(), FCollection.map(null, Prelude.id()));
+    assertThat(FCollection.map(null, Prelude.id())).isEmpty();
   }
 
   @Test
@@ -80,13 +77,12 @@ public class FCollectionTest {
     final Function<Integer, Collection<Integer>> f = a -> Arrays.asList(a, a);
     final Collection<Integer> expected = Arrays.asList(1, 1, 2, 2, 3, 3, 4, 4,
         5, 5);
-    assertEquals(expected, FCollection.flatMap(this.is, f));
+    assertThat(FCollection.flatMap(this.is, f)).isEqualTo(expected);
   }
 
   @Test
   public void flatMapShouldTreatNullAsEmptyIterable() {
-    assertEquals(Collections.emptyList(),
-        FCollection.flatMap(null, objectToObjectIterable()));
+    assertThat(FCollection.flatMap(null, objectToObjectIterable())).isEmpty();
   }
 
   private Function<Object, Iterable<Object>> objectToObjectIterable() {
@@ -96,13 +92,13 @@ public class FCollectionTest {
   @Test
   public void containsShouldReturnFalseWhenPredicateNotMet() {
     final Collection<Integer> xs = Arrays.asList(1, 2, 3);
-    assertFalse(FCollection.contains(xs, False.instance()));
+    assertThat(FCollection.contains(xs, False.instance())).isFalse();
   }
 
   @Test
   public void containsShouldReturnTrueWhenPredicateMet() {
     final Collection<Integer> xs = Arrays.asList(1, 2, 3);
-    assertTrue(FCollection.contains(xs,  i -> true));
+    assertThat(FCollection.contains(xs,  i -> true)).isTrue();
   }
 
   @Test
@@ -124,7 +120,7 @@ public class FCollectionTest {
     final BiFunction<Integer, Integer, Integer> f = (a, b) -> a + b;
 
     final int actual = FCollection.fold(f, 2, xs);
-    assertEquals(8, actual);
+    assertThat(actual).isEqualTo(8);
   }
 
   @Test
@@ -132,8 +128,7 @@ public class FCollectionTest {
     final Collection<Collection<Integer>> is = new ArrayList<>();
     is.add(Arrays.asList(1, 2, 3, 4, 5));
     is.add(Arrays.asList(6, 7, 8, 9));
-    assertEquals(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9),
-        FCollection.flatten(is));
+    assertThat(FCollection.flatten(is)).containsExactly(1, 2, 3, 4, 5, 6, 7, 8, 9);
 
   }
 
@@ -141,7 +136,7 @@ public class FCollectionTest {
   public void shouldSplitCollectionIntoOneBucketWhenListSizeEqualToBucketSize() {
     this.is = Arrays.asList(1, 2, 3);
     final List<List<Integer>> actual = FCollection.splitToLength(3, this.is);
-    assertEquals(1, actual.size());
+    assertThat(actual).hasSize(1);
     assertThat(actual.get(0)).contains(1, 2, 3);
   }
 
@@ -149,7 +144,7 @@ public class FCollectionTest {
   public void shouldSplitCollectionIntoTwoBucketsWhenListSizeOneGreaterThanBucketSize() {
     this.is = Arrays.asList(1, 2, 3);
     final List<List<Integer>> actual = FCollection.splitToLength(2, this.is);
-    assertEquals(2, actual.size());
+    assertThat(actual).hasSize(2);
     assertThat(actual.get(0)).contains(1, 2);
     assertThat(actual.get(1)).contains(3);
   }
@@ -158,7 +153,7 @@ public class FCollectionTest {
   public void shouldSplitCollectionIntoManyBucketsWhenListManyTimesGreaterThanBucketSize() {
     this.is = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
     final List<List<Integer>> actual = FCollection.splitToLength(2, this.is);
-    assertEquals(6, actual.size());
+    assertThat(actual).hasSize(6);
     assertThat(actual.get(0)).contains(1, 2);
     assertThat(actual.get(1)).contains(3, 4);
     assertThat(actual.get(5)).contains(11);
@@ -171,7 +166,7 @@ public class FCollectionTest {
         this.is, fortyTwo());
     final Map<Integer, Collection<Integer>> expected = new HashMap<>();
     expected.put(42, Arrays.asList(1, 2, 3));
-    assertEquals(expected, actual);
+    assertThat(actual).isEqualTo(expected);
   }
 
   @Test
@@ -183,7 +178,7 @@ public class FCollectionTest {
     expected.put(1, Arrays.asList(1));
     expected.put(2, Arrays.asList(2));
     expected.put(3, Arrays.asList(3));
-    assertEquals(expected, actual);
+    assertThat(actual).isEqualTo(expected);
   }
 
   private Function<Integer, Integer> fortyTwo() {

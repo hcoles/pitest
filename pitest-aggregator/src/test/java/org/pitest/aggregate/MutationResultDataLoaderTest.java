@@ -1,10 +1,6 @@
 package org.pitest.aggregate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.net.URL;
@@ -32,22 +28,22 @@ public class MutationResultDataLoaderTest {
   public void testLoadData() throws Exception {
     final Collection<MutationResult> results = this.underTest.loadData();
 
-    assertNotNull(results);
-    assertEquals(2, results.size());
+    assertThat(results).isNotNull();
+    assertThat(results).hasSize(2);
 
     for (final MutationResult result : results) {
       if (result.getDetails().getFirstIndex() == 5) {
         assertThat(result.getDetails().getBlocks()).contains(38);
-        assertEquals("com.mycompany.OrderedWeightedValueSampler", result.getDetails().getId().getClassName().asJavaName());
-        assertEquals(202, result.getDetails().getLineNumber());
-        assertFalse(result.getStatus().isDetected());
-        assertEquals(DetectionStatus.NO_COVERAGE, result.getStatus());
+        assertThat(result.getDetails().getId().getClassName().asJavaName()).isEqualTo("com.mycompany.OrderedWeightedValueSampler");
+        assertThat(result.getDetails().getLineNumber()).isEqualTo(202);
+        assertThat(result.getStatus().isDetected()).isFalse();
+        assertThat(result.getStatus()).isEqualTo(DetectionStatus.NO_COVERAGE);
       } else {
         assertThat(result.getDetails().getBlocks()).contains(27);
-        assertEquals("com.mycompany.OrderedWeightedValueSampler", result.getDetails().getId().getClassName().asJavaName());
-        assertEquals(77, result.getDetails().getLineNumber());
-        assertTrue(result.getStatus().isDetected());
-        assertEquals(DetectionStatus.KILLED, result.getStatus());
+        assertThat(result.getDetails().getId().getClassName().asJavaName()).isEqualTo("com.mycompany.OrderedWeightedValueSampler");
+        assertThat(result.getDetails().getLineNumber()).isEqualTo(77);
+        assertThat(result.getStatus().isDetected()).isTrue();
+        assertThat(result.getStatus()).isEqualTo(DetectionStatus.KILLED);
       }
     }
   }

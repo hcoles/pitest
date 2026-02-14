@@ -1,8 +1,6 @@
 package org.pitest.functional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,25 +24,25 @@ public class FArrayTest {
   @Test
   public void shouldReturnAllEntriesWhenFilteredOnTrue() {
     final List<Integer> expected = Arrays.asList(this.is);
-    assertEquals(expected, FArray.filter(this.is, i -> true));
+    assertThat(FArray.filter(this.is, i -> true)).isEqualTo(expected);
   }
 
   @Test
   public void shouldReturnEmptyListWhenFilteredOnFalse() {
     final List<Integer> expected = Collections.emptyList();
-    assertEquals(expected, FArray.filter(this.is, False.instance()));
+    assertThat(FArray.filter(this.is, False.instance())).isEqualTo(expected);
   }
 
   @Test
   public void shouldReturnOnlyMatchesToPredicate() {
     final Predicate<Integer> p = a -> a <= 2;
     final List<Integer> expected = Arrays.asList(1, 2);
-    assertEquals(expected, FArray.filter(this.is, p));
+    assertThat(FArray.filter(this.is, p)).isEqualTo(expected);
   }
 
   @Test
   public void shouldReturnEmptyListWhenGivenNull() {
-    assertEquals(Collections.emptyList(), FArray.filter(null,  i -> true));
+    assertThat(FArray.filter(null,  i -> true)).isEmpty();
   }
 
   @Test
@@ -52,13 +50,12 @@ public class FArrayTest {
     final Function<Integer, Collection<Integer>> f = a -> Arrays.asList(a, a);
     final Collection<Integer> expected = Arrays.asList(1, 1, 2, 2, 3, 3, 4, 4,
         5, 5);
-    assertEquals(expected, FArray.flatMap(this.is, f));
+    assertThat(FArray.flatMap(this.is, f)).isEqualTo(expected);
   }
 
   @Test
   public void flatMapShouldTreatNullAsEmptyIterable() {
-    assertEquals(Collections.emptyList(),
-        FArray.flatMap(null, objectToObjectIterable()));
+    assertThat(FArray.flatMap(null, objectToObjectIterable())).isEmpty();
   }
 
   private Function<Object, Iterable<Object>> objectToObjectIterable() {
@@ -68,13 +65,13 @@ public class FArrayTest {
   @Test
   public void containsShouldReturnFalseWhenPredicateNotMet() {
     final Integer[] xs = { 1, 2, 3 };
-    assertFalse(FArray.contains(xs, False.instance()));
+    assertThat(FArray.contains(xs, False.instance())).isFalse();
   }
 
   @Test
   public void containsShouldReturnTrueWhenPredicateMet() {
     final Integer[] xs = { 1, 2, 3 };
-    assertTrue(FArray.contains(xs,  i -> true));
+    assertThat(FArray.contains(xs,  i -> true)).isTrue();
   }
 
   @Test

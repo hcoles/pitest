@@ -1,7 +1,6 @@
 package org.pitest.aggregate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.net.URL;
@@ -28,13 +27,13 @@ public class BlockCoverageDataLoaderTest {
   public void testLoadData() throws Exception {
     final Collection<BlockCoverage> results = this.underTest.loadData();
 
-    assertNotNull(results);
-    assertEquals(5, results.size());
+    assertThat(results).isNotNull();
+    assertThat(results).hasSize(5);
     for (final BlockCoverage block : results) {
-      assertNotNull(block.getTests());
-      assertEquals(1, block.getTests().size());
+      assertThat(block.getTests()).isNotNull();
+      assertThat(block.getTests()).hasSize(1);
 
-      assertEquals("com.example.DividerTest.testDivide(com.example.DividerTest)", block.getTests().iterator().next());
+      assertThat(block.getTests().iterator().next()).isEqualTo("com.example.DividerTest.testDivide(com.example.DividerTest)");
     }
   }
 
