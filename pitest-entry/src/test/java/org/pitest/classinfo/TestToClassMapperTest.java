@@ -14,14 +14,15 @@
  */
 package org.pitest.classinfo;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import java.util.Optional;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
+
 
 public class TestToClassMapperTest {
 
@@ -44,8 +45,8 @@ public class TestToClassMapperTest {
     final byte[] bytes = { 0 };
     when(this.source.getBytes("com.example.Foo"))
         .thenReturn(Optional.ofNullable(bytes));
-    assertEquals(ClassName.fromString("com.example.Foo"),
-        this.testee.findTestee("com.example.FooTest").get());
+    assertThat(this.testee.findTestee("com.example.FooTest"))
+        .contains(ClassName.fromString("com.example.Foo"));
   }
 
   @Test
@@ -53,8 +54,8 @@ public class TestToClassMapperTest {
     final byte[] bytes = { 0 };
     when(this.source.getBytes("com.example.Foo"))
         .thenReturn(Optional.ofNullable(bytes));
-    assertEquals(ClassName.fromString("com.example.Foo"),
-        this.testee.findTestee("com.example.TestFoo").get());
+    assertThat(this.testee.findTestee("com.example.TestFoo"))
+        .contains(ClassName.fromString("com.example.Foo"));
   }
 
   @Test
@@ -62,7 +63,8 @@ public class TestToClassMapperTest {
     final byte[] bytes = null;
     when(this.source.getBytes("com.example.Foo"))
         .thenReturn(Optional.ofNullable(bytes));
-    assertEquals(Optional.empty(), this.testee.findTestee("com.example.TestFoo"));
+    assertThat(this.testee.findTestee("com.example.TestFoo"))
+        .isEmpty();
   }
 
 }

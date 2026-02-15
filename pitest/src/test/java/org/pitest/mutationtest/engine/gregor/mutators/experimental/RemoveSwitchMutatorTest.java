@@ -20,7 +20,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -36,19 +36,17 @@ public class RemoveSwitchMutatorTest {
 
   MutatorVerifierStart v = MutatorVerifierStart.forMutator(new RemoveSwitchMutator(2))
           .notCheckingUnMutatedValues();
-  
+
   @Test
   public void shouldProvideAMeaningfulName() {
-    assertEquals("EXPERIMENTAL_REMOVE_SWITCH_MUTATOR_[0-99]",
-        new RemoveSwitchMutator(2).getName());
+    assertThat(new RemoveSwitchMutator(2).getName()).isEqualTo("EXPERIMENTAL_REMOVE_SWITCH_MUTATOR_[0-99]");
   }
 
   @Test
   public void shouldProvideAMeaningfulAggregatedName() {
     Iterable<MethodMutatorFactory> mutators = RemoveSwitchMutator.makeMutators();
     for (MethodMutatorFactory mutator : mutators) {
-      assertEquals("EXPERIMENTAL_REMOVE_SWITCH_MUTATOR_[0-99]",
-              mutator.getName());
+      assertThat(mutator.getName()).isEqualTo("EXPERIMENTAL_REMOVE_SWITCH_MUTATOR_[0-99]");
     }
   }
 
@@ -56,14 +54,14 @@ public class RemoveSwitchMutatorTest {
     @Override
     public Integer apply(int value) {
       switch (value) {
-      case 0:
-        return 0;
-      case 1:
-        return 1;
-      case 2:
-        return 2;
-      default:
-        return -1;
+        case 0:
+          return 0;
+        case 1:
+          return 1;
+        case 2:
+          return 2;
+        default:
+          return -1;
       }
     }
   }
@@ -108,20 +106,20 @@ public class RemoveSwitchMutatorTest {
 
   }
 
-  private static class HasCharSwitchWithDefault implements Function<Character,Character> {
+  private static class HasCharSwitchWithDefault implements Function<Character, Character> {
 
     @Override
     public Character apply(Character c) {
       char value = c.charValue();
       switch (value) {
-      case 'a':
-        return 'a';
-      case 'b':
-        return 'b';
-      case 'c':
-        return 'c';
-      default:
-        return 'z';
+        case 'a':
+          return 'a';
+        case 'b':
+          return 'b';
+        case 'c':
+          return 'c';
+        default:
+          return 'z';
       }
     }
   }
@@ -135,19 +133,19 @@ public class RemoveSwitchMutatorTest {
     v2.firstMutantShouldReturn('z', 'z');
   }
 
-  private static class HasEnumSwitchWithDefault implements Function<TimeUnit,Integer> {
+  private static class HasEnumSwitchWithDefault implements Function<TimeUnit, Integer> {
 
     @Override
     public Integer apply(TimeUnit value) {
       switch (value) {
         case NANOSECONDS:
-        return 1;
+          return 1;
         case MICROSECONDS:
-        return 2;
+          return 2;
         case MILLISECONDS:
-        return 3;
-      default:
-        return -1;
+          return 3;
+        default:
+          return -1;
       }
     }
   }
@@ -167,16 +165,16 @@ public class RemoveSwitchMutatorTest {
     @Override
     public Integer apply(int value) {
       switch (value) {
-      case 1:
-        return 1;
-      case 200:
-        return 2;
-      case 4000:
-        return 4;
-      case 800000:
-        return 8;
-      default:
-        return 0;
+        case 1:
+          return 1;
+        case 200:
+          return 2;
+        case 4000:
+          return 4;
+        case 800000:
+          return 8;
+        default:
+          return 0;
       }
     }
   }
@@ -185,21 +183,21 @@ public class RemoveSwitchMutatorTest {
   public void shouldReplaceTableLabelsInt() {
     IntMutantVerifier<Integer> v2 = v.forIntFunctionClass(HasMultipleArmIntSwitchWithDefault.class);
     v2.firstMutantShouldReturn(0,
-        0);
+            0);
     v2.firstMutantShouldReturn(1,
-        1);
+            1);
     v2.firstMutantShouldReturn(200,
-        2);
+            2);
     v2.firstMutantShouldReturn(4000,
-        0);
+            0);
     v2.firstMutantShouldReturn(800000,
-        8);
+            8);
   }
 
   @Test
   public void includesValueInLookupSwitchDescription() {
-      IntMutantVerifier<Integer> v2 = v.forIntFunctionClass(HasMultipleArmIntSwitchWithDefault.class);
-      v2.firstMutantDescription().isEqualTo("RemoveSwitch 2 (case value 4000)");
+    IntMutantVerifier<Integer> v2 = v.forIntFunctionClass(HasMultipleArmIntSwitchWithDefault.class);
+    v2.firstMutantDescription().isEqualTo("RemoveSwitch 2 (case value 4000)");
   }
 
   private static class HasMultipleArmIntSwitchWithoutDefault implements IntFunction<Integer> {
@@ -207,14 +205,14 @@ public class RemoveSwitchMutatorTest {
     @Override
     public Integer apply(int value) {
       switch (value) {
-      case 0:
-        return 0;
-      case 200:
-        return 2;
-      case 4000:
-        return 4;
-      case 800000:
-        return 8;
+        case 0:
+          return 0;
+        case 200:
+          return 2;
+        case 4000:
+          return 4;
+        case 800000:
+          return 8;
       }
       return -1;
     }
@@ -225,14 +223,14 @@ public class RemoveSwitchMutatorTest {
     IntMutantVerifier<Integer> v2 = v.forIntFunctionClass(HasMultipleArmIntSwitchWithoutDefault.class);
 
     v2.firstMutantShouldReturn(0,
-        0);
+            0);
     v2.firstMutantShouldReturn(200,
-        2);
+            2);
     v2.firstMutantShouldReturn(4000, -1);
     v2.firstMutantShouldReturn(
-        800000, 8);
+            800000, 8);
     v2.firstMutantShouldReturn(8,
-        -1);
+            -1);
   }
 
   private static class HasFewerLabelsWithDefault implements IntFunction<Integer> {
@@ -240,12 +238,12 @@ public class RemoveSwitchMutatorTest {
     @Override
     public Integer apply(int value) {
       switch (value) {
-      case 1:
-        return 1;
-      case 200:
-        return 2;
-      default:
-        return 3;
+        case 1:
+          return 1;
+        case 200:
+          return 2;
+        default:
+          return 3;
       }
     }
   }
@@ -253,7 +251,7 @@ public class RemoveSwitchMutatorTest {
   @Test
   public void shouldNotTouchIt() {
     v.forClass(HasFewerLabelsWithDefault.class)
-                    .noMutantsCreated();
+            .noMutantsCreated();
   }
 
 
@@ -284,7 +282,7 @@ public class RemoveSwitchMutatorTest {
             .noMutantsCreated();
   }
 
-  private static class FallThroughTableSwitch implements Function<TimeUnit,Integer> {
+  private static class FallThroughTableSwitch implements Function<TimeUnit, Integer> {
 
     @Override
     public Integer apply(TimeUnit value) {
@@ -306,7 +304,6 @@ public class RemoveSwitchMutatorTest {
     v.forClass(FallThroughTableSwitch.class)
             .noMutantsCreated();
   }
-
 
 }
 

@@ -1,7 +1,6 @@
 package org.pitest.classinfo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.Serializable;
 
@@ -21,7 +20,8 @@ public class AddlerHashTest {
   @Test
   public void shouldCreateChecksumOfSuppliedBytes()
       throws ClassNotFoundException {
-    assertTrue(this.testee.hash(ClassUtils.classAsBytes(String.class)) != 0);
+    assertThat(this.testee.hash(ClassUtils.classAsBytes(String.class))).isNotZero();
+
   }
 
   @Test
@@ -29,15 +29,16 @@ public class AddlerHashTest {
       throws ClassNotFoundException {
     final long expected = this.testee.hash(ClassUtils
         .classAsBytes(String.class));
-    assertEquals(expected,
-        this.testee.hash(ClassUtils.classAsBytes(String.class)));
+    assertThat(this.testee.hash(ClassUtils.classAsBytes(String.class))).isEqualTo(expected);
+
   }
 
   @Test
   public void shouldCreateDifferentHashesForDifferentClasses()
       throws ClassNotFoundException {
-    assertTrue(this.testee.hash(ClassUtils.classAsBytes(Comparable.class)) != this.testee
+    assertThat(this.testee.hash(ClassUtils.classAsBytes(Comparable.class))).isNotEqualTo(this.testee
         .hash(ClassUtils.classAsBytes(Serializable.class)));
+
   }
 
 }

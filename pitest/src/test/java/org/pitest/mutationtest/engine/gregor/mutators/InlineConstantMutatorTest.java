@@ -20,7 +20,7 @@ import org.pitest.verifier.mutants.MutatorVerifierStart;
 
 import java.util.concurrent.Callable;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class InlineConstantMutatorTest {
 
@@ -43,8 +43,7 @@ public class InlineConstantMutatorTest {
 
     @Test
     public void shouldProvideAMeaningfulName() {
-        assertEquals("INLINE_CONSTS",
-                new InlineConstantMutator().getName());
+        assertThat(new InlineConstantMutator().getName()).isEqualTo("INLINE_CONSTS");
     }
 
     @Test

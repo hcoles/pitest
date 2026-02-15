@@ -7,7 +7,7 @@ import org.pitest.mutationtest.engine.Location;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CoverageResultTest {
 
@@ -17,21 +17,21 @@ public class CoverageResultTest {
   public void shouldCalculateCorrectNumberOfCoveredBlocksWhenNoneCovered() {
     this.testee = new CoverageResult(null, 0, true,
         Collections.<BlockLocation> emptyList());
-    assertEquals(0, this.testee.getNumberOfCoveredBlocks());
+    assertThat(this.testee.getNumberOfCoveredBlocks()).isEqualTo(0);
   }
 
   @Test
   public void shouldCalculateCorrectNumberOfCoveredBlocksWhenOneClassHasCoverage() {
     this.testee = new CoverageResult(null, 0, true,
         Collections.singletonList(makeCoverage("foo", 1)));
-    assertEquals(1, this.testee.getNumberOfCoveredBlocks());
+    assertThat(this.testee.getNumberOfCoveredBlocks()).isEqualTo(1);
   }
 
   @Test
   public void shouldCalculateCorrectNumberOfCoveredBlocksWhenMultiplesClassesHaveCoverage() {
     this.testee = new CoverageResult(null, 0, true, Arrays.asList(
         makeCoverage("foo", 42), makeCoverage("bar", 42)));
-    assertEquals(2, this.testee.getNumberOfCoveredBlocks());
+    assertThat(this.testee.getNumberOfCoveredBlocks()).isEqualTo(2);
   }
 
   private BlockLocation makeCoverage(final String name, final int block) {

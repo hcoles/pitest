@@ -19,7 +19,7 @@ import org.pitest.verifier.mutants.MutatorVerifierStart;
 
 import java.util.concurrent.Callable;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator.REMOVE_INCREMENTS;
 
 public class RemoveIncrementsMutatorTest {
@@ -29,8 +29,7 @@ public class RemoveIncrementsMutatorTest {
 
     @Test
     public void shouldProvideAMeaningfulName() {
-        assertEquals("REMOVE_INCREMENTS",
-                REMOVE_INCREMENTS.getName());
+        assertThat(REMOVE_INCREMENTS.getName()).isEqualTo("REMOVE_INCREMENTS");
     }
 
     @Test

@@ -1,6 +1,6 @@
 package org.pitest.simpletest.steps;
 
-import static org.junit.Assert.assertSame;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,8 +18,8 @@ public class CallStepTest {
   @Test
   public void shouldReturnSuppliedObject() {
     final CallStep testee = new CallStep(this.testMethod);
-    assertSame(this,
-        testee.execute(null, this));
+    assertThat(testee.execute(null, this)).isSameAs(this);
+        testee.execute(null, this);
   }
 
   public void testMethod() {

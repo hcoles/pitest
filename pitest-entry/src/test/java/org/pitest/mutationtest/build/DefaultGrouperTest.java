@@ -1,6 +1,6 @@
 package org.pitest.mutationtest.build;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.pitest.mutationtest.LocationMother.aMutationId;
 
 import java.util.Arrays;
@@ -35,7 +35,7 @@ public class DefaultGrouperTest {
         Arrays.asList(ClassName.fromString("foo")), Arrays.asList(
             createDetails("foo"), createDetails("foo"), createDetails("foo")));
 
-    assertEquals(3, actual.size());
+    assertThat(actual).hasSize(3);
   }
 
   private void assertCreatesOneUnitForTwoMutations() {
@@ -43,7 +43,7 @@ public class DefaultGrouperTest {
     final MutationDetails mutation2 = createDetails("foo");
     final List<List<MutationDetails>> actual = this.testee.groupMutations(null,
         Arrays.asList(mutation1, mutation2));
-    assertEquals(1, actual.size());
+    assertThat(actual).hasSize(1);
   }
 
   private void makeTesteeWithUnitSizeOf(final int i) {

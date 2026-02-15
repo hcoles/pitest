@@ -14,9 +14,7 @@
  */
 package org.pitest.classinfo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
@@ -51,12 +49,12 @@ public class RepositoryTest {
 
   @Test
   public void shouldReturnTrueWhenAskedForKnownClass() {
-    assertTrue(this.testee.hasClass(ClassName.fromClass(Integer.class)));
+    assertThat(this.testee.hasClass(ClassName.fromClass(Integer.class))).isTrue();
   }
 
   @Test
   public void shouldReturnFalseWhenAskedForUnknownClass() {
-    assertFalse(this.testee.hasClass(ClassName.fromString("never.heard.of.you")));
+    assertThat(this.testee.hasClass(ClassName.fromString("never.heard.of.you"))).isFalse();
   }
 
   @Test
@@ -70,8 +68,7 @@ public class RepositoryTest {
 
   @Test
   public void shouldReturnNoneWhenAskedForUnknownClass() {
-    assertEquals(Optional.empty(),
-        this.testee.fetchClass(ClassName.fromString("never.heard.of.you")));
+    assertThat(this.testee.fetchClass(ClassName.fromString("never.heard.of.you"))).isEmpty();
   }
 
   @Test
@@ -94,7 +91,7 @@ public class RepositoryTest {
 
   @Test
   public void shouldReturnInfoForClassOnClassPath() {
-    assertTrue(this.testee.fetchClass(Integer.class).isPresent());
+    assertThat(this.testee.fetchClass(Integer.class)).isPresent();
   }
 
   @Test
@@ -114,7 +111,7 @@ public class RepositoryTest {
   @Test
   public void shouldReportOuterClassForStaticInnerClasses() {
     final String actual = getOuterClassNameFor(SimpleInnerClass.class);
-    assertEquals(RepositoryTest.class.getName().replace(".", "/"), actual);
+    assertThat(actual).isEqualTo(RepositoryTest.class.getName().replace(".", "/"));
   }
 
   @Test
@@ -124,7 +121,7 @@ public class RepositoryTest {
     };
 
     final String actual = getOuterClassNameFor(local.getClass());
-    assertEquals(RepositoryTest.class.getName().replace(".", "/"), actual);
+    assertThat(actual).isEqualTo(RepositoryTest.class.getName().replace(".", "/"));
   }
 
   public class NonStaticInnerClass {
@@ -134,7 +131,7 @@ public class RepositoryTest {
   @Test
   public void shouldReportOuterClassForNonStaticInnerClasses() {
     final String actual = getOuterClassNameFor(NonStaticInnerClass.class);
-    assertEquals(RepositoryTest.class.getName().replace(".", "/"), actual);
+    assertThat(actual).isEqualTo(RepositoryTest.class.getName().replace(".", "/"));
   }
 
   public static class OuterStaticInnerClass {
@@ -146,9 +143,8 @@ public class RepositoryTest {
   @Test
   public void shouldReportInnermstOuterClassForNestedInnerClasses() {
     final String actual = getOuterClassNameFor(OuterStaticInnerClass.InnerStaticClass.class);
-    assertEquals(
-        RepositoryTest.OuterStaticInnerClass.class.getName().replace(".", "/"),
-        actual);
+    assertThat(actual).isEqualTo(
+        RepositoryTest.OuterStaticInnerClass.class.getName().replace(".", "/"));
   }
 
   static class Foo {
@@ -162,21 +158,19 @@ public class RepositoryTest {
   @Test
   public void shouldReportSuperClass() {
     final Optional<ClassInfo> aClass = this.testee.fetchClass(Bar.class);
-    assertEquals(ClassName.fromClass(Foo.class), aClass.get().getSuperClass()
-        .get().getName());
+    assertThat(aClass.get().getSuperClass().get().getName()).isEqualTo(ClassName.fromClass(Foo.class));
   }
 
   @Test
   public void shouldReportSuperClassAsObjectWhenNoneDeclared() {
     final Optional<ClassInfo> aClass = this.testee.fetchClass(Foo.class);
-    assertEquals(ClassName.fromClass(Object.class), aClass.get().getSuperClass()
-        .get().getName());
+    assertThat(aClass.get().getSuperClass().get().getName()).isEqualTo(ClassName.fromClass(Object.class));
   }
 
   @Test
   public void shouldReportNoSuperClassForObject() {
     final Optional<ClassInfo> aClass = this.testee.fetchClass(Object.class);
-    assertEquals(Optional.empty(), aClass.get().getSuperClass());
+    assertThat(aClass.get().getSuperClass()).isEmpty();
   }
 
   interface ITop {
@@ -198,16 +192,16 @@ public class RepositoryTest {
   @Test
   public void shouldCorrectlyNegotiateClassHierarchies() {
     final Optional<ClassInfo> aClass = this.testee.fetchClass(Bottom.class);
-    assertTrue(aClass.get().descendsFrom(Middle.class));
-    assertTrue(aClass.get().descendsFrom(Top.class));
-    assertTrue(aClass.get().descendsFrom(Object.class));
-    assertFalse(aClass.get().descendsFrom(String.class));
+    assertThat(aClass.get().descendsFrom(Middle.class)).isTrue();
+    assertThat(aClass.get().descendsFrom(Top.class)).isTrue();
+    assertThat(aClass.get().descendsFrom(Object.class)).isTrue();
+    assertThat(aClass.get().descendsFrom(String.class)).isFalse();
   }
 
   @Test
   public void doesNotTreatInterfacesAsPartOfClassHierarchy() {
     final Optional<ClassInfo> aClass = this.testee.fetchClass(Bottom.class);
-    assertFalse(aClass.get().descendsFrom(ITop.class));
+    assertThat(aClass.get().descendsFrom(ITop.class)).isFalse();
   }
 
   @Test

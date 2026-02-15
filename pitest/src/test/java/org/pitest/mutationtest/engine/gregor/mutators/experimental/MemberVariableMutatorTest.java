@@ -20,7 +20,7 @@ import org.pitest.verifier.mutants.MutatorVerifierStart;
 
 import java.util.concurrent.Callable;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Stefan Penndorf <stefan.penndorf@gmail.com>
@@ -33,8 +33,7 @@ public class MemberVariableMutatorTest {
 
     @Test
     public void shouldProvideAMeaningfulName() {
-        assertEquals("EXPERIMENTAL_MEMBER_VARIABLE",
-                new MemberVariableMutator().getName());
+        assertThat(new MemberVariableMutator().getName()).isEqualTo("EXPERIMENTAL_MEMBER_VARIABLE");
     }
 
     @Test

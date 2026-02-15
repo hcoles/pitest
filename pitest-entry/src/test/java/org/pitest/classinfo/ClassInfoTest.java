@@ -14,7 +14,8 @@
  */
 package org.pitest.classinfo;
 
-import static org.junit.Assert.assertFalse;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,8 +40,10 @@ public class ClassInfoTest {
     final ClassInfo classB = new ClassInfo(pointerTo(parent),
         emptyClassPointer(), this.data);
 
-    assertFalse(classA.getHierarchicalId().getHierarchicalHash()
-        .equals(classB.getHierarchicalId().getHierarchicalHash()));
+    assertThat(classA.getHierarchicalId().getHierarchicalHash())
+        .isNotEqualTo(classB.getHierarchicalId().getHierarchicalHash());
+
+
   }
 
   @Test
@@ -52,8 +55,10 @@ public class ClassInfoTest {
     final ClassInfo classB = new ClassInfo(emptyClassPointer(),
         pointerTo(outer), this.data);
 
-    assertFalse(classA.getHierarchicalId().getHierarchicalHash()
-        .equals(classB.getHierarchicalId().getHierarchicalHash()));
+    assertThat(classA.getHierarchicalId().getHierarchicalHash())
+        .isNotEqualTo(classB.getHierarchicalId().getHierarchicalHash());
+
+
   }
 
   private ClassPointer emptyClassPointer() {

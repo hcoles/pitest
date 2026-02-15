@@ -1,8 +1,6 @@
 package org.pitest.simpletest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,19 +28,19 @@ public class EqualitySetTest {
     for (final String each : this.testee) {
       actual.add(each);
     }
-    assertEquals(expected, actual);
+    assertThat(actual).isEqualTo(expected);
   }
 
   @Test
   public void containsShouldReturnTrueWhenMemberPresent() {
     this.testee.add("one");
-    assertTrue(this.testee.contains("one"));
+    assertThat(this.testee.contains("one")).isTrue();
   }
 
   @Test
   public void containsShouldReturnFalseWhenMemberNotPresent() {
     this.testee.add("one");
-    assertFalse(this.testee.contains("two"));
+    assertThat(this.testee.contains("two")).isFalse();
   }
 
   @Test
@@ -50,7 +48,7 @@ public class EqualitySetTest {
     this.testee.add("one");
     this.testee.add("two");
     final List<String> expected = Arrays.asList("one", "two");
-    assertEquals(expected, this.testee.toCollection());
+    assertThat(this.testee.toCollection()).isEqualTo(expected);
   }
 
   @Test
@@ -60,7 +58,7 @@ public class EqualitySetTest {
     this.testee.add("one");
     this.testee.add("two");
     final List<String> expected = Arrays.asList("one", "two");
-    assertEquals(expected, this.testee.toCollection());
+    assertThat(this.testee.toCollection()).isEqualTo(expected);
   }
 
   @Test
@@ -68,18 +66,18 @@ public class EqualitySetTest {
     final List<String> expected = Arrays.asList("one", "two");
     this.testee.addAll(expected);
     this.testee.addAll(expected);
-    assertEquals(expected, this.testee.toCollection());
+    assertThat(this.testee.toCollection()).isEqualTo(expected);
   }
 
   @Test
   public void isEmptyShouldReturnTrueWhenEmpty() {
-    assertTrue(this.testee.isEmpty());
+    assertThat(this.testee.isEmpty()).isTrue();
   }
 
   @Test
   public void isEmptyShouldReturnFalseWhenNotEmpty() {
     this.testee.add("foo");
-    assertFalse(this.testee.isEmpty());
+    assertThat(this.testee.isEmpty()).isFalse();
   }
 
 }

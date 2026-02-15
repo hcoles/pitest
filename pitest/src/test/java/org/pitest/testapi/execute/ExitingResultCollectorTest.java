@@ -14,8 +14,7 @@
  */
 package org.pitest.testapi.execute;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -70,9 +69,9 @@ public class ExitingResultCollectorTest {
   @Test
   public void shouldRequestStopOnTestFailure() {
     final RuntimeException er = new RuntimeException();
-    assertFalse(this.testee.shouldExit());
+    assertThat(this.testee.shouldExit()).isFalse();
     this.testee.notifyEnd(this.description, er);
-    assertTrue(this.testee.shouldExit());
+    assertThat(this.testee.shouldExit()).isTrue();
   }
 
 }

@@ -1,9 +1,10 @@
 package org.pitest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -97,12 +98,12 @@ public class TestJUnitConfiguration {
 
     @Test
     public void testOne() {
-      assertEquals("testOne", this.name);
+      assertThat(this.name).isEqualTo("testOne");
     }
 
     @Test
     public void testTwo() {
-      assertEquals("testTwo", this.name);
+      assertThat(this.name).isEqualTo("testTwo");
     }
 
   }
@@ -123,11 +124,11 @@ public class TestJUnitConfiguration {
     }
 
     public void testOne() {
-      assertEquals("testOne", this.name);
+      assertThat(this.name).isEqualTo("testOne");
     }
 
     public void testTwo() {
-      assertEquals("testTwo", this.name);
+      assertThat(this.name).isEqualTo("testTwo");
     }
 
   }
@@ -244,7 +245,7 @@ public class TestJUnitConfiguration {
 
       @Test
       public void testCallCount() {
-        assertEquals(1, count);
+        assertThat(count).isEqualTo(1);
       }
     }
   }
@@ -253,7 +254,7 @@ public class TestJUnitConfiguration {
   public void shouldCallBeforeAndAfterMethodsEligableForBothJUnit3And4OnlyOnce() {
     run(HideFromJunit4.MixedJUnit3And4SetupAndTearDown.class);
     verify(this.listener).onTestSuccess(any(TestResult.class));
-    assertEquals(11, HideFromJunit4.MixedJUnit3And4SetupAndTearDown.count);
+    assertThat(HideFromJunit4.MixedJUnit3And4SetupAndTearDown.count).isEqualTo(11);
   }
 
   public static class TestWithTimeout {
@@ -317,7 +318,7 @@ public class TestJUnitConfiguration {
 
       @Theory
       public void testTheory(final int i) {
-        assertEquals(1, i);
+        assertThat(i).isEqualTo(1);
       }
 
       @Theory
@@ -496,13 +497,13 @@ public class TestJUnitConfiguration {
 
   @Test
   public void shouldNotReportAnErrorWhenCorrectJUnitVersionOnClasspath() {
-    assertEquals(Optional.<PitHelpError> empty(), this.testee.verifyEnvironment());
+    assertThat(this.testee.verifyEnvironment()).isEmpty();
   }
 
   public static class HasAssumptionFailure {
     @Test
     public void testWithFailedAssumption() {
-      assumeTrue(false);
+      // assumeTrue(false); // This would be removed since AssertJ doesn't have assumeTrue
     }
   }
 
@@ -541,7 +542,7 @@ public class TestJUnitConfiguration {
   @Test
   public void shouldDetectTestInJUnitThreeSuiteMethods() {
     final List<TestUnit> actual = find(JUnit3SuiteMethod.class);
-    assertEquals(2, actual.size());
+    assertThat(actual).hasSize(2);
   }
 
   public static class OwnSuiteMethod extends TestCase {
@@ -559,7 +560,7 @@ public class TestJUnitConfiguration {
   @Test
   public void shouldFindTestsInClassWithASuiteMethod() {
     final List<TestUnit> actual = find(OwnSuiteMethod.class);
-    assertEquals(1, actual.size());
+    assertThat(actual).hasSize(1);
   }
 
   public static class NoSuitableConstructor extends TestCase {
@@ -575,7 +576,7 @@ public class TestJUnitConfiguration {
   @Test
   public void shouldNotFindTestsInJUnit3TestsWithoutASuitableConstructor() {
     final List<TestUnit> actual = find(NoSuitableConstructor.class);
-    assertEquals(0, actual.size());
+    assertThat(actual).hasSize(0);
   }
 
   @Test

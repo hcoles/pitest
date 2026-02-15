@@ -14,7 +14,7 @@
  */
 package org.pitest.help;
 
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
@@ -24,7 +24,7 @@ public class PitHelpErrorTest {
   public void shouldFormatTextStrings() {
     final PitHelpError testee = new PitHelpError(Help.WRONG_JUNIT_VERSION,
         "3.8.1");
-    assertTrue(testee.getMessage().contains("3.8.1"));
+    assertThat(testee.getMessage()).contains("3.8.1");
   }
 
 }

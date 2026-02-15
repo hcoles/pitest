@@ -1,7 +1,6 @@
 package org.pitest.mutationtest.build;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.pitest.mutationtest.LocationMother.aLocation;
@@ -49,7 +48,7 @@ public class DefaultTestPrioritiserTest {
     when(this.coverage.getTestsForBlockLocation(any(BlockLocation.class))).thenReturn(
         expected);
     final List<TestInfo> actual = this.testee.assignTests(makeMutation("foo"));
-    assertEquals(expected, actual);
+    assertThat(actual).isEqualTo(expected);
   }
 
   @Test
@@ -59,7 +58,7 @@ public class DefaultTestPrioritiserTest {
         unorderedTests);
     final List<TestInfo> actual = this.testee.assignTests(makeMutation("foo"));
 
-    assertThat(actual.stream().map(toTime())).contains(1, 100, 1000, 10000);
+    assertThat(actual.stream().map(toTime())).containsExactly(1, 100, 1000, 10000);
   }
 
   private Function<TestInfo, Integer> toTime() {

@@ -13,7 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.pitest.mutationtest.LocationMother.aMutationId;
 
 public class DefaultReporterTest {
@@ -34,8 +34,8 @@ public class DefaultReporterTest {
         .build();
     this.testee.describe(mi);
     final SafeDataInputStream is = resultToStream();
-    assertEquals(Id.DESCRIBE, is.readByte());
-    assertEquals(is.read(MutationIdentifier.class), mi);
+    assertThat(is.readByte()).isEqualTo(Id.DESCRIBE);
+    assertThat(is.read(MutationIdentifier.class)).isEqualTo(mi);
   }
 
   @Test
@@ -46,9 +46,9 @@ public class DefaultReporterTest {
         DetectionStatus.KILLED, "foo");
     this.testee.report(mi, ms);
     final SafeDataInputStream is = resultToStream();
-    assertEquals(Id.REPORT, is.readByte());
-    assertEquals(is.read(MutationIdentifier.class), mi);
-    assertEquals(is.read(MutationStatusTestPair.class), ms);
+    assertThat(is.readByte()).isEqualTo(Id.REPORT);
+    assertThat(is.read(MutationIdentifier.class)).isEqualTo(mi);
+    assertThat(is.read(MutationStatusTestPair.class)).isEqualTo(ms);
   }
 
   private SafeDataInputStream resultToStream() {
@@ -60,8 +60,8 @@ public class DefaultReporterTest {
   public void shouldSendExitCode() {
     this.testee.done(ExitCode.TIMEOUT);
     final SafeDataInputStream is = resultToStream();
-    assertEquals(Id.DONE, is.readByte());
-    assertEquals(is.readInt(), ExitCode.TIMEOUT.getCode());
+    assertThat(is.readByte()).isEqualTo(Id.DONE);
+    assertThat(is.readInt()).isEqualTo(ExitCode.TIMEOUT.getCode());
   }
 
 }

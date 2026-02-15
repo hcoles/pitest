@@ -8,7 +8,7 @@ import org.pitest.verifier.mutants.MutatorVerifierStart;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class RemoveConditionalMutatorTest {
 
@@ -20,14 +20,10 @@ public class RemoveConditionalMutatorTest {
 
     @Test
     public void shouldProvideAMeaningfulName() {
-        assertEquals("REMOVE_CONDITIONALS_EQUAL_IF",
-                new RemoveConditionalMutator(Choice.EQUAL, true).getName());
-        assertEquals("REMOVE_CONDITIONALS_EQUAL_ELSE",
-                new RemoveConditionalMutator(Choice.EQUAL, false).getName());
-        assertEquals("REMOVE_CONDITIONALS_ORDER_IF",
-                new RemoveConditionalMutator(Choice.ORDER, true).getName());
-        assertEquals("REMOVE_CONDITIONALS_ORDER_ELSE",
-                new RemoveConditionalMutator(Choice.ORDER, false).getName());
+        assertThat(new RemoveConditionalMutator(Choice.EQUAL, true).getName()).isEqualTo("REMOVE_CONDITIONALS_EQUAL_IF");
+        assertThat(new RemoveConditionalMutator(Choice.EQUAL, false).getName()).isEqualTo("REMOVE_CONDITIONALS_EQUAL_ELSE");
+        assertThat(new RemoveConditionalMutator(Choice.ORDER, true).getName()).isEqualTo("REMOVE_CONDITIONALS_ORDER_IF");
+        assertThat(new RemoveConditionalMutator(Choice.ORDER, false).getName()).isEqualTo("REMOVE_CONDITIONALS_ORDER_ELSE");
     }
 
     @Test

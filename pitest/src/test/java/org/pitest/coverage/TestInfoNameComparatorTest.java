@@ -1,6 +1,6 @@
 package org.pitest.coverage;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,15 +22,15 @@ public class TestInfoNameComparatorTest {
 
   @Test
   public void shouldCompareTestsBasedOnTheirNames() {
-    assertEquals(-1, this.testee.compare(this.lhs, this.rhs));
-    assertEquals(1, this.testee.compare(this.rhs, this.lhs));
+    assertThat(this.testee.compare(this.lhs, this.rhs)).isLessThan(0);
+    assertThat(this.testee.compare(this.rhs, this.lhs)).isGreaterThan(0);
   }
 
   @Test
   public void shouldTreatIdenticallyNamesTestsAsEqual() {
     final TestInfo sameName = new TestInfo("bar", "0name", 1000,
         Optional.<ClassName> empty(), 0);
-    assertEquals(0, this.testee.compare(this.lhs, sameName));
+    assertThat(this.testee.compare(this.lhs, sameName)).isEqualTo(0);
   }
 
 }

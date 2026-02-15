@@ -14,9 +14,7 @@
  */
 package org.pitest.mutationtest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 import org.pitest.util.ExitCode;
@@ -25,65 +23,66 @@ public class DetectionStatusTest {
 
   @Test
   public void shouldConsiderKilledMutationsToBeDetected() {
-    assertTrue(DetectionStatus.KILLED.isDetected());
+    assertThat(DetectionStatus.KILLED.isDetected()).isTrue();
   }
 
   @Test
   public void shouldConsiderSurvivingMutationsToBeUnDetected() {
-    assertFalse(DetectionStatus.SURVIVED.isDetected());
+    assertThat(DetectionStatus.SURVIVED.isDetected()).isFalse();
   }
 
   @Test
   public void shouldConsiderTimedOutMutationsToBeDetected() {
-    assertTrue(DetectionStatus.TIMED_OUT.isDetected());
+    assertThat(DetectionStatus.TIMED_OUT.isDetected()).isTrue();
   }
 
   @Test
   public void shouldConsiderNonViableMutationsToBeDetected() {
-    assertTrue(DetectionStatus.NON_VIABLE.isDetected());
+    assertThat(DetectionStatus.NON_VIABLE.isDetected()).isTrue();
   }
 
   @Test
   public void shouldConsiderMemoryErrorsAsDetected() {
-    assertTrue(DetectionStatus.MEMORY_ERROR.isDetected());
+    assertThat(DetectionStatus.MEMORY_ERROR.isDetected()).isTrue();
   }
 
   @Test
   public void shouldConsiderUnAnalysedMutationsAsUnDetected() {
-    assertFalse(DetectionStatus.NOT_STARTED.isDetected());
+    assertThat(DetectionStatus.NOT_STARTED.isDetected()).isFalse();
   }
 
   @Test
   public void shouldConsiderUnfinishedAnalysAsUnDetected() {
-    assertFalse(DetectionStatus.STARTED.isDetected());
+    assertThat(DetectionStatus.STARTED.isDetected()).isFalse();
   }
 
   @Test
   public void shouldConsiderRunErrorAsDetected() {
     // really? dubious
-    assertTrue(DetectionStatus.RUN_ERROR.isDetected());
+    assertThat(DetectionStatus.RUN_ERROR.isDetected()).isTrue();
   }
 
   @Test
   public void shouldConsiderUnCoveredKilledMutationsToBeUnDetected() {
-    assertFalse(DetectionStatus.NO_COVERAGE.isDetected());
+    assertThat(DetectionStatus.NO_COVERAGE.isDetected()).isFalse();
   }
 
   @Test
   public void shouldConverytutOfMemoryExitCode() {
-    assertEquals(DetectionStatus.MEMORY_ERROR,
-        DetectionStatus.getForErrorExitCode(ExitCode.OUT_OF_MEMORY));
+    assertThat(DetectionStatus.getForErrorExitCode(ExitCode.OUT_OF_MEMORY))
+        .isEqualTo(DetectionStatus.MEMORY_ERROR);
   }
 
   @Test
   public void shouldConvertTimeOutExitCode() {
-    assertEquals(DetectionStatus.TIMED_OUT,
-        DetectionStatus.getForErrorExitCode(ExitCode.TIMEOUT));
+    assertThat(DetectionStatus.getForErrorExitCode(ExitCode.TIMEOUT))
+        .isEqualTo(DetectionStatus.TIMED_OUT);
   }
 
   @Test
   public void shouldConvertUnknownErrorExitCode() {
-    assertEquals(DetectionStatus.RUN_ERROR,
-        DetectionStatus.getForErrorExitCode(ExitCode.UNKNOWN_ERROR));
+    assertThat(DetectionStatus.getForErrorExitCode(ExitCode.UNKNOWN_ERROR))
+        .isEqualTo(DetectionStatus.RUN_ERROR);
   }
+
 }

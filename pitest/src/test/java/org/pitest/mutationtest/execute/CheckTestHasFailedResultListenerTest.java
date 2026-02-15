@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.execute;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Before;
@@ -39,29 +39,29 @@ public class CheckTestHasFailedResultListenerTest {
   public void shouldReturnDetectionStatusOfSurvivedWhenNoFailuresOrErrors() {
     this.testee = new CheckTestHasFailedResultListener(false);
     this.testee.onTestSuccess(new TestResult(this.description, null));
-    assertEquals(DetectionStatus.SURVIVED, this.testee.status());
+    assertThat(this.testee.status()).isEqualTo(DetectionStatus.SURVIVED);
   }
 
   @Test
   public void shouldReturnDetectionStatusOfKilledWhenEncountersFailure() {
     this.testee = new CheckTestHasFailedResultListener(false);
     this.testee.onTestFailure(new TestResult(this.description, null));
-    assertEquals(DetectionStatus.KILLED, this.testee.status());
+    assertThat(this.testee.status()).isEqualTo(DetectionStatus.KILLED);
   }
 
   @Test
   public void shouldRecordDescriptionOfLastFailingTest() {
     this.testee = new CheckTestHasFailedResultListener(false);
     this.testee.onTestFailure(new TestResult(this.description, null));
-    assertEquals(this.description, this.testee.getFailingTests().get(0));
+    assertThat(this.testee.getFailingTests().get(0)).isEqualTo(this.description);
   }
 
   @Test
   public void shouldRecordNumberOfTestsRun() {
     this.testee = new CheckTestHasFailedResultListener(false);
-    assertEquals(0, this.testee.getNumberOfTestsRun());
+    assertThat(this.testee.getNumberOfTestsRun()).isEqualTo(0);
     this.testee.onTestStart(null);
-    assertEquals(1, this.testee.getNumberOfTestsRun());
+    assertThat(this.testee.getNumberOfTestsRun()).isEqualTo(1);
   }
   
   @Test

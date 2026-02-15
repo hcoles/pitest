@@ -43,9 +43,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.pitest.coverage.CoverageMother.aBlockLocation;
@@ -103,7 +101,7 @@ public class CoverageDataTest {
 
   @Test
   public void shouldReturnNotTestsWhenNoTestsCoverClass() {
-    assertTrue(this.testee.getTestsForClass(this.foo).isEmpty());
+    assertThat(this.testee.getTestsForClass(this.foo)).isEmpty();
   }
 
   @Test
@@ -127,21 +125,20 @@ public class CoverageDataTest {
   public void shouldReportAGreenSuiteWhenNoTestHasFailed() {
     this.testee.calculateClassCoverage(makeCoverageResult("foo", "fooTest", 42,
         1));
-    assertTrue(this.testee.allTestsGreen());
+    assertThat(this.testee.allTestsGreen()).isTrue();
   }
 
   @Test
   public void shouldNotReportAGreenSuiteWhenATestHasFailed() {
     this.testee.calculateClassCoverage(makeCoverageResult("foo",
         new Description("fooTest"), 42, 1, false));
-    assertFalse(this.testee.allTestsGreen());
+    assertThat(this.testee.allTestsGreen()).isFalse();
   }
 
   @Test
   public void shouldReturnCoverageIdOf0WhenNoTestsCoverClass() {
-    assertEquals(0,
-        this.testee.getCoverageIdForClass(ClassName.fromString("unknown"))
-        .longValue());
+    assertThat(this.testee.getCoverageIdForClass(ClassName.fromString("unknown"))
+        .longValue()).isEqualTo(0);
   }
 
   @Test
@@ -168,7 +165,7 @@ public class CoverageDataTest {
 
   @Test
   public void shouldProvideEmptyBlockCoverageListWhenNoCoverage() {
-    assertEquals(Collections.emptyList(), this.testee.createCoverage());
+    assertThat(this.testee.createCoverage()).isEmpty();
   }
 
   @Test
@@ -184,7 +181,7 @@ public class CoverageDataTest {
     this.testee.calculateClassCoverage(makeCoverageResult("foo", "fooTest", 0,
         1));
     final BlockCoverage actual = this.testee.createCoverage().get(0);
-    assertEquals(block.build(), actual.getBlock());
+    assertThat(actual.getBlock()).isEqualTo(block.build());
     assertThat(actual.getTests()).contains("FooTest.fooTest");
   }
 

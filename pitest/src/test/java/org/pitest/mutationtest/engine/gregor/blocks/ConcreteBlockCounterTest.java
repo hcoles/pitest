@@ -1,6 +1,6 @@
 package org.pitest.mutationtest.engine.gregor.blocks;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,9 +17,9 @@ public class ConcreteBlockCounterTest {
   @Test
   public void shouldTrackBlocks() {
     this.testee.registerNewBlock();
-    assertEquals(1, this.testee.getCurrentBlock());
+    assertThat(this.testee.getCurrentBlock()).isEqualTo(1);
     this.testee.registerNewBlock();
-    assertEquals(2, this.testee.getCurrentBlock());
+    assertThat(this.testee.getCurrentBlock()).isEqualTo(2);
   }
 
 }

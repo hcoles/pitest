@@ -18,7 +18,7 @@ import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
@@ -26,23 +26,21 @@ public class TimeSpanTest {
 
   @Test
   public void shouldReportTimesAsLessThanOneSecondWhenLessThanOneSecond() {
-    assertEquals("< 1 second", new TimeSpan(0, MILLISECONDS.toNanos(999)).toString());
+    assertThat(new TimeSpan(0, MILLISECONDS.toNanos(999)).toString()).isEqualTo("< 1 second");
   }
 
   @Test
   public void shouldReportTimesInSecondsWhenLessThenOneMinute() {
-    assertEquals("59 seconds", new TimeSpan(0, SECONDS.toNanos(59)).toString());
+    assertThat(new TimeSpan(0, SECONDS.toNanos(59)).toString()).isEqualTo("59 seconds");
   }
 
   @Test
   public void shouldReportTimesInMinutesWhenMoreThanOneMinute() {
-    assertEquals("1 minutes and 1 seconds",
-        new TimeSpan(0, MINUTES.toNanos(1) + SECONDS.toNanos(1)).toString());
+    assertThat(new TimeSpan(0, MINUTES.toNanos(1) + SECONDS.toNanos(1)).toString()).isEqualTo("1 minutes and 1 seconds");
   }
 
   @Test
   public void shouldReportTimesInHoursWhenMoreThanOneHour() {
-    assertEquals("1 hours, 2 minutes and 1 seconds", new TimeSpan(0,
-        HOURS.toNanos(1) + MINUTES.toNanos(2) + SECONDS.toNanos(1)).toString());
+    assertThat(new TimeSpan(0, HOURS.toNanos(1) + MINUTES.toNanos(2) + SECONDS.toNanos(1)).toString()).isEqualTo("1 hours, 2 minutes and 1 seconds");
   }
 }

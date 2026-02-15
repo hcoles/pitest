@@ -1,6 +1,6 @@
 package org.pitest.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyByte;
 import static org.mockito.Mockito.never;
@@ -52,7 +52,7 @@ public class SocketReadingCallableTest {
   @Test
   public void shouldReportTheExitCodeSentByTheMinionProcess() throws Exception {
     mockClientSocketToSendExitCode(ExitCode.TIMEOUT);
-    assertEquals(ExitCode.TIMEOUT, this.testee.call());
+    assertThat(this.testee.call()).isEqualTo(ExitCode.TIMEOUT);
   }
 
   @Test

@@ -14,7 +14,7 @@
  */
 package org.pitest.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.*;
 
 import org.junit.Test;
 
@@ -22,7 +22,7 @@ public class StringUtilTest {
 
   @Test
   public void repeatShouldRepeatGivenCharacter() {
-    assertEquals("----", StringUtil.repeat('-', 4));
+    assertThat(StringUtil.repeat('-', 4)).isEqualTo("----");
   }
 
 }
