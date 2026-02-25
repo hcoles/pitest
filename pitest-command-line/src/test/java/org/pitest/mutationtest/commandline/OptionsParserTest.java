@@ -81,6 +81,14 @@ public class OptionsParserTest {
   }
 
   @Test
+  public void shouldConfigReportDir() {
+    final String value = "foo";
+    final ReportOptions actual = parseAddingRequiredArgs("--configDir", value);
+    assertEquals(value, actual.getConfigDir());
+  }
+
+
+  @Test
   public void shouldCreatePredicateFromCommaSeparatedListOfTargetClassGlobs() {
     final ReportOptions actual = parseAddingRequiredArgs("--targetClasses",
         "foo*,bar*");
