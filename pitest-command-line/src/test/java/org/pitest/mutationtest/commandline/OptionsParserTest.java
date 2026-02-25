@@ -78,7 +78,7 @@ public class OptionsParserTest {
   public void shouldConfigReportDir() {
     final String value = "foo";
     final ReportOptions actual = parseAddingRequiredArgs("--configDir", value);
-    assertEquals(value, actual.getConfigDir());
+    assertThat(actual.getConfigDir()).isEqualTo(value);
   }
 
 
@@ -717,8 +717,7 @@ public class OptionsParserTest {
 
   private ReportOptions parseAddingRequiredArgs(final String... args) {
 
-    final List<String> a = new ArrayList<>();
-    a.addAll(Arrays.asList(args));
+    final List<String> a = new ArrayList<>(Arrays.asList(args));
     addIfNotPresent(a, "--targetClasses");
     addIfNotPresent(a, "--reportDir");
     addIfNotPresent(a, "--sourceDirs");

@@ -1,8 +1,6 @@
 package org.pitest.maven;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 
@@ -17,44 +15,44 @@ public class PathToJavaClassConverterTest {
 
   @Test
   public void shouldReturnNoMatchedForFilesNotUnderSourceTree() {
-    assertFalse(this.testee.apply("not/under/source/tree/File.java").iterator()
-        .hasNext());
+    assertThat(this.testee.apply("not/under/source/tree/File.java").iterator()
+        .hasNext()).isFalse();
   }
 
   @Test
   public void shouldConvertFileInPackageDefaultToJavaClassName() {
-    assertEquals("InDefault*", apply("InDefault.java"));
+    assertThat(apply("InDefault.java")).isEqualTo("InDefault*");
   }
 
   @Test
   public void shouldConvertFileInPackageToJavaClassName() {
-    assertEquals("com.example.Class*", apply("com/example/Class.java"));
+    assertThat(apply("com/example/Class.java")).isEqualTo("com.example.Class*");
   }
 
   @Test
   public void shouldConvertFilesWithOddCaseExtensionsToJavaClassName() {
-    assertEquals("com.example.Class*", apply("com/example/Class.JaVa"));
+    assertThat(apply("com/example/Class.JaVa")).isEqualTo("com.example.Class*");
   }
 
   @Test
   public void shouldNotConvertFilesWithoutExtension() {
-    assertFalse(this.testee.apply(SRC + "/File").iterator().hasNext());
+    assertThat(this.testee.apply(SRC + "/File").iterator().hasNext()).isFalse();
   }
 
   @Test
   public void shouldConvertFilesWithDotInPath() {
-    assertTrue(this.testee.apply(SRC + "/foo.bar/File.java").iterator()
-        .hasNext());
+    assertThat(this.testee.apply(SRC + "/foo.bar/File.java").iterator()
+        .hasNext()).isTrue();
   }
 
   @Test
   public void shouldIncludeWildCardInGeneratedGlobToCatchInnerClasses() {
-    assertTrue(apply("foo.java").endsWith("*"));
+    assertThat(apply("foo.java")).endsWith("*");
   }
 
   @Test
   public void shouldConvertBackslashPathsRegardlessOfOs() {
-    assertEquals("com.example.Class*", apply("com\\example\\Class.java"));
+    assertThat(apply("com\\example\\Class.java")).isEqualTo("com.example.Class*");
   }
 
   private String apply(final String value) {

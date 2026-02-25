@@ -98,7 +98,8 @@ public class MutationTestBuilderTest {
     this.testee = new MutationTestBuilder(ExecutionMode.NORMAL, this.wf, new NullHistory(),
         this.source, new DefaultGrouper(0), filterAllMutants());
 
-    assertTrue(this.testee.createMutationTestUnits(Arrays.asList(ClassName.fromString("foo"))).isEmpty());
+    assertThat(this.testee.createMutationTestUnits(Arrays.asList(ClassName.fromString("foo"))))
+            .isEmpty();
   }
 
   private ProjectMutationInterceptor filterAllMutants() {

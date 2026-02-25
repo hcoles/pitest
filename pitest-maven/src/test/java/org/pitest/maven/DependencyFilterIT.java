@@ -14,8 +14,7 @@
  */
 package org.pitest.maven;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import org.apache.maven.artifact.Artifact;
@@ -44,14 +43,14 @@ public class DependencyFilterIT {
   public void shouldAllowPitestCore() {
     when(this.artifact.getGroupId()).thenReturn("org.pitest");
     when(this.artifact.getArtifactId()).thenReturn("pitest");
-    assertTrue(this.testee.test(this.artifact));
+    assertThat(this.testee.test(this.artifact)).isTrue();
   }
 
   @Test
   public void shouldNotAllowHtmlReport() {
     when(this.artifact.getGroupId()).thenReturn("org.pitest");
     when(this.artifact.getArtifactId()).thenReturn("pitest-html-report");
-    assertFalse(this.testee.test(this.artifact));
+    assertThat(this.testee.test(this.artifact)).isFalse();
   }
 
 }

@@ -15,7 +15,7 @@ import org.pitest.mutationtest.tooling.CombinedStatistics;
 import java.io.File;
 import java.util.Collections;
 
-import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -39,14 +39,14 @@ public class PitMojoTest extends BasePitMojoTest {
   }
 
   public void testRunsAMutationReportWhenMutationCoverageGoalTriggered()
-      throws Exception {
+          throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration(""));
     final Build build = new Build();
     build.setOutputDirectory("foo");
     this.testee.getProject().setBuild(build);
     this.testee.execute();
     verify(this.executionStrategy).execute(any(File.class),
-        any(ReportOptions.class), any(PluginServices.class), anyMap());
+            any(ReportOptions.class), any(PluginServices.class), anyMap());
   }
 
   public void testDoesNotAnalysePomProjects() throws Exception {
@@ -54,18 +54,18 @@ public class PitMojoTest extends BasePitMojoTest {
     this.testee = createPITMojo(createPomWithConfiguration(""));
     this.testee.execute();
     verify(this.executionStrategy, never()).execute(any(File.class),
-        any(ReportOptions.class), any(PluginServices.class), anyMap());
+            any(ReportOptions.class), any(PluginServices.class), anyMap());
   }
 
   public void testDoesNotAnalyseProjectsWithSkipFlagSet() throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration("<skip>true</skip>"));
     this.testee.execute();
     verify(this.executionStrategy, never()).execute(any(File.class),
-        any(ReportOptions.class), any(PluginServices.class), anyMap());
+            any(ReportOptions.class), any(PluginServices.class), anyMap());
   }
 
   public void testThrowsMojoFailureExceptionWhenMutationScoreBelowThreshold()
-      throws Exception {
+          throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration("<mutationThreshold>21</mutationThreshold>"));
     setupCoverage(20, 1, 1);
     try {
@@ -89,7 +89,7 @@ public class PitMojoTest extends BasePitMojoTest {
   }
 
   public void testDoesNotThrowsMojoFailureExceptionWhenMutationScoreOnThreshold()
-      throws Exception {
+          throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration("<mutationThreshold>21</mutationThreshold>"));
     setupCoverage(21, 1, 1);
     try {
@@ -101,7 +101,7 @@ public class PitMojoTest extends BasePitMojoTest {
   }
 
   public void testThrowsMojoFailureExceptionWhenSurvivingMutantsAboveThreshold()
-      throws Exception {
+          throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration("<maxSurviving>19</maxSurviving>"));
     setupSuvivingMutants(20);
     try {
@@ -111,9 +111,9 @@ public class PitMojoTest extends BasePitMojoTest {
       // pass
     }
   }
-  
+
   public void testDoesNotThrowsMojoFailureExceptionWhenSurvivingMutantsOnThreshold()
-      throws Exception {
+          throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration("<maxSurviving>19</maxSurviving>"));
     setupSuvivingMutants(19);
     try {
@@ -122,9 +122,9 @@ public class PitMojoTest extends BasePitMojoTest {
       fail();
     }
   }
-  
+
   public void testAllowsSurvivingMutantsThresholdToBeZero()
-      throws Exception {
+          throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration("<maxSurviving>0</maxSurviving>"));
     setupSuvivingMutants(1);
     try {
@@ -134,9 +134,9 @@ public class PitMojoTest extends BasePitMojoTest {
       // pass
     }
   }
-  
+
   public void testThrowsMojoFailureExceptionWhenCoverageBelowThreshold()
-      throws Exception {
+          throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration("<coverageThreshold>50</coverageThreshold>"));
     setupCoverage(100L, 100, 40);
     try {
@@ -148,7 +148,7 @@ public class PitMojoTest extends BasePitMojoTest {
   }
 
   public void testDoesNotThrowMojoFailureExceptionWhenCoverageOnThreshold()
-      throws Exception {
+          throws Exception {
     this.testee = createPITMojo(createPomWithConfiguration("<coverageThreshold>50</coverageThreshold>"));
     setupCoverage(100L, 100, 50);
     try {
@@ -162,236 +162,203 @@ public class PitMojoTest extends BasePitMojoTest {
   public void testConfigureEnvironmentVariable() throws Exception {
 
     PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
-        + "                    <environmentVariables>\n"
-        + "                        <DISPLAY>:20</DISPLAY>\n"
-        + "                    </environmentVariables>"));
+            + "                    <environmentVariables>\n"
+            + "                        <DISPLAY>:20</DISPLAY>\n"
+            + "                    </environmentVariables>"));
 
-    assertEquals(mojo.getEnvironmentVariables().get("DISPLAY"), ":20");
+    assertThat(mojo.getEnvironmentVariables().get("DISPLAY")).isEqualTo(":20");
   }
 
-  public void testEmptyTargetClassIsIgnored() throws Exception{
+  public void testEmptyTargetClassIsIgnored() throws Exception {
 
     PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
-        + "  <targetClasses>\n"
-        + "    <targetClass>net.example.ClassName</targetClass>\n"
-        + "    <targetClass>net.example.Other</targetClass>\n"
-        + "    <targetClass></targetClass>\n"
-        + "  </targetClasses>"));
+            + "  <targetClasses>\n"
+            + "    <targetClass>net.example.ClassName</targetClass>\n"
+            + "    <targetClass>net.example.Other</targetClass>\n"
+            + "    <targetClass></targetClass>\n"
+            + "  </targetClasses>"));
 
-    assertEquals(
-        asList("net.example.ClassName", "net.example.Other"),
-        mojo.getTargetClasses());
+    assertThat(mojo.getTargetClasses()).containsExactly("net.example.ClassName", "net.example.Other");
   }
 
-  public void testEmptyTargetTestIsIgnored() throws Exception{
+  public void testEmptyTargetTestIsIgnored() throws Exception {
 
     PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
-        + "  <targetTests>\n"
-        + "    <targetTest>net.example.ClassNameTest</targetTest>\n"
-        + "    <targetTest>net.example.OtherTest</targetTest>\n"
-        + "    <targetTest></targetTest>\n"
-        + "  </targetTests>"));
+            + "  <targetTests>\n"
+            + "    <targetTest>net.example.ClassNameTest</targetTest>\n"
+            + "    <targetTest>net.example.OtherTest</targetTest>\n"
+            + "    <targetTest></targetTest>\n"
+            + "  </targetTests>"));
 
-    assertEquals(
-        asList("net.example.ClassNameTest", "net.example.OtherTest"),
-        mojo.getTargetTests());
+    assertThat(mojo.getTargetTests()).containsExactly("net.example.ClassNameTest", "net.example.OtherTest");
   }
 
-
-  public void testEmptyExcludedMethodIsIgnored() throws Exception{
+  public void testEmptyExcludedMethodIsIgnored() throws Exception {
 
     PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
-        + "  <excludedMethods>\n"
-        + "    <excludedMethod>*method1</excludedMethod>\n"
-        + "    <excludedMethod>*method2</excludedMethod>\n"
-        + "    <excludedMethod></excludedMethod>\n"
-        + "  </excludedMethods>"));
+            + "  <excludedMethods>\n"
+            + "    <excludedMethod>*method1</excludedMethod>\n"
+            + "    <excludedMethod>*method2</excludedMethod>\n"
+            + "    <excludedMethod></excludedMethod>\n"
+            + "  </excludedMethods>"));
 
-    assertEquals(
-        asList("*method1", "*method2"),
-        mojo.getExcludedMethods());
+    assertThat(mojo.getExcludedMethods()).containsExactly("*method1", "*method2");
   }
 
-  public void testEmptyExcludedClassIsIgnored() throws Exception{
+  public void testEmptyExcludedClassIsIgnored() throws Exception {
 
     PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
-        + "  <excludedClasses>\n"
-        + "    <excludedClass>net.example.BadClass</excludedClass>\n"
-        + "    <excludedClass>net.example.WorstClass</excludedClass>\n"
-        + "    <excludedClass></excludedClass>\n"
-        + "  </excludedClasses>"));
+            + "  <excludedClasses>\n"
+            + "    <excludedClass>net.example.BadClass</excludedClass>\n"
+            + "    <excludedClass>net.example.WorstClass</excludedClass>\n"
+            + "    <excludedClass></excludedClass>\n"
+            + "  </excludedClasses>"));
 
-    assertEquals(
-        asList("net.example.BadClass", "net.example.WorstClass"),
-        mojo.getExcludedClasses());
+    assertThat(mojo.getExcludedClasses()).containsExactly("net.example.BadClass", "net.example.WorstClass");
   }
 
-  public void testEmptyAvoidCallsToValueIsIgnored() throws Exception{
+  public void testEmptyAvoidCallsToValueIsIgnored() throws Exception {
 
     PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
-        + "  <avoidCallsTo>\n"
-        + "    <avoidCallsTo>net.example.methodA</avoidCallsTo>\n"
-        + "    <avoidCallsTo>net.example.methodB</avoidCallsTo>\n"
-        + "    <avoidCallsTo></avoidCallsTo>\n"
-        + "  </avoidCallsTo>"));
+            + "  <avoidCallsTo>\n"
+            + "    <avoidCallsTo>net.example.methodA</avoidCallsTo>\n"
+            + "    <avoidCallsTo>net.example.methodB</avoidCallsTo>\n"
+            + "    <avoidCallsTo></avoidCallsTo>\n"
+            + "  </avoidCallsTo>"));
 
-    assertEquals(
-        asList("net.example.methodA", "net.example.methodB"),
-        mojo.getAvoidCallsTo());
+    assertThat(mojo.getAvoidCallsTo()).containsExactly("net.example.methodA", "net.example.methodB");
   }
 
-  public void testEmptyMutatorIsIgnored() throws Exception{
+  public void testEmptyMutatorIsIgnored() throws Exception {
 
     PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
-        + "  <mutators>\n"
-        + "    <mutator>MUTATOR_1</mutator>\n"
-        + "    <mutator>MUTATOR_2</mutator>\n"
-        + "    <mutator></mutator>\n"
-        + "  </mutators>"));
+            + "  <mutators>\n"
+            + "    <mutator>MUTATOR_1</mutator>\n"
+            + "    <mutator>MUTATOR_2</mutator>\n"
+            + "    <mutator></mutator>\n"
+            + "  </mutators>"));
 
-    assertEquals(
-        asList("MUTATOR_1", "MUTATOR_2"),
-        mojo.getMutators());
+    assertThat(mojo.getMutators()).containsExactly("MUTATOR_1", "MUTATOR_2");
   }
 
   public void testEmptyExcludedTestClassIsIgnored() throws Exception {
 
     PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
-        + "  <excludedTestClasses>\n"
-        + "    <excludedTestClass>TestClass1</excludedTestClass>\n"
-        + "    <excludedTestClass>TestClass2</excludedTestClass>\n"
-        + "    <excludedTestClass></excludedTestClass>\n"
-        + "  </excludedTestClasses>"));
+            + "  <excludedTestClasses>\n"
+            + "    <excludedTestClass>TestClass1</excludedTestClass>\n"
+            + "    <excludedTestClass>TestClass2</excludedTestClass>\n"
+            + "    <excludedTestClass></excludedTestClass>\n"
+            + "  </excludedTestClasses>"));
 
-    assertEquals(
-        asList("TestClass1", "TestClass2"),
-        mojo.getExcludedTestClasses());
+    assertThat(mojo.getExcludedTestClasses()).containsExactly("TestClass1", "TestClass2");
   }
 
   public void testEmptyJvmArgIsIgnored() throws Exception {
 
     PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
-        + "  <jvmArgs>\n"
-        + "    <jvmArg>-Dnet.sample.param=42</jvmArg>\n"
-        + "    <jvmArg>-Dnet.sample.fun=true</jvmArg>\n"
-        + "    <jvmArg></jvmArg>\n"
-        + "  </jvmArgs>"));
+            + "  <jvmArgs>\n"
+            + "    <jvmArg>-Dnet.sample.param=42</jvmArg>\n"
+            + "    <jvmArg>-Dnet.sample.fun=true</jvmArg>\n"
+            + "    <jvmArg></jvmArg>\n"
+            + "  </jvmArgs>"));
 
-    assertEquals(
-        asList("-Dnet.sample.param=42", "-Dnet.sample.fun=true"),
-        mojo.getJvmArgs());
+    assertThat(mojo.getJvmArgs()).containsExactly("-Dnet.sample.param=42", "-Dnet.sample.fun=true");
   }
 
   public void testEmptyOutputFormatIsIgnored() throws Exception {
 
     PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
-        + "  <outputFormats>\n"
-        + "    <outputFormat>XML</outputFormat>\n"
-        + "    <outputFormat>HTML</outputFormat>\n"
-        + "    <outputFormat></outputFormat>\n"
-        + "  </outputFormats>"));
+            + "  <outputFormats>\n"
+            + "    <outputFormat>XML</outputFormat>\n"
+            + "    <outputFormat>HTML</outputFormat>\n"
+            + "    <outputFormat></outputFormat>\n"
+            + "  </outputFormats>"));
 
-    assertEquals(
-        asList("XML", "HTML"),
-        mojo.getOutputFormats());
+    assertThat(mojo.getOutputFormats()).containsExactly("XML", "HTML");
   }
 
   public void testEmptyExcludedGroupIsIgnored() throws Exception {
 
     PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
-        + "  <excludedGroups>\n"
-        + "    <excludedGroup>REDS</excludedGroup>\n"
-        + "    <excludedGroup>GREENS</excludedGroup>\n"
-        + "    <excludedGroup></excludedGroup>\n"
-        + "  </excludedGroups>"));
+            + "  <excludedGroups>\n"
+            + "    <excludedGroup>REDS</excludedGroup>\n"
+            + "    <excludedGroup>GREENS</excludedGroup>\n"
+            + "    <excludedGroup></excludedGroup>\n"
+            + "  </excludedGroups>"));
 
-    assertEquals(
-        asList("REDS", "GREENS"),
-        mojo.getExcludedGroups());
+    assertThat(mojo.getExcludedGroups()).containsExactly("REDS", "GREENS");
   }
 
   public void testEmptyIncludedGroupIsIgnored() throws Exception {
 
     PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
-        + "  <includedGroups>\n"
-        + "    <includedGroup>YELLOWS</includedGroup>\n"
-        + "    <includedGroup>PURPLES</includedGroup>\n"
-        + "    <includedGroup></includedGroup>\n"
-        + "  </includedGroups>"));
+            + "  <includedGroups>\n"
+            + "    <includedGroup>YELLOWS</includedGroup>\n"
+            + "    <includedGroup>PURPLES</includedGroup>\n"
+            + "    <includedGroup></includedGroup>\n"
+            + "  </includedGroups>"));
 
-    assertEquals(
-        asList("YELLOWS", "PURPLES"),
-        mojo.getIncludedGroups());
+    assertThat(mojo.getIncludedGroups()).containsExactly("YELLOWS", "PURPLES");
   }
 
   public void testEmptyIncludedTestMethodIsIgnored() throws Exception {
 
     PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
-        + "  <includedTestMethods>\n"
-        + "    <includedTestMethod>testA</includedTestMethod>\n"
-        + "    <includedTestMethod>testB</includedTestMethod>\n"
-        + "    <includedTestMethod></includedTestMethod>\n"
-        + "  </includedTestMethods>"));
+            + "  <includedTestMethods>\n"
+            + "    <includedTestMethod>testA</includedTestMethod>\n"
+            + "    <includedTestMethod>testB</includedTestMethod>\n"
+            + "    <includedTestMethod></includedTestMethod>\n"
+            + "  </includedTestMethods>"));
 
-    assertEquals(
-        asList("testA", "testB"),
-        mojo.getIncludedTestMethods());
+    assertThat(mojo.getIncludedTestMethods()).containsExactly("testA", "testB");
   }
 
   public void testEmptyAdditionalClasspathElementIsIgnored() throws Exception {
 
     PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
-        + "  <additionalClasspathElements>\n"
-        + "    <additionalClasspathElement>stuff.jar</additionalClasspathElement>\n"
-        + "    <additionalClasspathElement>thing.jar</additionalClasspathElement>\n"
-        + "    <additionalClasspathElement></additionalClasspathElement>\n"
-        + "  </additionalClasspathElements>"));
+            + "  <additionalClasspathElements>\n"
+            + "    <additionalClasspathElement>stuff.jar</additionalClasspathElement>\n"
+            + "    <additionalClasspathElement>thing.jar</additionalClasspathElement>\n"
+            + "    <additionalClasspathElement></additionalClasspathElement>\n"
+            + "  </additionalClasspathElements>"));
 
-    assertEquals(
-        asList("stuff.jar", "thing.jar"),
-        mojo.getAdditionalClasspathElements());
+    assertThat(mojo.getAdditionalClasspathElements()).containsExactly("stuff.jar", "thing.jar");
   }
 
   public void testEmptyClasspathDependencyExcludeIsIgnored() throws Exception {
 
     PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
-        + "  <classpathDependencyExcludes>\n"
-        + "    <classpathDependencyExclude>bad.jar</classpathDependencyExclude>\n"
-        + "    <classpathDependencyExclude>unwanted.jar</classpathDependencyExclude>\n"
-        + "    <classpathDependencyExclude></classpathDependencyExclude>\n"
-        + "  </classpathDependencyExcludes>"));
+            + "  <classpathDependencyExcludes>\n"
+            + "    <classpathDependencyExclude>bad.jar</classpathDependencyExclude>\n"
+            + "    <classpathDependencyExclude>unwanted.jar</classpathDependencyExclude>\n"
+            + "    <classpathDependencyExclude></classpathDependencyExclude>\n"
+            + "  </classpathDependencyExcludes>"));
 
-    assertEquals(
-        asList("bad.jar", "unwanted.jar"),
-        mojo.getClasspathDependencyExcludes());
+    assertThat(mojo.getClasspathDependencyExcludes()).containsExactly("bad.jar", "unwanted.jar");
   }
 
   public void testEmptyExcludedRunnerIsIgnored() throws Exception {
 
     PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
-        + "  <excludedRunners>\n"
-        + "    <excludedRunner>SimpleRunner</excludedRunner>\n"
-        + "    <excludedRunner>FastRunner</excludedRunner>\n"
-        + "    <excludedRunner></excludedRunner>\n"
-        + "  </excludedRunners>"));
+            + "  <excludedRunners>\n"
+            + "    <excludedRunner>SimpleRunner</excludedRunner>\n"
+            + "    <excludedRunner>FastRunner</excludedRunner>\n"
+            + "    <excludedRunner></excludedRunner>\n"
+            + "  </excludedRunners>"));
 
-    assertEquals(
-        asList("SimpleRunner", "FastRunner"),
-        mojo.getExcludedRunners());
+    assertThat(mojo.getExcludedRunners()).containsExactly("SimpleRunner", "FastRunner");
   }
 
   public void testEmptyFeatureIsIgnored() throws Exception {
 
     PitMojo mojo = createPITMojo(createPomWithConfiguration("\n"
-        + "  <features>\n"
-        + "    <feature>DO_THAT_THING</feature>\n"
-        + "    <feature>BE_AWESOME</feature>\n"
-        + "    <feature></feature>\n"
-        + "  </features>"));
+            + "  <features>\n"
+            + "    <feature>DO_THAT_THING</feature>\n"
+            + "    <feature>BE_AWESOME</feature>\n"
+            + "    <feature></feature>\n"
+            + "  </features>"));
 
-    assertEquals(
-        asList("DO_THAT_THING", "BE_AWESOME"),
-        mojo.getFeatures());
+    assertThat(mojo.getFeatures()).containsExactly("DO_THAT_THING", "BE_AWESOME");
   }
 
   public void testCombinesFeaturesAndExtraFeatures() throws Exception {
@@ -406,20 +373,18 @@ public class PitMojoTest extends BasePitMojoTest {
             + "  </extraFeatures>\n"
     ));
 
-    assertEquals(
-            asList("FEATURE", "ALSO_A_FEATURE", "MORE"),
-            mojo.getFeatures());
+    assertThat(mojo.getFeatures()).containsExactly("FEATURE", "ALSO_A_FEATURE", "MORE");
   }
 
   private void setupCoverage(long mutationScore, int lines, int linesCovered)
-      throws MojoExecutionException {
+          throws MojoExecutionException {
     Iterable<Score> scores = Collections.<Score>emptyList();
     final MutationStatistics stats = new MutationStatistics(scores, 100, mutationScore, 100, 0, Collections.emptySet());
     CoverageSummary sum = new CoverageSummary(lines, linesCovered, 0);
     final CombinedStatistics cs = new CombinedStatistics(stats, sum, Collections.emptyList());
     when(
-        this.executionStrategy.execute(any(File.class),
-            any(ReportOptions.class), any(PluginServices.class), anyMap()))
+            this.executionStrategy.execute(any(File.class),
+                    any(ReportOptions.class), any(PluginServices.class), anyMap()))
             .thenReturn(cs);
   }
 
@@ -434,18 +399,19 @@ public class PitMojoTest extends BasePitMojoTest {
                     any(ReportOptions.class), any(PluginServices.class), anyMap()))
             .thenReturn(cs);
   }
-  
+
   private void setupSuvivingMutants(long survivors)
-      throws MojoExecutionException {
+          throws MojoExecutionException {
     Iterable<Score> scores = Collections.<Score>emptyList();
     int detected = 100;
     final MutationStatistics stats = new MutationStatistics(scores, detected + survivors, detected, detected + survivors, 0, Collections.emptySet());
     CoverageSummary sum = new CoverageSummary(0, 0, 0);
     final CombinedStatistics cs = new CombinedStatistics(stats, sum, Collections.emptyList());
     when(
-        this.executionStrategy.execute(any(File.class),
-            any(ReportOptions.class), any(PluginServices.class), anyMap()))
+            this.executionStrategy.execute(any(File.class),
+                    any(ReportOptions.class), any(PluginServices.class), anyMap()))
             .thenReturn(cs);
   }
 
 }
+
