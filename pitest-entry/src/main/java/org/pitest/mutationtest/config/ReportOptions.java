@@ -90,6 +90,8 @@ public class ReportOptions {
 
   private String                         reportDir;
 
+  private String                         configDir;
+
   private File                           historyInputLocation;
   private File                           historyOutputLocation;
 
@@ -728,4 +730,11 @@ public class ReportOptions {
             .toString();
   }
 
+    public String getConfigDir() {
+        return configDir;
+    }
+
+    public void setConfigDir(String configDir) {
+        this.configDir = configDir;
+    }
 }
