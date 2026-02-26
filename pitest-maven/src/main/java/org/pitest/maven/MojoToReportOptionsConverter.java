@@ -283,6 +283,10 @@ public class MojoToReportOptionsConverter {
     data.setExcludedRunners(this.mojo.getExcludedRunners());
 
     data.setReportDir(this.mojo.getReportsDirectory().getAbsolutePath());
+
+    if (this.mojo.getConfigDirectory() != null) {
+      data.setConfigDir(this.mojo.getConfigDirectory().getAbsolutePath());
+    }
     configureVerbosity(data);
     if (this.mojo.getJvmArgs() != null) {
       data.addChildJVMArgs(this.mojo.getJvmArgs());

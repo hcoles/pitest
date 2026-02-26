@@ -30,6 +30,11 @@ public enum ConfigOption {
    * The directory to write report sot
    */
   REPORT_DIR("reportDir"),
+
+  /**
+   * Directory to examine for configuration
+   */
+  CONFIG_DIR("configDir"),
   /**
    * Filter defining classes to mutate
    */

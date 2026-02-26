@@ -83,6 +83,7 @@ import static org.pitest.mutationtest.config.ConfigOption.OUTPUT_FORMATS;
 import static org.pitest.mutationtest.config.ConfigOption.PLUGIN_CONFIGURATION;
 import static org.pitest.mutationtest.config.ConfigOption.PROJECT_BASE;
 import static org.pitest.mutationtest.config.ConfigOption.REPORT_DIR;
+import static org.pitest.mutationtest.config.ConfigOption.CONFIG_DIR;
 import static org.pitest.mutationtest.config.ConfigOption.SKIP_FAILING_TESTS;
 import static org.pitest.mutationtest.config.ConfigOption.SOURCE_DIR;
 import static org.pitest.mutationtest.config.ConfigOption.TARGET_CLASSES;
@@ -106,6 +107,7 @@ public class OptionsParser {
 
   private final OptionParser                         parser;
   private final ArgumentAcceptingOptionSpec<String>  reportDirSpec;
+  private final ArgumentAcceptingOptionSpec<String>  configDirSpec;
   private final OptionSpec<String>                   targetClassesSpec;
   private final OptionSpec<String>                   targetTestsSpec;
   private final OptionSpec<String>                   avoidCallsSpec;
@@ -175,6 +177,9 @@ public class OptionsParser {
 
     this.reportDirSpec = parserAccepts(REPORT_DIR).withRequiredArg()
         .describedAs("directory to create report folder in").required();
+
+    this.configDirSpec = parserAccepts(CONFIG_DIR).withRequiredArg()
+            .describedAs("directory to examine for configuration");
 
     this.targetClassesSpec = parserAccepts(TARGET_CLASSES)
         .withRequiredArg()
@@ -450,6 +455,8 @@ public class OptionsParser {
   private ParseResult parseCommandLine(final ReportOptions data,
       final OptionSet userArgs) {
     data.setReportDir(this.reportDirSpec.value(userArgs));
+    data.setConfigDir(this.configDirSpec.value(userArgs));
+
     data.setTargetClasses(this.targetClassesSpec.values(userArgs));
     data.setTargetTests(asStream(this.targetTestsSpec.values(userArgs))
             .map(Glob.toGlobPredicate())

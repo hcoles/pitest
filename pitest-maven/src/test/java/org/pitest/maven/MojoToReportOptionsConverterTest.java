@@ -77,6 +77,11 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertEquals(new File("Foo").getAbsolutePath(), actual.getReportDir());
   }
 
+  public void testsParsesConfigDir() {
+    final ReportOptions actual = parseConfig("<configDirectory>Foo</configDirectory>");
+    assertEquals(new File("Foo").getAbsolutePath(), actual.getConfigDir());
+  }
+
   public void testCreatesPredicateFromListOfTargetClassGlobs() {
     final String xml = "<targetClasses>" + //
         "                     <param>foo*</param>" + //

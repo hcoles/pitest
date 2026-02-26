@@ -104,6 +104,9 @@ public final class PitMojo extends AbstractMojo {
   @Parameter(defaultValue = "${project.build.directory}/pit-reports", property = "reportsDirectory")
   private File                        reportsDirectory;
 
+  @Parameter(property = "configDirectory")
+  private File                        configDirectory;
+
   /**
    * File to write history information to for incremental analysis
    */
@@ -636,6 +639,10 @@ public final class PitMojo extends AbstractMojo {
     return this.reportsDirectory;
   }
 
+  public File getConfigDirectory() {
+    return this.configDirectory;
+  }
+
   public int getThreads() {
     return this.threads;
   }
@@ -850,7 +857,7 @@ public final class PitMojo extends AbstractMojo {
     return this.dryRun;
   }
 
-  static class RunDecision {
+    static class RunDecision {
     private List<String> reasons = new ArrayList<>(4);
 
     boolean shouldRun() {
