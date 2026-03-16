@@ -68,6 +68,13 @@ public class MutationTestMinion {
   public void run() {
     try {
 
+      // multiple things try to ensure this process halts, but somehow
+      // it stays alive for some codebases for reasons that are hard to replicate.
+      // Adding an abrupt halt to the graceful shutdown process likely has no effect
+      // but *might* help with some edge case zombies.
+      Thread printingHook = new Thread(() -> Runtime.getRuntime().halt(0));
+      Runtime.getRuntime().addShutdownHook(printingHook);
+
       final MinionArguments paramsFromParent = this.dis
           .read(MinionArguments.class);
 
