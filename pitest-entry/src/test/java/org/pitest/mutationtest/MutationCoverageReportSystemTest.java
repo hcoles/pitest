@@ -21,6 +21,7 @@ import static org.pitest.mutationtest.DetectionStatus.KILLED;
 import static org.pitest.mutationtest.DetectionStatus.NO_COVERAGE;
 import static org.pitest.mutationtest.DetectionStatus.RUN_ERROR;
 import static org.pitest.mutationtest.DetectionStatus.SURVIVED;
+import static org.pitest.mutationtest.DetectionStatus.TIMED_OUT;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -33,6 +34,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import com.example.BlockMainThread;
+import com.example.KeepAliveNonDaemon;
 import com.example.classloaders.MuteeInOtherClassloader;
 import com.example.classloaders.MuteeInOtherClassloaderPooledTest;
 import com.example.classloaders.MuteeInOtherClassloaderTest;
@@ -264,6 +267,25 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     createAndRun();
     verifyResults(SURVIVED);
   }
+
+  @Test(timeout = ONE_MINUTE)
+  public void shouldTerminateForNonDaemonThreads() {
+    this.data.setTargetClasses(asGlobs(KeepAliveNonDaemon.class));
+    this.data
+            .setTargetTests(predicateFor(com.example.KeepAliveNonDaemonTest.class));
+    createAndRun();
+    verifyResults(SURVIVED, SURVIVED, SURVIVED);
+  }
+
+  @Test(timeout = ONE_MINUTE)
+  public void shouldTerminateForBlockedMainThreads() {
+    this.data.setTargetClasses(asGlobs(BlockMainThread.class));
+    this.data
+            .setTargetTests(predicateFor(com.example.BlockMainThreadTest.class));
+    createAndRun();
+    verifyResults(SURVIVED, TIMED_OUT, TIMED_OUT);
+  }
+
 
   @Test
   public void shouldMarkChildJVMCrashesAsRunErrors() {
