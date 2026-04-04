@@ -9,9 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -19,8 +17,6 @@ import java.util.stream.Collectors;
  * Process for java 9+, using file to pass all parameters
  */
 public class Java9Process implements WrappingProcess {
-
-    private static final Map<Optional<String>, Path> CACHE = new ConcurrentHashMap<>();
 
     private final int         port;
     private final ProcessArgs processArgs;
@@ -81,7 +77,7 @@ public class Java9Process implements WrappingProcess {
         removeJacocoAgent(fileArgs);
 
         // All arguments are passed via a temporary file, thereby avoiding command line length limits
-        Path argsFile = CACHE.computeIfAbsent(javaAgent.getJarLocation(), j -> createArgsFile(fileArgs));
+        Path argsFile = createArgsFile(fileArgs);
 
         List<String> cmd = new ArrayList<>();
         cmd.add(javaProc);
