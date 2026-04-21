@@ -8,6 +8,16 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.23.1
+
+* #1463 extend unmodifiable collections filtering
+
+## 1.23.0
+
+* #1455 move default history analysis to plugin
+* #1457 introduce new parameter for configuration directory
+* #1458 speculative measures to kill stubborn child processes
+
 ## 1.22.0
 
 * #1437 Test filter extension point
