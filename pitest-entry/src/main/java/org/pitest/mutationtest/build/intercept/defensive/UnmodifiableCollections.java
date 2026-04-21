@@ -16,6 +16,7 @@ import org.pitest.sequence.SlotWrite;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.pitest.bytecode.analysis.InstructionMatchers.anyInstruction;
@@ -41,7 +42,9 @@ public class UnmodifiableCollections extends RegionInterceptor {
             );
 
     private static Match<AbstractInsnNode> returnsUnmodifiableCollection() {
-        return methodCallTo(ClassName.fromClass(Collections.class), n -> n.startsWith("unmodifiable") || n.equals("singleton"));
+        return methodCallTo(ClassName.fromClass(Collections.class), n -> n.startsWith("unmodifiable") || n.equals("singleton")).or(
+                methodCallTo(ClassName.fromClass(Map.class), "copyOf")
+        );
     }
 
 
