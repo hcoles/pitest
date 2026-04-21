@@ -73,6 +73,14 @@ public class UnmodifiableCollectionsFactoryTest {
     }
 
     @Test
+    public void filtersMutationsToReturnCollectionsSingleton() {
+        v.forClass(HasCollectionsSingletonReturn.class)
+                .forCodeMatching(INVOKESTATIC.asPredicate())
+                .allMutantsAreFiltered()
+                .verify();
+    }
+
+    @Test
     public void doesNotFilterOtherCode() {
         v.forClass(HasUnmodifiableSetReturn.class)
                 .forCodeMatching(INVOKESTATIC.asPredicate().negate())
@@ -133,6 +141,13 @@ class HasUnmodifiableMapReturn {
 
     public Map<String,String> mutateMe(Map<String,String> m) {
         return Collections.unmodifiableMap(m);
+    }
+}
+
+class HasCollectionsSingletonReturn {
+
+    public Set<String> mutateMe(String s) {
+        return Collections.singleton(s);
     }
 }
 
