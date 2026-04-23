@@ -3,5 +3,12 @@ package org.pitest.mutationtest.environment;
 import org.pitest.mutationtest.engine.Mutant;
 
 public interface ResetEnvironment {
-    void resetFor(Mutant mutatedClass);
-}
+
+    void resetFor(Mutant mutatedClass, ClassLoader loader);
+
+    void finishFor(Mutant mutatedClass, ClassLoader loader);
+
+    default int priority() {
+        return 10;
+    }
+ }

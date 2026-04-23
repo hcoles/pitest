@@ -61,4 +61,8 @@ public final class JavassistInterceptor {
   static void setMutant(final Mutant newMutant) {
     mutant = newMutant;
   }
+
+  static void reset() {
+    mutant = null;
+  }
 }
