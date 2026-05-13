@@ -24,4 +24,15 @@ public class VerbosityTest {
         assertThatCode(() -> Verbosity.fromString("rubbish"))
                 .hasMessageStartingWith("Unrecognised verbosity rubbish");
     }
+
+    @Test
+    public void doesntWriteToStandardOutWhenSilent() {
+        assertThat(Verbosity.SILENT.writeToStandardOut()).isFalse();
+    }
+
+    @Test
+    public void writesToStandardOutWhenNotSilent() {
+        assertThat(QUIET.writeToStandardOut()).isTrue();
+    }
+
 }

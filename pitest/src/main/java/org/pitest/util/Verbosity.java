@@ -3,6 +3,7 @@ package org.pitest.util;
 import java.util.logging.Level;
 
 public enum Verbosity {
+    SILENT(MinionLogging.DONT_SHOW, false, Level.OFF),
     QUIET(MinionLogging.DONT_SHOW, false, Level.SEVERE),
     QUIET_WITH_PROGRESS(MinionLogging.DONT_SHOW, true, Level.SEVERE),
     DEFAULT(MinionLogging.DONT_SHOW, true, Level.INFO),
@@ -29,6 +30,10 @@ public enum Verbosity {
         } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException("Unrecognised verbosity " + verbosity);
         }
+    }
+
+    public boolean writeToStandardOut() {
+        return this != SILENT;
     }
 
     public boolean showMinionOutput() {
