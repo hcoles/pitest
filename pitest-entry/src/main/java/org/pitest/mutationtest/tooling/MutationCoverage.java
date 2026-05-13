@@ -58,6 +58,7 @@ import org.pitest.util.Timings;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -99,7 +100,7 @@ public class MutationCoverage {
 
   public CombinedStatistics runReport() throws IOException {
 
-    if (!this.data.getVerbosity().showMinionOutput()) {
+    if (this.data.getVerbosity().writeToStandardOut() && !this.data.getVerbosity().showMinionOutput()) {
       LOG.info("Verbose logging is disabled. If you encounter a problem, please enable it before reporting an issue.");
     }
     Log.setVerbose(this.data.getVerbosity());
@@ -295,7 +296,7 @@ public class MutationCoverage {
 
   private void printStats(CombinedStatistics combinedStatistics) {
     MutationStatistics stats = combinedStatistics.getMutationStatistics();
-    final PrintStream ps = System.out;
+    final PrintStream ps = pickOutputSteam();
 
     ps.println(StringUtil.separatorLine('='));
     ps.println("- Mutators");
@@ -328,6 +329,13 @@ public class MutationCoverage {
       ps.println("Build messages:- ");
       combinedStatistics.getIssues().forEach(m -> ps.println("* " + m));
     }
+  }
+
+  private PrintStream pickOutputSteam() {
+    if (this.data.getVerbosity().writeToStandardOut()) {
+      return System.out;
+    }
+    return new PrintStream(OutputStream.nullOutputStream());
   }
 
   private List<MutationAnalysisUnit> buildMutationTests(CoverageDatabase coverageData,
