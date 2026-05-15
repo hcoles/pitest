@@ -8,6 +8,7 @@ import static org.pitest.mutationtest.LocationMother.aLocation;
 import static org.pitest.mutationtest.LocationMother.aMutationId;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -91,9 +92,34 @@ public class MutationTestBuilderTest {
     assertEquals(1, actual.size());
   }
 
+  @Test
+  public void shouldApplyProjectFilterAcrossAllMutations() {
+    when(this.source.createMutations(any(ClassName.class))).thenReturn(
+        Arrays.asList(createDetails("foo"), createDetails("foo")));
+    this.testee = new MutationTestBuilder(ExecutionMode.NORMAL, this.wf, new NullHistory(),
+        this.source, new DefaultGrouper(0), filterAllMutants());
+
+    assertTrue(this.testee.createMutationTestUnits(Arrays.asList(ClassName.fromString("foo"))).isEmpty());
+  }
+
+  private ProjectMutationInterceptor filterAllMutants() {
+    return new ProjectMutationInterceptor() {
+
+      @Override
+      public Collection<MutationDetails> intercept(Collection<MutationDetails> mutations) {
+        return List.of();
+      }
+
+      @Override
+      public InterceptorType type() {
+        return InterceptorType.FILTER;
+      }
+    };
+  }
+
   private void makeTesteeWithUnitSizeOf(int unitSize) {
     this.testee = new MutationTestBuilder(ExecutionMode.NORMAL, this.wf, new NullHistory(),
-        this.source, new DefaultGrouper(unitSize));
+        this.source, new DefaultGrouper(unitSize), CompoundProjectMutationInterceptor.passThrough());
   }
 
   public static MutationDetails createDetails(String clazz) {

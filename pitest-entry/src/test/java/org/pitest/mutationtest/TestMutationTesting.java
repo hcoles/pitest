@@ -61,6 +61,7 @@ import org.pitest.coverage.execute.DefaultCoverageGenerator;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.build.CompoundMutationInterceptor;
+import org.pitest.mutationtest.build.CompoundProjectMutationInterceptor;
 import org.pitest.mutationtest.build.DefaultGrouper;
 import org.pitest.mutationtest.build.DefaultTestPrioritiser;
 import org.pitest.mutationtest.build.MutationAnalysisUnit;
@@ -295,7 +296,7 @@ public class TestMutationTesting {
 
 
     final MutationTestBuilder builder = new MutationTestBuilder(mode, wf,
-        new NullHistory(), source, new DefaultGrouper(0));
+        new NullHistory(), source, new DefaultGrouper(0), CompoundProjectMutationInterceptor.passThrough());
 
     final List<MutationAnalysisUnit> tus = builder
         .createMutationTestUnits(codeClasses);

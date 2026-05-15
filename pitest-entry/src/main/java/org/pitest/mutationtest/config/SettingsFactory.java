@@ -19,11 +19,13 @@ import org.pitest.mutationtest.CompoundMutationResultInterceptor;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.build.CompoundInterceptorFactory;
+import org.pitest.mutationtest.build.CompoundProjectMutationFilterFactory;
 import org.pitest.mutationtest.build.DefaultMutationGrouperFactory;
 import org.pitest.mutationtest.build.DefaultTestPrioritiserFactory;
 import org.pitest.mutationtest.build.FilteringPrioritiser;
 import org.pitest.mutationtest.build.MutationGrouperFactory;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
+import org.pitest.mutationtest.build.ProjectMutationInterceptorFactory;
 import org.pitest.mutationtest.build.TestFilter;
 import org.pitest.mutationtest.build.TestFilterFactory;
 import org.pitest.mutationtest.build.TestFilterParams;
@@ -225,6 +227,12 @@ public class SettingsFactory {
         .findInterceptors();
     final FeatureParser parser = new FeatureParser();
     return new CompoundInterceptorFactory(parser.parseFeatures(this.options.getFeatures()), new ArrayList<>(interceptors));
+  }
+
+  public CompoundProjectMutationFilterFactory getProjectFilter() {
+    final Collection<? extends ProjectMutationInterceptorFactory> factories = this.plugins.findProjectFilters();
+    final FeatureParser parser = new FeatureParser();
+    return new CompoundProjectMutationFilterFactory(parser.parseFeatures(this.options.getFeatures()), new ArrayList<>(factories));
   }
 
   public BuildVerifierFactory createVerifier() {

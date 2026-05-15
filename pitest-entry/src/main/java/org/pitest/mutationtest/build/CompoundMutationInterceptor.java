@@ -16,51 +16,51 @@ import static java.util.Comparator.comparing;
 
 public class CompoundMutationInterceptor implements MutationInterceptor {
 
-  private final List<MutationInterceptor> children = new ArrayList<>();
+    private final List<MutationInterceptor> children = new ArrayList<>();
 
-  public CompoundMutationInterceptor(List<? extends MutationInterceptor> interceptors) {
-    this.children.addAll(interceptors);
-    this.children.sort(comparing(MutationInterceptor::type));
-  }
-
-  public static MutationInterceptor nullInterceptor() {
-    return new CompoundMutationInterceptor(Collections.emptyList());
-  }
-
-  public CompoundMutationInterceptor filter(Predicate<MutationInterceptor> p) {
-    return new CompoundMutationInterceptor(children.stream()
-            .filter(p)
-            .collect(Collectors.toList()));
-  }
-
-  @Override
-  public void initialise(CodeSource code) {
-    this.children.forEach(each -> each.initialise(code));
-  }
-
-  @Override
-  public void begin(ClassTree clazz) {
-    this.children.forEach(each -> each.begin(clazz));
-  }
-
-  @Override
-  public Collection<MutationDetails> intercept(
-      Collection<MutationDetails> mutations, Mutater m) {
-    Collection<MutationDetails> modified = mutations;
-    for (final MutationInterceptor each : this.children) {
-      modified = each.intercept(modified, m);
+    public CompoundMutationInterceptor(List<? extends MutationInterceptor> interceptors) {
+        this.children.addAll(interceptors);
+        this.children.sort(comparing(MutationInterceptor::type));
     }
-    return modified;
-  }
 
-  @Override
-  public void end() {
-    this.children.forEach(MutationInterceptor::end);
-  }
+    public static MutationInterceptor nullInterceptor() {
+        return new CompoundMutationInterceptor(Collections.emptyList());
+    }
 
-  @Override
-  public InterceptorType type() {
-    return InterceptorType.OTHER;
-  }
+    public CompoundMutationInterceptor filter(Predicate<InterceptorType> p) {
+        return new CompoundMutationInterceptor(children.stream()
+                .filter(i -> p.test(i.type()))
+                .collect(Collectors.toList()));
+    }
+
+    @Override
+    public void initialise(CodeSource code) {
+        this.children.forEach(each -> each.initialise(code));
+    }
+
+    @Override
+    public void begin(ClassTree clazz) {
+        this.children.forEach(each -> each.begin(clazz));
+    }
+
+    @Override
+    public Collection<MutationDetails> intercept(
+            Collection<MutationDetails> mutations, Mutater m) {
+        Collection<MutationDetails> modified = mutations;
+        for (final MutationInterceptor each : this.children) {
+            modified = each.intercept(modified, m);
+        }
+        return modified;
+    }
+
+    @Override
+    public void end() {
+        this.children.forEach(MutationInterceptor::end);
+    }
+
+    @Override
+    public InterceptorType type() {
+        return InterceptorType.OTHER;
+    }
 
 }

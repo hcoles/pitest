@@ -37,18 +37,21 @@ public class MutationTestBuilder {
   private final History analyser;
   private final WorkerFactory    workerFactory;
   private final MutationGrouper  grouper;
+  private final ProjectMutationInterceptor projectFilter;
 
   public MutationTestBuilder(ExecutionMode mode,
                              WorkerFactory workerFactory,
                              History analyser,
                              MutationSource mutationSource,
-                             MutationGrouper grouper) {
+                             MutationGrouper grouper,
+                             ProjectMutationInterceptor projectFilter) {
 
     this.mode = mode;
     this.mutationSource = mutationSource;
     this.analyser = analyser;
     this.workerFactory = workerFactory;
     this.grouper = grouper;
+    this.projectFilter = projectFilter;
   }
 
   public List<MutationAnalysisUnit> createMutationTestUnits(
@@ -59,11 +62,13 @@ public class MutationTestBuilder {
                     .flatMap(c -> mutationSource.createMutations(c).stream())
                             .collect(Collectors.toList());
 
-    mutations.sort(comparing(MutationDetails::getId));
+    final List<MutationDetails> filteredMutations = new ArrayList<>(projectFilter.intercept(mutations));
 
-    List<MutationResult> analysisUnits = this.analyser.analyse(mutations);
+    filteredMutations.sort(comparing(MutationDetails::getId));
 
-    Collection<MutationDetails> needProcessing = filterAlreadyAnalysedMutations(mutations, analysisUnits);
+    List<MutationResult> analysisUnits = this.analyser.analyse(filteredMutations);
+
+    Collection<MutationDetails> needProcessing = filterAlreadyAnalysedMutations(filteredMutations, analysisUnits);
 
     List<MutationResult> analysedMutations = analysisUnits.stream()
             .filter(r -> r.getStatus() != DetectionStatus.NOT_STARTED)
