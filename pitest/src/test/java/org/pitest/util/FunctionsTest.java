@@ -14,9 +14,8 @@
  */
 package org.pitest.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
@@ -24,18 +23,17 @@ public class FunctionsTest {
 
   @Test
   public void classToNameShouldReturnClassName() {
-    assertEquals(String.class.getName(),
-        Functions.classToName().apply(String.class));
+    assertThat(Functions.classToName().apply(String.class)).isEqualTo(String.class.getName());
   }
 
   @Test
   public void startWithShouldReturnTrueIfGivenStringStartsWithParameter() {
-    assertTrue(Functions.startsWith("foo").test("foobar"));
+    assertThat(Functions.startsWith("foo").test("foobar")).isTrue();
   }
 
   @Test
   public void startWithShouldReturnFalseIfGivenStringDoesNotStartsWithParameter() {
-    assertFalse(Functions.startsWith("foo").test("barfoo"));
+    assertThat(Functions.startsWith("foo").test("barfoo")).isFalse();
   }
 
   static enum Foo {
@@ -44,18 +42,18 @@ public class FunctionsTest {
 
   @Test
   public void stringToEnumShouldConvertStringsToEnumValues() {
-    assertEquals(Foo.A, Functions.stringToEnum(Foo.class).apply("A"));
-    assertEquals(Foo.Bar, Functions.stringToEnum(Foo.class).apply("Bar"));
+    assertThat(Functions.stringToEnum(Foo.class).apply("A")).isEqualTo(Foo.A);
+    assertThat(Functions.stringToEnum(Foo.class).apply("Bar")).isEqualTo(Foo.Bar);
   }
 
   @Test
   public void classNameToJVMClassNameShouldConvertDotsToSlashes() {
-    assertEquals("a/b/c", Functions.classNameToJVMClassName().apply("a.b.c"));
+    assertThat(Functions.classNameToJVMClassName().apply("a.b.c")).isEqualTo("a/b/c");
   }
 
   @Test
   public void jvmClassToClassNameShouldConvertSlashesToDots() {
-    assertEquals("a.b.c", Functions.jvmClassToClassName().apply("a/b/c"));
+    assertThat(Functions.jvmClassToClassName().apply("a/b/c")).isEqualTo("a.b.c");
   }
 
 }

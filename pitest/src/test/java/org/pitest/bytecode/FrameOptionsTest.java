@@ -1,6 +1,6 @@
 package org.pitest.bytecode;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 import org.objectweb.asm.ClassWriter;
@@ -9,42 +9,42 @@ public class FrameOptionsTest {
 
   @Test
   public void shouldComputeFramesForJava7() {
-    assertEquals(ClassWriter.COMPUTE_FRAMES, bytesToTestee("CAFEBABE00000033"));
+    assertThat(bytesToTestee("CAFEBABE00000033")).isEqualTo(ClassWriter.COMPUTE_FRAMES);
   }
 
   @Test
   public void shouldComputeFramesForJava8() {
-    assertEquals(ClassWriter.COMPUTE_FRAMES, bytesToTestee("CAFEBABE00000034"));
+    assertThat(bytesToTestee("CAFEBABE00000034")).isEqualTo(ClassWriter.COMPUTE_FRAMES);
   }
 
   @Test
   public void shouldNotComputeFramesForJava6() {
-    assertEquals(ClassWriter.COMPUTE_MAXS, bytesToTestee("CAFEBABE00000032"));
+    assertThat(bytesToTestee("CAFEBABE00000032")).isEqualTo(ClassWriter.COMPUTE_MAXS);
   }
 
   @Test
   public void shouldNotComputeFramesForJava5() {
-    assertEquals(ClassWriter.COMPUTE_MAXS, bytesToTestee("CAFEBABE00000031"));
+    assertThat(bytesToTestee("CAFEBABE00000031")).isEqualTo(ClassWriter.COMPUTE_MAXS);
   }
 
   @Test
   public void shouldNotComputeFramesForJava4() {
-    assertEquals(ClassWriter.COMPUTE_MAXS, bytesToTestee("CAFEBABE00000030"));
+    assertThat(bytesToTestee("CAFEBABE00000030")).isEqualTo(ClassWriter.COMPUTE_MAXS);
   }
 
   @Test
   public void shouldNotComputeFramesForJava3() {
-    assertEquals(ClassWriter.COMPUTE_MAXS, bytesToTestee("CAFEBABE0000002F"));
+    assertThat(bytesToTestee("CAFEBABE0000002F")).isEqualTo(ClassWriter.COMPUTE_MAXS);
   }
 
   @Test
   public void shouldNotComputeFramesForJava2() {
-    assertEquals(ClassWriter.COMPUTE_MAXS, bytesToTestee("CAFEBABE0000002E"));
+    assertThat(bytesToTestee("CAFEBABE0000002E")).isEqualTo(ClassWriter.COMPUTE_MAXS);
   }
 
   @Test
   public void shouldNotComputeFramesForJava1() {
-    assertEquals(ClassWriter.COMPUTE_MAXS, bytesToTestee("CAFEBABE0000002D"));
+    assertThat(bytesToTestee("CAFEBABE0000002D")).isEqualTo(ClassWriter.COMPUTE_MAXS);
   }
 
   private int bytesToTestee(String hex) {

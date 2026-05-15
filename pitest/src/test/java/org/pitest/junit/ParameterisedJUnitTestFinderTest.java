@@ -15,8 +15,8 @@
 package org.pitest.junit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.pitest.testapi.TestGroupConfig.emptyConfig;
 
 import java.util.Arrays;
@@ -67,13 +67,13 @@ public class ParameterisedJUnitTestFinderTest {
   @Test
   public void shouldCreateTestUnitForEachParameterMethodCombinationOfParameterizedTest() {
     final Collection<TestUnit> actual = findWithTestee(ParameterisedTest.class);
-    assertEquals(8, actual.size());
+    assertThat(actual).hasSize(8);
   }
 
   @Test
   public void shouldReturnNoTestForNonParameterisedTest() {
     final Collection<TestUnit> actual = findWithTestee(ParameterisedJUnitTestFinderTest.class);
-    assertTrue(actual.isEmpty());
+    assertThat(actual).isEmpty();
   }
 
   @Test

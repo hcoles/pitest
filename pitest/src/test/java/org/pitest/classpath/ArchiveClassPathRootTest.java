@@ -14,10 +14,7 @@
  */
 package org.pitest.classpath;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,17 +43,17 @@ public class ArchiveClassPathRootTest {
     final Collection<String> expected = Arrays.asList(
         "injar.p1.P1NoTest$InnerTest", "injar.p1.P1NoTest", "injar.p1.P1Test",
         "injar.p2.P2Test");
-    assertEquals(expected, this.testee.classNames());
+    assertThat(this.testee.classNames()).isEqualTo(expected);
   }
 
   @Test
   public void getDataShouldReturnNullForUnknownClass() throws Exception {
-    assertNull(this.testee.getData("bar"));
+    assertThat(this.testee.getData("bar")).isNull();
   }
 
   @Test
   public void getDataShouldReturnInputStreamForAKnownClass() throws Exception {
-    assertNotNull(this.testee.getData("injar.p1.P1Test"));
+    assertThat(this.testee.getData("injar.p1.P1Test")).isNotNull();
   }
 
   @Test
@@ -66,19 +63,19 @@ public class ArchiveClassPathRootTest {
       final InputStream actual = this.testee.getData("injar.p1.P1Test");
       actual.read(b);
     } catch (final IOException ex) {
-      fail();
+      assertThat(ex).isNull(); // This will fail if an exception occurs
     }
   }
 
   @Test
   public void getResourceShouldReturnNullForAnUnknownResource()
       throws Exception {
-    assertNull(this.testee.getResource("bar"));
+    assertThat(this.testee.getResource("bar")).isNull();
   }
 
   @Test
   public void getResourceShouldReturnURLForAKnownResource() throws Exception {
-    assertNotNull(this.testee.getResource("injar/p1/P1Test.class"));
+    assertThat(this.testee.getResource("injar/p1/P1Test.class")).isNotNull();
   }
 
 }

@@ -1,6 +1,6 @@
 package org.pitest.classinfo;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.HashMap;
 
@@ -18,8 +18,7 @@ public class ComputeClassWriterTest {
 
   @Test
   public void shouldResolveObjectAsSuperClassWhenNoCommonParentExists() {
-    assertEquals(ClassName.fromClass(Object.class).asInternalName(),
-        callTesteeWith(Integer.class, String.class));
+    assertThat(callTesteeWith(Integer.class, String.class)).isEqualTo(ClassName.fromClass(Object.class).asInternalName());
   }
 
   static interface ICommon {
@@ -40,8 +39,7 @@ public class ComputeClassWriterTest {
 
   @Test
   public void shouldResolveSuperClassWhenCommonParentExists() {
-    assertEquals(ClassName.fromClass(Parent.class).asInternalName(),
-        callTesteeWith(Child1.class, Child2.class));
+    assertThat(callTesteeWith(Child1.class, Child2.class)).isEqualTo(ClassName.fromClass(Parent.class).asInternalName());
   }
 
   static class ImplementsICommon1 implements ICommon {
@@ -54,8 +52,7 @@ public class ComputeClassWriterTest {
 
   @Test
   public void shouldResolveObjectAsSuperClassWhenImplementCommonInterface() {
-    assertEquals(ClassName.fromClass(Object.class).asInternalName(),
-        callTesteeWith(ImplementsICommon1.class, ImplementsICommon2.class));
+    assertThat(callTesteeWith(ImplementsICommon1.class, ImplementsICommon2.class)).isEqualTo(ClassName.fromClass(Object.class).asInternalName());
   }
 
   static interface ICommon2 extends ICommon {
@@ -68,20 +65,17 @@ public class ComputeClassWriterTest {
 
   @Test
   public void shouldResolveObjectAsSuperClassWhenInterfacesExtendCommonInterface() {
-    assertEquals(ClassName.fromClass(Object.class).asInternalName(),
-        callTesteeWith(ICommon2.class, ICommon3.class));
+    assertThat(callTesteeWith(ICommon2.class, ICommon3.class)).isEqualTo(ClassName.fromClass(Object.class).asInternalName());
   }
 
   @Test
   public void shouldResolveParentInterfaceWhenSecondInterfaceExtendsTheFirst() {
-    assertEquals(ClassName.fromClass(ICommon.class).asInternalName(),
-        callTesteeWith(ICommon.class, ICommon2.class));
+    assertThat(callTesteeWith(ICommon.class, ICommon2.class)).isEqualTo(ClassName.fromClass(ICommon.class).asInternalName());
   }
 
   @Test
   public void shouldResolveParentInterfaceWhenFirstInterfaceExtendsTheSecond() {
-    assertEquals(ClassName.fromClass(ICommon.class).asInternalName(),
-        callTesteeWith(ICommon2.class, ICommon.class));
+    assertThat(callTesteeWith(ICommon2.class, ICommon.class)).isEqualTo(ClassName.fromClass(ICommon.class).asInternalName());
   }
 
   static class GrandChild extends Child2 {
@@ -90,14 +84,12 @@ public class ComputeClassWriterTest {
 
   @Test
   public void shouldResolveCommonParentWhenNotImmediateParentOfSecondType() {
-    assertEquals(ClassName.fromClass(Parent.class).asInternalName(),
-        callTesteeWith(Child1.class, GrandChild.class));
+    assertThat(callTesteeWith(Child1.class, GrandChild.class)).isEqualTo(ClassName.fromClass(Parent.class).asInternalName());
   }
 
   @Test
   public void shouldResolveCommonParentWhenNotImmediateParentOfFirstType() {
-    assertEquals(ClassName.fromClass(Parent.class).asInternalName(),
-        callTesteeWith(GrandChild.class, Child1.class));
+    assertThat(callTesteeWith(GrandChild.class, Child1.class)).isEqualTo(ClassName.fromClass(Parent.class).asInternalName());
   }
 
   static interface ICommonGrandChild extends ICommon3 {
@@ -110,14 +102,12 @@ public class ComputeClassWriterTest {
 
   @Test
   public void shouldCommonParentInterfaceWhenNotImmediateParentOfSecondType() {
-    assertEquals(ClassName.fromClass(ICommon3.class).asInternalName(),
-        callTesteeWith(ICommon3.class, ICommonGreatGrandChild.class));
+    assertThat(callTesteeWith(ICommon3.class, ICommonGreatGrandChild.class)).isEqualTo(ClassName.fromClass(ICommon3.class).asInternalName());
   }
 
   @Test
   public void shouldCommonParentInterfaceWhenNotImmediateParentOfFirstType() {
-    assertEquals(ClassName.fromClass(ICommon3.class).asInternalName(),
-        callTesteeWith(ICommonGreatGrandChild.class, ICommon3.class));
+    assertThat(callTesteeWith(ICommonGreatGrandChild.class, ICommon3.class)).isEqualTo(ClassName.fromClass(ICommon3.class).asInternalName());
   }
 
   private final String callTesteeWith(final Class<?> first,

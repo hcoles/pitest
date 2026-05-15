@@ -27,7 +27,7 @@ public class Glob implements Predicate<String> {
   private final Pattern regex;
 
   private static final String ZERO_OR_MORE_PACKAGES      = "(?:.*\\.)*";
-  private static final String DOUBLE_STAR_PACKAGE_MARKER = "#%#%#";
+  private static final String  DOUBLE_STAR_PACKAGE_MARKER = "#%#%#";
 
   public Glob(final String glob) {
     String rectifiedGlob;

@@ -1,8 +1,8 @@
 package org.pitest.mutationtest.engine;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
 import static org.pitest.mutationtest.LocationMother.aLocation;
 import static org.pitest.mutationtest.LocationMother.aMutationId;
 
@@ -20,23 +20,23 @@ public class MutationIdentifierTest {
   @Test
   public void shouldEqualSelf() {
     final MutationIdentifier a = aMutationId().withIndex(1).withMutator("M").build();
-    assertTrue(a.equals(a));
+    assertThat(a.equals(a)).isTrue();
   }
 
   @Test
   public void shouldBeUnEqualWhenIndexDiffers() {
     final MutationIdentifier a = aMutationId().withIndex(1).build();
     final MutationIdentifier b = aMutationId().withIndex(2).build();
-    assertFalse(a.equals(b));
-    assertFalse(b.equals(a));
+    assertThat(a.equals(b)).isFalse();
+    assertThat(b.equals(a)).isFalse();
   }
 
   @Test
   public void shouldBeUnEqualWhenMutatorDiffers() {
     final MutationIdentifier a = aMutationId().withMutator("FOO").build();
     final MutationIdentifier b = aMutationId().withMutator("BAR").build();
-    assertFalse(a.equals(b));
-    assertFalse(b.equals(a));
+    assertThat(a.equals(b)).isFalse();
+    assertThat(b.equals(a)).isFalse();
   }
 
   @Test
@@ -45,24 +45,24 @@ public class MutationIdentifierTest {
         aLocation().withMethod("FOO")).build();
     final MutationIdentifier b = aMutationId().withLocation(
         aLocation().withMethod("BAR")).build();
-    assertFalse(a.equals(b));
-    assertFalse(b.equals(a));
+    assertThat(a.equals(b)).isFalse();
+    assertThat(b.equals(a)).isFalse();
   }
 
   @Test
   public void shouldHaveSymmetricEqulasImplementation() {
     final MutationIdentifier a = aMutationId().withIndex(1).withMutator("M").build();
     final MutationIdentifier b = aMutationId().withIndex(1).withMutator("M").build();
-    assertTrue(a.equals(b));
-    assertTrue(b.equals(a));
-    assertTrue(a.hashCode() == b.hashCode());
+    assertThat(a.equals(b)).isTrue();
+    assertThat(b.equals(a)).isTrue();
+    assertThat(a.hashCode() == b.hashCode()).isTrue();
   }
 
   @Test
   public void shouldMatchWhenObjectsAreEqual() {
     final MutationIdentifier a = aMutationId().build();
     final MutationIdentifier b = aMutationId().build();
-    assertTrue(a.matches(b));
+    assertThat(a.matches(b)).isTrue();
   }
 
   @Test
@@ -70,7 +70,7 @@ public class MutationIdentifierTest {
     final MutationIdentifier a = new MutationIdentifier(aLocation().build(),
         new HashSet<>(Arrays.asList(1, 2)), "M");
     final MutationIdentifier b = new MutationIdentifier(aLocation().build(), 1, "M");
-    assertTrue(a.matches(b));
+    assertThat(a.matches(b)).isTrue();
   }
 
   @Test
@@ -78,21 +78,21 @@ public class MutationIdentifierTest {
     final MutationIdentifier a = new MutationIdentifier(aLocation().build(),
         new HashSet<Integer>(100, 200), "M");
     final MutationIdentifier b = new MutationIdentifier(aLocation().build(), 1, "M");
-    assertFalse(a.matches(b));
+    assertThat(a.matches(b)).isFalse();
   }
 
   @Test
   public void shouldNotMatchWhenMutatorsDiffer() {
     final MutationIdentifier a = aMutationId().withMutator("A").build();
     final MutationIdentifier b = aMutationId().withMutator("XXXX").build();
-    assertFalse(a.matches(b));
+    assertThat(a.matches(b)).isFalse();
   }
 
   @Test
   public void shouldNotMatchWhenIndexesDiffer() {
     final MutationIdentifier a = aMutationId().withIndex(1).build();
     final MutationIdentifier b = aMutationId().withIndex(100).build();
-    assertFalse(a.matches(b));
+    assertThat(a.matches(b)).isFalse();
   }
 
   @Test
@@ -101,7 +101,7 @@ public class MutationIdentifierTest {
         .withMethodDescription("X").build(), 1, "M");
     final MutationIdentifier b = new MutationIdentifier(aLocation()
         .withMethodDescription("Y").build(), 1, "M");
-    assertFalse(a.matches(b));
+    assertThat(a.matches(b)).isFalse();
   }
 
   @Test
@@ -116,10 +116,10 @@ public class MutationIdentifierTest {
     List<MutationIdentifier> mis = Arrays.asList(a, b, c, d, e);
     Collections.sort(mis);
     final List<MutationIdentifier> expectedOrder = Arrays.asList(e, a, c, d, b);
-    assertEquals(expectedOrder, mis);
+    assertThat(expectedOrder).isEqualTo(mis);
     mis = Arrays.asList(e, b, d, a, c);
     Collections.sort(mis);
-    assertEquals(expectedOrder, mis);
+    assertThat(expectedOrder).isEqualTo(mis);
 
   }
 

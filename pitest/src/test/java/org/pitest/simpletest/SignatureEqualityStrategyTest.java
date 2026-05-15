@@ -1,7 +1,7 @@
 package org.pitest.simpletest;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 import java.lang.reflect.Method;
 import java.util.function.Predicate;
@@ -21,14 +21,16 @@ public class SignatureEqualityStrategyTest {
 
   @Test
   public void shouldConsiderDifferentlyNamedMethodsNotEqual() {
-    assertFalse(this.testee.isEqual(createTestMethod("foo"),
-        createTestMethod("bar")));
+    assertThat(this.testee.isEqual(createTestMethod("foo"),
+        createTestMethod("bar"))).isFalse();
+
   }
 
   @Test
   public void shouldConsiderSameMethodEqual() {
-    assertTrue(this.testee.isEqual(createTestMethod("foo"),
-        createTestMethod("foo")));
+    assertThat(this.testee.isEqual(createTestMethod("foo"),
+        createTestMethod("foo"))).isTrue();
+
   }
 
   @Test
@@ -37,8 +39,9 @@ public class SignatureEqualityStrategyTest {
 
     final Predicate<Method> onearg = a -> a.getName().equals("foo") && (a.getParameterTypes().length == 1);
 
-    assertFalse(this.testee.isEqual(createTestMethod(noargs),
-        createTestMethod(onearg)));
+    assertThat(this.testee.isEqual(createTestMethod(noargs),
+        createTestMethod(onearg))).isFalse();
+
   }
 
   public void foo(final int i) {

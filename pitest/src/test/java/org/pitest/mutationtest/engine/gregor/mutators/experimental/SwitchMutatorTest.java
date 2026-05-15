@@ -26,7 +26,7 @@ import java.util.function.IntFunction;
 
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SwitchMutatorTest {
 
@@ -36,7 +36,7 @@ public class SwitchMutatorTest {
 
     @Test
     public void shouldProvideAMeaningfulName() {
-        assertEquals("EXPERIMENTAL_SWITCH", new SwitchMutator().getName());
+        assertThat(new SwitchMutator().getName()).isEqualTo("EXPERIMENTAL_SWITCH");
     }
 
     @Test

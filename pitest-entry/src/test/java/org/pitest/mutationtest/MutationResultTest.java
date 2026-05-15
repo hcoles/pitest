@@ -14,6 +14,7 @@
  */
 package org.pitest.mutationtest;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
@@ -30,21 +31,21 @@ public class MutationResultTest {
   public void shouldReturnNameOfKillingTestWhenKnown() {
     this.testee = new MutationResult(null, new MutationStatusTestPair(1,
         DetectionStatus.KILLED, "good test"));
-    assertEquals("good test", this.testee.getKillingTestDescription());
+    assertThat(this.testee.getKillingTestDescription()).isEqualTo("good test");
   }
 
   @Test
   public void shouldNoneWhenNoKillingTest() {
     this.testee = new MutationResult(null, MutationStatusTestPair.notAnalysed(1,
         DetectionStatus.TIMED_OUT, Collections.emptyList()));
-    assertEquals("none", this.testee.getKillingTestDescription());
+    assertThat(this.testee.getKillingTestDescription()).isEqualTo("none");
   }
 
   @Test
   public void shouldReturnStatusDescription() {
     this.testee = new MutationResult(null, MutationStatusTestPair.notAnalysed(1,
         DetectionStatus.TIMED_OUT,Collections.emptyList()));
-    assertEquals("TIMED_OUT", this.testee.getStatusDescription());
+    assertThat(this.testee.getStatusDescription()).isEqualTo("TIMED_OUT");
   }
 
   @Test

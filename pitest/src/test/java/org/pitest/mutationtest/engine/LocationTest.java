@@ -1,6 +1,6 @@
 package org.pitest.mutationtest.engine;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.pitest.mutationtest.engine.Location.location;
 
 import java.util.Arrays;
@@ -26,7 +26,7 @@ public class LocationTest {
         "AA", "AA");
     final List<Location> ls = Arrays.asList(a, b, c, d);
     Collections.sort(ls);
-    assertEquals(Arrays.asList(a, c, d, b), ls);
+    assertThat(Arrays.asList(a, c, d, b)).isEqualTo(ls);
   }
 
   @Test

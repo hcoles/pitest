@@ -105,7 +105,7 @@ public class CompoundMutationInterceptorTest {
 
     final Collection<MutationDetails> actual = this.testee.intercept(original, this.mutater);
 
-    assertThat(actual).isEqualTo(reportResult);
+    assertThat(actual).isSameAs(reportResult);
 
     verify(this.otherChild).intercept(original,this.mutater);
     verify(this.modifyChild).intercept(otherResult,this.mutater);

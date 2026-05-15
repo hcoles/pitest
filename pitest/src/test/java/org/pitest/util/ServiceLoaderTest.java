@@ -1,7 +1,7 @@
 package org.pitest.util;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 import org.pitest.mutationtest.MutationEngineFactory;
@@ -16,7 +16,7 @@ public class ServiceLoaderTest {
   public void shouldReturnNoValuesWhenNoServicesFounds() throws Exception {
     final Iterable<AService> actual = ServiceLoader.load(AService.class, Thread
         .currentThread().getContextClassLoader());
-    assertFalse(actual.iterator().hasNext());
+    assertThat(actual).isNullOrEmpty();
   }
 
   @Test
@@ -24,7 +24,7 @@ public class ServiceLoaderTest {
     final Iterable<MutationEngineFactory> actual = ServiceLoader.load(
         MutationEngineFactory.class, Thread.currentThread()
         .getContextClassLoader());
-    assertTrue(actual.iterator().hasNext());
+    assertThat(actual).isNotEmpty();
   }
 
 }

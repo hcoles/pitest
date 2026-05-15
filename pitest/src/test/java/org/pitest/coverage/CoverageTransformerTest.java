@@ -28,9 +28,9 @@ import java.util.Collections;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CoverageTransformerTest {
 
@@ -58,7 +58,7 @@ public class CoverageTransformerTest {
   public void shouldNotTransformClassesNotMatchingPredicate() {
     final CoverageTransformer testee = new CoverageTransformer(
         False.<String> instance());
-    assertNull(testee.transform(null, "anything", null, null, null));
+    assertThat(testee.transform(null, "anything", null, null, null)).isNull();
   }
 
   @Test
@@ -66,8 +66,8 @@ public class CoverageTransformerTest {
     final CoverageTransformer testee = new CoverageTransformer(
         s -> true);
     final byte[] bs = this.bytes.getBytes(String.class.getName()).get();
-    assertFalse(Arrays.equals(bs,
-        testee.transform(null, "anything", null, null, bs)));
+    assertThat(Arrays.equals(bs,
+        testee.transform(null, "anything", null, null, bs))).isFalse();
   }
 
   @Test
@@ -86,8 +86,7 @@ public class CoverageTransformerTest {
     // printClass(bs);
     final StringWriter sw = new StringWriter();
     CheckClassAdapter.verify(new ClassReader(bs), false, new PrintWriter(sw));
-    assertTrue(sw.toString(), sw.toString().length() == 0);
-
+    assertThat(sw.toString()).isEmpty();
   }
 
   protected void printRaw(final Class<?> clazz) throws IOException {

@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.engine.gregor;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,9 +36,9 @@ public class GregorMutationEngineTest {
     final DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
         i -> true, mutators);
     this.testee = new GregorMutationEngine(config);
-    assertEquals(Arrays.asList(
+    assertThat(this.testee.getMutatorNames()).containsExactly(
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY.getName(),
-        MathMutator.MATH.getName()), this.testee.getMutatorNames());
+        MathMutator.MATH.getName());
 
   }
 

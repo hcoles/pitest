@@ -1,7 +1,6 @@
 package org.pitest.junit;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
 
@@ -21,24 +20,24 @@ public class JUnitCompatibleConfigurationTest {
 
   @Test
   public void considersPre46Invalid() throws Exception {
-    assertThat(this.testee.isInvalidVersion("4.5"), is(true));
-    assertThat(this.testee.isInvalidVersion("4.5-SNAPSHOT"), is(true));
+    assertThat(this.testee.isInvalidVersion("4.5")).isTrue();
+    assertThat(this.testee.isInvalidVersion("4.5-SNAPSHOT")).isTrue();
   }
 
   @Test
   public void canParseReleaseVersion() throws Exception {
-    assertThat(this.testee.isInvalidVersion("4.6"), is(false));
-    assertThat(this.testee.isInvalidVersion("4.10"), is(false));
+    assertThat(this.testee.isInvalidVersion("4.6")).isFalse();
+    assertThat(this.testee.isInvalidVersion("4.10")).isFalse();
   }
 
   @Test
   public void canParseSnapshotVersion() throws Exception {
-    assertThat(this.testee.isInvalidVersion("4.10-SNAPSHOT"), is(false));
-    assertThat(this.testee.isInvalidVersion("4.5-SNAPSHOT"), is(true));
+    assertThat(this.testee.isInvalidVersion("4.10-SNAPSHOT")).isFalse();
+    assertThat(this.testee.isInvalidVersion("4.5-SNAPSHOT")).isTrue();
   }
 
   @Test
   public void canParseReleaseCandidateVersion() throws Exception {
-    assertThat(this.testee.isInvalidVersion("4.10.rc1"), is(false));
+    assertThat(this.testee.isInvalidVersion("4.10.rc1")).isFalse();
   }
 }

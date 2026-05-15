@@ -1,10 +1,10 @@
 package org.pitest.functional.predicate;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.pitest.functional.prelude.Prelude.not;
 
 import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author henry
@@ -14,11 +14,11 @@ public class NotTest {
 
   @Test
   public void shouldInvertTrue() {
-    assertFalse(not(i -> true).test(null));
+    assertThat(not(i -> true).test(null)).isFalse();
   }
 
   @Test
   public void shouldInvertFalse() {
-    assertTrue(not(False.instance()).test(null));
+    assertThat(not(False.instance()).test(null)).isTrue();
   }
 }

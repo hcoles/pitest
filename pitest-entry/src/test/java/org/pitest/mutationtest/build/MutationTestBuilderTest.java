@@ -1,7 +1,6 @@
 package org.pitest.mutationtest.build;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.pitest.mutationtest.LocationMother.aLocation;
@@ -57,15 +56,15 @@ public class MutationTestBuilderTest {
             createDetails("foo")));
     final List<MutationAnalysisUnit> actual = this.testee
         .createMutationTestUnits(Arrays.asList(ClassName.fromString("foo")));
-    assertEquals(3, actual.size());
+    assertThat(actual).hasSize(3);
   }
 
   @Test
   public void shouldCreateNoUnitsWhenNoMutationsFound() {
     when(this.source.createMutations(any(ClassName.class))).thenReturn(
         Collections.<MutationDetails> emptyList());
-    assertTrue(this.testee.createMutationTestUnits(
-        Arrays.asList(ClassName.fromString("foo"))).isEmpty());
+    assertThat(this.testee.createMutationTestUnits(
+        Arrays.asList(ClassName.fromString("foo")))).isEmpty();
   }
 
   @Test
@@ -79,7 +78,7 @@ public class MutationTestBuilderTest {
         Arrays.asList(mutation2, mutation2));
     final List<MutationAnalysisUnit> actual = this.testee
         .createMutationTestUnits(Arrays.asList(foo, bar));
-    assertTrue(actual.get(0).priority() > actual.get(1).priority());
+    assertThat(actual.get(0).priority()).isGreaterThan(actual.get(1).priority());
   }
 
   private void assertCreatesOneTestUnitForTwoMutations() {
@@ -89,7 +88,7 @@ public class MutationTestBuilderTest {
         Arrays.asList(mutation1, mutation2));
     final List<MutationAnalysisUnit> actual = this.testee
         .createMutationTestUnits(Arrays.asList(ClassName.fromString("foo")));
-    assertEquals(1, actual.size());
+    assertThat(actual).hasSize(1);
   }
 
   @Test
@@ -99,7 +98,8 @@ public class MutationTestBuilderTest {
     this.testee = new MutationTestBuilder(ExecutionMode.NORMAL, this.wf, new NullHistory(),
         this.source, new DefaultGrouper(0), filterAllMutants());
 
-    assertTrue(this.testee.createMutationTestUnits(Arrays.asList(ClassName.fromString("foo"))).isEmpty());
+    assertThat(this.testee.createMutationTestUnits(Arrays.asList(ClassName.fromString("foo"))))
+            .isEmpty();
   }
 
   private ProjectMutationInterceptor filterAllMutants() {

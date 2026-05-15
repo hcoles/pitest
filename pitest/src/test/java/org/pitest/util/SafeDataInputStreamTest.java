@@ -14,7 +14,7 @@
  */
 package org.pitest.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -39,7 +39,7 @@ public class SafeDataInputStreamTest {
     final SafeDataInputStream dis = new SafeDataInputStream(i);
     final String actual = dis.readString();
 
-    assertEquals(s, actual);
+    assertThat(actual).isEqualTo(s);
 
   }
 

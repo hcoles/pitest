@@ -1,7 +1,6 @@
 package org.pitest.classpath;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 
@@ -14,7 +13,7 @@ public class DirectoryClassPathRootTest {
   @Test
   public void getDataShouldReturnNullForUnknownClass() throws Exception {
     this.testee = new DirectoryClassPathRoot(new File("foo"));
-    assertNull(this.testee.getData("bar"));
+    assertThat(this.testee.getData("bar")).isNull();
   }
 
   @Test
@@ -22,8 +21,8 @@ public class DirectoryClassPathRootTest {
     final File root = new File("target/test-classes/"); // this is going to be
     // flakey as hell
     this.testee = new DirectoryClassPathRoot(root);
-    assertTrue(this.testee.classNames().contains(
-        DirectoryClassPathRootTest.class.getName()));
+    assertThat(this.testee.classNames()).contains(
+        DirectoryClassPathRootTest.class.getName());
   }
 
 }

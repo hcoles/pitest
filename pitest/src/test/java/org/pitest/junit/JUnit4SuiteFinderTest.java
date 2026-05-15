@@ -14,8 +14,8 @@
  */
 package org.pitest.junit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,7 +38,7 @@ public class JUnit4SuiteFinderTest {
   @Test
   public void shouldReturnEmptyCollectionForUnannotatedClass() {
     final Class<?> noAnnotation = JUnit4SuiteFinderTest.class;
-    assertTrue(this.testee.apply(noAnnotation).isEmpty());
+    assertThat(this.testee.apply(noAnnotation)).isEmpty();
   }
 
   private static class HideFromJUnit {
@@ -55,7 +55,7 @@ public class JUnit4SuiteFinderTest {
     final Class<?> annotated = HideFromJUnit.AnnotatedJUnit.class;
     final Collection<Class<?>> expected = Arrays.<Class<?>> asList(
         String.class, Integer.class);
-    assertEquals(expected, this.testee.apply(annotated));
+    assertThat(this.testee.apply(annotated)).isEqualTo(expected);
   }
 
 }

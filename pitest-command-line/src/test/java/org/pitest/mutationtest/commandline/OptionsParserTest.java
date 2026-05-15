@@ -16,11 +16,6 @@ package org.pitest.mutationtest.commandline;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -31,7 +26,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -77,14 +71,14 @@ public class OptionsParserTest {
   public void shouldParseReportDir() {
     final String value = "foo";
     final ReportOptions actual = parseAddingRequiredArgs("--reportDir", value);
-    assertEquals(value, actual.getReportDir());
+    assertThat(actual.getReportDir()).isEqualTo(value);
   }
 
   @Test
   public void shouldConfigReportDir() {
     final String value = "foo";
     final ReportOptions actual = parseAddingRequiredArgs("--configDir", value);
-    assertEquals(value, actual.getConfigDir());
+    assertThat(actual.getConfigDir()).isEqualTo(value);
   }
 
 
@@ -93,9 +87,9 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("--targetClasses",
         "foo*,bar*");
     final Predicate<String> actualPredicate = actual.getTargetClassesFilter();
-    assertTrue(actualPredicate.test("foo_anything"));
-    assertTrue(actualPredicate.test("bar_anything"));
-    assertFalse(actualPredicate.test("notfoobar"));
+    assertThat(actualPredicate.test("foo_anything")).isTrue();
+    assertThat(actualPredicate.test("bar_anything")).isTrue();
+    assertThat(actualPredicate.test("notfoobar")).isFalse();
   }
 
   @Test
@@ -119,7 +113,7 @@ public class OptionsParserTest {
     List<String> expected = new ArrayList<>();
     expected.add("foo");
     expected.add("bar");
-    assertEquals(expected, actual.getJvmArgs());
+    assertThat(actual.getJvmArgs()).containsExactlyElementsOf(expected);
   }
 
   @Test
@@ -127,9 +121,9 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("--mutators",
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY.name() + ","
             + MathMutator.MATH.name());
-    assertEquals(Arrays.asList(
+    assertThat(actual.getMutators()).containsExactlyElementsOf(Arrays.asList(
         ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY.name(),
-        MathMutator.MATH.name()), actual.getMutators());
+        MathMutator.MATH.name()));
   }
 
   @Test
@@ -141,68 +135,68 @@ public class OptionsParserTest {
   @Test
   public void shouldDetectInlinedCodeByDefault() {
     final ReportOptions actual = parseAddingRequiredArgs();
-    assertTrue(actual.isDetectInlinedCode());
+    assertThat(actual.isDetectInlinedCode()).isTrue();
   }
 
   @Test
   public void shouldDetermineIfInlinedCodeFlagIsSet() {
     final ReportOptions actual = parseAddingRequiredArgs("--detectInlinedCode");
-    assertTrue(actual.isDetectInlinedCode());
+    assertThat(actual.isDetectInlinedCode()).isTrue();
   }
 
   @Test
   public void shouldDetermineIfInlinedCodeFlagIsSetWhenTrueSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--detectInlinedCode=true");
-    assertTrue(actual.isDetectInlinedCode());
+    assertThat(actual.isDetectInlinedCode()).isTrue();
   }
 
   @Test
   public void shouldDetermineIfInlinedCodeFlagIsSetWhenFalseSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--detectInlinedCode=false");
-    assertFalse(actual.isDetectInlinedCode());
+    assertThat(actual.isDetectInlinedCode()).isFalse();
   }
 
   @Test
   public void shouldNotCreateTimestampedReportsByDefault() {
     final ReportOptions actual = parseAddingRequiredArgs();
-    assertFalse(actual.shouldCreateTimeStampedReports());
+    assertThat(actual.shouldCreateTimeStampedReports()).isFalse();
   }
 
   @Test
   public void shouldDetermineIfTimestampedReportsFlagIsSet() {
     final ReportOptions actual = parseAddingRequiredArgs("--timestampedReports");
-    assertTrue(actual.shouldCreateTimeStampedReports());
+    assertThat(actual.shouldCreateTimeStampedReports()).isTrue();
   }
 
   @Test
   public void shouldDetermineIfTimestampedReportsFlagIsSetWhenTrueSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--timestampedReports=true");
-    assertTrue(actual.shouldCreateTimeStampedReports());
+    assertThat(actual.shouldCreateTimeStampedReports()).isTrue();
   }
 
   @Test
   public void shouldDetermineIfTimestampedReportsFlagIsSetWhenFalseSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--timestampedReports=false");
-    assertFalse(actual.shouldCreateTimeStampedReports());
+    assertThat(actual.shouldCreateTimeStampedReports()).isFalse();
   }
 
   @Test
   public void shouldParseNumberOfThreads() {
     final ReportOptions actual = parseAddingRequiredArgs("--threads", "42");
-    assertEquals(42, actual.getNumberOfThreads());
+    assertThat(actual.getNumberOfThreads()).isEqualTo(42);
   }
 
   @Test
   public void shouldParseTimeOutFactor() {
     final ReportOptions actual = parseAddingRequiredArgs("--timeoutFactor",
         "1.32");
-    assertEquals(1.32f, actual.getTimeoutFactor(), 0.1);
+    assertThat(actual.getTimeoutFactor()).isEqualTo(1.32f);
   }
 
   @Test
   public void shouldParseTimeOutConstant() {
     final ReportOptions actual = parseAddingRequiredArgs("--timeoutConst", "42");
-    assertEquals(42, actual.getTimeoutConstant());
+    assertThat(actual.getTimeoutConstant()).isEqualTo(42);
   }
 
   @Test
@@ -210,9 +204,9 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("--targetTest",
         "foo*,bar*");
     final Predicate<String> actualPredicate = actual.getTargetTestsFilter();
-    assertTrue(actualPredicate.test("foo_anything"));
-    assertTrue(actualPredicate.test("bar_anything"));
-    assertFalse(actualPredicate.test("notfoobar"));
+    assertThat(actualPredicate.test("foo_anything")).isTrue();
+    assertThat(actualPredicate.test("bar_anything")).isTrue();
+    assertThat(actualPredicate.test("notfoobar")).isFalse();
   }
 
   @Test
@@ -220,13 +214,13 @@ public class OptionsParserTest {
     ReportOptions actual = parseAddingRequiredArgs("--targetTest",
             "~foo\\w*,~bar.*");
     Predicate<String> actualPredicate = actual.getTargetTestsFilter();
-    assertTrue(actualPredicate.test("foo_anything"));
-    assertTrue(actualPredicate.test("bar_anything"));
-    assertFalse(actualPredicate.test("notfoobar"));
+    assertThat(actualPredicate.test("foo_anything")).isTrue();
+    assertThat(actualPredicate.test("bar_anything")).isTrue();
+    assertThat(actualPredicate.test("notfoobar")).isFalse();
     actual = parseAddingRequiredArgs("--targetTest",
             "~.*?foo\\w*,~bar.*");
     actualPredicate = actual.getTargetTestsFilter();
-    assertTrue(actualPredicate.test("notfoobar"));
+    assertThat(actualPredicate.test("notfoobar")).isTrue();
   }
 
   @Test
@@ -234,9 +228,9 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("--targetClasses",
         "foo*,bar*");
     final Predicate<String> actualPredicate = actual.getTargetTestsFilter();
-    assertTrue(actualPredicate.test("foo_anything"));
-    assertTrue(actualPredicate.test("bar_anything"));
-    assertFalse(actualPredicate.test("notfoobar"));
+    assertThat(actualPredicate.test("foo_anything")).isTrue();
+    assertThat(actualPredicate.test("bar_anything")).isTrue();
+    assertThat(actualPredicate.test("notfoobar")).isFalse();
   }
 
   @Test
@@ -244,8 +238,8 @@ public class OptionsParserTest {
     final ReportOptions actual = parseAddingRequiredArgs("--excludedTestClasses",
         "foo*", "--targetTests", "foo*,bar*", "--targetClasses", "foo*,bar*");
     final Predicate<String> testPredicate = actual.getTargetTestsFilter();
-    assertFalse(testPredicate.test("foo_anything"));
-    assertTrue(testPredicate.test("bar_anything"));
+    assertThat(testPredicate.test("foo_anything")).isFalse();
+    assertThat(testPredicate.test("bar_anything")).isTrue();
   }
 
   @Test
@@ -254,14 +248,14 @@ public class OptionsParserTest {
         "foo*", "--targetTests", "foo*,bar*", "--targetClasses", "foo*,bar*");
 
     final Predicate<String> targetPredicate = actual.getTargetClassesFilter();
-    assertFalse(targetPredicate.test("foo_anything"));
-    assertTrue(targetPredicate.test("bar_anything"));
+    assertThat(targetPredicate.test("foo_anything")).isFalse();
+    assertThat(targetPredicate.test("bar_anything")).isTrue();
   }
 
   @Test
   public void shouldDefaultLoggingPackagesToDefaultsDefinedByDefaultMutationConfigFactory() {
     final ReportOptions actual = parseAddingRequiredArgs();
-    assertEquals(ReportOptions.LOGGING_CLASSES, actual.getLoggingClasses());
+    assertThat(actual.getLoggingClasses()).containsExactlyElementsOf(ReportOptions.LOGGING_CLASSES);
   }
 
   @Test
@@ -274,8 +268,7 @@ public class OptionsParserTest {
   public void shouldParseCommaSeparatedListOfClassesToAvoidCallTo() {
     final ReportOptions actual = parseAddingRequiredArgs("--avoidCallsTo",
         "foo,bar,foo.bar");
-    assertEquals(Arrays.asList("foo", "bar", "foo.bar"),
-        actual.getLoggingClasses());
+    assertThat(actual.getLoggingClasses()).containsExactly("foo", "bar", "foo.bar");
   }
 
   @Test
@@ -326,16 +319,14 @@ public class OptionsParserTest {
   @Test
   public void shouldDefaultToHtmlReportWhenNoOutputFormatsSpecified() {
     final ReportOptions actual = parseAddingRequiredArgs();
-    assertEquals(new HashSet<>(Arrays.asList("HTML")),
-        actual.getOutputFormats());
+    assertThat(actual.getOutputFormats()).containsExactly("HTML");
   }
 
   @Test
   public void shouldParseCommaSeparatedListOfOutputFormatsWhenSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--outputFormats",
         "HTML,CSV");
-    assertEquals(new HashSet<>(Arrays.asList("HTML", "CSV")),
-        actual.getOutputFormats());
+    assertThat(actual.getOutputFormats()).containsExactlyInAnyOrder("HTML", "CSV");
   }
 
   @Test
@@ -343,8 +334,8 @@ public class OptionsParserTest {
     final ReportOptions ro = parseAddingRequiredArgs("--classPath",
         "/foo/bar,./boo");
     final Collection<String> actual = ro.getClassPathElements();
-    assertTrue(actual.contains("/foo/bar"));
-    assertTrue(actual.contains("./boo"));
+    assertThat(actual).contains("/foo/bar");
+    assertThat(actual).contains("./boo");
   }
 
   @Test
@@ -354,88 +345,85 @@ public class OptionsParserTest {
     final ReportOptions ro = parseAddingRequiredArgs("--classPathFile",
 	    classPathFile.getAbsolutePath());
     final Collection<String> actual = ro.getClassPathElements();
-    assertTrue(actual.contains("C:/foo"));
-    assertTrue(actual.contains("/etc/bar"));
+    assertThat(actual).contains("C:/foo");
+    assertThat(actual).contains("/etc/bar");
   }
 
 
   @Test
   public void shouldFailWhenNoMutationsSetByDefault() {
     final ReportOptions actual = parseAddingRequiredArgs();
-    assertTrue(actual.shouldFailWhenNoMutations());
+    assertThat(actual.shouldFailWhenNoMutations()).isTrue();
   }
 
   @Test
   public void shouldFailWhenNoMutationsWhenFlagIsSet() {
     final ReportOptions actual = parseAddingRequiredArgs("--failWhenNoMutations");
-    assertTrue(actual.shouldFailWhenNoMutations());
+    assertThat(actual.shouldFailWhenNoMutations()).isTrue();
   }
 
   @Test
   public void shouldFailWhenNoMutationsWhenTrueSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--failWhenNoMutations=true");
-    assertTrue(actual.shouldFailWhenNoMutations());
+    assertThat(actual.shouldFailWhenNoMutations()).isTrue();
   }
 
   @Test
   public void shouldNotFailWhenNoMutationsWhenFalseSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--failWhenNoMutations=false");
-    assertFalse(actual.shouldFailWhenNoMutations());
+    assertThat(actual.shouldFailWhenNoMutations()).isFalse();
   }
 
   @Test
   public void shouldNotSkipFailingTestsByDefault() {
     final ReportOptions actual = parseAddingRequiredArgs();
-    assertFalse(actual.skipFailingTests());
+    assertThat(actual.skipFailingTests()).isFalse();
   }
 
   @Test
   public void shouldSkipFailingTestsWhenFlagIsSet() {
     final ReportOptions actual = parseAddingRequiredArgs("--skipFailingTests");
-    assertTrue(actual.skipFailingTests());
+    assertThat(actual.skipFailingTests()).isTrue();
   }
 
   @Test
   public void shouldSkipFailingTestsWhenTrueSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--skipFailingTests=true");
-    assertTrue(actual.skipFailingTests());
+    assertThat(actual.skipFailingTests()).isTrue();
   }
 
   @Test
   public void shouldNotSkipFailingTestsWhenFalseSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--skipFailingTests=false");
-    assertFalse(actual.skipFailingTests());
+    assertThat(actual.skipFailingTests()).isFalse();
   }
 
   @Test
   public void shouldParseCommaSeparatedListOfMutableCodePaths() {
     final ReportOptions actual = parseAddingRequiredArgs("--mutableCodePaths",
         "foo,bar");
-    assertEquals(Arrays.asList("foo", "bar"), actual.getCodePaths());
+    assertThat(actual.getCodePaths()).containsExactly("foo", "bar");
   }
 
   @Test
   public void shouldParseCommaSeparatedListOfExcludedTestGroups() {
     final ReportOptions actual = parseAddingRequiredArgs("--excludedGroups",
         "foo,bar");
-    assertEquals(Arrays.asList("foo", "bar"), actual.getGroupConfig()
-        .getExcludedGroups());
+    assertThat(actual.getGroupConfig().getExcludedGroups()).containsExactly("foo", "bar");
   }
 
   @Test
   public void shouldParseCommaSeparatedListOfIncludedTestGroups() {
     final ReportOptions actual = parseAddingRequiredArgs("--includedGroups",
         "foo,bar");
-    assertEquals(Arrays.asList("foo", "bar"), actual.getGroupConfig()
-        .getIncludedGroups());
+    assertThat(actual.getGroupConfig().getIncludedGroups()).containsExactly("foo", "bar");
   }
 
   @Test
   public void shouldParseCommaSeparatedListOfIncludedTestMethods() {
     final ReportOptions actual = parseAddingRequiredArgs("--includedTestMethods",
             "foo,bar");
-    assertEquals(Arrays.asList("foo", "bar"), actual
-        .getIncludedTestMethods());
+    assertThat(actual.getIncludedTestMethods()).containsExactly("foo", "bar");
   }
 
   @Test
@@ -449,137 +437,136 @@ public class OptionsParserTest {
   public void shouldParseMutationUnitSize() {
     final ReportOptions actual = parseAddingRequiredArgs("--mutationUnitSize",
         "50");
-    assertEquals(50, actual.getMutationUnitSize());
+    assertThat(actual.getMutationUnitSize()).isEqualTo(50);
   }
 
   @Test
   public void shouldDefaultMutationUnitSizeToCorrectValue() {
     final ReportOptions actual = parseAddingRequiredArgs();
-    assertEquals(
-        (int) ConfigOption.MUTATION_UNIT_SIZE.getDefault(Integer.class),
-        actual.getMutationUnitSize());
+    assertThat(actual.getMutationUnitSize()).isEqualTo(
+        (int) ConfigOption.MUTATION_UNIT_SIZE.getDefault(Integer.class));
   }
 
   @Test
   public void shouldDefaultToNoHistory() {
     final ReportOptions actual = parseAddingRequiredArgs();
-    assertNull(actual.getHistoryInputLocation());
-    assertNull(actual.getHistoryOutputLocation());
+    assertThat(actual.getHistoryInputLocation()).isNull();
+    assertThat(actual.getHistoryOutputLocation()).isNull();
   }
 
   @Test
   public void shouldParseHistoryInputLocation() {
     final ReportOptions actual = parseAddingRequiredArgs(
         "--historyInputLocation", "foo");
-    assertEquals(new File("foo"), actual.getHistoryInputLocation());
+    assertThat(actual.getHistoryInputLocation()).isEqualTo(new File("foo"));
   }
 
   @Test
   public void shouldParseHistoryOutputLocation() {
     final ReportOptions actual = parseAddingRequiredArgs(
         "--historyOutputLocation", "foo");
-    assertEquals(new File("foo"), actual.getHistoryOutputLocation());
+    assertThat(actual.getHistoryOutputLocation()).isEqualTo(new File("foo"));
   }
 
   @Test
   public void shouldParseMutationThreshold() {
     final ReportOptions actual = parseAddingRequiredArgs("--mutationThreshold",
         "42");
-    assertEquals(42, actual.getMutationThreshold());
+    assertThat(actual.getMutationThreshold()).isEqualTo(42);
   }
 
   @Test
   public void shouldParseTestStrengthThreshold() {
     final ReportOptions actual = parseAddingRequiredArgs("--testStrengthThreshold",
             "50");
-    assertEquals(50, actual.getTestStrengthThreshold());
+    assertThat(actual.getTestStrengthThreshold()).isEqualTo(50);
   }
 
   @Test
   public void shouldParseMaximumAllowedSurvivingMutants() {
     final ReportOptions actual = parseAddingRequiredArgs("--maxSurviving",
         "42");
-    assertEquals(42, actual.getMaximumAllowedSurvivors());
+    assertThat(actual.getMaximumAllowedSurvivors()).isEqualTo(42);
   }
 
   @Test
   public void shouldParseCoverageThreshold() {
     final ReportOptions actual = parseAddingRequiredArgs("--coverageThreshold",
         "42");
-    assertEquals(42, actual.getCoverageThreshold());
+    assertThat(actual.getCoverageThreshold()).isEqualTo(42);
   }
 
   @Test
   public void shouldDefaultToGregorEngineWhenNoOptionSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs();
-    assertEquals("gregor", actual.getMutationEngine());
+    assertThat(actual.getMutationEngine()).isEqualTo("gregor");
   }
 
   @Test
   public void shouldParseMutationEnigne() {
     final ReportOptions actual = parseAddingRequiredArgs("--mutationEngine",
         "foo");
-    assertEquals("foo", actual.getMutationEngine());
+    assertThat(actual.getMutationEngine()).isEqualTo("foo");
   }
 
   @Test
   public void shouldDefaultJVMToNull() {
     final ReportOptions actual = parseAddingRequiredArgs();
-    assertEquals(null, actual.getJavaExecutable());
+    assertThat(actual.getJavaExecutable()).isNull();
   }
 
   @Test
   public void shouldParseJVM() {
     final ReportOptions actual = parseAddingRequiredArgs("--jvmPath", "foo");
-    assertEquals("foo", actual.getJavaExecutable());
+    assertThat(actual.getJavaExecutable()).isEqualTo("foo");
   }
 
   @Test
   public void shouldNotExportLineCoverageByDefault() {
     final ReportOptions actual = parseAddingRequiredArgs();
-    assertFalse(actual.shouldExportLineCoverage());
+    assertThat(actual.shouldExportLineCoverage()).isFalse();
   }
 
   @Test
   public void shouldDetermineIfExportLineCoverageFlagIsSet() {
     final ReportOptions actual = parseAddingRequiredArgs("--exportLineCoverage");
-    assertTrue(actual.shouldExportLineCoverage());
+    assertThat(actual.shouldExportLineCoverage()).isTrue();
   }
 
   @Test
   public void shouldDetermineIfExportLineCoverageFlagIsSetWhenTrueSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--exportLineCoverage=true");
-    assertTrue(actual.shouldExportLineCoverage());
+    assertThat(actual.shouldExportLineCoverage()).isTrue();
   }
 
   @Test
   public void shouldDetermineIfExportLineCoverageFlagIsSetWhenFalseSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--exportLineCoverage=false");
-    assertFalse(actual.shouldExportLineCoverage());
+    assertThat(actual.shouldExportLineCoverage()).isFalse();
   }
 
   @Test
   public void shouldIncludeLaunchClasspathByDefault() {
     final ReportOptions actual = parseAddingRequiredArgs();
-    assertTrue(actual.isIncludeLaunchClasspath());
+    assertThat(actual.isIncludeLaunchClasspath()).isTrue();
   }
 
   @Test
   public void shouldIncludeLaunchClasspathWhenFlag() {
     final ReportOptions actual = parseAddingRequiredArgs("--includeLaunchClasspath");
-    assertTrue(actual.isIncludeLaunchClasspath());
+    assertThat(actual.isIncludeLaunchClasspath()).isTrue();
   }
 
   @Test
   public void shouldIncludeLaunchClasspathWhenFlagTrue() {
     final ReportOptions actual = parseAddingRequiredArgs("--includeLaunchClasspath=true");
-    assertTrue(actual.isIncludeLaunchClasspath());
+    assertThat(actual.isIncludeLaunchClasspath()).isTrue();
   }
 
   @Test
   public void shouldNotIncludeLaunchClasspathWhenFlagFalse() {
     final ReportOptions actual = parseAddingRequiredArgs("--includeLaunchClasspath=false");
-    assertFalse(actual.isIncludeLaunchClasspath());
+    assertThat(actual.isIncludeLaunchClasspath()).isFalse();
   }
 
   @Test
@@ -604,21 +591,21 @@ public class OptionsParserTest {
   @Test
   public void shouldCreateEmptyPluginPropertiesWhenNoneSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs();
-    assertNotNull(actual.getFreeFormProperties());
+    assertThat(actual.getFreeFormProperties()).isNotNull();
   }
 
   @Test
   public void shouldIncludePluginPropertyValuesWhenSingleKey() {
     final ReportOptions actual = parseAddingRequiredArgs("-pluginConfiguration=foo=1");
-    assertEquals("1", actual.getFreeFormProperties().getProperty("foo"));
+    assertThat(actual.getFreeFormProperties().getProperty("foo")).isEqualTo("1");
   }
 
   @Test
   public void shouldIncludePluginPropertyValuesWhenMultipleKeys() {
     final ReportOptions actual = parseAddingRequiredArgs(
         "-pluginConfiguration=foo=1", "-pluginConfiguration=bar=2");
-    assertEquals("1", actual.getFreeFormProperties().getProperty("foo"));
-    assertEquals("2", actual.getFreeFormProperties().getProperty("bar"));
+    assertThat(actual.getFreeFormProperties().getProperty("foo")).isEqualTo("1");
+    assertThat(actual.getFreeFormProperties().getProperty("bar")).isEqualTo("2");
   }
 
 
@@ -630,25 +617,25 @@ public class OptionsParserTest {
   @Test
   public void shouldDefaultMatrixFlagToFalse() {
     final ReportOptions actual = parseAddingRequiredArgs();
-    assertFalse(actual.isFullMutationMatrix());
+    assertThat(actual.isFullMutationMatrix()).isFalse();
   }
 
   @Test
   public void shouldMatrixFlagWhenFlagIsSet() {
     final ReportOptions actual = parseAddingRequiredArgs("--fullMutationMatrix");
-    assertTrue(actual.isFullMutationMatrix());
+    assertThat(actual.isFullMutationMatrix()).isTrue();
   }
 
   @Test
   public void shouldMatrixFlagWhenTrueSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--fullMutationMatrix=true");
-    assertTrue(actual.isFullMutationMatrix());
+    assertThat(actual.isFullMutationMatrix()).isTrue();
   }
 
   @Test
   public void shouldNotMatrixFlagWhenFalseSupplied() {
     final ReportOptions actual = parseAddingRequiredArgs("--fullMutationMatrix=false");
-    assertFalse(actual.isFullMutationMatrix());
+    assertThat(actual.isFullMutationMatrix()).isFalse();
   }
 
   @Test
@@ -730,8 +717,7 @@ public class OptionsParserTest {
 
   private ReportOptions parseAddingRequiredArgs(final String... args) {
 
-    final List<String> a = new ArrayList<>();
-    a.addAll(Arrays.asList(args));
+    final List<String> a = new ArrayList<>(Arrays.asList(args));
     addIfNotPresent(a, "--targetClasses");
     addIfNotPresent(a, "--reportDir");
     addIfNotPresent(a, "--sourceDirs");

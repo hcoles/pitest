@@ -1,6 +1,6 @@
 package org.pitest.mutationtest.engine.gregor.analysis;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
@@ -17,17 +17,16 @@ import org.pitest.util.IsolationUtils;
 public class InstructionTrackingMethodVisitorTest {
 
   private final ClassByteArraySource byteSource = new ClassloaderByteArraySource(
-      IsolationUtils
-      .getContextClassLoader());
+          IsolationUtils
+                  .getContextClassLoader());
 
-  private final InstructionCounter   counter    = new DefaultInstructionCounter();
+  private final InstructionCounter counter = new DefaultInstructionCounter();
 
   @Test
   public void shouldGiveIndexConsistentWithTreeApiForStringEquals() {
     analyse(String.class, "equals");
     final MethodNode tree = makeTree(String.class, "equals");
-    assertEquals(tree.instructions.size(),
-        this.counter.currentInstructionCount());
+    assertThat(this.counter.currentInstructionCount()).isEqualTo(tree.instructions.size());
   }
 
   class HasMethodCallsAndBranches {
@@ -47,26 +46,25 @@ public class InstructionTrackingMethodVisitorTest {
   public void shouldGiveIndexConsistentWithTreeApiWhenMethodCallsPresent() {
     analyse(HasMethodCallsAndBranches.class, "foo");
     final MethodNode tree = makeTree(HasMethodCallsAndBranches.class, "foo");
-    assertEquals(tree.instructions.size(),
-        this.counter.currentInstructionCount());
+    assertThat(this.counter.currentInstructionCount()).isEqualTo(tree.instructions.size());
   }
 
   class HasSwitchStatements {
     public int foo(final int j) {
       switch (j) {
-      case 1:
-        return 3;
-      case 2:
-        return 4;
+        case 1:
+          return 3;
+        case 2:
+          return 4;
       }
 
       switch (j) {
-      case 34:
-        return 1;
-      case 9:
-        return 2;
-      default:
-        return 6;
+        case 34:
+          return 1;
+        case 9:
+          return 2;
+        default:
+          return 6;
       }
     }
 
@@ -76,14 +74,13 @@ public class InstructionTrackingMethodVisitorTest {
   public void shouldGiveIndexConsistentWithTreeApiWhenSwitchStatementsPresent() {
     analyse(HasSwitchStatements.class, "foo");
     final MethodNode tree = makeTree(HasSwitchStatements.class, "foo");
-    assertEquals(tree.instructions.size(),
-        this.counter.currentInstructionCount());
+    assertThat(this.counter.currentInstructionCount()).isEqualTo(tree.instructions.size());
   }
 
   private InstructionTrackingMethodVisitor analyse(final Class<?> clazz,
-      final String targetMethod) {
+                                                   final String targetMethod) {
     final ClassReader reader = new ClassReader(this.byteSource.getBytes(
-        clazz.getName()).get());
+            clazz.getName()).get());
     final Analyser cv = new Analyser(targetMethod);
     reader.accept(cv, 0);
     return cv.testee;
@@ -91,7 +88,7 @@ public class InstructionTrackingMethodVisitorTest {
 
   private MethodNode makeTree(final Class<?> clazz, final String name) {
     final ClassReader reader = new ClassReader(this.byteSource.getBytes(
-        ClassName.fromClass(clazz).asJavaName()).get());
+            ClassName.fromClass(clazz).asJavaName()).get());
     final ClassNode tree = new ClassNode();
     reader.accept(tree, 0);
     for (final Object m : tree.methods) {
@@ -104,7 +101,7 @@ public class InstructionTrackingMethodVisitorTest {
   }
 
   private class Analyser extends ClassVisitor {
-    private final String             targetMethod;
+    private final String targetMethod;
     InstructionTrackingMethodVisitor testee;
 
     public Analyser(final String targetMethod) {
@@ -114,11 +111,11 @@ public class InstructionTrackingMethodVisitorTest {
 
     @Override
     public MethodVisitor visitMethod(final int access, final String name,
-        final String desc, final String signature, final String[] exceptions) {
+                                     final String desc, final String signature, final String[] exceptions) {
       if (name.equals(this.targetMethod)) {
         this.testee = new InstructionTrackingMethodVisitor(super.visitMethod(
-            access, name, desc, signature, exceptions),
-            InstructionTrackingMethodVisitorTest.this.counter);
+                access, name, desc, signature, exceptions),
+                InstructionTrackingMethodVisitorTest.this.counter);
         return this.testee;
       } else {
         return null;
@@ -126,5 +123,5 @@ public class InstructionTrackingMethodVisitorTest {
     }
 
   }
-
 }
+

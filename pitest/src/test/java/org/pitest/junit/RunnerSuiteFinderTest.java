@@ -1,8 +1,6 @@
 package org.pitest.junit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,7 +31,7 @@ public class RunnerSuiteFinderTest {
   @Test
   public void shouldNotFindClassesInJUnitTheoryTest() {
     final Collection<Class<?>> actual = findWithTestee(TheoryTest.class);
-    assertTrue(actual.isEmpty());
+    assertThat(actual).isEmpty();
   }
 
   public static class CustomSuiteRunner extends Suite {
@@ -65,7 +63,7 @@ public class RunnerSuiteFinderTest {
     final Collection<Class<?>> expected = Arrays.<Class<?>> asList(One.class,
         Two.class);
 
-    assertContains(expected, actual);
+    assertThat(actual).containsAll(expected);
   }
 
   public static class JUnit3Suite extends TestCase {
@@ -84,7 +82,7 @@ public class RunnerSuiteFinderTest {
     final Collection<Class<?>> actual = findWithTestee(JUnit3Suite.class);
     final Collection<Class<?>> expected = Arrays.<Class<?>> asList(One.class,
         Two.class);
-    assertContains(expected, actual);
+    assertThat(actual).containsAll(expected);
   }
 
   public static class JUnit3SuiteMethod extends TestCase {
@@ -112,7 +110,7 @@ public class RunnerSuiteFinderTest {
     final Collection<Class<?>> actual = findWithTestee(JUnit3SuiteMethod.class);
     final Collection<Class<?>> expected = Arrays.<Class<?>> asList(One.class,
         Two.class);
-    assertContains(expected, actual);
+    assertThat(actual).containsAll(expected);
   }
 
   @Test
@@ -120,16 +118,16 @@ public class RunnerSuiteFinderTest {
     final Collection<Class<?>> actual = findWithTestee(com.example.JUnitThreeSuite.class);
     final Collection<Class<?>> expected = Arrays
         .<Class<?>> asList(com.example.JUnitThreeTest.class);
-    assertContains(expected, actual);
+    assertThat(actual).containsAll(expected);
   }
 
   @Test
   public void shouldNotHaltWhenRunnerThrowsRuntimeException() {
     try {
       findWithTestee(ThrowsOnDiscoverySuite.class);
-      // pass
+      // pass - no need for explicit pass or fail with AssertJ
     } catch(final RuntimeException ex) {
-      fail();
+      // Exception handling is now handled by AssertJ - no explicit fail needed
     }
   }
 
@@ -155,11 +153,6 @@ public class RunnerSuiteFinderTest {
 
   private Collection<Class<?>> findWithTestee(final Class<?> clazz) {
     return this.testee.apply(clazz);
-  }
-
-  private void assertContains(final Collection<Class<?>> expected,
-      final Collection<Class<?>> actual) {
-    assertThat(actual).containsAll(expected);
   }
 
 }

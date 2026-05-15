@@ -1,7 +1,6 @@
 package org.pitest.mutationtest.commandline;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,13 +18,13 @@ public class PluginFilterTest {
   @Test
   public void shouldExcludeHtmlReportPlugin() throws Exception {
     final String pluginLocation = getClassLocationAsCanonicalPath(HtmlReportFactory.class);
-    assertFalse(this.testee.test(pluginLocation));
+    assertThat(this.testee.test(pluginLocation)).isFalse();
   }
 
   @Test
   public void shouldIncludeMutationEngine() throws Exception {
     final String pluginLocation = getClassLocationAsCanonicalPath(GregorMutationEngine.class);
-    assertTrue(this.testee.test(pluginLocation));
+    assertThat(this.testee.test(pluginLocation)).isTrue();
   }
 
   private String getClassLocationAsCanonicalPath(Class<?> clazz)

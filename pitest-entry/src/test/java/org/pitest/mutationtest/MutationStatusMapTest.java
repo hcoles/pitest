@@ -44,13 +44,13 @@ public class MutationStatusMapTest {
   @Test
   public void shouldDetectWhenHasUnrunMutations() {
     this.testee.setStatusForMutation(this.details, DetectionStatus.NOT_STARTED);
-    assertTrue(this.testee.hasUnrunMutations());
+    assertThat(this.testee.hasUnrunMutations()).isTrue();
   }
 
   @Test
   public void shouldDetectWhenDoesNotHaveUnrunMutations() {
     this.testee.setStatusForMutation(this.details, DetectionStatus.KILLED);
-    assertFalse(this.testee.hasUnrunMutations());
+    assertThat(this.testee.hasUnrunMutations()).isFalse();
   }
 
   @Test
@@ -66,7 +66,7 @@ public class MutationStatusMapTest {
   public void shouldReturnEmptyListMutationsWhenNoUnrunMutationsPresent() {
     this.testee.setStatusForMutations(
         Arrays.asList(this.details, this.detailsTwo), DetectionStatus.STARTED);
-    assertEquals(Collections.emptyList(), this.testee.getUnrunMutations());
+    assertThat(this.testee.getUnrunMutations()).isEmpty();
   }
 
   @Test
@@ -81,7 +81,7 @@ public class MutationStatusMapTest {
   public void shouldReturnEmptyListMutationsWhenNoUnfinishedMutationsPresent() {
     this.testee.setStatusForMutations(
         Arrays.asList(this.details, this.detailsTwo), DetectionStatus.KILLED);
-    assertEquals(Collections.emptyList(), this.testee.getUnrunMutations());
+    assertThat(this.testee.getUnrunMutations()).isEmpty();
   }
 
   @Test
@@ -108,7 +108,7 @@ public class MutationStatusMapTest {
             DetectionStatus.SURVIVED, Collections.singletonList("foo"),Arrays.asList("foo1","bar"), Arrays.asList("foo","foo1","bar"));
     this.testee.setStatusForMutation(this.aSurvivedMutationDetails, statusPairOne);
 
-    assertEquals(DetectionStatus.SURVIVED, this.testee.createMutationResults().get(0).getStatus());
+    assertThat(this.testee.createMutationResults().get(0).getStatus()).isEqualTo(DetectionStatus.SURVIVED);
     assertThat(this.testee.createMutationResults().get(0).getKillingTests()).contains("foo");
     assertThat(this.testee.createMutationResults().get(0).getSucceedingTests()).contains("foo1","bar");
     assertThat(this.testee.createMutationResults().get(0).getCoveringTests()).contains("foo","foo1","bar");
@@ -121,7 +121,7 @@ public class MutationStatusMapTest {
         Arrays.asList(this.details, this.detailsTwo),
         DetectionStatus.NOT_STARTED);
     this.testee.markUncoveredMutations();
-    assertEquals(Collections.emptyList(), this.testee.getUnrunMutations());
+    assertThat(this.testee.getUnrunMutations()).isEmpty();
 
     final MutationStatusTestPair statusPairOne = new MutationStatusTestPair(42,
         DetectionStatus.NO_COVERAGE, "foo");

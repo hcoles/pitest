@@ -1,6 +1,6 @@
 package org.pitest.mutationtest.mocksupport;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.pitest.mutationtest.LocationMother.aLocation;
 import static org.pitest.mutationtest.LocationMother.aMutationId;
 
@@ -41,8 +41,8 @@ public class JavassistInterceptorTest {
     JavassistInterceptor.setMutant(this.mutant);
     final InputStream actual = JavassistInterceptor.openClassfile(
         this.interceptedClass, "nomatch");
-    assertEquals(streamToString(actual),
-        streamToString(this.interceptedClass.openClassfile("")));
+    assertThat(streamToString(actual))
+        .isEqualTo(streamToString(this.interceptedClass.openClassfile("")));
   }
 
   @Test
@@ -51,8 +51,8 @@ public class JavassistInterceptorTest {
     JavassistInterceptor.setMutant(null);
     final InputStream actual = JavassistInterceptor.openClassfile(
         this.interceptedClass, "nomatch");
-    assertEquals(streamToString(actual),
-        streamToString(this.interceptedClass.openClassfile("")));
+    assertThat(streamToString(actual))
+        .isEqualTo(streamToString(this.interceptedClass.openClassfile("")));
   }
 
   @Test
@@ -62,7 +62,8 @@ public class JavassistInterceptorTest {
     final InputStream actual = JavassistInterceptor.openClassfile(
         this.interceptedClass, "match");
 
-    assertEquals(streamToString(actual), "replaced");
+    assertThat(streamToString(actual))
+        .isEqualTo("replaced");
   }
 
   private String streamToString(final InputStream is) throws IOException {

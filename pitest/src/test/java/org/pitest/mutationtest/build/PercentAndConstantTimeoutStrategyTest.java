@@ -15,7 +15,7 @@
 
 package org.pitest.mutationtest.build;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
@@ -27,8 +27,8 @@ public class PercentAndConstantTimeoutStrategyTest {
   public void shouldReturnProductOfFactorAnTestTimePlusConstant() {
     final long time = 1;
     this.testee = new PercentAndConstantTimeoutStrategy(1.2f, 666);
-    assertEquals((Math.round(1.2f * time) + 666),
-        this.testee.getAllowedTime(time));
+    assertThat(this.testee.getAllowedTime(time))
+        .isEqualTo((Math.round(1.2f * time) + 666));
 
   }
 }

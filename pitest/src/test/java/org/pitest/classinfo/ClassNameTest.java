@@ -15,9 +15,6 @@
 package org.pitest.classinfo;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,33 +33,32 @@ public class ClassNameTest {
   @Test
   public void shouldConvertJavaNamesToInternalNames() {
     final ClassName testee = ClassName.fromString("com.foo.bar");
-    assertEquals("com/foo/bar", testee.asInternalName());
+    assertThat(testee.asInternalName()).isEqualTo("com/foo/bar");
   }
 
   @Test
   public void shouldConvertInternalNamesToJavaNames() {
     final ClassName testee = ClassName.fromString("com/foo/bar");
-    assertEquals("com.foo.bar", testee.asJavaName());
+    assertThat(testee.asJavaName()).isEqualTo("com.foo.bar");
   }
 
   @Test
   public void shouldTreatSameClassNameAsEqual() {
     final ClassName left = ClassName.fromString("com/foo/bar");
     final ClassName right = ClassName.fromString("com.foo.bar");
-    assertTrue(left.equals(right));
-    assertTrue(right.equals(left));
+    assertThat(left.equals(right)).isTrue();
+    assertThat(right.equals(left)).isTrue();
   }
 
   @Test
   public void shouldDisplayJavaNameInToString() {
     final ClassName testee = ClassName.fromString("com/foo/bar");
-    assertEquals("com.foo.bar", testee.toString());
+    assertThat(testee.toString()).isEqualTo("com.foo.bar");
   }
 
   @Test
   public void getNameWithoutPackageShouldReturnNameOnlyWhenClassIsOuterClass() {
-    assertEquals(ClassName.fromString("String"),
-        ClassName.fromClass(String.class).getNameWithoutPackage());
+    assertThat(ClassName.fromClass(String.class).getNameWithoutPackage()).isEqualTo(ClassName.fromString("String"));
   }
 
   static class Foo {
@@ -71,37 +67,32 @@ public class ClassNameTest {
 
   @Test
   public void getNameWithoutPackageShouldReturnNameWhenClassIsInnerClass() {
-    assertEquals(ClassName.fromString("ClassNameTest$Foo"),
-        ClassName.fromClass(Foo.class).getNameWithoutPackage());
+    assertThat(ClassName.fromClass(Foo.class).getNameWithoutPackage()).isEqualTo(ClassName.fromString("ClassNameTest$Foo"));
   }
 
   @Test
   public void getNameWithoutPackageShouldReturnNameWhenClassInPackageDefault() {
-    assertEquals(ClassName.fromString("Foo"),
-        ClassName.fromString("Foo").getNameWithoutPackage());
+    assertThat(ClassName.fromString("Foo").getNameWithoutPackage()).isEqualTo(ClassName.fromString("Foo"));
   }
 
   @Test
   public void getPackageShouldReturnEmptyPackageWhenClassInPackageDefault() {
-    assertEquals(ClassName.fromString(""), ClassName.fromString("Foo").getPackage());
+    assertThat(ClassName.fromString("Foo").getPackage()).isEqualTo(ClassName.fromString(""));
   }
 
   @Test
   public void getPackageShouldReturnPackageWhenClassWithinAPackage() {
-    assertEquals(ClassName.fromString("org.pitest.classinfo"), ClassName.fromClass(
-        ClassNameTest.class).getPackage());
+    assertThat(ClassName.fromClass(ClassNameTest.class).getPackage()).isEqualTo(ClassName.fromString("org.pitest.classinfo"));
   }
 
   @Test
   public void withoutSuffixCharsShouldReturnPacakgeAndClassWithoutSuffixChars() {
-    assertEquals(ClassName.fromString("com.example.Foo"), ClassName.fromString(
-        "com.example.FooTest").withoutSuffixChars(4));
+    assertThat(ClassName.fromString("com.example.FooTest").withoutSuffixChars(4)).isEqualTo(ClassName.fromString("com.example.Foo"));
   }
 
   @Test
   public void withoutPrefeixCharsShouldReturnPacakgeAndClassWithoutPrefixChars() {
-    assertEquals(ClassName.fromString("com.example.Foo"), ClassName.fromString(
-        "com.example.TestFoo").withoutPrefixChars(4));
+    assertThat(ClassName.fromString("com.example.TestFoo").withoutPrefixChars(4)).isEqualTo(ClassName.fromString("com.example.Foo"));
   }
 
   @Test
@@ -112,31 +103,27 @@ public class ClassNameTest {
 
     final List<ClassName> actual = Arrays.asList(b, c, a);
     Collections.sort(actual);
-    assertEquals(Arrays.asList(a, b, c), actual);
+    assertThat(actual).isEqualTo(Arrays.asList(a, b, c));
   }
 
   @Test
   public void shouldProduceSameHashCodeForSameClass() {
-    assertEquals(ClassName.fromString("org/example/Foo").hashCode(), ClassName
-        .fromString("org.example.Foo").hashCode());
+    assertThat(ClassName.fromString("org/example/Foo").hashCode()).isEqualTo(ClassName.fromString("org.example.Foo").hashCode());
   }
 
   @Test
   public void shouldProduceDifferentHashCodeForDifferentClasses() {
-    assertFalse(ClassName.fromString("org/example/Foo").hashCode() == ClassName
-        .fromString("org.example.Bar").hashCode());
+    assertThat(ClassName.fromString("org/example/Foo").hashCode()).isNotEqualTo(ClassName.fromString("org.example.Bar").hashCode());
   }
 
   @Test
   public void shouldTreatSameClassAsEqual() {
-    assertEquals(ClassName.fromString("org/example/Foo"),
-        ClassName.fromString("org.example.Foo"));
+    assertThat(ClassName.fromString("org/example/Foo")).isEqualTo(ClassName.fromString("org.example.Foo"));
   }
 
   @Test
   public void shouldTreatDifferentClassesAsNotEqual() {
-    assertFalse(ClassName.fromString("org/example/Foo").equals(
-        ClassName.fromString("org.example.Bar")));
+    assertThat(ClassName.fromString("org/example/Foo")).isNotEqualTo(ClassName.fromString("org.example.Bar"));
   }
 
   @Test

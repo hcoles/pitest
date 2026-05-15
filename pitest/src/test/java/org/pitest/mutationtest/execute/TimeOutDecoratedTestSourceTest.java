@@ -14,8 +14,8 @@
  */
 package org.pitest.mutationtest.execute;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -53,22 +53,22 @@ public class TimeOutDecoratedTestSourceTest {
 
   @Test
   public void shouldReturnNoTestUnitsWhenNoTestDetailsSupplied() {
-    assertTrue(this.testee.translateTests(Collections.<TestInfo> emptyList())
-        .isEmpty());
+    assertThat(this.testee.translateTests(Collections.<TestInfo> emptyList()))
+        .isEmpty();
   }
 
   @Test
   public void shouldReturnNoTestUnitWhenNonMatchingTestDetailSupplied() {
-    assertTrue(this.testee.translateTests(
+    assertThat(this.testee.translateTests(
         Arrays.asList(new TestInfo("foo", "bar", 42, Optional.<ClassName> empty(),
-            0))).isEmpty());
+            0)))).isEmpty();
   }
 
   @Test
   public void shouldReturnTestUnitWhenMatchingTestDetailSupplied() {
     final List<TestUnit> actual = this.testee.translateTests(Arrays
         .asList(new TestInfo("foo", "one", 42, Optional.<ClassName> empty(), 0)));
-    assertEquals(1, actual.size());
+    assertThat(actual).hasSize(1);
   }
 
   private TestUnit makeTestUnit(final String name) {

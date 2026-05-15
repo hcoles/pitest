@@ -20,7 +20,7 @@ import org.pitest.verifier.mutants.MutatorVerifierStart;
 
 import java.util.function.IntFunction;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.pitest.mutationtest.engine.gregor.mutators.ConditionalsBoundaryMutator.CONDITIONALS_BOUNDARY;
 
 public class ConditionalsBoundaryMutatorTest {
@@ -34,8 +34,7 @@ public class ConditionalsBoundaryMutatorTest {
 
     @Test
     public void shouldProvideAMeaningfulName() {
-        assertEquals("CONDITIONALS_BOUNDARY",
-                CONDITIONALS_BOUNDARY.getName());
+        assertThat(CONDITIONALS_BOUNDARY.getName()).isEqualTo("CONDITIONALS_BOUNDARY");
     }
 
     @Test

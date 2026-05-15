@@ -1,8 +1,6 @@
 package org.pitest.aggregate;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.util.Arrays;
@@ -33,10 +31,10 @@ public class CodeSourceAggregatorTest {
   @Test
   public void testCreateCodeSource() {
     final CodeSource source = this.underTest.createCodeSource();
-    assertNotNull(source);
+    assertThat(source).isNotNull();
 
-    assertTrue(source.fetchClassHash(ClassName.fromClass(CodeSourceAggregator.class)).isPresent());
-    assertFalse(source.fetchClassHash(ClassName.fromString("com.doesnt.exist.Type")).isPresent());
+    assertThat(source.fetchClassHash(ClassName.fromClass(CodeSourceAggregator.class)).isPresent()).isTrue();
+    assertThat(source.fetchClassHash(ClassName.fromString("com.doesnt.exist.Type")).isPresent()).isFalse();
   }
 
 }

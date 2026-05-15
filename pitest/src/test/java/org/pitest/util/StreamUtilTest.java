@@ -1,6 +1,6 @@
 package org.pitest.util;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -15,7 +15,7 @@ public class StreamUtilTest {
     final byte[] expected = createByteArray();
     final ByteArrayInputStream bis = new ByteArrayInputStream(expected);
     final byte[] actual = StreamUtil.streamToByteArray(bis);
-    assertArrayEquals(expected, actual);
+    assertThat(actual).containsExactly(expected);
   }
 
   private byte[] createByteArray() {
@@ -29,7 +29,7 @@ public class StreamUtilTest {
     final InputStream actualStream = StreamUtil
         .copyStream(new ByteArrayInputStream(createByteArray()));
     final byte[] actualContents = StreamUtil.streamToByteArray(actualStream);
-    assertArrayEquals(expected, actualContents);
+    assertThat(actualContents).containsExactly(expected);
   }
 
 }

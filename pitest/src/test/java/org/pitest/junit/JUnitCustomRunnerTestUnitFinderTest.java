@@ -15,10 +15,13 @@
 package org.pitest.junit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.pitest.testapi.TestGroupConfig.emptyConfig;
 
 import java.util.ArrayList;
@@ -73,13 +76,13 @@ public class JUnitCustomRunnerTestUnitFinderTest {
     includedMethods.add("testTheory3");
     setIncludedTestMethods(includedMethods);
     final Collection<TestUnit> actual = findWithTestee(TheoryTest.class);
-    assertEquals(2, actual.size());
+    assertThat(actual).hasSize(2);
   }
 
   @Test
   public void shouldFindTestsInJUnitTheoryTest() {
     final Collection<TestUnit> actual = findWithTestee(TheoryTest.class);
-    assertEquals(3, actual.size());
+    assertThat(actual).hasSize(3);
   }
 
   @RunWith(Parameterized.class)
@@ -103,7 +106,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   @Test
   public void shouldNotFindTestInParameterisedTestClass() {
     final Collection<TestUnit> actual = findWithTestee(ParameterisedTest.class);
-    assertEquals(0, actual.size());
+    assertThat(actual).isEmpty();
   }
 
   public static class CustomSuiteRunner extends Suite {
@@ -148,7 +151,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   @Test
   public void shouldNotFindTestsInCustomSuite() {
     final Collection<TestUnit> actual = findWithTestee(CustomSuite.class);
-    assertTrue(actual.isEmpty());
+    assertThat(actual).isEmpty();
   }
 
   public static class Three {
@@ -172,7 +175,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   @Test
   public void shouldNotFindTestsInNestedCustomSuites() {
     final Collection<TestUnit> actual = findWithTestee(NestCustomSuite.class);
-    assertTrue(actual.isEmpty());
+    assertThat(actual).isEmpty();
   }
 
   private Collection<TestUnit> findWithTestee(final Class<?> clazz) {
@@ -186,7 +189,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   @Test
   public void shouldNotFindTestInNonTestClasses() {
     final Collection<TestUnit> actual = findWithTestee(NotATest.class);
-    assertTrue(actual.isEmpty());
+    assertThat(actual).isEmpty();
   }
 
   public static class JMockTest extends MockObjectTestCase {
@@ -199,7 +202,8 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   public void shouldFindTestUnitsInCustomJUnit3Class() {
     final Collection<TestUnit> actual = this.testee
         .findTestUnits(JMockTest.class, new NullExecutionListener());
-    assertFalse(actual.isEmpty());
+    assertThat(actual).isNotEmpty();
+
   }
 
   public static class JUnit3Test extends TestCase {
@@ -230,7 +234,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   @Test
   public void shouldCreateSingleAtomicUnitWhenClassAnnotatedWithBeforeClass() {
     final Collection<TestUnit> actual = findWithTestee(HasBeforeClassAnnotation.class);
-    assertEquals(1, actual.size());
+    assertThat(actual).hasSize(1);
   }
 
   public static class HasAfterClassAnnotation {
@@ -255,7 +259,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   @Test
   public void shouldCreateSingleAtomicUnitWhenClassAnnotatedWithAfterClass() {
     final Collection<TestUnit> actual = findWithTestee(HasAfterClassAnnotation.class);
-    assertEquals(1, actual.size());
+    assertThat(actual).hasSize(1);
   }
 
   public static class ClassRuleMethod {
@@ -279,7 +283,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   public void shouldCreateSingleAtomicUnitWhenAnyMethodAnnotatedWithClassRule()
       throws Exception {
     final Collection<TestUnit> actual = findWithTestee(ClassRuleMethod.class);
-    assertEquals(1, actual.size());
+    assertThat(actual).hasSize(1);
   }
 
   public static class ClassRuleField {
@@ -301,7 +305,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   public void shouldCreateSingleAtomicUnitWhenAnyFieldAnnotatedWithClassRule()
       throws Exception {
     final Collection<TestUnit> actual = findWithTestee(ClassRuleMethod.class);
-    assertEquals(1, actual.size());
+    assertThat(actual).hasSize(1);
   }
 
   public static class NoPublicConstructor extends TestCase {
@@ -317,7 +321,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   @Test
   public void shouldNotFindTestsInClassesExtendingTestCaseWithoutAPublicConstructor() {
     final Collection<TestUnit> actual = findWithTestee(NoPublicConstructor.class);
-    assertEquals(0, actual.size());
+    assertThat(actual).isEmpty();
   }
 
   public static class OwnSuiteMethod extends TestCase {
@@ -339,7 +343,7 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   @Test
   public void shouldFindTestsInClassWithASuiteMethodThatReturnsItself() {
     final Collection<TestUnit> actual = findWithTestee(OwnSuiteMethod.class);
-    assertEquals(2, actual.size());
+    assertThat(actual).hasSize(2);
   }
 
   public static class SuiteMethod extends TestCase {
@@ -353,23 +357,19 @@ public class JUnitCustomRunnerTestUnitFinderTest {
   @Test
   public void shouldNotFindTestsInClassWithASuiteMethodThatReturnsOthersClasses() {
     final Collection<TestUnit> actual = findWithTestee(SuiteMethod.class);
-    assertEquals(0, actual.size());
+    assertThat(actual).isEmpty();
   }
 
   @Test
   public void willFindSingleTestUnitInJUnitParamsTest() {
     final Collection<TestUnit> actual = findWithTestee(JUnitParamsTest.class);
-    assertEquals(1, actual.size());
+    assertThat(actual).hasSize(1);
   }
 
   @Test
   public void shouldNotHaltWhenRunnerThrowsRuntimeException() {
-    try {
-      findWithTestee(ThrowsOnDiscoverySuite.class);
-      // pass
-    } catch(final RuntimeException ex) {
-      fail();
-    }
+      assertThatCode(() ->findWithTestee(ThrowsOnDiscoverySuite.class))
+              .doesNotThrowAnyException();
   }
 
   @Test

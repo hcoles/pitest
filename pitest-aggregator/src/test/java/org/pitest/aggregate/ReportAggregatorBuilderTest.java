@@ -1,6 +1,5 @@
 package org.pitest.aggregate;
 
-import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -10,8 +9,6 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.pitest.aggregate.TestInvocationHelper.getCompiledDirectory;
 import static org.pitest.aggregate.TestInvocationHelper.getCoverageFile;
 import static org.pitest.aggregate.TestInvocationHelper.getMutationFile;
@@ -32,7 +29,7 @@ public class ReportAggregatorBuilderTest {
   @Test
   public void testLineCoverageFiles_withNull() {
     this.expected.expect(IllegalArgumentException.class);
-    this.expected.expectMessage(Matchers.containsString(IS_NULL));
+    this.expected.expectMessage(org.hamcrest.Matchers.containsString(IS_NULL));
 
     ReportAggregator.builder().lineCoverageFiles(Arrays.asList(getCoverageFile(), null, getCoverageFile()));
   }
@@ -42,13 +39,13 @@ public class ReportAggregatorBuilderTest {
     ReportAggregator.Builder builder = ReportAggregator.builder()
         .lineCoverageFiles(Arrays.asList(new File("doesnotexist.xml")));
 
-    assertTrue(builder.getMutationResultsFiles().isEmpty());
+    assertThat(builder.getMutationResultsFiles()).isEmpty();
   }
 
   @Test
   public void testLineCoverageFiles_withDir() {
     this.expected.expect(IllegalArgumentException.class);
-    this.expected.expectMessage(Matchers.containsString(NOT_A_FILE));
+    this.expected.expectMessage(org.hamcrest.Matchers.containsString(NOT_A_FILE));
 
     ReportAggregator.builder().lineCoverageFiles(Arrays.asList(getSourceDirectory()));
   }
@@ -56,7 +53,7 @@ public class ReportAggregatorBuilderTest {
   @Test
   public void testMutationResultsFiles_withNull() {
     this.expected.expect(IllegalArgumentException.class);
-    this.expected.expectMessage(Matchers.containsString(IS_NULL));
+    this.expected.expectMessage(org.hamcrest.Matchers.containsString(IS_NULL));
 
     ReportAggregator.builder().mutationResultsFiles(Arrays.asList(getMutationFile(), null, getMutationFile()));
   }
@@ -66,13 +63,13 @@ public class ReportAggregatorBuilderTest {
     ReportAggregator.Builder builder = ReportAggregator.builder()
         .mutationResultsFiles(Arrays.asList(new File("doesnotexist.xml")));
 
-    assertTrue(builder.getMutationResultsFiles().isEmpty());
+    assertThat(builder.getMutationResultsFiles()).isEmpty();
   }
 
   @Test
   public void testMutationResultsFiles_withDir() {
     this.expected.expect(IllegalArgumentException.class);
-    this.expected.expectMessage(Matchers.containsString(NOT_A_FILE));
+    this.expected.expectMessage(org.hamcrest.Matchers.containsString(NOT_A_FILE));
 
     ReportAggregator.builder().mutationResultsFiles(Arrays.asList(getTestSourceDirectory()));
   }
@@ -80,7 +77,7 @@ public class ReportAggregatorBuilderTest {
   @Test
   public void testSourceCodeDirectories_withNull() {
     this.expected.expect(IllegalArgumentException.class);
-    this.expected.expectMessage(Matchers.containsString(IS_NULL));
+    this.expected.expectMessage(org.hamcrest.Matchers.containsString(IS_NULL));
 
     ReportAggregator.builder().sourceCodeDirectories(Arrays.asList(getSourceDirectory(), null, getTestSourceDirectory()));
   }
@@ -90,13 +87,13 @@ public class ReportAggregatorBuilderTest {
     ReportAggregator.Builder builder = ReportAggregator.builder()
         .sourceCodeDirectories(Arrays.asList(new File("fakedirectory")));
 
-    assertTrue(builder.getSourceCodeDirectories().isEmpty());
+    assertThat(builder.getSourceCodeDirectories()).isEmpty();
   }
 
   @Test
   public void testSourceCodeDirectories_withFile() {
     this.expected.expect(IllegalArgumentException.class);
-    this.expected.expectMessage(Matchers.containsString(NOT_A_DIR));
+    this.expected.expectMessage(org.hamcrest.Matchers.containsString(NOT_A_DIR));
 
     ReportAggregator.builder().sourceCodeDirectories(Arrays.asList(getCoverageFile()));
   }
@@ -104,7 +101,7 @@ public class ReportAggregatorBuilderTest {
   @Test
   public void testCompiledCodeDirectories_withNull() {
     this.expected.expect(IllegalArgumentException.class);
-    this.expected.expectMessage(Matchers.containsString(IS_NULL));
+    this.expected.expectMessage(org.hamcrest.Matchers.containsString(IS_NULL));
 
     ReportAggregator.builder().compiledCodeDirectories(Arrays.asList(getCompiledDirectory(), null, getTestCompiledDirectory()));
   }
@@ -114,32 +111,32 @@ public class ReportAggregatorBuilderTest {
     ReportAggregator.Builder builder = ReportAggregator.builder()
         .compiledCodeDirectories(Arrays.asList(new File("fakedirectory")));
 
-    assertTrue(builder.getCompiledCodeDirectories().isEmpty());
+    assertThat(builder.getCompiledCodeDirectories()).isEmpty();
   }
 
   @Test
   public void testCompiledCodeDirectories_withFile() {
     this.expected.expect(IllegalArgumentException.class);
-    this.expected.expectMessage(Matchers.containsString(NOT_A_DIR));
+    this.expected.expectMessage(org.hamcrest.Matchers.containsString(NOT_A_DIR));
 
     ReportAggregator.builder().compiledCodeDirectories(Arrays.asList(getMutationFile()));
   }
 
   @Test
   public void testBuild() {
-    assertNotNull(ReportAggregator.builder() // create builder
+    assertThat(ReportAggregator.builder() // create builder
         .resultOutputStrategy(getResultOutputStrategy()) // resultOutputStrategy
         .lineCoverageFiles(Arrays.asList(getCoverageFile())) // lineCoverageFiles
         .mutationResultsFiles(Arrays.asList(getMutationFile())) // mutationResultsFiles
         .compiledCodeDirectories(Arrays.asList(getCompiledDirectory(), getTestCompiledDirectory())) // compiledCodeDirectories
         .sourceCodeDirectories(Arrays.asList(getSourceDirectory(), getTestSourceDirectory())) // sourceCodeDirectories
-        .build());
+        .build()).isNotNull();
   }
 
   @Test
   public void testBuild_missingOutputStrategy() {
     this.expected.expect(IllegalStateException.class);
-    this.expected.expectMessage(Matchers.containsString("resultOutputStrategy"));
+    this.expected.expectMessage(org.hamcrest.Matchers.containsString("resultOutputStrategy"));
     ReportAggregator.builder() // create builder
         .lineCoverageFiles(Arrays.asList(getCoverageFile())) // lineCoverageFiles
         .mutationResultsFiles(Arrays.asList(getMutationFile())) // mutationResultsFiles
@@ -151,7 +148,7 @@ public class ReportAggregatorBuilderTest {
   @Test
   public void testBuild_missingCoverageFiles() {
     this.expected.expect(IllegalStateException.class);
-    this.expected.expectMessage(Matchers.containsString("lineCoverageFiles"));
+    this.expected.expectMessage(org.hamcrest.Matchers.containsString("lineCoverageFiles"));
     ReportAggregator.builder() // create builder
         .resultOutputStrategy(getResultOutputStrategy()) // resultOutputStrategy
         .mutationResultsFiles(Arrays.asList(getMutationFile())) // mutationResultsFiles
@@ -163,7 +160,7 @@ public class ReportAggregatorBuilderTest {
   @Test
   public void testBuild_missingMutationResultsFiles() {
     this.expected.expect(IllegalStateException.class);
-    this.expected.expectMessage(Matchers.containsString("mutationResultsFiles"));
+    this.expected.expectMessage(org.hamcrest.Matchers.containsString("mutationResultsFiles"));
     ReportAggregator.builder() // create builder
         .resultOutputStrategy(getResultOutputStrategy()) // resultOutputStrategy
         .lineCoverageFiles(Arrays.asList(getCoverageFile())) // lineCoverageFiles
@@ -175,7 +172,7 @@ public class ReportAggregatorBuilderTest {
   @Test
   public void testBuild_missingCompiledCodeDirectories() {
     this.expected.expect(IllegalStateException.class);
-    this.expected.expectMessage(Matchers.containsString("compiledCodeDirectories"));
+    this.expected.expectMessage(org.hamcrest.Matchers.containsString("compiledCodeDirectories"));
     ReportAggregator.builder() // create builder
         .resultOutputStrategy(getResultOutputStrategy()) // resultOutputStrategy
         .lineCoverageFiles(Arrays.asList(getCoverageFile())) // lineCoverageFiles
@@ -187,7 +184,7 @@ public class ReportAggregatorBuilderTest {
   @Test
   public void testBuild_missingSourceCodeDirectories() {
     this.expected.expect(IllegalStateException.class);
-    this.expected.expectMessage(Matchers.containsString("sourceCodeDirectories"));
+    this.expected.expectMessage(org.hamcrest.Matchers.containsString("sourceCodeDirectories"));
     ReportAggregator.builder() // create builder
         .resultOutputStrategy(getResultOutputStrategy()) // resultOutputStrategy
         .lineCoverageFiles(Arrays.asList(getCoverageFile())) // lineCoverageFiles

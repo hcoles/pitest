@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TestGregorMutater {
 
@@ -84,7 +84,7 @@ public class TestGregorMutater {
                 .forClass(OneStraightThroughMethod.class)
                 .findMutations();
 
-        assertEquals(2, actualDetails.size());
+        assertThat(actualDetails.size()).isEqualTo(2);
         assertThat(actualDetails.get(0).getBlocks()).containsAll(actualDetails.get(1).getBlocks());
     }
 
@@ -103,10 +103,10 @@ public class TestGregorMutater {
                 .forClass(SwitchStatement.class)
                 .findMutations();
 
-        assertEquals(3, actualDetails.size());
+        assertThat(actualDetails.size()).isEqualTo(3);
         final int firstMutationBlock = actualDetails.get(0).getFirstBlock();
-        assertEquals(firstMutationBlock + 1, actualDetails.get(1).getFirstBlock());
-        assertEquals(firstMutationBlock + 2, actualDetails.get(2).getFirstBlock());
+        assertThat(actualDetails.get(1).getFirstBlock()).isEqualTo(firstMutationBlock + 1);
+        assertThat(actualDetails.get(2).getFirstBlock()).isEqualTo(firstMutationBlock + 2);
     }
 
     @Test
@@ -115,9 +115,9 @@ public class TestGregorMutater {
                 .forClass(FallThroughSwitch.class)
                 .findMutations();
 
-        assertEquals(2, actualDetails.size());
+        assertThat(actualDetails.size()).isEqualTo(2);
         final int firstMutationBlock = actualDetails.get(0).getFirstBlock();
-        assertEquals(firstMutationBlock + 1, actualDetails.get(1).getFirstBlock());
+        assertThat(actualDetails.get(1).getFirstBlock()).isEqualTo(firstMutationBlock + 1);
     }
 
     @Test
@@ -135,18 +135,18 @@ public class TestGregorMutater {
                 .forClass(HasTwoMutableMethods.class)
                 .findMutations();
 
-        assertEquals(2, actualDetails.size());
-        assertEquals(4, actualDetails.get(0).getId().getFirstIndex());
-        assertEquals(15, actualDetails.get(1).getId().getFirstIndex()); // differs
+        assertThat(actualDetails.size()).isEqualTo(2);
+        assertThat(actualDetails.get(0).getId().getFirstIndex()).isEqualTo(4);
+        assertThat(actualDetails.get(1).getId().getFirstIndex()).isEqualTo(15); // differs
         // by
         // target?
     }
 
     private void assertTwoMutationsInDifferentBlocks(
             final List<MutationDetails> actualDetails) {
-        assertEquals(2, actualDetails.size());
+        assertThat(actualDetails.size()).isEqualTo(2);
         final int firstMutationBlock = actualDetails.get(0).getFirstBlock();
-        assertEquals(firstMutationBlock + 1, actualDetails.get(1).getFirstBlock());
+        assertThat(actualDetails.get(1).getFirstBlock()).isEqualTo(firstMutationBlock + 1);
     }
 
     enum AnEnum {

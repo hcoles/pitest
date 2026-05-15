@@ -17,7 +17,6 @@ package org.pitest.classpath;
 import static java.util.Arrays.asList;
 import static java.util.function.Predicate.isEqual;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
@@ -77,20 +76,17 @@ public class ClassPathTest {
 
   @Test
   public void shouldReturnAllClassNames() {
-    assertEquals(asList("FooClass", "BarClass"),
-        this.testee.classNames());
+    assertThat(this.testee.classNames()).containsExactlyInAnyOrder("FooClass", "BarClass");
   }
 
   @Test
   public void shouldFindMatchingClasses() {
-    assertEquals(asList("FooClass"),
-        this.testee.findClasses(isEqual("FooClass")));
+    assertThat(this.testee.findClasses(isEqual("FooClass"))).containsExactly("FooClass");
   }
 
   @Test
   public void shouldAllowSubComponentsToBeSelected() {
-    assertEquals(Collections.singletonList("FooClass"), this.testee
-        .getComponent(rootIsEqualTo("foo")).classNames());
+    assertThat(this.testee.getComponent(rootIsEqualTo("foo")).classNames()).containsExactly("FooClass");
   }
 
   @Test

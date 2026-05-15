@@ -14,8 +14,7 @@
  */
 package org.pitest.simpletest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +34,8 @@ public class NoArgsConstructorInstantiationStrategyTest {
 
   @Test
   public void shouldAllwaysReturnsTrue() {
-    assertTrue(this.testee
-        .canInstantiate(NoArgsConstructorInstantiationStrategyTest.class));
-    assertTrue(this.testee.canInstantiate(null));
+    assertThat(this.testee.canInstantiate(NoArgsConstructorInstantiationStrategyTest.class)).isTrue();
+    assertThat(this.testee.canInstantiate(null)).isTrue();
   }
 
   @Test
@@ -45,10 +43,7 @@ public class NoArgsConstructorInstantiationStrategyTest {
     final List<NoArgsInstantiateStep> expected = new ArrayList<>();
     expected.add(NoArgsInstantiateStep
         .instantiate(NoArgsConstructorInstantiationStrategyTest.class));
-    assertEquals(expected,
-        this.testee
-        .instantiations(NoArgsConstructorInstantiationStrategyTest.class));
-
+    assertThat(expected).isEqualTo(this.testee.instantiations(NoArgsConstructorInstantiationStrategyTest.class));
   }
 
 }

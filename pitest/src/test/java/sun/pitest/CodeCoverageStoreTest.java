@@ -14,9 +14,7 @@
  */
 package sun.pitest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 import java.util.Collection;
@@ -60,36 +58,36 @@ public class CodeCoverageStoreTest {
   public void shouldGenerateNewClassIdForEachClass() {
     final int id = CodeCoverageStore.registerClass("Foo");
     final int id2 = CodeCoverageStore.registerClass("Bar");
-    assertFalse(id == id2);
+    assertThat(id).isNotEqualTo(id2);
   }
 
   @Test
   public void shouldCodeAndEncodeWhenClassIdAndLineNumberAreAtMaximum() {
     final long value = CodeCoverageStore.encode(Integer.MAX_VALUE,
-        Integer.MAX_VALUE);
-    assertEquals(Integer.MAX_VALUE, CodeCoverageStore.decodeClassId(value));
-    assertEquals(Integer.MAX_VALUE, CodeCoverageStore.decodeLineId(value));
+            Integer.MAX_VALUE);
+    assertThat(CodeCoverageStore.decodeClassId(value)).isEqualTo(Integer.MAX_VALUE);
+    assertThat(CodeCoverageStore.decodeLineId(value)).isEqualTo(Integer.MAX_VALUE);
   }
 
   @Test
   public void shouldCodeAndEncodeWhenClassIdAndLineNumberAreAtMinimum() {
     final long value = CodeCoverageStore.encode(Integer.MIN_VALUE, 0);
-    assertEquals(Integer.MIN_VALUE, CodeCoverageStore.decodeClassId(value));
-    assertEquals(0, CodeCoverageStore.decodeLineId(value));
+    assertThat(CodeCoverageStore.decodeClassId(value)).isEqualTo(Integer.MIN_VALUE);
+    assertThat(CodeCoverageStore.decodeLineId(value)).isEqualTo(0);
   }
 
   @Test
   public void shouldCodeAndEncodeWhenClassIdAndLineNumberAreZero() {
     final long value = CodeCoverageStore.encode(0, 0);
-    assertEquals(0, CodeCoverageStore.decodeClassId(value));
-    assertEquals(0, CodeCoverageStore.decodeLineId(value));
+    assertThat(CodeCoverageStore.decodeClassId(value)).isEqualTo(0);
+    assertThat(CodeCoverageStore.decodeLineId(value)).isEqualTo(0);
   }
 
   @Test
   public void shouldCodeAndEncodeClassIdAndLineNumber() {
     final long value = CodeCoverageStore.encode(42, 123);
-    assertEquals(42, CodeCoverageStore.decodeClassId(value));
-    assertEquals(123, CodeCoverageStore.decodeLineId(value));
+    assertThat(CodeCoverageStore.decodeClassId(value)).isEqualTo(42);
+    assertThat(CodeCoverageStore.decodeLineId(value)).isEqualTo(123);
   }
 
   @Test
@@ -102,12 +100,12 @@ public class CodeCoverageStoreTest {
     CodeCoverageStore.reset();
 
     final Collection<Long> actual = CodeCoverageStore.getHits();
-    assertEquals(Collections.emptyList(), actual);
+    assertThat(actual).isEqualTo(Collections.emptyList());
   }
 
   @Test
   public void shouldBeSafeToAccessAcrossMultipleThreads()
-      throws InterruptedException, ExecutionException {
+          throws InterruptedException, ExecutionException {
 
     int classId = CodeCoverageStore.registerClass("foo");
     boolean[] ar = CodeCoverageStore.getOrRegisterClassProbes(classId, 2);
@@ -123,7 +121,7 @@ public class CodeCoverageStoreTest {
     final Future<ConcurrentModificationException> future = pool.submit(read);
     pool.shutdown();
 
-    assertNull(future.get());
+    assertThat(future.get()).isNull();
 
   }
 
@@ -172,5 +170,5 @@ public class CodeCoverageStoreTest {
     };
     return write;
   }
-
 }
+

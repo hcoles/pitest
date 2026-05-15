@@ -14,7 +14,7 @@
  */
 package org.pitest.mutationtest.engine.gregor.mutators;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.pitest.mutationtest.engine.gregor.mutators.IncrementsMutator.INCREMENTS;
 
 import java.util.concurrent.Callable;
@@ -49,7 +49,7 @@ public class IncrementsMutatorTest {
   public void shouldRecordCorrectLineNumberForMutations() {
     MutationDetails actual = v.forClass(HasIncrement.class)
             .firstMutant();
-    assertEquals(32, actual.getLineNumber());
+    assertThat(actual.getLineNumber()).isEqualTo(32);
   }
 
 }

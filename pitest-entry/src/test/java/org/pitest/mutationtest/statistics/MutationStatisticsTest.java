@@ -16,23 +16,23 @@ package org.pitest.mutationtest.statistics;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MutationStatisticsTest {
 
   @Test
   public void shouldNotHaveHundredPercentIfNotAllKilled() {
-    assertEquals(99, new MutationStatistics(null, 2000, 1999, 1, 1, null).getPercentageDetected());
+    assertThat(new MutationStatistics(null, 2000, 1999, 1, 1, null).getPercentageDetected()).isEqualTo(99);
   }
 
   @Test
   public void shouldHaveHundredPercentIfAllKilled() {
-    assertEquals(100, new MutationStatistics(null, 2000, 2000, 1, 1, null).getPercentageDetected());
+    assertThat(new MutationStatistics(null, 2000, 2000, 1, 1, null).getPercentageDetected()).isEqualTo(100);
   }
 
   @Test
   public void shouldHaveHundredPercentIfNoMutations() {
-    assertEquals(100, new MutationStatistics(null, 0, 0, 0, 0, null).getPercentageDetected());
+    assertThat(new MutationStatistics(null, 0, 0, 0, 0, null).getPercentageDetected()).isEqualTo(100);
   }
 
 }

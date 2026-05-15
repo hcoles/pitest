@@ -1,7 +1,6 @@
 package org.pitest.mutationtest.mocksupport;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -37,15 +36,15 @@ public class BendJavassistToMyWillTransformerTest {
   public void shouldNotTransformClassesNotMatchingFilter()
       throws IllegalClassFormatException {
     when(this.filter.test(any(String.class))).thenReturn(false);
-    assertNull(this.testee.transform(null, "foo", null, null, this.bytes));
+    assertThat(this.testee.transform(null, "foo", null, null, this.bytes)).isNull();
   }
 
   @Test
   public void shouldTransformClassesMatchingFilter()
       throws IllegalClassFormatException {
     when(this.filter.test(any(String.class))).thenReturn(true);
-    assertFalse(null == this.testee.transform(IsolationUtils.getContextClassLoader(), "foo", null, null,
-        this.bytes));
+    assertThat(this.testee.transform(IsolationUtils.getContextClassLoader(), "foo", null, null,
+        this.bytes)).isNotNull();
   }
 
 
