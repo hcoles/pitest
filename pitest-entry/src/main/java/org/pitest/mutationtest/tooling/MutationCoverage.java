@@ -40,7 +40,7 @@ import org.pitest.mutationtest.build.MutationGrouper;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationSource;
 import org.pitest.mutationtest.build.MutationTestBuilder;
-import org.pitest.mutationtest.build.ProjectMutationFilter;
+import org.pitest.mutationtest.build.ProjectMutationInterceptor;
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.build.TestPrioritiser;
 import org.pitest.mutationtest.build.WorkerFactory;
@@ -364,7 +364,7 @@ public class MutationCoverage {
 
     interceptor.initialise(this.code);
 
-    final ProjectMutationFilter projectFilter = this.settings.getProjectFilter()
+    final ProjectMutationInterceptor projectFilter = this.settings.getProjectFilter()
             .createFilter(this.data, coverageData, bas, testPrioritiser, this.code)
             .filter(interceptorFilter);
 

@@ -13,23 +13,23 @@ import java.util.stream.Collectors;
 
 public class CompoundProjectMutationFilterFactory {
 
-    private final FeatureSelector<ProjectMutationFilterFactory> features;
+    private final FeatureSelector<ProjectMutationInterceptorFactory> features;
 
     public CompoundProjectMutationFilterFactory(List<FeatureSetting> features,
-                                                Collection<ProjectMutationFilterFactory> factories) {
+                                                Collection<ProjectMutationInterceptorFactory> factories) {
         this.features = new FeatureSelector<>(features, factories);
     }
 
-    public CompoundProjectMutationFilter createFilter(ReportOptions data,
-                                              CoverageDatabase coverage,
-                                              ClassByteArraySource source,
-                                              TestPrioritiser testPrioritiser,
-                                              CodeSource code) {
-        List<ProjectMutationFilter> filters = this.features.getActiveFeatures().stream()
-                .map(f -> f.createFilter(new InterceptorParameters(
+    public CompoundProjectMutationInterceptor createFilter(ReportOptions data,
+                                                           CoverageDatabase coverage,
+                                                           ClassByteArraySource source,
+                                                           TestPrioritiser testPrioritiser,
+                                                           CodeSource code) {
+        List<ProjectMutationInterceptor> filters = this.features.getActiveFeatures().stream()
+                .map(f -> f.createInterceptor(new InterceptorParameters(
                         this.features.getSettingForFeature(f.provides().name()),
                         data, coverage, source, testPrioritiser, code)))
                 .collect(Collectors.toList());
-        return new CompoundProjectMutationFilter(filters);
+        return new CompoundProjectMutationInterceptor(filters);
     }
 }

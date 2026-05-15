@@ -37,14 +37,14 @@ public class MutationTestBuilder {
   private final History analyser;
   private final WorkerFactory    workerFactory;
   private final MutationGrouper  grouper;
-  private final ProjectMutationFilter projectFilter;
+  private final ProjectMutationInterceptor projectFilter;
 
   public MutationTestBuilder(ExecutionMode mode,
                              WorkerFactory workerFactory,
                              History analyser,
                              MutationSource mutationSource,
                              MutationGrouper grouper,
-                             ProjectMutationFilter projectFilter) {
+                             ProjectMutationInterceptor projectFilter) {
 
     this.mode = mode;
     this.mutationSource = mutationSource;

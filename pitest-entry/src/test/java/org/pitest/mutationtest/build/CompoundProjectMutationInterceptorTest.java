@@ -8,7 +8,6 @@ import org.pitest.classpath.CodeSource;
 import org.pitest.classpath.DefaultCodeSource;
 import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.mutationtest.engine.MutationDetails;
-import org.pitest.plugin.Feature;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,17 +22,17 @@ import static org.mockito.Mockito.when;
 import static org.pitest.mutationtest.engine.MutationDetailsMother.aMutationDetail;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CompoundProjectMutationFilterTest {
+public class CompoundProjectMutationInterceptorTest {
 
   @Mock
-  ProjectMutationFilter first;
+  ProjectMutationInterceptor first;
 
   @Mock
-  ProjectMutationFilter second;
+  ProjectMutationInterceptor second;
 
   @Test
   public void initialisesAllChildren() {
-    CompoundProjectMutationFilter testee = new CompoundProjectMutationFilter(Arrays.asList(first, second));
+    CompoundProjectMutationInterceptor testee = new CompoundProjectMutationInterceptor(Arrays.asList(first, second));
     CodeSource source = new DefaultCodeSource(new ProjectClassPaths(null, null, null));
 
     testee.initialise(source);
@@ -44,7 +43,7 @@ public class CompoundProjectMutationFilterTest {
 
   @Test
   public void chainsFiltersThroughAllChildrenInOrder() {
-    CompoundProjectMutationFilter testee = new CompoundProjectMutationFilter(Arrays.asList(first, second));
+    CompoundProjectMutationInterceptor testee = new CompoundProjectMutationInterceptor(Arrays.asList(first, second));
 
     Collection<MutationDetails> initial = aMutationDetail().build(3);
     Collection<MutationDetails> afterFirst = aMutationDetail().build(2);
@@ -58,7 +57,7 @@ public class CompoundProjectMutationFilterTest {
 
   @Test
   public void returnsInputUnchangedWhenNoChildren() {
-    CompoundProjectMutationFilter testee = new CompoundProjectMutationFilter(Collections.emptyList());
+    CompoundProjectMutationInterceptor testee = new CompoundProjectMutationInterceptor(Collections.emptyList());
     Collection<MutationDetails> mutations = aMutationDetail().build(3);
 
     assertThat(testee.intercept(mutations)).isEqualTo(mutations);
@@ -68,7 +67,7 @@ public class CompoundProjectMutationFilterTest {
   public void passthroughReturnsSameInstance() {
     Collection<MutationDetails> mutations = aMutationDetail().build(3);
 
-    assertThat(CompoundProjectMutationFilter.passThrough().intercept(mutations)).isSameAs(mutations);
+    assertThat(CompoundProjectMutationInterceptor.passThrough().intercept(mutations)).isSameAs(mutations);
   }
 
   @Test
@@ -76,7 +75,7 @@ public class CompoundProjectMutationFilterTest {
     when(first.type()).thenReturn(InterceptorType.FILTER);
     when(second.type()).thenReturn(InterceptorType.OTHER);
 
-    CompoundProjectMutationFilter testee = new CompoundProjectMutationFilter(List.of(first, second))
+    CompoundProjectMutationInterceptor testee = new CompoundProjectMutationInterceptor(List.of(first, second))
             .filter(i -> i == InterceptorType.FILTER);
 
     testee.intercept(aMutationDetail().build(3));

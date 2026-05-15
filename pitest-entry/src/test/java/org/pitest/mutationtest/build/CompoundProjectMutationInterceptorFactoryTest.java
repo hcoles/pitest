@@ -6,7 +6,6 @@ import org.pitest.plugin.Feature;
 import org.pitest.plugin.FeatureSetting;
 import org.pitest.plugin.ToggleStatus;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,15 +14,15 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.pitest.mutationtest.engine.MutationDetailsMother.aMutationDetail;
 
-public class CompoundProjectMutationFilterFactoryTest {
+public class CompoundProjectMutationInterceptorFactoryTest {
 
   @Test
   public void includesFiltersEnabledByDefault() {
-    ProjectMutationFilterFactory removeAll = factoryFor(Feature.named("enabled").withOnByDefault(true));
+    ProjectMutationInterceptorFactory removeAll = factoryFor(Feature.named("enabled").withOnByDefault(true));
     CompoundProjectMutationFilterFactory testee = new CompoundProjectMutationFilterFactory(
         Collections.emptyList(), List.of(removeAll));
 
-    ProjectMutationFilter filter = testee.createFilter(null, null, null, null, null);
+    ProjectMutationInterceptor filter = testee.createFilter(null, null, null, null, null);
     Collection<MutationDetails> mutations = aMutationDetail().build(3);
 
     assertThat(filter.intercept(mutations)).isEmpty();
@@ -31,11 +30,11 @@ public class CompoundProjectMutationFilterFactoryTest {
 
   @Test
   public void excludesFiltersDisabledByDefault() {
-    ProjectMutationFilterFactory removeAll = factoryFor(Feature.named("disabled").withOnByDefault(false));
+    ProjectMutationInterceptorFactory removeAll = factoryFor(Feature.named("disabled").withOnByDefault(false));
     CompoundProjectMutationFilterFactory testee = new CompoundProjectMutationFilterFactory(
         Collections.emptyList(), List.of(removeAll));
 
-    ProjectMutationFilter filter = testee.createFilter(null, null, null, null, null);
+    ProjectMutationInterceptor filter = testee.createFilter(null, null, null, null, null);
     Collection<MutationDetails> mutations = aMutationDetail().build(3);
 
     assertThat(filter.intercept(mutations)).hasSize(3);
@@ -43,12 +42,12 @@ public class CompoundProjectMutationFilterFactoryTest {
 
   @Test
   public void canActivateOptInFilters() {
-    ProjectMutationFilterFactory removeAll = factoryFor(Feature.named("optin").withOnByDefault(false));
+    ProjectMutationInterceptorFactory removeAll = factoryFor(Feature.named("optin").withOnByDefault(false));
     FeatureSetting activate = new FeatureSetting("optin", ToggleStatus.ACTIVATE, new HashMap<>());
     CompoundProjectMutationFilterFactory testee = new CompoundProjectMutationFilterFactory(
             List.of(activate), List.of(removeAll));
 
-    ProjectMutationFilter filter = testee.createFilter(null, null, null, null, null);
+    ProjectMutationInterceptor filter = testee.createFilter(null, null, null, null, null);
     Collection<MutationDetails> mutations = aMutationDetail().build(3);
 
     assertThat(filter.intercept(mutations)).isEmpty();
@@ -56,22 +55,22 @@ public class CompoundProjectMutationFilterFactoryTest {
 
   @Test
   public void canDeactivateDefaultOnFilters() {
-    ProjectMutationFilterFactory removeAll = factoryFor(Feature.named("enabled").withOnByDefault(true));
+    ProjectMutationInterceptorFactory removeAll = factoryFor(Feature.named("enabled").withOnByDefault(true));
     FeatureSetting deactivate = new FeatureSetting("enabled", ToggleStatus.DEACTIVATE, new HashMap<>());
     CompoundProjectMutationFilterFactory testee = new CompoundProjectMutationFilterFactory(
             List.of(deactivate), List.of(removeAll));
 
-    ProjectMutationFilter filter = testee.createFilter(null, null, null, null, null);
+    ProjectMutationInterceptor filter = testee.createFilter(null, null, null, null, null);
     Collection<MutationDetails> mutations = aMutationDetail().build(3);
 
     assertThat(filter.intercept(mutations)).hasSize(3);
   }
 
-  private ProjectMutationFilterFactory factoryFor(Feature feature) {
-    return new ProjectMutationFilterFactory() {
+  private ProjectMutationInterceptorFactory factoryFor(Feature feature) {
+    return new ProjectMutationInterceptorFactory() {
       @Override
-      public ProjectMutationFilter createFilter(InterceptorParameters params) {
-        return new ProjectMutationFilter() {
+      public ProjectMutationInterceptor createInterceptor(InterceptorParameters params) {
+        return new ProjectMutationInterceptor() {
           @Override
           public Collection<MutationDetails> intercept(Collection<MutationDetails> mutations) {
               return List.of();

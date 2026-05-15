@@ -8,16 +8,16 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class CompoundProjectMutationFilter implements ProjectMutationFilter {
+public class CompoundProjectMutationInterceptor implements ProjectMutationInterceptor {
 
-  private final List<ProjectMutationFilter> filters;
+  private final List<ProjectMutationInterceptor> filters;
 
-  public CompoundProjectMutationFilter(List<ProjectMutationFilter> filters) {
+  public CompoundProjectMutationInterceptor(List<ProjectMutationInterceptor> filters) {
     this.filters = filters;
   }
 
-  public static ProjectMutationFilter passThrough() {
-    return new CompoundProjectMutationFilter(List.of());
+  public static ProjectMutationInterceptor passThrough() {
+    return new CompoundProjectMutationInterceptor(List.of());
   }
 
   @Override
@@ -28,7 +28,7 @@ public class CompoundProjectMutationFilter implements ProjectMutationFilter {
   @Override
   public Collection<MutationDetails> intercept(Collection<MutationDetails> mutations) {
     Collection<MutationDetails> current = mutations;
-    for (ProjectMutationFilter f : filters) {
+    for (ProjectMutationInterceptor f : filters) {
       current = f.intercept(current);
     }
     return current;
@@ -39,8 +39,8 @@ public class CompoundProjectMutationFilter implements ProjectMutationFilter {
     return InterceptorType.OTHER;
   }
 
-  public CompoundProjectMutationFilter filter(Predicate<InterceptorType> p) {
-    return new CompoundProjectMutationFilter(filters.stream()
+  public CompoundProjectMutationInterceptor filter(Predicate<InterceptorType> p) {
+    return new CompoundProjectMutationInterceptor(filters.stream()
         .filter(f -> p.test(f.type()))
             .collect(Collectors.toList()));
   }

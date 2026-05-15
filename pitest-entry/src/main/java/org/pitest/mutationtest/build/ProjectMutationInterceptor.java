@@ -5,7 +5,7 @@ import java.util.Collection;
 import org.pitest.classpath.CodeSource;
 import org.pitest.mutationtest.engine.MutationDetails;
 
-public interface ProjectMutationFilter {
+public interface ProjectMutationInterceptor {
 
   /**
    * Called once prior to filtering

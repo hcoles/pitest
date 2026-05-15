@@ -25,7 +25,7 @@ import org.pitest.mutationtest.build.DefaultTestPrioritiserFactory;
 import org.pitest.mutationtest.build.FilteringPrioritiser;
 import org.pitest.mutationtest.build.MutationGrouperFactory;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
-import org.pitest.mutationtest.build.ProjectMutationFilterFactory;
+import org.pitest.mutationtest.build.ProjectMutationInterceptorFactory;
 import org.pitest.mutationtest.build.TestFilter;
 import org.pitest.mutationtest.build.TestFilterFactory;
 import org.pitest.mutationtest.build.TestFilterParams;
@@ -230,7 +230,7 @@ public class SettingsFactory {
   }
 
   public CompoundProjectMutationFilterFactory getProjectFilter() {
-    final Collection<? extends ProjectMutationFilterFactory> factories = this.plugins.findProjectFilters();
+    final Collection<? extends ProjectMutationInterceptorFactory> factories = this.plugins.findProjectFilters();
     final FeatureParser parser = new FeatureParser();
     return new CompoundProjectMutationFilterFactory(parser.parseFeatures(this.options.getFeatures()), new ArrayList<>(factories));
   }
