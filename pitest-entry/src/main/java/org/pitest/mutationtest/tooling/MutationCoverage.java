@@ -35,9 +35,11 @@ import org.pitest.mutationtest.MutationResultInterceptor;
 import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.build.MutationAnalysisUnit;
 import org.pitest.mutationtest.build.MutationGrouper;
+import org.pitest.mutationtest.build.CompoundProjectMutationFilter;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationSource;
 import org.pitest.mutationtest.build.MutationTestBuilder;
+import org.pitest.mutationtest.build.ProjectMutationFilter;
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
 import org.pitest.mutationtest.build.TestPrioritiser;
 import org.pitest.mutationtest.build.WorkerFactory;
@@ -166,8 +168,9 @@ public class MutationCoverage {
 
 
     this.timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
+    final ProjectMutationFilter projectFilter = createProjectFilter(coverageData);
     final List<MutationAnalysisUnit> tus = buildMutationTests(coverageData, history,
-            engine, args, allInterceptors());
+            engine, args, allInterceptors(), projectFilter);
     this.timings.registerEnd(Timings.Stage.BUILD_MUTATION_TESTS);
 
     LOG.info("Created " + tus.size() + " mutation test units" );
@@ -234,13 +237,24 @@ public class MutationCoverage {
     // an initial run here we are able to skip coverage generation when no mutants
     // are found, e.g if pitest is being run against diffs.
     this.timings.registerStart(Timings.Stage.MUTATION_PRE_SCAN);
-    List<MutationAnalysisUnit> mutants = buildMutationTests(new NoCoverage(), new NullHistory(), engine, args, noReportsOrFilters());
+    List<MutationAnalysisUnit> mutants = buildMutationTests(new NoCoverage(), new NullHistory(), engine, args, noReportsOrFilters(), CompoundProjectMutationFilter.PASSTHROUGH);
     this.timings.registerEnd(Timings.Stage.MUTATION_PRE_SCAN);
     return mutants;
   }
 
   private Predicate<MutationInterceptor> noReportsOrFilters() {
     return i -> i.type().includeInPrescan();
+  }
+
+  private ProjectMutationFilter createProjectFilter(CoverageDatabase coverageData) {
+    final ClassByteArraySource bas = new CachingByteArraySource(fallbackToClassLoader(new ClassPathByteArraySource(
+        this.data.getClassPath())), 200);
+    final TestPrioritiser testPrioritiser = this.settings.getTestPrioritiser()
+        .makeTestPrioritiser(this.data.getFreeFormProperties(), this.code, coverageData);
+    final ProjectMutationFilter filter = this.settings.getProjectFilter()
+        .createFilter(this.data, coverageData, bas, testPrioritiser, this.code);
+    filter.initialise(this.code);
+    return filter;
   }
 
 
@@ -342,7 +356,8 @@ public class MutationCoverage {
                                                         History history,
                                                         MutationEngine engine,
                                                         EngineArguments args,
-                                                        Predicate<MutationInterceptor> interceptorFilter) {
+                                                        Predicate<MutationInterceptor> interceptorFilter,
+                                                        ProjectMutationFilter projectFilter) {
 
     final MutationConfig mutationConfig = new MutationConfig(engine, coverage()
         .getLaunchOptions());
@@ -374,7 +389,7 @@ public class MutationCoverage {
         this.data.getNumberOfThreads(), this.data.getMutationUnitSize());
 
     final MutationTestBuilder builder = new MutationTestBuilder(data.mode(), wf, history,
-        source, grouper);
+        source, grouper, projectFilter);
 
     return builder.createMutationTestUnits(this.code.getCodeUnderTestNames());
   }

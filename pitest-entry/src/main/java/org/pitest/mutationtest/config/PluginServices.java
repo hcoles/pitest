@@ -10,6 +10,7 @@ import org.pitest.mutationtest.MutationResultInterceptor;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.build.MutationGrouperFactory;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
+import org.pitest.mutationtest.build.ProjectMutationFilterFactory;
 import org.pitest.mutationtest.build.TestFilterFactory;
 import org.pitest.mutationtest.build.TestPrioritiserFactory;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -67,6 +68,7 @@ public class PluginServices {
     l.addAll(findStandAloneMutatorInfos());
     l.addAll(findTestStatListeners());
     l.addAll(findTestFilters());
+    l.addAll(findProjectFilters());
     return l;
   }
 
@@ -153,6 +155,10 @@ public class PluginServices {
 
   public List<TestFilterFactory> findTestFilters() {
       return new ArrayList<>(load(TestFilterFactory.class));
+  }
+
+  public List<ProjectMutationFilterFactory> findProjectFilters() {
+    return new ArrayList<>(load(ProjectMutationFilterFactory.class));
   }
 
   public List<MutatorInfo> findMutatorInfos() {

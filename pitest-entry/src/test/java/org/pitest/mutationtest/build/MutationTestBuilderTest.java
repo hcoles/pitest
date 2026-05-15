@@ -18,6 +18,7 @@ import org.mockito.MockitoAnnotations;
 import org.pitest.classinfo.ClassName;
 import org.pitest.mutationtest.config.ExecutionMode;
 import org.pitest.mutationtest.engine.MutationDetails;
+import org.pitest.mutationtest.build.CompoundProjectMutationFilter;
 import org.pitest.mutationtest.incremental.NullHistory;
 
 public class MutationTestBuilderTest {
@@ -91,9 +92,19 @@ public class MutationTestBuilderTest {
     assertEquals(1, actual.size());
   }
 
+  @Test
+  public void shouldApplyProjectFilterAcrossAllMutations() {
+    when(this.source.createMutations(any(ClassName.class))).thenReturn(
+        Arrays.asList(createDetails("foo"), createDetails("foo")));
+    this.testee = new MutationTestBuilder(ExecutionMode.NORMAL, this.wf, new NullHistory(),
+        this.source, new DefaultGrouper(0), mutations -> Collections.emptyList());
+
+    assertTrue(this.testee.createMutationTestUnits(Arrays.asList(ClassName.fromString("foo"))).isEmpty());
+  }
+
   private void makeTesteeWithUnitSizeOf(int unitSize) {
     this.testee = new MutationTestBuilder(ExecutionMode.NORMAL, this.wf, new NullHistory(),
-        this.source, new DefaultGrouper(unitSize));
+        this.source, new DefaultGrouper(unitSize), CompoundProjectMutationFilter.PASSTHROUGH);
   }
 
   public static MutationDetails createDetails(String clazz) {
