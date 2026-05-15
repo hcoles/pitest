@@ -296,7 +296,7 @@ public class TestMutationTesting {
 
 
     final MutationTestBuilder builder = new MutationTestBuilder(mode, wf,
-        new NullHistory(), source, new DefaultGrouper(0), CompoundProjectMutationFilter.PASSTHROUGH);
+        new NullHistory(), source, new DefaultGrouper(0), CompoundProjectMutationFilter.passThrough());
 
     final List<MutationAnalysisUnit> tus = builder
         .createMutationTestUnits(codeClasses);

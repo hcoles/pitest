@@ -37,7 +37,6 @@ import org.pitest.mutationtest.MutationResultListener;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationAnalysisUnit;
 import org.pitest.mutationtest.build.MutationGrouper;
-import org.pitest.mutationtest.build.CompoundProjectMutationFilter;
 import org.pitest.mutationtest.build.MutationInterceptor;
 import org.pitest.mutationtest.build.MutationSource;
 import org.pitest.mutationtest.build.MutationTestBuilder;
@@ -170,9 +169,9 @@ public class MutationCoverage {
 
 
     this.timings.registerStart(Timings.Stage.BUILD_MUTATION_TESTS);
-    final ProjectMutationFilter projectFilter = createProjectFilter(coverageData);
+
     final List<MutationAnalysisUnit> tus = buildMutationTests(coverageData, history,
-            engine, args, allInterceptors(), projectFilter);
+            engine, args, allInterceptors());
     this.timings.registerEnd(Timings.Stage.BUILD_MUTATION_TESTS);
 
     LOG.info("Created " + tus.size() + " mutation test units" );
@@ -240,7 +239,7 @@ public class MutationCoverage {
     // are found, e.g if pitest is being run against diffs.
     this.timings.registerStart(Timings.Stage.MUTATION_PRE_SCAN);
     List<MutationAnalysisUnit> mutants = buildMutationTests(new NoCoverage(),
-            new NullHistory(), engine, args, noReportsOrFilters(), CompoundProjectMutationFilter.PASSTHROUGH);
+            new NullHistory(), engine, args, noReportsOrFilters());
     this.timings.registerEnd(Timings.Stage.MUTATION_PRE_SCAN);
     return mutants;
   }
@@ -248,18 +247,6 @@ public class MutationCoverage {
   private Predicate<InterceptorType> noReportsOrFilters() {
     return InterceptorType::includeInPrescan;
   }
-
-  private ProjectMutationFilter createProjectFilter(CoverageDatabase coverageData) {
-    ClassByteArraySource bas = new CachingByteArraySource(fallbackToClassLoader(new ClassPathByteArraySource(
-        this.data.getClassPath())), 200);
-    TestPrioritiser testPrioritiser = this.settings.getTestPrioritiser()
-        .makeTestPrioritiser(this.data.getFreeFormProperties(), this.code, coverageData);
-    ProjectMutationFilter filter = this.settings.getProjectFilter()
-        .createFilter(this.data, coverageData, bas, testPrioritiser, this.code);
-    filter.initialise(this.code);
-    return filter;
-  }
-
 
   private void checkExcludedRunners() {
     final Collection<String> excludedRunners = this.data.getExcludedRunners();
@@ -359,8 +346,7 @@ public class MutationCoverage {
                                                         History history,
                                                         MutationEngine engine,
                                                         EngineArguments args,
-                                                        Predicate<InterceptorType> interceptorFilter,
-                                                        ProjectMutationFilter projectFilter) {
+                                                        Predicate<InterceptorType> interceptorFilter) {
 
     final MutationConfig mutationConfig = new MutationConfig(engine, coverage()
         .getLaunchOptions());
@@ -377,6 +363,12 @@ public class MutationCoverage {
             .filter(interceptorFilter);
 
     interceptor.initialise(this.code);
+
+    final ProjectMutationFilter projectFilter = this.settings.getProjectFilter()
+            .createFilter(this.data, coverageData, bas, testPrioritiser, this.code)
+            .filter(interceptorFilter);
+
+    projectFilter.initialise(this.code);
 
     final MutationSource source = new MutationSource(mutationConfig, testPrioritiser, bas, interceptor);
 

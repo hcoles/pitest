@@ -15,6 +15,8 @@ public interface ProjectMutationFilter {
     // noop
   }
 
-  Collection<MutationDetails> filter(Collection<MutationDetails> mutations);
+  Collection<MutationDetails> intercept(Collection<MutationDetails> mutations);
+
+  InterceptorType type();
 
 }

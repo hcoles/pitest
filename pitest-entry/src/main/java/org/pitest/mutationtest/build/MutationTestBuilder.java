@@ -62,7 +62,7 @@ public class MutationTestBuilder {
                     .flatMap(c -> mutationSource.createMutations(c).stream())
                             .collect(Collectors.toList());
 
-    final List<MutationDetails> filteredMutations = new ArrayList<>(projectFilter.filter(mutations));
+    final List<MutationDetails> filteredMutations = new ArrayList<>(projectFilter.intercept(mutations));
 
     filteredMutations.sort(comparing(MutationDetails::getId));
 

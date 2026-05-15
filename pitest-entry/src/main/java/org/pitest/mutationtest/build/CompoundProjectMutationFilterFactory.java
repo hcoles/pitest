@@ -20,7 +20,7 @@ public class CompoundProjectMutationFilterFactory {
         this.features = new FeatureSelector<>(features, factories);
     }
 
-    public ProjectMutationFilter createFilter(ReportOptions data,
+    public CompoundProjectMutationFilter createFilter(ReportOptions data,
                                               CoverageDatabase coverage,
                                               ClassByteArraySource source,
                                               TestPrioritiser testPrioritiser,
