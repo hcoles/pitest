@@ -14,37 +14,36 @@ import java.util.stream.Collectors;
 
 public class CompoundInterceptorFactory {
 
-  private final FeatureSelector<MutationInterceptorFactory> features;
+    private final FeatureSelector<MutationInterceptorFactory> features;
 
-  public CompoundInterceptorFactory(List<FeatureSetting> features,
-      Collection<MutationInterceptorFactory> filters) {
-    this.features = new FeatureSelector<>(features, filters);
-  }
+    public CompoundInterceptorFactory(List<FeatureSetting> features,
+                                      Collection<MutationInterceptorFactory> filters) {
+        this.features = new FeatureSelector<>(features, filters);
+    }
 
-  public CompoundMutationInterceptor createInterceptor(
-      ReportOptions data,
-      CoverageDatabase coverage,
-      ClassByteArraySource source,
-      TestPrioritiser testPrioritiser,
-      CodeSource code
-      ) {
-    List<MutationInterceptor> interceptors = this.features.getActiveFeatures().stream()
-            .map(toInterceptor(this.features, data, coverage, source, testPrioritiser, code))
-            .collect(Collectors.toList());
-    return new CompoundMutationInterceptor(interceptors);
-  }
+    private static Function<MutationInterceptorFactory, MutationInterceptor> toInterceptor(
+            FeatureSelector<MutationInterceptorFactory> features,
+            ReportOptions data,
+            CoverageDatabase coverage,
+            ClassByteArraySource source,
+            TestPrioritiser testPrioritiser,
+            CodeSource code
+    ) {
 
+        return a -> a.createInterceptor(new InterceptorParameters(features.getSettingForFeature(a.provides().name()), data, coverage, source, testPrioritiser, code));
 
-  private static Function<MutationInterceptorFactory, MutationInterceptor> toInterceptor(
-          FeatureSelector<MutationInterceptorFactory> features,
-          ReportOptions data,
-          CoverageDatabase coverage,
-          ClassByteArraySource source,
-          TestPrioritiser testPrioritiser,
-          CodeSource code
-          ) {
+    }
 
-    return a -> a.createInterceptor(new InterceptorParameters(features.getSettingForFeature(a.provides().name()), data, coverage, source, testPrioritiser, code));
-
-  }
- }
+    public CompoundMutationInterceptor createInterceptor(
+            ReportOptions data,
+            CoverageDatabase coverage,
+            ClassByteArraySource source,
+            TestPrioritiser testPrioritiser,
+            CodeSource code
+    ) {
+        List<MutationInterceptor> interceptors = this.features.getActiveFeatures().stream()
+                .map(toInterceptor(this.features, data, coverage, source, testPrioritiser, code))
+                .collect(Collectors.toList());
+        return new CompoundMutationInterceptor(interceptors);
+    }
+}

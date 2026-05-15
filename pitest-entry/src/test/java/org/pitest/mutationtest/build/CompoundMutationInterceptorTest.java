@@ -79,7 +79,7 @@ public class CompoundMutationInterceptorTest {
     this.testee = new CompoundMutationInterceptor(Arrays.asList(this.modifyChild,this.filterChild));
     final ClassTree aClass = new ClassTree(null);
 
-    this.testee.filter(i -> i == modifyChild).begin(aClass);
+    this.testee.filter(i -> i == InterceptorType.MODIFY).begin(aClass);
     verify(this.modifyChild).begin(aClass);
     verify(this.filterChild, never()).begin(aClass);
   }

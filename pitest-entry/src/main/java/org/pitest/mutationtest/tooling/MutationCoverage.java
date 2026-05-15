@@ -20,6 +20,7 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.classpath.CodeSource;
+import org.pitest.coverage.ClassLines;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.CoverageSummary;
@@ -33,6 +34,7 @@ import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationConfig;
 import org.pitest.mutationtest.MutationResultInterceptor;
 import org.pitest.mutationtest.MutationResultListener;
+import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationAnalysisUnit;
 import org.pitest.mutationtest.build.MutationGrouper;
 import org.pitest.mutationtest.build.CompoundProjectMutationFilter;
@@ -214,8 +216,8 @@ public class MutationCoverage {
             .collect(Collectors.toList());
 
     int numberOfCodeLines = examinedClasses.stream()
-            .map(c -> modifiedCoverage.getCodeLinesForClass(c))
-            .map(c -> c.getNumberOfCodeLines())
+            .map(modifiedCoverage::getCodeLinesForClass)
+            .map(ClassLines::getNumberOfCodeLines)
             .reduce(0, Integer::sum);
 
     int coveredLines = examinedClasses.stream()
@@ -225,7 +227,7 @@ public class MutationCoverage {
     return new CoverageSummary(numberOfCodeLines, coveredLines, numberOfTests);
   }
 
-  private Predicate<MutationInterceptor> allInterceptors() {
+  private Predicate<InterceptorType> allInterceptors() {
     return i -> true;
   }
 
@@ -237,21 +239,22 @@ public class MutationCoverage {
     // an initial run here we are able to skip coverage generation when no mutants
     // are found, e.g if pitest is being run against diffs.
     this.timings.registerStart(Timings.Stage.MUTATION_PRE_SCAN);
-    List<MutationAnalysisUnit> mutants = buildMutationTests(new NoCoverage(), new NullHistory(), engine, args, noReportsOrFilters(), CompoundProjectMutationFilter.PASSTHROUGH);
+    List<MutationAnalysisUnit> mutants = buildMutationTests(new NoCoverage(),
+            new NullHistory(), engine, args, noReportsOrFilters(), CompoundProjectMutationFilter.PASSTHROUGH);
     this.timings.registerEnd(Timings.Stage.MUTATION_PRE_SCAN);
     return mutants;
   }
 
-  private Predicate<MutationInterceptor> noReportsOrFilters() {
-    return i -> i.type().includeInPrescan();
+  private Predicate<InterceptorType> noReportsOrFilters() {
+    return InterceptorType::includeInPrescan;
   }
 
   private ProjectMutationFilter createProjectFilter(CoverageDatabase coverageData) {
-    final ClassByteArraySource bas = new CachingByteArraySource(fallbackToClassLoader(new ClassPathByteArraySource(
+    ClassByteArraySource bas = new CachingByteArraySource(fallbackToClassLoader(new ClassPathByteArraySource(
         this.data.getClassPath())), 200);
-    final TestPrioritiser testPrioritiser = this.settings.getTestPrioritiser()
+    TestPrioritiser testPrioritiser = this.settings.getTestPrioritiser()
         .makeTestPrioritiser(this.data.getFreeFormProperties(), this.code, coverageData);
-    final ProjectMutationFilter filter = this.settings.getProjectFilter()
+    ProjectMutationFilter filter = this.settings.getProjectFilter()
         .createFilter(this.data, coverageData, bas, testPrioritiser, this.code);
     filter.initialise(this.code);
     return filter;
@@ -331,9 +334,9 @@ public class MutationCoverage {
 
     final CoverageSummary coverage = combinedStatistics.getCoverageSummary();
     if (coverage != null) {
-      ps.println(String.format(">> Line Coverage (for mutated classes only): %d/%d (%d%%)", coverage.getNumberOfCoveredLines(),
-              coverage.getNumberOfLines(), coverage.getCoverage()));
-      ps.println(String.format(">> %d tests examined", coverage.getNumberOfTests()));
+      ps.printf(">> Line Coverage (for mutated classes only): %d/%d (%d%%)%n", coverage.getNumberOfCoveredLines(),
+              coverage.getNumberOfLines(), coverage.getCoverage());
+      ps.printf(">> %d tests examined%n", coverage.getNumberOfTests());
     }
 
     stats.report(ps);
@@ -356,7 +359,7 @@ public class MutationCoverage {
                                                         History history,
                                                         MutationEngine engine,
                                                         EngineArguments args,
-                                                        Predicate<MutationInterceptor> interceptorFilter,
+                                                        Predicate<InterceptorType> interceptorFilter,
                                                         ProjectMutationFilter projectFilter) {
 
     final MutationConfig mutationConfig = new MutationConfig(engine, coverage()
