@@ -122,5 +122,8 @@ public class MutationTotals {
     this.addMutations(data.getNumberOfMutations());
     this.addMutationsDetetcted(data.getNumberOfMutationsDetected());
     this.addMutationsWithCoverage(data.getNumberOfMutationsWithCoverage());
+    if (data.thresholdPrecision > 0) {
+      this.thresholdPrecision = data.thresholdPrecision;
+    }
   }
 }
