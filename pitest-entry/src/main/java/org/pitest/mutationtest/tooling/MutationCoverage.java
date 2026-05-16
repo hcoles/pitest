@@ -321,11 +321,16 @@ public class MutationCoverage {
 
     final CoverageSummary coverage = combinedStatistics.getCoverageSummary();
     if (coverage != null) {
-      ps.printf(">> Line Coverage (for mutated classes only): %d/%d (%d%%)%n", coverage.getNumberOfCoveredLines(),
-              coverage.getNumberOfLines(), coverage.getCoverage());
+      int precision = this.data.getThresholdPrecision();
+      String coverageDisplay = precision > 0
+          ? coverage.getCoverage(precision).toPlainString()
+          : String.valueOf(coverage.getCoverage());
+      ps.printf(">> Line Coverage (for mutated classes only): %d/%d (%s%%)%n", coverage.getNumberOfCoveredLines(),
+              coverage.getNumberOfLines(), coverageDisplay);
       ps.printf(">> %d tests examined%n", coverage.getNumberOfTests());
     }
 
+    stats.setThresholdPrecision(this.data.getThresholdPrecision());
     stats.report(ps);
 
     if (!combinedStatistics.getIssues().isEmpty()) {

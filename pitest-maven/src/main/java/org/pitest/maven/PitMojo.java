@@ -24,6 +24,7 @@ import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -265,25 +266,31 @@ public final class PitMojo extends AbstractMojo {
    * Mutation score threshold at which to fail build
    */
   @Parameter(defaultValue = "0", property = "mutationThreshold")
-  private int                         mutationThreshold;
+  private String                      mutationThreshold = "0";
 
   /**
    * Test strength score threshold at which to fail build
    */
   @Parameter(defaultValue = "0", property = "testStrengthThreshold")
-  private int                         testStrengthThreshold;
+  private String                      testStrengthThreshold = "0";
 
   /**
    * Maximum surviving mutants to allow
    */
   @Parameter(defaultValue = "-1", property = "maxSurviving")
   private int                         maxSurviving = -1;
-    
+
   /**
    * Line coverage threshold at which to fail build
    */
   @Parameter(defaultValue = "0", property = "coverageThreshold")
-  private int                         coverageThreshold;
+  private String                      coverageThreshold = "0";
+
+  /**
+   * Number of decimal places to use when comparing threshold values
+   */
+  @Parameter(defaultValue = "0", property = "thresholdPrecision")
+  private int                         thresholdPrecision;
 
   /**
    * Path to java executable to use when running tests. Will default to
@@ -533,33 +540,42 @@ public final class PitMojo extends AbstractMojo {
 
   private void throwErrorIfCoverageBelowThreshold(
       final CoverageSummary coverageSummary) throws MojoFailureException {
-    if ((this.coverageThreshold != 0)
-        && (coverageSummary.getCoverage() < this.coverageThreshold)) {
-      throw new MojoFailureException("Line coverage of "
-          + coverageSummary.getCoverage() + "("
-          + coverageSummary.getNumberOfCoveredLines() + "/"
-          + coverageSummary.getNumberOfLines() + ") is below threshold of "
-          + this.coverageThreshold);
+    BigDecimal threshold = new BigDecimal(this.coverageThreshold);
+    if (threshold.compareTo(BigDecimal.ZERO) != 0) {
+      BigDecimal actual = coverageSummary.getCoverage(this.thresholdPrecision);
+      if (actual.compareTo(threshold) < 0) {
+        throw new MojoFailureException("Line coverage of "
+            + actual + "("
+            + coverageSummary.getNumberOfCoveredLines() + "/"
+            + coverageSummary.getNumberOfLines() + ") is below threshold of "
+            + threshold);
+      }
     }
   }
 
   private void throwErrorIfScoreBelowThreshold(final MutationStatistics result)
       throws MojoFailureException {
-    if ((this.mutationThreshold != 0)
-        && (result.getPercentageDetected() < this.mutationThreshold)) {
-      throw new MojoFailureException("Mutation score of "
-          + result.getPercentageDetected() + " is below threshold of "
-          + this.mutationThreshold);
+    BigDecimal threshold = new BigDecimal(this.mutationThreshold);
+    if (threshold.compareTo(BigDecimal.ZERO) != 0) {
+      BigDecimal actual = result.getPercentageDetected(this.thresholdPrecision);
+      if (actual.compareTo(threshold) < 0) {
+        throw new MojoFailureException("Mutation score of "
+            + actual + " is below threshold of "
+            + threshold);
+      }
     }
   }
 
   private void throwErrorIfTestStrengthBelowThreshold(final MutationStatistics result)
           throws MojoFailureException {
-    if ((this.testStrengthThreshold != 0)
-            && (result.getTestStrength() < this.testStrengthThreshold)) {
-      throw new MojoFailureException("Test strength score of "
-              + result.getTestStrength() + " is below threshold of "
-              + this.testStrengthThreshold);
+    BigDecimal threshold = new BigDecimal(this.testStrengthThreshold);
+    if (threshold.compareTo(BigDecimal.ZERO) != 0) {
+      BigDecimal actual = result.getTestStrength(this.thresholdPrecision);
+      if (actual.compareTo(threshold) < 0) {
+        throw new MojoFailureException("Test strength score of "
+                + actual + " is below threshold of "
+                + threshold);
+      }
     }
   }
   
@@ -855,6 +871,10 @@ public final class PitMojo extends AbstractMojo {
 
   public boolean isDryRun() {
     return this.dryRun;
+  }
+
+  public int getThresholdPrecision() {
+    return this.thresholdPrecision;
   }
 
     static class RunDecision {

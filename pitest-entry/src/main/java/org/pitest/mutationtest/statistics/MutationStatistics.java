@@ -17,6 +17,7 @@ package org.pitest.mutationtest.statistics;
 import org.pitest.classinfo.ClassName;
 
 import java.io.PrintStream;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
@@ -32,6 +33,7 @@ public final class MutationStatistics {
   private final long totalWithCoverage;
 
   private final Set<ClassName> mutatedClasses;
+  private int thresholdPrecision;
 
   public MutationStatistics(Iterable<Score> scores,
                             long totalMutations,
@@ -83,12 +85,27 @@ public final class MutationStatistics {
     return getPercentage(getTotalMutations(), getTotalDetectedMutations());
   }
 
+  public BigDecimal getPercentageDetected(int precision) {
+    return getPercentage(getTotalMutations(), getTotalDetectedMutations(), precision);
+  }
+
+  public void setThresholdPrecision(int thresholdPrecision) {
+    this.thresholdPrecision = thresholdPrecision;
+  }
+
   public void report(final PrintStream out) {
+    String detected = thresholdPrecision > 0
+        ? getPercentageDetected(thresholdPrecision).toPlainString()
+        : String.valueOf(getPercentageDetected());
+    String strength = thresholdPrecision > 0
+        ? getTestStrength(thresholdPrecision).toPlainString()
+        : String.valueOf(getTestStrength());
+
     out.println(">> Generated " + this.getTotalMutations()
         + " mutations Killed " + this.getTotalDetectedMutations() + " ("
-        + this.getPercentageDetected() + "%)");
+        + detected + "%)");
     out.println(">> Mutations with no coverage " + this.getTotalMutationsWithoutCoverage()
-            + ". Test strength " + this.getTestStrength() + "%");
+            + ". Test strength " + strength + "%");
     out.println(">> Ran " + this.numberOfTestsRun + " tests ("
         + getTestsPerMutation() + " tests per mutation)");
 
@@ -108,5 +125,9 @@ public final class MutationStatistics {
 
   public int getTestStrength() {
     return getPercentage(getTotalMutationsWithCoverage(), getTotalDetectedMutations());
+  }
+
+  public BigDecimal getTestStrength(int precision) {
+    return getPercentage(getTotalMutationsWithCoverage(), getTotalDetectedMutations(), precision);
   }
 }

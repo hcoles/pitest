@@ -1,13 +1,14 @@
 package org.pitest.aggregate;
 
+import java.math.BigDecimal;
+
 public class AggregationResult {
   private final long mutations;
   private final long mutationsSurvived;
-  private final int  mutationCoverage;
+  private final BigDecimal mutationCoverage;
+  private final BigDecimal testStrength;
 
-  private final int testStrength;
-
-  public AggregationResult(long mutations, long mutationsSurvived, int mutationCoverage, int testStrength) {
+  public AggregationResult(long mutations, long mutationsSurvived, BigDecimal mutationCoverage, BigDecimal testStrength) {
     this.mutations = mutations;
     this.mutationsSurvived = mutationsSurvived;
     this.mutationCoverage = mutationCoverage;
@@ -22,11 +23,11 @@ public class AggregationResult {
     return mutationsSurvived;
   }
 
-  public int getMutationCoverage() {
+  public BigDecimal getMutationCoverage() {
     return mutationCoverage;
   }
 
-  public int getTestStrength() {
+  public BigDecimal getTestStrength() {
     return testStrength;
   }
 }

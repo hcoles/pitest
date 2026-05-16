@@ -107,4 +107,38 @@ public class MutationTotalsTest {
     assertEquals(50, this.testee.getTestStrength());
   }
 
+  @Test
+  public void shouldReturnIntegerLineCoverageLabelAtDefaultPrecision() {
+    this.testee.addLines(1295);
+    this.testee.addLinesCovered(796);
+    assertEquals("61", this.testee.getLineCoverageLabel());
+  }
+
+  @Test
+  public void shouldReturnDecimalLineCoverageLabelWhenPrecisionSet() {
+    MutationTotals totals = new MutationTotals();
+    totals.setThresholdPrecision(2);
+    totals.addLines(1295);
+    totals.addLinesCovered(796);
+    assertEquals("61.47", totals.getLineCoverageLabel());
+  }
+
+  @Test
+  public void shouldReturnDecimalMutationCoverageLabelWhenPrecisionSet() {
+    MutationTotals totals = new MutationTotals();
+    totals.setThresholdPrecision(2);
+    totals.addMutations(413);
+    totals.addMutationsDetetcted(324);
+    assertEquals("78.45", totals.getMutationCoverageLabel());
+  }
+
+  @Test
+  public void shouldReturnDecimalTestStrengthLabelWhenPrecisionSet() {
+    MutationTotals totals = new MutationTotals();
+    totals.setThresholdPrecision(2);
+    totals.addMutationsWithCoverage(335);
+    totals.addMutationsDetetcted(324);
+    assertEquals("96.72", totals.getTestStrengthLabel());
+  }
+
 }

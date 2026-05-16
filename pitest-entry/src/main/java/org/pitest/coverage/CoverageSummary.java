@@ -1,5 +1,7 @@
 package org.pitest.coverage;
 
+import java.math.BigDecimal;
+
 import static org.pitest.util.PercentageCalculator.getPercentage;
 
 /**
@@ -31,6 +33,10 @@ public final class CoverageSummary {
 
   public int getCoverage() {
     return getPercentage(numberOfLines, numberOfCoveredLines);
+  }
+
+  public BigDecimal getCoverage(int precision) {
+    return getPercentage(numberOfLines, numberOfCoveredLines, precision);
   }
 
 }

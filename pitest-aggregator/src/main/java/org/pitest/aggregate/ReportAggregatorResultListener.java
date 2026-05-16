@@ -6,10 +6,14 @@ import org.pitest.mutationtest.report.html.MutationTotals;
 
 public class ReportAggregatorResultListener implements MutationResultListener {
   MutationTotals totals = new MutationTotals();
+  private final int thresholdPrecision;
+
+  public ReportAggregatorResultListener(int thresholdPrecision) {
+    this.thresholdPrecision = thresholdPrecision;
+  }
 
   @Override
   public void runStart() {
-    // nothing to do here
   }
 
   @Override
@@ -22,11 +26,10 @@ public class ReportAggregatorResultListener implements MutationResultListener {
 
   @Override
   public void runEnd() {
-    // nothing to do here
   }
 
   public AggregationResult result() {
     return new AggregationResult(totals.getNumberOfMutations(), totals.getNumberOfMutations() - totals.getNumberOfMutationsDetected(),
-        totals.getMutationCoverage(), totals.getTestStrength());
+        totals.getMutationCoverage(thresholdPrecision), totals.getTestStrength(thresholdPrecision));
   }
 }

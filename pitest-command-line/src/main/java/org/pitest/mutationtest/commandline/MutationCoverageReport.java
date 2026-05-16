@@ -23,6 +23,7 @@ import org.pitest.mutationtest.tooling.CombinedStatistics;
 import org.pitest.mutationtest.tooling.EntryPoint;
 import org.pitest.util.Unchecked;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 
 /**
@@ -44,40 +45,50 @@ public class MutationCoverageReport {
 
       final CombinedStatistics stats = runReport(data, plugins);
 
+      int precision = data.getThresholdPrecision();
       throwErrorIfScoreBelowCoverageThreshold(stats.getCoverageSummary(),
-          data.getCoverageThreshold());
+          data.getCoverageThreshold(), precision);
       throwErrorIfScoreBelowTestStrengthThreshold(stats.getMutationStatistics(),
-              data.getTestStrengthThreshold());
+              data.getTestStrengthThreshold(), precision);
       throwErrorIfScoreBelowMutationThreshold(stats.getMutationStatistics(),
-          data.getMutationThreshold());
+          data.getMutationThreshold(), precision);
       throwErrorIfMoreThanMaxSurvivingMutants(stats.getMutationStatistics(), data.getMaximumAllowedSurvivors());
     }
 
   }
 
   private static void throwErrorIfScoreBelowCoverageThreshold(
-      CoverageSummary stats, int threshold) {
-    if ((threshold != 0) && (stats.getCoverage() < threshold)) {
-      throw new RuntimeException("Line coverage of " + stats.getCoverage()
-          + " is below threshold of " + threshold);
+      CoverageSummary stats, BigDecimal threshold, int precision) {
+    if (threshold.compareTo(BigDecimal.ZERO) != 0) {
+      BigDecimal actual = stats.getCoverage(precision);
+      if (actual.compareTo(threshold) < 0) {
+        throw new RuntimeException("Line coverage of " + actual
+            + " is below threshold of " + threshold);
+      }
     }
   }
 
   private static void throwErrorIfScoreBelowMutationThreshold(
-      final MutationStatistics stats, final int threshold) {
-    if ((threshold != 0) && (stats.getPercentageDetected() < threshold)) {
-      throw new RuntimeException("Mutation score of "
-          + stats.getPercentageDetected() + " is below threshold of "
-          + threshold);
+      final MutationStatistics stats, final BigDecimal threshold, int precision) {
+    if (threshold.compareTo(BigDecimal.ZERO) != 0) {
+      BigDecimal actual = stats.getPercentageDetected(precision);
+      if (actual.compareTo(threshold) < 0) {
+        throw new RuntimeException("Mutation score of "
+            + actual + " is below threshold of "
+            + threshold);
+      }
     }
   }
 
   private static void throwErrorIfScoreBelowTestStrengthThreshold(
-          final MutationStatistics stats, final int threshold) {
-    if ((threshold != 0) && (stats.getTestStrength() < threshold)) {
-      throw new RuntimeException("Test strength score of "
-              + stats.getTestStrength() + " is below threshold of "
-              + threshold);
+          final MutationStatistics stats, final BigDecimal threshold, int precision) {
+    if (threshold.compareTo(BigDecimal.ZERO) != 0) {
+      BigDecimal actual = stats.getTestStrength(precision);
+      if (actual.compareTo(threshold) < 0) {
+        throw new RuntimeException("Test strength score of "
+                + actual + " is below threshold of "
+                + threshold);
+      }
     }
   }
 

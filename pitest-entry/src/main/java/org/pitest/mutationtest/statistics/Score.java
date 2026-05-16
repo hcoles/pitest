@@ -15,6 +15,7 @@
 package org.pitest.mutationtest.statistics;
 
 import java.io.PrintStream;
+import java.math.BigDecimal;
 
 import static org.pitest.util.PercentageCalculator.getPercentage;
 
@@ -70,6 +71,10 @@ public final class Score {
 
   public int getPercentageDetected() {
     return getPercentage(getTotalMutations(), getTotalDetectedMutations());
+  }
+
+  public BigDecimal getPercentageDetected(int precision) {
+    return getPercentage(getTotalMutations(), getTotalDetectedMutations(), precision);
   }
 
 }

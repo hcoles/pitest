@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -126,9 +127,10 @@ public class ReportOptions {
   private boolean                        shouldCreateTimestampedReports = true;
   private boolean                        detectInlinedCode              = false;
   private boolean                        exportLineCoverage             = false;
-  private int                            mutationThreshold;
-  private int                            coverageThreshold;
-  private int                            testStrengthThreshold;
+  private BigDecimal                     mutationThreshold              = BigDecimal.ZERO;
+  private BigDecimal                     coverageThreshold              = BigDecimal.ZERO;
+  private BigDecimal                     testStrengthThreshold          = BigDecimal.ZERO;
+  private int                            thresholdPrecision;
 
   private String                         mutationEngine                 = "gregor";
 
@@ -537,11 +539,11 @@ public class ReportOptions {
     return this.exportLineCoverage;
   }
 
-  public int getMutationThreshold() {
+  public BigDecimal getMutationThreshold() {
     return this.mutationThreshold;
   }
 
-  public void setMutationThreshold(final int value) {
+  public void setMutationThreshold(final BigDecimal value) {
     this.mutationThreshold = value;
   }
 
@@ -553,22 +555,29 @@ public class ReportOptions {
     this.mutationEngine = mutationEngine;
   }
 
-  public int getCoverageThreshold() {
+  public BigDecimal getCoverageThreshold() {
     return this.coverageThreshold;
   }
 
-  public void setCoverageThreshold(final int coverageThreshold) {
+  public void setCoverageThreshold(final BigDecimal coverageThreshold) {
     this.coverageThreshold = coverageThreshold;
   }
 
-  public int getTestStrengthThreshold() {
+  public BigDecimal getTestStrengthThreshold() {
     return this.testStrengthThreshold;
   }
 
-  public void setTestStrengthThreshold(final int testStrengthThreshold) {
+  public void setTestStrengthThreshold(final BigDecimal testStrengthThreshold) {
     this.testStrengthThreshold = testStrengthThreshold;
   }
 
+  public int getThresholdPrecision() {
+    return this.thresholdPrecision;
+  }
+
+  public void setThresholdPrecision(final int thresholdPrecision) {
+    this.thresholdPrecision = thresholdPrecision;
+  }
 
   public String getJavaExecutable() {
     return this.javaExecutable;
@@ -714,6 +723,7 @@ public class ReportOptions {
             .add("mutationThreshold=" + mutationThreshold)
             .add("coverageThreshold=" + coverageThreshold)
             .add("testStrengthThreshold=" + testStrengthThreshold)
+            .add("thresholdPrecision=" + thresholdPrecision)
             .add("mutationEngine='" + mutationEngine + "'")
             .add("javaExecutable='" + javaExecutable + "'")
             .add("includeLaunchClasspath=" + includeLaunchClasspath)

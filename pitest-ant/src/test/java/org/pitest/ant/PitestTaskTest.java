@@ -455,6 +455,13 @@ public class PitestTaskTest {
   }
 
   @Test
+  public void shouldPassThresholdPrecisionToJavaTask() {
+    this.pitestTask.setThresholdPrecision("2");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--thresholdPrecision=2");
+  }
+
+  @Test
   public void shouldPassMutationEngineToJavaTask() {
     this.pitestTask.setMutationEngine("foo");
     this.pitestTask.execute(this.java);
