@@ -8,6 +8,11 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.24.0
+
+* 1465 silent mode
+* 1466 new extension point - project filtering
+
 ## 1.23.1
 
 * #1463 extend unmodifiable collections filtering
