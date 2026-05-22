@@ -1,5 +1,6 @@
 package org.pitest.mutationtest.report.html;
 
+import static org.pitest.mutationtest.DetectionStatus.EQUIVALENT;
 import static org.pitest.mutationtest.DetectionStatus.KILLED;
 import static org.pitest.mutationtest.DetectionStatus.MEMORY_ERROR;
 import static org.pitest.mutationtest.DetectionStatus.NON_VIABLE;
@@ -33,6 +34,7 @@ class ResultComparator implements Comparator<MutationResult>, Serializable {
     RANK.put(STARTED, 1);
     RANK.put(RUN_ERROR, 0);
     RANK.put(NO_COVERAGE, 0);
+    RANK.put(EQUIVALENT, 2);
   }
 
   @Override
