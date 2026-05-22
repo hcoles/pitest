@@ -65,7 +65,14 @@ public enum DetectionStatus {
   /**
    * Mutation is not covered by any test.
    */
-  NO_COVERAGE(false);
+  NO_COVERAGE(false),
+
+  /**
+   * Mutation is equivalent to the un-mutated code. Treated as detected
+   * although by definition it cannot be.
+   *
+   */
+  EQUIVALENT(true);
 
 
   private final boolean detected;

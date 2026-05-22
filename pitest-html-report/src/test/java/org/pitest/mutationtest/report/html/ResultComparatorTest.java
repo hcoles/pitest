@@ -1,5 +1,7 @@
 package org.pitest.mutationtest.report.html;
 
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
@@ -19,12 +21,19 @@ public class ResultComparatorTest {
   public void shouldSortInDesiredOrder() {
     final List<MutationResult> mrs = Arrays.asList(
         make(DetectionStatus.TIMED_OUT), make(DetectionStatus.SURVIVED),
-        make(DetectionStatus.NO_COVERAGE), make(DetectionStatus.KILLED));
+        make(DetectionStatus.NO_COVERAGE), make(DetectionStatus.KILLED),
+            make(DetectionStatus.EQUIVALENT));
     mrs.sort(this.testee);
-    assertEquals(DetectionStatus.SURVIVED,mrs.get(0).getStatus());
-    assertEquals(DetectionStatus.NO_COVERAGE,mrs.get(1).getStatus());
-    assertEquals(DetectionStatus.TIMED_OUT,mrs.get(2).getStatus());
-    assertEquals(DetectionStatus.KILLED,mrs.get(3).getStatus());
+
+    assertThat(mrs)
+        .containsExactly(
+            make(DetectionStatus.SURVIVED),
+            make(DetectionStatus.NO_COVERAGE),
+            make(DetectionStatus.TIMED_OUT),
+            make(DetectionStatus.EQUIVALENT),
+            make(DetectionStatus.KILLED)
+        );
+
   }
 
   private MutationResult make(final DetectionStatus status) {
