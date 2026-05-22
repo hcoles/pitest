@@ -267,7 +267,8 @@ public class SettingsFactory {
 
   private static Predicate<MutationResultListenerFactory> matchesOutputFormat(
           final Iterable<String> outputFormats) {
-    return a -> FCollection.contains(outputFormats, equalsIgnoreCase(a.name()));
+    return a -> a.provides().equals(MutationResultListenerFactory.LEGACY_MODE)
+            && FCollection.contains(outputFormats, equalsIgnoreCase(a.name()));
   }
 
   private static Predicate<MutationResultListenerFactory> isActivatedByFeature() {
