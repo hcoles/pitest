@@ -8,6 +8,11 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.25.0
+
+* #1470 make history available to interceptors
+* #1471 introduce equivalent status
+
 ## 1.24.0
 
 * 1465 silent mode
