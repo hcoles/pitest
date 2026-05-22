@@ -103,7 +103,7 @@ public class MutationTestBuilder {
     // place of the original
     final Collection<MutationDetails> haveBeenAltered = analysedMutations.stream()
             .filter(m -> m.getStatus() == DetectionStatus.NOT_STARTED)
-            .map(r -> r.getDetails())
+            .map(MutationResult::getDetails)
             .collect(Collectors.toList());
 
     needAnalysis.addAll(haveBeenAltered);

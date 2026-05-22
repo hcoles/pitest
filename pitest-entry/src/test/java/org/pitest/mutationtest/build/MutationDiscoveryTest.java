@@ -278,7 +278,7 @@ public class MutationDiscoveryTest {
     final SettingsFactory settings = new SettingsFactory(this.data,
         PluginServices.makeForContextLoader());
     final MutationInterceptor interceptor = settings.getInterceptor()
-        .createInterceptor(this.data, null, source, null, new FixedCodeSource());
+        .createInterceptor(this.data, null, source, null, new FixedCodeSource(), null);
 
     final MutationEngine engine = new GregorEngineFactory().createEngine(
         EngineArguments.arguments().withExcludedMethods(this.data.getExcludedMethods())
