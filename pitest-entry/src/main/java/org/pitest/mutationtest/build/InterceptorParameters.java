@@ -3,6 +3,7 @@ package org.pitest.mutationtest.build;
 import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageDatabase;
+import org.pitest.mutationtest.History;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.plugin.FeatureParameter;
 import org.pitest.plugin.FeatureSetting;
@@ -18,8 +19,8 @@ public final class InterceptorParameters {
   private final ClassByteArraySource source;
   private final CoverageDatabase coverage;
   private final CodeSource code;
-
   private final TestPrioritiser testPrioritiser;
+  private final History history;
 
 
   @Deprecated
@@ -27,8 +28,8 @@ public final class InterceptorParameters {
                                ReportOptions data,
                                CoverageDatabase coverage,
                                ClassByteArraySource source,
-                               TestPrioritiser testPrioritiser) {
-    this(conf, data, coverage, source, testPrioritiser, null);
+                               TestPrioritiser testPrioritiser, History history) {
+    this(conf, data, coverage, source, testPrioritiser, null, history);
   }
 
   public InterceptorParameters(FeatureSetting conf,
@@ -36,13 +37,14 @@ public final class InterceptorParameters {
                                CoverageDatabase coverage,
                                ClassByteArraySource source,
                                TestPrioritiser testPrioritiser,
-                               CodeSource code) {
+                               CodeSource code, History history) {
     this.conf = conf;
     this.data = data;
     this.coverage = coverage;
     this.source = source;
     this.testPrioritiser = testPrioritiser;
     this.code = code;
+    this.history = history;
   }
 
   public ReportOptions data() {
@@ -68,6 +70,10 @@ public final class InterceptorParameters {
 
   public CodeSource code() {
     return code;
+  }
+
+  public History history() {
+    return history;
   }
 
   public Optional<String> getString(FeatureParameter limit) {

@@ -16,7 +16,7 @@ public class VerifierStart {
     }
 
     public static InterceptorVerifier forInterceptorFactory(MutationInterceptorFactory f, CodeSource code) {
-        return new InterceptorVerifier(f.createInterceptor( new InterceptorParameters(null, null, null, null, null, code)));
+        return new InterceptorVerifier(f.createInterceptor( new InterceptorParameters(null, null, null, null, null, code, null)));
     }
 
 }

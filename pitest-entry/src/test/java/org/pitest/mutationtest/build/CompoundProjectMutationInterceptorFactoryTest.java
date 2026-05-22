@@ -22,7 +22,7 @@ public class CompoundProjectMutationInterceptorFactoryTest {
     CompoundProjectMutationFilterFactory testee = new CompoundProjectMutationFilterFactory(
         Collections.emptyList(), List.of(removeAll));
 
-    ProjectMutationInterceptor filter = testee.createFilter(null, null, null, null, null);
+    ProjectMutationInterceptor filter = testee.createFilter(null, null, null, null, null, null);
     Collection<MutationDetails> mutations = aMutationDetail().build(3);
 
     assertThat(filter.intercept(mutations)).isEmpty();
@@ -34,7 +34,7 @@ public class CompoundProjectMutationInterceptorFactoryTest {
     CompoundProjectMutationFilterFactory testee = new CompoundProjectMutationFilterFactory(
         Collections.emptyList(), List.of(removeAll));
 
-    ProjectMutationInterceptor filter = testee.createFilter(null, null, null, null, null);
+    ProjectMutationInterceptor filter = testee.createFilter(null, null, null, null, null, null);
     Collection<MutationDetails> mutations = aMutationDetail().build(3);
 
     assertThat(filter.intercept(mutations)).hasSize(3);
@@ -47,7 +47,7 @@ public class CompoundProjectMutationInterceptorFactoryTest {
     CompoundProjectMutationFilterFactory testee = new CompoundProjectMutationFilterFactory(
             List.of(activate), List.of(removeAll));
 
-    ProjectMutationInterceptor filter = testee.createFilter(null, null, null, null, null);
+    ProjectMutationInterceptor filter = testee.createFilter(null, null, null, null, null, null);
     Collection<MutationDetails> mutations = aMutationDetail().build(3);
 
     assertThat(filter.intercept(mutations)).isEmpty();
@@ -60,7 +60,7 @@ public class CompoundProjectMutationInterceptorFactoryTest {
     CompoundProjectMutationFilterFactory testee = new CompoundProjectMutationFilterFactory(
             List.of(deactivate), List.of(removeAll));
 
-    ProjectMutationInterceptor filter = testee.createFilter(null, null, null, null, null);
+    ProjectMutationInterceptor filter = testee.createFilter(null, null, null, null, null,null);
     Collection<MutationDetails> mutations = aMutationDetail().build(3);
 
     assertThat(filter.intercept(mutations)).hasSize(3);

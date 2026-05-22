@@ -626,6 +626,9 @@ public class ReportOptions {
             this.getIncludedTestMethods(), this.skipFailingTests());
   }
 
+  /**
+   * Project base dir. NOT reliably set by gradle
+   */
   public Path getProjectBase() {
     return projectBase;
   }
