@@ -4,7 +4,6 @@ import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.MutationResultListener;
 
 import java.io.PrintStream;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -14,10 +13,11 @@ class ProgressListener implements MutationResultListener {
     private final PrintStream out;
     private final long intervalSeconds;
     private final AtomicLong mutationsCompleted = new AtomicLong();
-    private ScheduledExecutorService scheduler;
+    private final ScheduledExecutorService scheduler;
 
-    ProgressListener(PrintStream out, long intervalSeconds) {
+    ProgressListener(PrintStream out, ScheduledExecutorService scheduler, long intervalSeconds) {
         this.out = out;
+        this.scheduler = scheduler;
         this.intervalSeconds = intervalSeconds;
     }
 
@@ -27,7 +27,6 @@ class ProgressListener implements MutationResultListener {
 
     @Override
     public void runStart() {
-        scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(
                 () -> out.println(mutationsCompleted.get() + " mutations completed"),
                 intervalSeconds, intervalSeconds, TimeUnit.SECONDS);

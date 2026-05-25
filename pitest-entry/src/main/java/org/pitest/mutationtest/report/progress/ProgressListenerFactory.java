@@ -7,6 +7,7 @@ import org.pitest.plugin.Feature;
 import org.pitest.plugin.FeatureParameter;
 
 import java.util.Properties;
+import java.util.concurrent.Executors;
 
 public class ProgressListenerFactory implements MutationResultListenerFactory {
 
@@ -20,7 +21,7 @@ public class ProgressListenerFactory implements MutationResultListenerFactory {
         int interval = args.settings()
                 .flatMap(s -> s.getInteger(INTERVAL.name()))
                 .orElse(DEFAULT_INTERVAL);
-        return new ProgressListener(System.out, interval);
+        return new ProgressListener(System.out, Executors.newSingleThreadScheduledExecutor(), interval);
     }
 
     @Override
