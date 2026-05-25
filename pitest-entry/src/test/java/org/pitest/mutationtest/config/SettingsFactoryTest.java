@@ -108,6 +108,12 @@ public class SettingsFactoryTest {
     this.testee.createListener();
   }
 
+  @Test(expected = PitError.class)
+  public void shouldThrowErrorWhenOutputFormatMatchesFeatureManagedListener() {
+    this.options.addOutputFormats(Arrays.asList("progress"));
+    this.testee.createListener();
+  }
+
   @Test
   public void shouldReturnADefaultJavaExecutableWhenNoneIsSpecified() {
     this.options.setJavaExecutable(null);

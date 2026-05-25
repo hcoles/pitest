@@ -257,21 +257,30 @@ public class SettingsFactory {
   private Collection<MutationResultListenerFactory> findListeners() {
     final Iterable<? extends MutationResultListenerFactory> listeners = this.plugins
         .findListeners();
-    final Collection<MutationResultListenerFactory> matches = FCollection
-        .filter(listeners, nameMatches(this.options.getOutputFormats()));
-    if (matches.size() < this.options.getOutputFormats().size()) {
+
+    final Collection<MutationResultListenerFactory> outputFormatListeners = FCollection
+        .filter(listeners, matchesOutputFormat(this.options.getOutputFormats()));
+    if (outputFormatListeners.size() < this.options.getOutputFormats().size()) {
       throw new PitError("Unknown listener requested in "
           + String.join(",", this.options.getOutputFormats()));
     }
-    return matches;
+
+    final Collection<MutationResultListenerFactory> featureListeners = FCollection
+        .filter(listeners, isActivatedByFeature());
+
+    final Collection<MutationResultListenerFactory> all = new ArrayList<>(outputFormatListeners);
+    all.addAll(featureListeners);
+    return all;
   }
 
-  private static Predicate<MutationResultListenerFactory> nameMatches(
+  private static Predicate<MutationResultListenerFactory> matchesOutputFormat(
           final Iterable<String> outputFormats) {
-    // plugins can be either activated here by name
-    // or later via the feature mechanism
-    return a -> FCollection.contains(outputFormats, equalsIgnoreCase(a.name()))
-            || !a.provides().equals(MutationResultListenerFactory.LEGACY_MODE);
+    return a -> a.provides().equals(MutationResultListenerFactory.LEGACY_MODE)
+            && FCollection.contains(outputFormats, equalsIgnoreCase(a.name()));
+  }
+
+  private static Predicate<MutationResultListenerFactory> isActivatedByFeature() {
+    return a -> !a.provides().equals(MutationResultListenerFactory.LEGACY_MODE);
   }
 
 
