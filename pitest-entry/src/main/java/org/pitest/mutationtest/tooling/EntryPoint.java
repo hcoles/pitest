@@ -164,7 +164,7 @@ public class EntryPoint {
     }
     FeatureParser parser = new FeatureParser();
     FeatureSelector select = new FeatureSelector(parser.parseFeatures(data.getFeatures()), singletonList(factory));
-    return factory.makeHistory(new HistoryParams(select, code), historyWriter.orElse(new NullWriterFactory()), reader);
+    return factory.makeHistory(new HistoryParams(select, code, data), historyWriter.orElse(new NullWriterFactory()), reader);
   }
 
   private void checkMatrixMode(ReportOptions data) {
