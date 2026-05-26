@@ -8,6 +8,11 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.25.1
+
+* #1469 Progress report (thanks @eatdrinksleepcode)
+* #1473 make report options available to history plugins
+
 ## 1.25.0
 
 * #1470 make history available to interceptors
