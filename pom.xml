@@ -378,6 +378,10 @@
 							</goals>
 						</execution>
 					</executions>
+					<configuration>
+						<!-- to be removed when https://github.com/CycloneDX/cyclonedx-maven-plugin/issues/597 is fixed-->
+						<skipNotDeployed>false</skipNotDeployed>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
