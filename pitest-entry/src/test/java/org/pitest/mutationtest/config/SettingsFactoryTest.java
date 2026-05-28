@@ -51,7 +51,7 @@ public class SettingsFactoryTest {
   @Test
   public void shouldReturnANullCoverageExporterWhenOptionSetToFalse() {
     this.options.setExportLineCoverage(false);
-    assertTrue(this.testee.createCoverageExporter() instanceof NullCoverageExporter);
+    assertThat(this.testee.createCoverageExporter()).isInstanceOf(NullCoverageExporter.class);
   }
 
   @Test
@@ -81,7 +81,7 @@ public class SettingsFactoryTest {
 
   @Test
   public void shouldReturnEngineWhenRequestedEngineIsKnown() {
-    assertTrue(this.testee.createEngine() instanceof GregorEngineFactory);
+    assertThat(this.testee.createEngine()).isInstanceOf(GregorEngineFactory.class);
   }
 
   @Test(expected = PitError.class)
@@ -107,7 +107,13 @@ public class SettingsFactoryTest {
     this.options.addOutputFormats(Arrays.asList("unknown"));
     this.testee.createListener();
   }
-  
+
+  @Test
+  public void featureOutputFormatsCanBeRequestedByName() {
+    this.options.addOutputFormats(Arrays.asList("progress"));
+    assertThatCode(() -> this.testee.createListener()).doesNotThrowAnyException();
+  }
+
   @Test
   public void shouldReturnADefaultJavaExecutableWhenNoneIsSpecified() {
     this.options.setJavaExecutable(null);
