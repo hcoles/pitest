@@ -8,6 +8,11 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.25.2
+
+* #1474 Publish SBOMs via cyclonedx
+* #1475 Bug fix - listeners controlled by feature strings should also be selectable by name
+
 ## 1.25.1
 
 * #1469 Progress report (thanks @eatdrinksleepcode)
