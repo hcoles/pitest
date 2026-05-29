@@ -1,8 +1,10 @@
 package org.pitest.mutationtest.build;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.pitest.classpath.CodeSource;
 import org.pitest.classpath.DefaultCodeSource;
@@ -30,6 +32,12 @@ public class CompoundProjectMutationInterceptorTest {
   @Mock
   ProjectMutationInterceptor second;
 
+  @Before
+  public void setUp() {
+     when(first.type()).thenReturn(InterceptorType.PRE_SCAN_FILTER);
+     when(second.type()).thenReturn(InterceptorType.OTHER);
+  }
+
   @Test
   public void initialisesAllChildren() {
     CompoundProjectMutationInterceptor testee = new CompoundProjectMutationInterceptor(Arrays.asList(first, second));
@@ -49,8 +57,8 @@ public class CompoundProjectMutationInterceptorTest {
     Collection<MutationDetails> afterFirst = aMutationDetail().build(2);
     Collection<MutationDetails> afterSecond = aMutationDetail().build(1);
 
-    when(first.intercept(initial)).thenReturn(afterFirst);
-    when(second.intercept(afterFirst)).thenReturn(afterSecond);
+    when(second.intercept(initial)).thenReturn(afterFirst);
+    when(first.intercept(afterFirst)).thenReturn(afterSecond);
 
     assertThat(testee.intercept(initial)).isEqualTo(afterSecond);
   }

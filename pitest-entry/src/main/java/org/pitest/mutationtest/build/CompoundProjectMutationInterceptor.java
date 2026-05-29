@@ -3,17 +3,21 @@ package org.pitest.mutationtest.build;
 import org.pitest.classpath.CodeSource;
 import org.pitest.mutationtest.engine.MutationDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static java.util.Comparator.comparing;
+
 public class CompoundProjectMutationInterceptor implements ProjectMutationInterceptor {
 
-  private final List<ProjectMutationInterceptor> filters;
+  private final List<ProjectMutationInterceptor> filters = new ArrayList<>();
 
   public CompoundProjectMutationInterceptor(List<ProjectMutationInterceptor> filters) {
-    this.filters = filters;
+    this.filters.addAll(filters);
+    this.filters.sort(comparing(ProjectMutationInterceptor::type));
   }
 
   public static ProjectMutationInterceptor passThrough() {
