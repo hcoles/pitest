@@ -8,6 +8,10 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.25.3
+
+* #1476 Introduce post pre-scan type
+
 ## 1.25.2
 
 * #1474 Publish SBOMs via cyclonedx
