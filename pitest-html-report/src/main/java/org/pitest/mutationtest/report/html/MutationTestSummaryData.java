@@ -42,6 +42,8 @@ public class MutationTestSummaryData {
 
   private long                             numberOfCoveredLines;
 
+  private int thresholdPrecision;
+
   public MutationTestSummaryData(final String fileName,
       final Collection<MutationResult> results,
       final Collection<String> mutators, final Collection<ClassLines> classes,
@@ -55,6 +57,7 @@ public class MutationTestSummaryData {
 
   public MutationTotals getTotals() {
     final MutationTotals mt = new MutationTotals();
+    mt.setThresholdPrecision(this.thresholdPrecision);
     mt.addFiles(1);
     mt.addMutations(this.getNumberOfMutations());
     mt.addMutationsDetetcted(this.getNumberOfMutationsDetected());
@@ -149,5 +152,8 @@ public class MutationTestSummaryData {
     return results.stream().collect(Collectors.toMap(mr -> mr.getDetails().getId(), Function.identity()));
   }
 
+  public void setThresholdPrecision(int thresholdPrecision) {
+    this.thresholdPrecision = thresholdPrecision;
+  }
 
 }

@@ -121,7 +121,7 @@ body{
 
 .coverage_percentage {
     display: inline-block;
-    width: 3em;
+    min-width: 3em;
     text-align: right;
 }
 

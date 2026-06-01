@@ -48,6 +48,7 @@ public final class ReportAggregator {
   private final CodeSourceAggregator       codeSourceAggregator;
   private final Charset inputCharset;
   private final Charset outputCharset;
+  private final int thresholdPrecision;
 
   private ReportAggregator(SettingsFactory settings,
                            ResultOutputStrategy resultOutputStrategy,
@@ -56,7 +57,8 @@ public final class ReportAggregator {
                            Set<File> sourceCodeDirs,
                            Set<File> compiledCodeDirs,
                            Charset inputCharset,
-                           Charset outputCharset) {
+                           Charset outputCharset,
+                           int thresholdPrecision) {
     this.settings = settings;
     this.resultOutputStrategy = resultOutputStrategy;
     this.blockCoverageLoader = new BlockCoverageDataLoader(lineCoverageFiles);
@@ -65,6 +67,7 @@ public final class ReportAggregator {
     this.codeSourceAggregator = new CodeSourceAggregator(settings, new HashSet<>(compiledCodeDirs));
     this.inputCharset = inputCharset;
     this.outputCharset = outputCharset;
+    this.thresholdPrecision = thresholdPrecision;
   }
 
   public AggregationResult aggregateReport() throws ReportAggregationException {
@@ -73,7 +76,7 @@ public final class ReportAggregator {
     boolean partialCoverage = scanForPartialCoverageFlag(mutationFiles);
 
     final MutationResultListener mutationResultListener = createResultListener(sourceLocator, Collections.emptySet(), partialCoverage);
-    final ReportAggregatorResultListener reportAggregatorResultListener = new ReportAggregatorResultListener();
+    final ReportAggregatorResultListener reportAggregatorResultListener = new ReportAggregatorResultListener(thresholdPrecision);
 
     reportAggregatorResultListener.runStart();
     mutationResultListener.runStart();
@@ -124,6 +127,7 @@ public final class ReportAggregator {
             partialCoverage,
             Collections.emptyList(),
             true,
+            thresholdPrecision,
             sourceLocator);
   }
 
@@ -168,6 +172,7 @@ public final class ReportAggregator {
     private final Set<File>      compiledCodeDirectories = new HashSet<>();
     private Charset inputCharset = Charset.defaultCharset();
     private Charset outputCharset = Charset.defaultCharset();
+    private int thresholdPrecision = 0;
 
     public Builder inputCharSet(Charset inputCharset) {
       this.inputCharset = inputCharset;
@@ -176,6 +181,11 @@ public final class ReportAggregator {
 
     public Builder outputCharset(Charset outputCharset) {
       this.outputCharset = outputCharset;
+      return this;
+    }
+
+    public Builder thresholdPrecision(int thresholdPrecision) {
+      this.thresholdPrecision = thresholdPrecision;
       return this;
     }
 
@@ -291,7 +301,8 @@ public final class ReportAggregator {
               this.sourceCodeDirectories,
               this.compiledCodeDirectories,
               inputCharset,
-              outputCharset);
+              outputCharset,
+              thresholdPrecision);
     }
 
     /*

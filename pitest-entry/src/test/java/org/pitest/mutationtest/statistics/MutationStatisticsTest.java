@@ -16,6 +16,8 @@ package org.pitest.mutationtest.statistics;
 
 import org.junit.Test;
 
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MutationStatisticsTest {
@@ -33,6 +35,18 @@ public class MutationStatisticsTest {
   @Test
   public void shouldHaveHundredPercentIfNoMutations() {
     assertThat(new MutationStatistics(null, 0, 0, 0, 0, null).getPercentageDetected()).isEqualTo(100);
+  }
+
+  @Test
+  public void shouldCalculatePrecisePercentageDetected() {
+    assertThat(new MutationStatistics(null, 413, 324, 1, 1, null).getPercentageDetected(2))
+        .isEqualByComparingTo(new BigDecimal("78.45"));
+  }
+
+  @Test
+  public void shouldCalculatePreciseTestStrength() {
+    assertThat(new MutationStatistics(null, 413, 324, 335, 1, null).getTestStrength(2))
+        .isEqualByComparingTo(new BigDecimal("96.72"));
   }
 
 }

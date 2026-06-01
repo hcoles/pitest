@@ -244,6 +244,10 @@ public class PitestTask extends Task { // NO_UCD (test only)
     this.setOption(ConfigOption.COVERAGE_THRESHOLD, value);
   }
 
+  public void setThresholdPrecision(final String value) {
+    this.setOption(ConfigOption.THRESHOLD_PRECISION, value);
+  }
+
   public void setMutationEngine(String value) {
     this.setOption(ConfigOption.MUTATION_ENGINE, value);
   }

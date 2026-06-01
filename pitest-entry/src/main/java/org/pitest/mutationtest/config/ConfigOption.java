@@ -213,6 +213,11 @@ public enum ConfigOption {
   COVERAGE_THRESHOLD("coverageThreshold", 0),
 
   /**
+   * Number of decimal places for threshold percentage comparisons
+   */
+  THRESHOLD_PRECISION("thresholdPrecision", 0),
+
+  /**
    * Mutation engine to use
    */
   MUTATION_ENGINE("mutationEngine", "gregor"),

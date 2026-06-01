@@ -36,6 +36,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -90,6 +91,7 @@ import static org.pitest.mutationtest.config.ConfigOption.TARGET_CLASSES;
 import static org.pitest.mutationtest.config.ConfigOption.TEST_FILTER;
 import static org.pitest.mutationtest.config.ConfigOption.TEST_PLUGIN;
 import static org.pitest.mutationtest.config.ConfigOption.TEST_STRENGTH_THRESHOLD;
+import static org.pitest.mutationtest.config.ConfigOption.THRESHOLD_PRECISION;
 import static org.pitest.mutationtest.config.ConfigOption.THREADS;
 import static org.pitest.mutationtest.config.ConfigOption.TIMEOUT_CONST;
 import static org.pitest.mutationtest.config.ConfigOption.TIMEOUT_FACTOR;
@@ -142,9 +144,10 @@ public class OptionsParser {
   private final OptionSpec<Integer>                  mutationUnitSizeSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> timestampedReportsSpec;
   private final ArgumentAcceptingOptionSpec<Boolean> detectInlinedCode;
-  private final ArgumentAcceptingOptionSpec<Integer> mutationThreshHoldSpec;
-  private final ArgumentAcceptingOptionSpec<Integer> testStrengthThreshHoldSpec;
-  private final ArgumentAcceptingOptionSpec<Integer> coverageThreshHoldSpec;
+  private final ArgumentAcceptingOptionSpec<String> mutationThreshHoldSpec;
+  private final ArgumentAcceptingOptionSpec<String> testStrengthThreshHoldSpec;
+  private final ArgumentAcceptingOptionSpec<String> coverageThreshHoldSpec;
+  private final ArgumentAcceptingOptionSpec<Integer> thresholdPrecisionSpec;
   private final ArgumentAcceptingOptionSpec<Integer> maxSurvivingSpec;
   private final OptionSpec<String>                   mutationEngine;
   private final ArgumentAcceptingOptionSpec<Boolean> exportLineCoverageSpec;
@@ -378,14 +381,14 @@ public class OptionsParser {
         .describedAs("File to write history to for incremental analysis");
 
     this.mutationThreshHoldSpec = parserAccepts(MUTATION_THRESHOLD)
-        .withRequiredArg().ofType(Integer.class)
+        .withRequiredArg().ofType(String.class)
         .describedAs("Mutation score below which to throw an error")
-        .defaultsTo(MUTATION_THRESHOLD.getDefault(Integer.class));
+        .defaultsTo("0");
 
     this.testStrengthThreshHoldSpec = parserAccepts(TEST_STRENGTH_THRESHOLD)
-            .withRequiredArg().ofType(Integer.class)
+            .withRequiredArg().ofType(String.class)
             .describedAs("Test strength score below which to throw an error")
-            .defaultsTo(TEST_STRENGTH_THRESHOLD.getDefault(Integer.class));
+            .defaultsTo("0");
 
     this.maxSurvivingSpec = parserAccepts(MAX_SURVIVING)
         .withRequiredArg().ofType(Integer.class)
@@ -393,9 +396,14 @@ public class OptionsParser {
         .defaultsTo(MAX_SURVIVING.getDefault(Integer.class));
 
     this.coverageThreshHoldSpec = parserAccepts(COVERAGE_THRESHOLD)
-        .withRequiredArg().ofType(Integer.class)
+        .withRequiredArg().ofType(String.class)
         .describedAs("Line coverage below which to throw an error")
-        .defaultsTo(COVERAGE_THRESHOLD.getDefault(Integer.class));
+        .defaultsTo("0");
+
+    this.thresholdPrecisionSpec = parserAccepts(THRESHOLD_PRECISION)
+        .withRequiredArg().ofType(Integer.class)
+        .describedAs("Number of decimal places for threshold comparisons")
+        .defaultsTo(THRESHOLD_PRECISION.getDefault(Integer.class));
 
     this.mutationEngine = parserAccepts(MUTATION_ENGINE).withRequiredArg()
         .ofType(String.class).describedAs("mutation engine to use")
@@ -496,10 +504,11 @@ public class OptionsParser {
     data.setMutationUnitSize(this.mutationUnitSizeSpec.value(userArgs));
     data.setHistoryInputLocation(this.historyInputSpec.value(userArgs));
     data.setHistoryOutputLocation(this.historyOutputSpec.value(userArgs));
-    data.setMutationThreshold(this.mutationThreshHoldSpec.value(userArgs));
-    data.setTestStrengthThreshold(this.testStrengthThreshHoldSpec.value(userArgs));
+    data.setMutationThreshold(new BigDecimal(this.mutationThreshHoldSpec.value(userArgs)));
+    data.setTestStrengthThreshold(new BigDecimal(this.testStrengthThreshHoldSpec.value(userArgs)));
     data.setMaximumAllowedSurvivors(this.maxSurvivingSpec.value(userArgs));
-    data.setCoverageThreshold(this.coverageThreshHoldSpec.value(userArgs));
+    data.setCoverageThreshold(new BigDecimal(this.coverageThreshHoldSpec.value(userArgs)));
+    data.setThresholdPrecision(this.thresholdPrecisionSpec.value(userArgs));
     data.setMutationEngine(this.mutationEngine.value(userArgs));
     data.setFreeFormProperties(listToProperties(this.pluginPropertiesSpec.values(userArgs)));
     data.setExportLineCoverage(booleanValue(exportLineCoverageSpec, userArgs));

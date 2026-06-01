@@ -16,6 +16,7 @@ import org.pitest.mutationtest.config.UndatedReportDirCreationStrategy;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,19 +44,22 @@ abstract class AbstractPitAggregationReportMojo extends PitReportMojo {
    * Mutation score threshold at which to fail build
    */
   @Parameter(defaultValue = "0", property = "aggregatedMutationThreshold")
-  private int aggregatedMutationThreshold;
+  private String aggregatedMutationThreshold = "0";
 
   /**
    * Test strength score threshold at which to fail build
    */
   @Parameter(defaultValue = "0", property = "aggregatedTestStrengthThreshold")
-  private int aggregatedTestStrengthThreshold;
+  private String aggregatedTestStrengthThreshold = "0";
 
   /**
    * Maximum surviving mutants to allow
    */
   @Parameter(defaultValue = "-1", property = "aggregatedMaxSurviving")
   private int aggregatedMaxSurviving = -1;
+
+  @Parameter(defaultValue = "0", property = "aggregatedThresholdPrecision")
+  private int aggregatedThresholdPrecision;
 
   private final ReportSourceLocator reportSourceLocator = new ReportSourceLocator();
 
@@ -92,6 +96,7 @@ abstract class AbstractPitAggregationReportMojo extends PitReportMojo {
           .resultOutputStrategy(new DirectoryResultOutputStrategy(
               getReportsDirectory().getAbsolutePath(),
               new UndatedReportDirCreationStrategy()))
+          .thresholdPrecision(this.aggregatedThresholdPrecision)
           .build();
 
       AggregationResult result = reportAggregator.aggregateReport();
@@ -176,23 +181,25 @@ abstract class AbstractPitAggregationReportMojo extends PitReportMojo {
         sourceRoots);
   }
 
-  private void throwErrorIfScoreBelowThreshold(final int mutationCoverage)
+  private void throwErrorIfScoreBelowThreshold(final BigDecimal mutationCoverage)
       throws MojoFailureException {
-    if ((this.aggregatedMutationThreshold != 0)
-        && (mutationCoverage < this.aggregatedMutationThreshold)) {
+    BigDecimal threshold = new BigDecimal(this.aggregatedMutationThreshold);
+    if (threshold.compareTo(BigDecimal.ZERO) != 0
+        && mutationCoverage.compareTo(threshold) < 0) {
       throw new MojoFailureException("Mutation score of "
           + mutationCoverage + " is below threshold of "
-          + this.aggregatedMutationThreshold);
+          + threshold);
     }
   }
 
-  private void throwErrorIfTestStrengthBelowThreshold(final int testStrength)
+  private void throwErrorIfTestStrengthBelowThreshold(final BigDecimal testStrength)
       throws MojoFailureException {
-    if ((this.aggregatedTestStrengthThreshold != 0)
-        && (testStrength < this.aggregatedTestStrengthThreshold)) {
+    BigDecimal threshold = new BigDecimal(this.aggregatedTestStrengthThreshold);
+    if (threshold.compareTo(BigDecimal.ZERO) != 0
+        && testStrength.compareTo(threshold) < 0) {
       throw new MojoFailureException("Test strength score of "
           + testStrength + " is below threshold of "
-          + this.aggregatedTestStrengthThreshold);
+          + threshold);
     }
   }
 

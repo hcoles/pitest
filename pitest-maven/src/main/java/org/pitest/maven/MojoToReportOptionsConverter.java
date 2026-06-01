@@ -327,6 +327,8 @@ public class MojoToReportOptionsConverter {
 
     data.setSkipFailingTests(this.mojo.skipFailingTests());
 
+    data.setThresholdPrecision(this.mojo.getThresholdPrecision());
+
     data.setInputEncoding(this.mojo.getSourceEncoding());
     data.setOutputEncoding(this.mojo.getOutputEncoding());
 

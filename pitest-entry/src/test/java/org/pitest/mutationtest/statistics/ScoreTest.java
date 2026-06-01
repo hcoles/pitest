@@ -22,8 +22,10 @@ import org.pitest.util.StringUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.math.BigDecimal;
 import java.util.function.Predicate;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -126,6 +128,14 @@ public class ScoreTest {
   public void shouldCalculatePercentageDetectedWhenAllDetected() {
     registerResults(DetectionStatus.KILLED, 8);
     assertEquals(100, this.testee.toScore().getPercentageDetected());
+  }
+
+  @Test
+  public void shouldCalculatePrecisePercentageDetected() {
+    registerResults(DetectionStatus.SURVIVED, 2);
+    registerResults(DetectionStatus.KILLED, 1);
+    assertThat(this.testee.toScore().getPercentageDetected(2))
+        .isEqualByComparingTo(new BigDecimal("33.33"));
   }
 
   private void registerResults(final DetectionStatus status, final int times) {

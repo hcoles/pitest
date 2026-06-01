@@ -20,6 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -472,14 +473,14 @@ public class OptionsParserTest {
   public void shouldParseMutationThreshold() {
     final ReportOptions actual = parseAddingRequiredArgs("--mutationThreshold",
         "42");
-    assertThat(actual.getMutationThreshold()).isEqualTo(42);
+    assertThat(actual.getMutationThreshold()).isEqualByComparingTo(new BigDecimal("42"));
   }
 
   @Test
   public void shouldParseTestStrengthThreshold() {
     final ReportOptions actual = parseAddingRequiredArgs("--testStrengthThreshold",
             "50");
-    assertThat(actual.getTestStrengthThreshold()).isEqualTo(50);
+    assertThat(actual.getTestStrengthThreshold()).isEqualByComparingTo(new BigDecimal("50"));
   }
 
   @Test
@@ -493,7 +494,19 @@ public class OptionsParserTest {
   public void shouldParseCoverageThreshold() {
     final ReportOptions actual = parseAddingRequiredArgs("--coverageThreshold",
         "42");
-    assertThat(actual.getCoverageThreshold()).isEqualTo(42);
+    assertThat(actual.getCoverageThreshold()).isEqualByComparingTo(new BigDecimal("42"));
+  }
+
+  @Test
+  public void shouldParseDecimalCoverageThreshold() {
+    final ReportOptions actual = parseAddingRequiredArgs("--coverageThreshold", "61.47");
+    assertThat(actual.getCoverageThreshold()).isEqualByComparingTo(new BigDecimal("61.47"));
+  }
+
+  @Test
+  public void shouldParseThresholdPrecision() {
+    final ReportOptions actual = parseAddingRequiredArgs("--thresholdPrecision", "2");
+    assertThat(actual.getThresholdPrecision()).isEqualTo(2);
   }
 
   @Test

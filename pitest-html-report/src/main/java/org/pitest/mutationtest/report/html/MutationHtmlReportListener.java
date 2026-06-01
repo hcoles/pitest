@@ -64,6 +64,8 @@ public class MutationHtmlReportListener implements MutationResultListener {
 
   private final boolean arcmutateMissing;
 
+  private final int thresholdPrecision;
+
   public MutationHtmlReportListener(Charset outputCharset,
                                     ReportCoverage coverage,
                                     ResultOutputStrategy outputStrategy,
@@ -71,6 +73,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
                                     boolean reportCoverage,
                                     List<BuildMessage> messages,
                                     boolean arcmutateMissing,
+                                    int thresholdPrecision,
                                     SourceLocator... locators) {
     this.outputCharset = outputCharset;
     this.coverage = coverage;
@@ -81,6 +84,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
     this.reportCoverage = reportCoverage;
     this.messages = messages;
     this.arcmutateMissing = arcmutateMissing;
+    this.thresholdPrecision = thresholdPrecision;
   }
 
   private String loadCss() {
@@ -138,8 +142,10 @@ public class MutationHtmlReportListener implements MutationResultListener {
 
     final List<ClassLines> lines = asList(this.coverage.getCodeLinesForClass(data.getMutatedClass()));
 
-    return new MutationTestSummaryData(data.getFileName(), data.getMutations(),
+    MutationTestSummaryData summaryData = new MutationTestSummaryData(data.getFileName(), data.getMutations(),
         this.mutatorNames, lines, coverage.getCoveredLines(data.getMutatedClass()).size());
+    summaryData.setThresholdPrecision(this.thresholdPrecision);
+    return summaryData;
   }
 
   private SourceFile createAnnotatedSourceFile(
@@ -218,6 +224,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
 
     final Writer writer = this.outputStrategy.createWriterForFile("index.html");
     final MutationTotals totals = new MutationTotals();
+    totals.setThresholdPrecision(this.thresholdPrecision);
 
     final List<PackageSummaryData> psd = new ArrayList<>(
         this.packageSummaryData.values());
