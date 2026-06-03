@@ -141,7 +141,7 @@ public abstract class ReportTestBase {
 
   private CoverageOptions createCoverageOptions(TestPluginArguments configuration) {
     return new CoverageOptions(this.data.getTargetClasses(),this.data.getExcludedClasses(),
-        configuration, this.data.getVerbosity());
+        configuration, this.data.getVerbosity(), data.getFeatures());
   }
 
   protected void setMutators(final String... mutator) {

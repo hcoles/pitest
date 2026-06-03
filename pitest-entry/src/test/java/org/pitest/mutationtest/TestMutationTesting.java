@@ -290,7 +290,7 @@ public class TestMutationTesting {
         coverageOptions.getPitConfig(), mutationConfig, arguments,
         new PercentAndConstantTimeoutStrategy(data.getTimeoutFactor(),
             data.getTimeoutConstant()), data.getVerbosity(), false, data.getClassPath()
-            .getLocalClassPath());
+            .getLocalClassPath(), data.getFeatures());
 
 
 
@@ -306,7 +306,7 @@ public class TestMutationTesting {
 
   private CoverageOptions createCoverageOptions(ReportOptions data) {
     return new CoverageOptions(data.getTargetClasses(),data.getExcludedClasses(), this.config,
-        data.getVerbosity());
+        data.getVerbosity(), data.getFeatures());
   }
 
   protected void verifyResults(final DetectionStatus... detectionStatus) {
