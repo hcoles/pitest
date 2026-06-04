@@ -1,7 +1,9 @@
 package org.pitest.mutationtest.config;
 
 import org.pitest.classpath.CodeSource;
+import org.pitest.classpath.CodeSourceDecoratorFactory;
 import org.pitest.classpath.CodeSourceFactory;
+import org.pitest.classpath.CompoundSourceDecoratorFactory;
 import org.pitest.classpath.DefaultCodeSource;
 import org.pitest.classpath.ProjectClassPaths;
 import org.pitest.coverage.CompoundCoverageExporterFactory;
@@ -227,6 +229,12 @@ public class SettingsFactory {
         .findInterceptors();
     final FeatureParser parser = new FeatureParser();
     return new CompoundInterceptorFactory(parser.parseFeatures(this.options.getFeatures()), new ArrayList<>(interceptors));
+  }
+
+  public CompoundSourceDecoratorFactory getSourceDecorator() {
+    final Collection<? extends CodeSourceDecoratorFactory> factories = this.plugins.findDecorators();
+    final FeatureParser parser = new FeatureParser();
+    return new CompoundSourceDecoratorFactory(parser.parseFeatures(this.options.getFeatures()), new ArrayList<>(factories));
   }
 
   public CompoundProjectMutationFilterFactory getProjectFilter() {

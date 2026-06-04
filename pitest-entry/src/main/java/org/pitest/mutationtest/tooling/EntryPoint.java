@@ -114,7 +114,8 @@ public class EntryPoint {
 
     final ProjectClassPaths cps = data.getMutationClassPaths();
 
-    final CodeSource code = settings.createCodeSource(cps);
+    final CodeSource code = settings.getSourceDecorator().createDecorator(data)
+            .decorate(settings.createCodeSource(cps));
 
     TestStatListener stats = settings.createTestStatListener();
     final Timings timings = new Timings(stats);

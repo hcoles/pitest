@@ -1,5 +1,6 @@
 package org.pitest.mutationtest.config;
 
+import org.pitest.classpath.CodeSourceDecoratorFactory;
 import org.pitest.classpath.CodeSourceFactory;
 import org.pitest.coverage.CoverageExporterFactory;
 import org.pitest.coverage.TestStatListenerFactory;
@@ -121,6 +122,10 @@ public class PluginServices {
 
   public Collection<MutationInterceptorFactory> findInterceptors() {
     return load(MutationInterceptorFactory.class);
+  }
+
+  public Collection<CodeSourceDecoratorFactory> findDecorators() {
+    return load(CodeSourceDecoratorFactory.class);
   }
 
   public List<BuildVerifierFactory> findVerifiers() {
