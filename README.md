@@ -8,6 +8,10 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.25.4
+
+* #1468 Support for configurable decimal precision (thanks @see-quick)
+
 ## 1.25.3
 
 * #1476 Introduce post pre-scan type
