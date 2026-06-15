@@ -259,6 +259,7 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
     }
   }
 
+
   @Test(timeout = ONE_MINUTE)
   public void shouldTerminateWhenThreadpoolCreated() {
     this.data.setTargetClasses(asGlobs(KeepAliveThread.class));
@@ -275,6 +276,17 @@ public class MutationCoverageReportSystemTest extends ReportTestBase {
             .setTargetTests(predicateFor(com.example.KeepAliveNonDaemonTest.class));
     createAndRun();
     verifyResults(SURVIVED, SURVIVED, SURVIVED);
+  }
+
+  @Test
+  public void shouldNotChangeSUTThreadDaemonStatus() {
+    setMutators("INCREMENTS");
+    this.data.setTargetClasses(asGlobs(HasMutationsInFinallyBlock.class));
+    this.data.setTargetTests(predicateFor(HasMutationInFinallyBlockTest.class));
+    this.data.setDetectInlinedCode(true);
+    createAndRun();
+
+    verifyResults(KILLED);
   }
 
   @Test(timeout = ONE_MINUTE)

@@ -14,76 +14,61 @@
  */
 package org.pitest.mutationtest.execute;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import org.pitest.extension.common.TestUnitDecorator;
 import org.pitest.functional.SideEffect;
 import org.pitest.mutationtest.TimeoutLengthStrategy;
 import org.pitest.testapi.ResultCollector;
 import org.pitest.testapi.TestUnit;
-import org.pitest.util.Unchecked;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 public final class MutationTimeoutDecorator extends TestUnitDecorator {
 
-  private final TimeoutLengthStrategy timeOutStrategy;
-  private final SideEffect            timeOutSideEffect;
-  private final long                  executionTime;
+    private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
 
-  public MutationTimeoutDecorator(final TestUnit child,
-      final SideEffect timeOutSideEffect,
-      final TimeoutLengthStrategy timeStrategy, final long executionTime) {
-    super(child);
-    this.timeOutSideEffect = timeOutSideEffect;
-    this.executionTime = executionTime;
-    this.timeOutStrategy = timeStrategy;
-  }
+    private final TimeoutLengthStrategy timeOutStrategy;
+    private final SideEffect timeOutSideEffect;
+    private final long executionTime;
 
-  @Override
-  public void execute(final ResultCollector rc) {
-
-    final long maxTime = this.timeOutStrategy
-        .getAllowedTime(this.executionTime);
-
-    final FutureTask<?> future = createFutureForChildTestUnit(rc);
-    executeFutureWithTimeOut(maxTime, future, rc);
-    if (!future.isDone()) {
-      this.timeOutSideEffect.apply();
+    public MutationTimeoutDecorator(final TestUnit child,
+                                    final SideEffect timeOutSideEffect,
+                                    final TimeoutLengthStrategy timeStrategy, final long executionTime) {
+        super(child);
+        this.timeOutSideEffect = timeOutSideEffect;
+        this.executionTime = executionTime;
+        this.timeOutStrategy = timeStrategy;
     }
 
-  }
+    @Override
+    public void execute(final ResultCollector rc) {
 
-  private void executeFutureWithTimeOut(final long maxTime,
-      final FutureTask<?> future, final ResultCollector rc) {
-    try {
-      future.get(maxTime, TimeUnit.MILLISECONDS);
-    } catch (final TimeoutException | InterruptedException ex) {
-      // swallow
-    } catch (final ExecutionException e) {
-      throw Unchecked.translateCheckedException(e);
+        final long maxTime = this.timeOutStrategy
+                .getAllowedTime(this.executionTime);
+        Future<?> timeout = createFuture(maxTime, this.timeOutSideEffect);
+        try {
+            child().execute(rc);
+        } catch (final Throwable ex) {
+            rc.notifyEnd(child().getDescription(), ex);
+        } finally {
+            timeout.cancel(true);
+        }
     }
-  }
 
-  private FutureTask<?> createFutureForChildTestUnit(final ResultCollector rc) {
-    final FutureTask<?> future = new FutureTask<>(createRunnable(rc), null);
-    final Thread thread = new Thread(future);
-    thread.setDaemon(true);
-    thread.setName("mutationTestThread");
-    thread.start();
-    return future;
-  }
+    public Future<?> createFuture(long limit, SideEffect sideEffect) {
+        FutureTask<Void> futureTask = new FutureTask<>(() -> {
+            try {
+                Thread.sleep(limit);
+                sideEffect.apply();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            return null;
+        });
 
-  private Runnable createRunnable(final ResultCollector rc) {
-    return () -> {
-      try {
-        child().execute(rc);
-      } catch (final Throwable ex) {
-        rc.notifyEnd(child().getDescription(), ex);
-      }
-
-    };
-  }
-
+        return EXECUTOR.submit(futureTask);
+    }
 }
+
