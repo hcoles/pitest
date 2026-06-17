@@ -8,6 +8,10 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.25.5
+
+* #1479 Single threaded mutant timeout detection (fixes #1478)
+
 ## 1.25.4
 
 * #1468 Support for configurable decimal precision (thanks @see-quick)
