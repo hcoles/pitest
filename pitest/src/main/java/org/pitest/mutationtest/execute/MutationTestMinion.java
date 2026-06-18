@@ -20,6 +20,7 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.mutationtest.EngineArguments;
+import org.pitest.mutationtest.environment.ResetArguments;
 import org.pitest.mutationtest.environment.ResetEnvironment;
 import org.pitest.mutationtest.config.ClientPluginServices;
 import org.pitest.mutationtest.config.MinionSettings;
@@ -78,6 +79,8 @@ public class MutationTestMinion {
       final MinionArguments paramsFromParent = this.dis
           .read(MinionArguments.class);
 
+      enableTransformations(paramsFromParent.featureStrings);
+
       configureVerbosity(paramsFromParent);
 
       final ClassLoader loader = IsolationUtils.getContextClassLoader();
@@ -89,7 +92,7 @@ public class MutationTestMinion {
 
       final MutationEngine engine = createEngine(paramsFromParent.engine, paramsFromParent.engineArgs);
 
-      final ResetEnvironment reset = this.plugins.createReset();
+      final ResetEnvironment reset = this.plugins.createReset(paramsFromParent.featureStrings, new ResetArguments(byteSource));
 
       final MutationTestWorker worker = new MutationTestWorker(hotswap,
           engine.createMutator(byteSource), loader, reset, paramsFromParent.fullMutationMatrix);
@@ -133,9 +136,6 @@ public class MutationTestMinion {
   public static void main(final String[] args) {
     LOG.fine(() -> "minion started");
 
-    enableTransformations();
-    HotSwapAgent.addTransformer(new CatchNewClassLoadersTransformer());
-
     final int port = Integer.parseInt(args[0]);
 
     Socket s = null;
@@ -174,9 +174,9 @@ public class MutationTestMinion {
     return finder.findTestUnitsForAllSuppliedClasses(tcs);
   }
 
-  private static void enableTransformations() {
+  private static void enableTransformations(Collection<String> featureString) {
     ClientPluginServices plugins = ClientPluginServices.makeForContextLoader();
-    for (TransformationPlugin each : plugins.findTransformations()) {
+    for (TransformationPlugin each : plugins.findTransformations(featureString)) {
       ClassFileTransformer transformer = each.makeMutationTransformer();
       if (transformer != null) {
         HotSwapAgent.addTransformer(transformer);

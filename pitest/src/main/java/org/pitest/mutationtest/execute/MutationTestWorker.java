@@ -98,7 +98,7 @@ public class MutationTestWorker {
     final MutationIdentifier mutationId = mutationDetails.getId();
     final Mutant mutatedClass = this.mutater.getMutation(mutationId);
 
-    reset.resetFor(mutatedClass);
+    reset.resetFor(mutatedClass, this.loader);
 
     if (DEBUG) {
       LOG.fine("mutating method " + mutatedClass.getDetails().getMethod());
@@ -110,6 +110,8 @@ public class MutationTestWorker {
 
     final MutationStatusTestPair mutationDetected = handleMutation(
         mutationDetails, mutatedClass, relevantTests);
+
+    reset.finishFor(mutatedClass, this.loader);
 
     r.report(mutationId, mutationDetected);
     if (DEBUG) {
