@@ -1,3 +1,4 @@
 org.pitest.mutationtest.autoconfig.KeepMacOsFocus
 org.pitest.mutationtest.autoconfig.AutoSetThreads
 org.pitest.mutationtest.autoconfig.EnableAssertions
+org.pitest.mutationtest.autoconfig.DisableQuarkusJacocoExtension
