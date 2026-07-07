@@ -8,6 +8,11 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.25.6
+
+* #1481 Auto disable quarkus jacoco extension 
+* #1482 ASM 9.10.1
+
 ## 1.25.5
 
 * #1479 Single threaded mutant timeout detection (fixes #1478)
