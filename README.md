@@ -8,6 +8,10 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.25.7
+
+* #1484 Disable jacoco transformations at bytecode level
+
 ## 1.25.6
 
 * #1481 Auto disable quarkus jacoco extension 
