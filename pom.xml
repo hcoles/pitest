@@ -105,7 +105,7 @@
 		<profile>
 			<id>verification-modern</id>
 			<activation>
-				<jdk>[17,18,19,21]</jdk>
+				<jdk>[17,)</jdk>
 				<property>
 					<name>!skipTests</name>
 				</property>

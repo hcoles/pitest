@@ -3,6 +3,7 @@ package org.pitest.mutationtest.engine.gregor.mutators.experimental;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.pitest.bytecode.ASMVersion;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -70,7 +71,7 @@ public enum BigDecimalMutator implements MethodMutatorFactory {
 
     private BigDecimalMathMutator(MethodMutatorFactory factory, MutationContext context,
                                   MethodVisitor visitor) {
-      super(Opcodes.ASM6, visitor);
+      super(ASMVersion.ASM_VERSION, visitor);
 
       this.factory = factory;
       this.context = context;

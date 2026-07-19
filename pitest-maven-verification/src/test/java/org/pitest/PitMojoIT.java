@@ -393,6 +393,8 @@ public class PitMojoIT {
   // note this test depends on the junit5 plugin
   public void shouldWorkWithQuarkus() throws Exception {
     assumeTrue(CurrentRuntime.version() >= 17);
+    // Byte Buddy (used by Mockito, bundled with Quarkus) does not yet support Java 25
+    skipIfJavaVersionNotSupportedByThirdParty(25);
 
     File testDir = prepare("/pit-quarkus");
     verifier.executeGoal("test");
@@ -419,6 +421,8 @@ public class PitMojoIT {
   @Test
   public void shouldWorkWithOlderQuarkusVersions() throws Exception {
     assumeTrue(CurrentRuntime.version() >= 17);
+    // Byte Buddy (used by Mockito, bundled with Quarkus) does not yet support Java 25
+    skipIfJavaVersionNotSupportedByThirdParty(25);
 
     File testDir = prepare("/pit-quarkus", "-Dquarkus.platform.version=3.21.4");
     verifier.executeGoal("test");
@@ -484,6 +488,8 @@ public class PitMojoIT {
   public void resolvesCorrectFilesForKotlinMultiModules() throws Exception {
     // if the same filename is used for files outside of their declared package
     // ensure the correct source file is use for annotation
+    // Kotlin Maven plugin 1.7.20 cannot parse Java 25+ version strings
+    skipIfJavaVersionNotSupportedByThirdParty(25);
     File testDir = prepare("/pit-kotlin-multi-module");
 
     verifier.executeGoals(asList("test-compile", "org.pitest:pitest-maven:mutationCoverage", "org.pitest:pitest-maven:report-aggregate-module"));
@@ -537,6 +543,10 @@ public class PitMojoIT {
   private void skipIfJavaVersionNotSupportByThirdParty() {
     String javaVersion = System.getProperty("java.version");
     assumeFalse(javaVersion.startsWith("9") || javaVersion.startsWith("10") || javaVersion.startsWith("11"));
+  }
+
+  private void skipIfJavaVersionNotSupportedByThirdParty(int minimumUnsupportedVersion) {
+    assumeTrue(CurrentRuntime.version() < minimumUnsupportedVersion);
   }
 
 

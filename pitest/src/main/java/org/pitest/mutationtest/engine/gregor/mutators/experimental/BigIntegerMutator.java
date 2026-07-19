@@ -6,6 +6,7 @@ import java.util.Map;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.pitest.bytecode.ASMVersion;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
@@ -84,7 +85,7 @@ public enum BigIntegerMutator implements MethodMutatorFactory {
 
     private BigIntegerMathMutator(MethodMutatorFactory factory, MutationContext context,
         MethodVisitor visitor) {
-      super(Opcodes.ASM6, visitor);
+      super(ASMVersion.ASM_VERSION, visitor);
 
       this.factory = factory;
       this.context = context;

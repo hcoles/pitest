@@ -24,6 +24,8 @@ jobs:
             java: "18"
           - title: "JDK 21"
             java: "21"
+          - title: "JDK 25"
+            java: "25"
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout from Git'
