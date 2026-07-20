@@ -8,6 +8,10 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.25.8
+
+* #1485 Fix BigDecicmal and BigInteger mutators for java 25 (thanks @TrueJacobG)
+
 ## 1.25.7
 
 * #1484 Disable jacoco transformations at bytecode level
