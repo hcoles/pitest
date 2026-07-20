@@ -10,7 +10,7 @@ Read all about it at https://pitest.org
 
 ## 1.25.8
 
-* #1485 Fix BigDecicmal and BigInteger mutators for java 25 (thanks @TrueJacobG)
+* #1485 Fix BigDecimal and BigInteger mutators for java 25 (thanks @TrueJacobG)
 
 ## 1.25.7
 
