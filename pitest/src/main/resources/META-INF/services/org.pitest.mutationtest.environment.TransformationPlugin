@@ -1,2 +1,3 @@
 org.pitest.mutationtest.mocksupport.JavassistTransformation
 org.pitest.mutationtest.jacoco.DisableJacocoTransformation
+org.pitest.mutationtest.environment.NormaliseRecordsPlugin
