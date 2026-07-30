@@ -31,7 +31,7 @@ public class RecordFilterTest {
     }
 
     @Test
-    public void findsMutantsInNormalClass() {
+    public void filtersNoMutantsFromNormalClass() {
         this.verifier.assertFiltersNoMutationsMatching(m -> true, NotARecord.class);
     }
 
@@ -62,6 +62,11 @@ public class RecordFilterTest {
     public void mutatesCustomToStringMethods() {
         this.verifier.assertFiltersNoMutationsMatching(inMethodCalled("toString"),
                 "RecordWithCustomToString");
+    }
+
+    @Test
+    public void mutatesCompactConstructor() {
+        this.verifier.assertFiltersNoMutationsMatching(inMethodCalled("<init>"), "RecordWithCompactConstructor");
     }
 
     private Predicate<MutationDetails> removesSysOutCall() {
