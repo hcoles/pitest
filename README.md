@@ -8,6 +8,12 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.25.9
+
+* #1486 normalise record attribute order on first load
+* #1488 rework record interceptor to filter based on a marker line number
+* #1490 filter mutants in enum switch default block
+
 ## 1.25.8
 
 * #1485 Fix BigDecimal and BigInteger mutators for java 25 (thanks @TrueJacobG)
