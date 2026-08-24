@@ -85,6 +85,61 @@ public class FeatureParserTest {
 
 
   @Test
+  public void shouldParseCommaSeparatedConfigValues() {
+    final FeatureSetting actual = parse("+BAR(name[hello],size[42])");
+    assertThat(actual.getString("name")).contains("hello");
+    assertThat(actual.getString("size")).contains("42");
+  }
+
+  @Test
+  public void shouldParseCommaAndSpaceSeparatedConfigValues() {
+    final FeatureSetting actual = parse("+BAR(name[hello], size[42])");
+    assertThat(actual.getString("name")).contains("hello");
+    assertThat(actual.getString("size")).contains("42");
+  }
+
+  @Test
+  public void shouldParseConfigValuesSeparatedByWhitespaceEitherSideOfComma() {
+    final FeatureSetting actual = parse("+BAR(name[hello] , size[42])");
+    assertThat(actual.getString("name")).contains("hello");
+    assertThat(actual.getString("size")).contains("42");
+  }
+
+  @Test
+  public void shouldParseMoreThanTwoCommaSeparatedConfigValues() {
+    final FeatureSetting actual = parse("+BAR(name[hello], size[42], on[true])");
+    assertThat(actual.getString("name")).contains("hello");
+    assertThat(actual.getInteger("size")).contains(42);
+    assertThat(actual.getBoolean("on")).contains(true);
+  }
+
+  @Test
+  public void shouldParseCommaSeparatedListValues() {
+    final FeatureSetting actual = parse("+BAR(things[1], things[2], things[3], things[4], size[42])");
+    assertThat(actual.getList("things")).contains("1","2","3","4");
+    assertThat(actual.getString("size")).contains("42");
+  }
+
+  @Test
+  public void shouldRetainCommasWithinValues() {
+    final FeatureSetting actual = parse("+BAR(name[hello,world], size[42])");
+    assertThat(actual.getString("name")).contains("hello,world");
+    assertThat(actual.getString("size")).contains("42");
+  }
+
+  @Test
+  public void shouldIgnoreTrailingWhitespaceAfterFinalConfigValue() {
+    final FeatureSetting actual = parse("+BAR(name[hello] )");
+    assertThat(actual.getString("name")).contains("hello");
+  }
+
+  @Test
+  public void shouldIgnoreTrailingCommaAfterFinalConfigValue() {
+    final FeatureSetting actual = parse("+BAR(name[hello], )");
+    assertThat(actual.getString("name")).contains("hello");
+  }
+
+  @Test
   public void shouldParseListValues() {
     final FeatureSetting actual = parse("+BAR(things[1] things[2] things[3] things[4] size[42])");
     assertThat(actual.getList("things")).contains("1","2","3","4");

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.pitest.functional.Streams.asStream;
@@ -15,8 +16,12 @@ import static org.pitest.functional.Streams.asStream;
  *
  * Syntax is designed to require no escaping when embedding in XML
  * document such as a maven pom.
+ *
+ * Parameters may be separated by whitespace, by commas, or by both.
  */
 public class FeatureParser {
+
+  private static final Pattern SEPARATORS = Pattern.compile("^[\\s,]+|[\\s,]+$");
 
   public List<FeatureSetting> parseFeatures(Collection<String> config) {
     return asStream(config)
@@ -40,7 +45,10 @@ public class FeatureParser {
     if ((confStart != -1) && (confStart < end)) {
       final String[] parts = split(a.substring(confStart, end));
       for (final String part : parts) {
-        extractValue(part, vals);
+        // separators trailing the last value leave nothing to parse
+        if (!stripSeparators(part).isEmpty()) {
+          extractValue(part, vals);
+        }
       }
     }
     return vals;
@@ -49,7 +57,7 @@ public class FeatureParser {
   private void extractValue(String part, Map<String, List<String>> vals) {
     final String[] pairs = part.split("\\[");
     for (int i = 0; i != pairs.length; i = i + 2) {
-      final String key = pairs[i].trim();
+      final String key = stripSeparators(pairs[i]);
       List<String> current = vals.get(key);
       if (current == null) {
         current = new ArrayList<>();
@@ -61,6 +69,15 @@ public class FeatureParser {
       }
      vals.put(key, current);
     }
+  }
+
+  /**
+   * Removes the whitespace and commas that separate a parameter from the
+   * one before it. Only whitespace is stripped from values, so commas within
+   * a value are preserved.
+   */
+  private String stripSeparators(String s) {
+    return SEPARATORS.matcher(s).replaceAll("");
   }
 
   private String[] split(String body) {
