@@ -36,8 +36,9 @@ public abstract class RegionInterceptor implements MutationInterceptor {
     @Override
     public Collection<MutationDetails> intercept(
             Collection<MutationDetails> mutations, Mutater m) {
+        var predicate = buildPredicate().negate();
         return mutations.stream()
-                .filter(buildPredicate().negate())
+                .filter(predicate)
                 .collect(Collectors.toList());
     }
 
