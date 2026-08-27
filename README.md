@@ -8,6 +8,15 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.30.0
+
+* #1492 Bump jackson version
+* #1493 Sheck directories populated when checking for empty projects
+* #1494 Accept comma separated feature parameters (thanks @lino)
+* #1496 Check non jvm lang dirs
+
+Note, version bump from 1.25.x series made due to mislabelling of release as 1.29.10. 
+
 ## 1.25.9
 
 * #1486 normalise record attribute order on first load
