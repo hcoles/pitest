@@ -67,7 +67,7 @@ select release_type in "point" "minor"; do
     case "$release_type" in
         point)
             NEW_BRANCH="release/$MAJOR.$MINOR.$((PATCH + 1))"
-            source_branch="$LATEST"
+            source_branch="master"
             echo ""
             echo "Creating point release: $NEW_BRANCH (from $source_branch)"
             break
