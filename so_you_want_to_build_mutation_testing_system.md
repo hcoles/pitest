@@ -175,5 +175,3 @@ Schemata have some nice properties
 3. A single linked binary can contain all mutants
 
 But will result in large classes - you may hit language limits.
-
-
