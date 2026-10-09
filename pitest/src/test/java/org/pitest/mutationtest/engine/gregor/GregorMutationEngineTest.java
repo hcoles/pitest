@@ -42,4 +42,12 @@ public class GregorMutationEngineTest {
 
   }
 
+  @Test
+  public void exposesMutationOperatorsForThirdPartyIntegrations() {
+    DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
+            i -> true, Mutator.all());
+    this.testee = new GregorMutationEngine(config);
+    assertThat(this.testee.getMutationOperators()).isNotEmpty();
+  }
+
 }

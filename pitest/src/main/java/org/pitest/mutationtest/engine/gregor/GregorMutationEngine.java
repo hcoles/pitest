@@ -64,4 +64,8 @@ public class GregorMutationEngine implements MutationEngine {
     return "gregor";
   }
 
+  public Set<MethodMutatorFactory> getMutationOperators() {
+    return this.mutationOperators;
+  }
+
 }
