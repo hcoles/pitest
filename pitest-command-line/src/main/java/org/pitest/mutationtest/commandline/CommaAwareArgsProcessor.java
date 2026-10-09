@@ -31,36 +31,45 @@ public class CommaAwareArgsProcessor {
             return Collections.emptyList();
         }
 
-        Set<Integer> modifiedIndices = new HashSet<>();
-        String preprocessedOptions = replaceCommas(commandLineOption, modifiedIndices);
+        Set<Integer> commaIndices = new HashSet<>();
+        Set<Integer> markerIndices = new HashSet<>();
+        String preprocessedOptions = replaceCommas(commandLineOption, commaIndices, markerIndices);
 
         String[] arguments = preprocessedOptions.split(",");
-        return postProcess(modifiedIndices, arguments);
+        return postProcess(commaIndices, markerIndices, arguments);
     }
 
     /**
      * Put commas back and delete region marker.
      */
-    private List<String> postProcess(Set<Integer> modifiedIndices, String[] arguments) {
+    private List<String> postProcess(
+            Set<Integer> commaIndices,
+            Set<Integer> markerIndices,
+            String[] arguments) {
         List<String> newArguments = new ArrayList<>();
-        int base = 0;
+        int currentArgumentLocation = 0;
         for (String argument : arguments) {
-            newArguments.add(buildNewArgument(modifiedIndices, base, argument).toString());
-            base += argument.length() + 1;
+            newArguments.add(buildNewArgument(commaIndices, markerIndices, currentArgumentLocation, argument).toString());
+            currentArgumentLocation += argument.length() + 1;
         }
         return newArguments;
     }
 
-    private StringBuilder buildNewArgument(Set<Integer> modifiedIndices, int base, String argument) {
+    private StringBuilder buildNewArgument(
+            Set<Integer> commaIndices,
+            Set<Integer> markerIndices,
+            int base,
+            String argument) {
         StringBuilder newArgument = new StringBuilder();
         for (int j = 0; j < argument.length(); j++) {
             char current = argument.charAt(j);
+            int originalIndex = j + base;
 
-            // Only remove region markers, if commas have been replaced. Otherwise treat them as part of the argument.
-            if (!modifiedIndices.isEmpty() && (current == REGION_BEGIN || current == REGION_END)) {
+            if (markerIndices.contains(originalIndex)) {
                 continue;
             }
-            if (current == '@' && modifiedIndices.contains(j + base)) {
+
+            if (current == '@' && commaIndices.contains(originalIndex)) {
                 newArgument.append(',');
             } else {
                 newArgument.append(current);
@@ -69,24 +78,41 @@ public class CommaAwareArgsProcessor {
         return newArgument;
     }
 
-    private String replaceCommas(String single, Set<Integer> modifiedIndices) {
+    private String replaceCommas(
+            String single,
+            Set<Integer> commaIndices,
+            Set<Integer> markerIndices) {
         StringBuilder newString = new StringBuilder();
         boolean inSpecialRegion = false;
+        boolean regionEscapedComma = false;
+        int regionStart = -1;
+
         for (int i = 0; i < single.length(); i++) {
             char current = single.charAt(i);
             char tobeAdded = current;
+
             if (current == REGION_BEGIN && !inSpecialRegion) {
                 inSpecialRegion = true;
+                regionEscapedComma = false;
+                regionStart = i;
             } else if (current == REGION_END && inSpecialRegion) {
+                if (regionEscapedComma) {
+                    markerIndices.add(regionStart);
+                    markerIndices.add(i);
+                }
                 inSpecialRegion = false;
+                regionEscapedComma = false;
+                regionStart = -1;
             } else if (inSpecialRegion && current == ',') {
                 tobeAdded = '@';
-                modifiedIndices.add(i);
+                commaIndices.add(i);
+                regionEscapedComma = true;
             }
+
             newString.append(tobeAdded);
         }
+
         return newString.toString();
     }
-
 
 }
