@@ -1,3 +1,0 @@
-org.pitest.mutationtest.report.csv.CSVReportFactory
-org.pitest.mutationtest.report.xml.XMLReportFactory
-org.pitest.mutationtest.report.progress.ProgressListenerFactory

@@ -1,2 +1,0 @@
-C:/foo
-/etc/bar

@@ -1,5 +1,0 @@
-<block classname="com.example.DividerTest" method="testDivide()V" number="1">
-	<tests>
-		<test name="com.example.DividerTest.testDivide(com.example.DividerTest)" />
-	</tests>
-</block>

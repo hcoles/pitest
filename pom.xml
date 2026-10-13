@@ -78,41 +78,9 @@
 	<modules>
 		<module>pitest-build-config</module>
 		<module>pitest</module>
-        <module>pitest-entry</module>
-        <module>pitest-maven</module>
-		<module>pitest-command-line</module>
-		<module>pitest-html-report</module>
-		<module>pitest-aggregator</module>
 	</modules>
 
 	<profiles>
-		<profile>
-			<!-- A bug in the nexus plugin (https://issues.sonatype.org/browse/NEXUS-19853)
-			     means we cannot properly skip the upload of the verification modules during a release.
-			     As a workaround they are therefore activated in this profile.
-			-->
-			<id>verification</id>
-			<activation>
-				<property>
-					<name>!skipTests</name>
-				</property>
-			</activation>
-			<modules>
-				<module>pitest-maven-verification</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>verification-modern</id>
-			<activation>
-				<jdk>[17,)</jdk>
-				<property>
-					<name>!skipTests</name>
-				</property>
-			</activation>
-			<modules>
-				<module>pitest-modern-verification</module>
-			</modules>
-		</profile>
 		<profile>
 			<id>release</id>
 			<activation>
