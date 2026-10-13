@@ -41,8 +41,14 @@ jobs:
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
       - name: Publish JAR
+        continue-on-error: true
         run: mvn -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE}} -B -Prelease deploy scm:tag -Drevision=${{ steps.extract_branch.outputs.branch }} -DskipTests=true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+      - name: 'Upload'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a #v7.0.1
+        with:
+          path: /home/runner/work/pitest/pitest/target/central-publishing/central-bundle.zip
+          archive: false
