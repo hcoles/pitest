@@ -28,8 +28,11 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+import org.pitest.bytecode.ASMVersion;
 import org.pitest.bytecode.FrameOptions;
 import org.pitest.bytecode.NullVisitor;
 import org.pitest.classinfo.ClassByteArraySource;
@@ -47,6 +50,12 @@ public class GregorMutater implements Mutater {
   private final Predicate<MethodInfo>     filter;
   private final ClassByteArraySource      byteSource;
   private final List<MethodMutatorFactory> mutators;
+
+  /**
+   * Nullness declared by package-info files. Cached because mutating a large
+   * package would otherwise re-read the same package-info for every class.
+   */
+  private final Map<String, Optional<Boolean>> packageNullness = new java.util.concurrent.ConcurrentHashMap<>();
 
   public GregorMutater(final ClassByteArraySource byteSource,
       final Predicate<MethodInfo> filter,
@@ -79,6 +88,7 @@ public class GregorMutater implements Mutater {
       final ClassContext context, final byte[] classToMutate) {
 
     final ClassReader first = new ClassReader(classToMutate);
+    registerPackageNullness(context, first.getClassName());
     final NullVisitor nv = new NullVisitor();
     final MutatingClassVisitor mca = new MutatingClassVisitor(nv, context,
         filterMethods(), this.mutators);
@@ -98,6 +108,7 @@ public class GregorMutater implements Mutater {
         .asJavaName());
 
     final ClassReader reader = new ClassReader(bytes.get());
+    registerPackageNullness(context, reader.getClassName());
     final ClassWriter w = new ComputeClassWriter(this.byteSource,
         this.computeCache, FrameOptions.pickFlags(bytes.get()));
     final MutatingClassVisitor mca = new MutatingClassVisitor(w, context,
@@ -110,6 +121,56 @@ public class GregorMutater implements Mutater {
 
     return new Mutant(details.get(0), w.toByteArray());
 
+  }
+
+  /**
+   * Reads {@code @NullMarked} / {@code @NullUnmarked} from the package-info of
+   * the class being mutated. Mutators use it to tell whether non-null is the
+   * default for the package, as JSpecify allows declaring nullness once per
+   * package instead of annotating every method.
+   */
+  private void registerPackageNullness(final ClassContext context,
+      final String className) {
+    final int lastSlash = className.lastIndexOf('/');
+    if (lastSlash < 0) {
+      return;
+    }
+    final String packageInfo = className.substring(0, lastSlash) + "/package-info";
+    final Optional<Boolean> nullMarked = this.packageNullness
+        .computeIfAbsent(packageInfo, this::readPackageNullness);
+    context.registerPackageNullMarked(nullMarked.orElse(null));
+  }
+
+  private Optional<Boolean> readPackageNullness(final String packageInfo) {
+    return this.byteSource.getBytes(packageInfo)
+        .map(GregorMutater::readNullness);
+  }
+
+  private static Boolean readNullness(final byte[] packageInfo) {
+    final NullnessVisitor visitor = new NullnessVisitor();
+    new ClassReader(packageInfo).accept(visitor, ClassReader.SKIP_CODE
+        | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+    return visitor.nullMarked;
+  }
+
+  private static final class NullnessVisitor extends ClassVisitor {
+
+    private Boolean nullMarked;
+
+    NullnessVisitor() {
+      super(ASMVersion.ASM_VERSION);
+    }
+
+    @Override
+    public AnnotationVisitor visitAnnotation(final String descriptor,
+        final boolean visible) {
+      if (descriptor.endsWith("NullMarked;")) {
+        this.nullMarked = Boolean.TRUE;
+      } else if (descriptor.endsWith("NullUnmarked;")) {
+        this.nullMarked = Boolean.FALSE;
+      }
+      return null;
+    }
   }
 
   private Predicate<MethodInfo> filterMethods() {
