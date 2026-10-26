@@ -36,22 +36,8 @@ class ClassContext implements BlockCounter {
 
   private final ConcreteBlockCounter  blockCounter = new ConcreteBlockCounter();
 
-  /**
-   * Nullness declared by {@code package-info}, applied to the class when it is
-   * registered. Null when the package declares nothing.
-   */
-  private Boolean                     packageNullMarked;
-
   public Optional<MutationIdentifier> getTargetMutation() {
     return this.target;
-  }
-
-  public void registerPackageNullMarked(final Boolean nullMarked) {
-    this.packageNullMarked = nullMarked;
-  }
-
-  public Boolean getPackageNullMarked() {
-    return this.packageNullMarked;
   }
 
   public ClassInfo getClassInfo() {

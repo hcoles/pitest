@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.engine.gregor.mutators.jspecify;
+package org.pitest.mutationtest.build.intercept.jspecify;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

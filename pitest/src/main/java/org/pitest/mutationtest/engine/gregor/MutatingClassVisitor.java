@@ -48,9 +48,8 @@ class MutatingClassVisitor extends ClassVisitor {
   public void visit(final int version, final int access, final String name,
       final String signature, final String superName, final String[] interfaces) {
     super.visit(version, access, name, signature, superName, interfaces);
-    final ClassInfo classInfo = new ClassInfo(access, name, superName);
-    classInfo.setNullMarked(this.context.getPackageNullMarked());
-    this.context.registerClass(classInfo);
+    this.context.registerClass(new ClassInfo(access, name,
+        superName));
   }
 
   @Override
@@ -61,7 +60,6 @@ class MutatingClassVisitor extends ClassVisitor {
 
   @Override
   public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-    recordNullness(descriptor);
     AnnotationInfo annotationInfo = new AnnotationInfo(descriptor, visible);
     for (final MethodMutatorFactory each : this.mutators) {
       if (each.skipAnnotation(this.nonMethodContext, annotationInfo)) {
@@ -76,18 +74,6 @@ class MutatingClassVisitor extends ClassVisitor {
       }
     }
     return next;
-  }
-
-  private void recordNullness(final String descriptor) {
-    final ClassInfo classInfo = this.context.getClassInfo();
-    if (classInfo == null) {
-      return;
-    }
-    if (descriptor.endsWith("NullMarked;")) {
-      classInfo.setNullMarked(Boolean.TRUE);
-    } else if (descriptor.endsWith("NullUnmarked;")) {
-      classInfo.setNullMarked(Boolean.FALSE);
-    }
   }
 
   @Override
