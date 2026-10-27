@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -32,11 +31,19 @@ import static org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnV
  */
 public class JSpecifyNullFilter implements MutationInterceptor {
 
+  private enum Nullness {
+    NULL_MARKED, NULL_UNMARKED, UNSPECIFIED;
+
+    Nullness orElse(Supplier<Nullness> fallback) {
+      return this == UNSPECIFIED ? fallback.get() : this;
+    }
+  }
+
   private final ClassByteArraySource code;
-  private final Map<String, Optional<Boolean>> packageNullness = new HashMap<>();
+  private final Map<String, Nullness> packageNullness = new HashMap<>();
 
   private ClassTree currentClass;
-  private Optional<Boolean> classNullMarked = Optional.empty();
+  private Nullness classNullness = Nullness.UNSPECIFIED;
 
   JSpecifyNullFilter(ClassByteArraySource code) {
     this.code = code;
@@ -50,8 +57,8 @@ public class JSpecifyNullFilter implements MutationInterceptor {
   @Override
   public void begin(ClassTree clazz) {
     this.currentClass = clazz;
-    this.classNullMarked = firstPresent(nullness(clazz.annotations()),
-        () -> packageNullness(clazz.name()));
+    this.classNullness = nullness(clazz.annotations())
+        .orElse(() -> packageNullness(clazz.name()));
   }
 
   @Override
@@ -65,7 +72,7 @@ public class JSpecifyNullFilter implements MutationInterceptor {
   @Override
   public void end() {
     this.currentClass = null;
-    this.classNullMarked = Optional.empty();
+    this.classNullness = Nullness.UNSPECIFIED;
   }
 
   private boolean isNullReturnInNonNullMethod(MutationDetails md) {
@@ -81,8 +88,8 @@ public class JSpecifyNullFilter implements MutationInterceptor {
     if (hasNullableReturn(method)) {
       return false;
     }
-    return firstPresent(nullness(method.annotations()), () -> this.classNullMarked)
-        .orElse(false);
+    return nullness(method.annotations())
+        .orElse(() -> this.classNullness) == Nullness.NULL_MARKED;
   }
 
   private static boolean hasNullableReturn(MethodTree method) {
@@ -106,34 +113,30 @@ public class JSpecifyNullFilter implements MutationInterceptor {
     return all;
   }
 
-  private Optional<Boolean> packageNullness(ClassName clazz) {
+  private Nullness packageNullness(ClassName clazz) {
     final String packageName = clazz.getPackage().asJavaName();
     return this.packageNullness.computeIfAbsent(packageName, this::readPackageNullness);
   }
 
-  private Optional<Boolean> readPackageNullness(String packageName) {
+  private Nullness readPackageNullness(String packageName) {
     final String packageInfo = packageName.isEmpty() ? "package-info"
         : packageName + ".package-info";
     return this.code.getBytes(packageInfo)
         .map(ClassTree::fromBytes)
-        .flatMap(t -> nullness(t.annotations()));
+        .map(t -> nullness(t.annotations()))
+        .orElse(Nullness.UNSPECIFIED);
   }
 
-  private static Optional<Boolean> firstPresent(Optional<Boolean> first,
-      Supplier<Optional<Boolean>> fallback) {
-    return first.isPresent() ? first : fallback.get();
-  }
-
-  private static Optional<Boolean> nullness(List<AnnotationNode> annotations) {
+  private static Nullness nullness(List<AnnotationNode> annotations) {
     for (final AnnotationNode each : annotations) {
       if (isNamed(each, "NullMarked")) {
-        return Optional.of(true);
+        return Nullness.NULL_MARKED;
       }
       if (isNamed(each, "NullUnmarked")) {
-        return Optional.of(false);
+        return Nullness.NULL_UNMARKED;
       }
     }
-    return Optional.empty();
+    return Nullness.UNSPECIFIED;
   }
 
   private static boolean isNamed(AnnotationNode a, String simpleName) {

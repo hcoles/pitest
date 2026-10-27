@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.build.intercept.jspecify;
+package com.example.jspecify;
 
 import org.jspecify.annotations.NullUnmarked;
 

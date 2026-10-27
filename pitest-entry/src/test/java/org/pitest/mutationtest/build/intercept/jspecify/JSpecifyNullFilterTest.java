@@ -2,8 +2,11 @@ package org.pitest.mutationtest.build.intercept.jspecify;
 
 import java.util.concurrent.Callable;
 
+import com.example.jspecify.NullMarkedPackageReturn;
+import com.example.jspecify.NullUnmarkedClassReturn;
 import org.junit.Test;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.NullUnmarked;
 import org.jspecify.annotations.Nullable;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.mutationtest.build.InterceptorType;
@@ -61,6 +64,18 @@ public class JSpecifyNullFilterTest {
   }
 
   @Test
+  public void filtersMutantsInMethodAnnotatedNullMarked() {
+    v.forClass(NullMarkedMethodReturn.class).forAnyCode()
+        .mutantsAreGenerated().allMutantsAreFiltered().verify();
+  }
+
+  @Test
+  public void doesNotFilterMethodAnnotatedNullUnmarkedInNullMarkedClass() {
+    v.forClass(NullUnmarkedMethodReturn.class).forAnyCode()
+        .mutantsAreGenerated().noMutantsAreFiltered().verify();
+  }
+
+  @Test
   public void doesNotFilterWhenNothingIsMarked() {
     v.forClass(java.util.concurrent.atomic.AtomicReference.class).forAnyCode()
         .noMutantsAreFiltered().verify();
@@ -68,6 +83,23 @@ public class JSpecifyNullFilterTest {
 
   @NullMarked
   private static class NullMarkedClassReturn implements Callable<Object> {
+    @Override
+    public Object call() {
+      return "";
+    }
+  }
+
+  private static class NullMarkedMethodReturn implements Callable<Object> {
+    @NullMarked
+    @Override
+    public Object call() {
+      return "";
+    }
+  }
+
+  @NullMarked
+  private static class NullUnmarkedMethodReturn implements Callable<Object> {
+    @NullUnmarked
     @Override
     public Object call() {
       return "";
