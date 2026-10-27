@@ -155,6 +155,12 @@
 			<version>1.3.0</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.jspecify</groupId>
+			<artifactId>jspecify</artifactId>
+			<version>1.0.0</version>
+			<scope>test</scope>
+		</dependency>
 	  
 		<!-- to verify compatibility -->
 		<dependency>

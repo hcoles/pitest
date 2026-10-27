@@ -3,6 +3,8 @@ package org.pitest.mutationtest.build.intercept.jspecify;
 import java.util.concurrent.Callable;
 
 import org.junit.Test;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
