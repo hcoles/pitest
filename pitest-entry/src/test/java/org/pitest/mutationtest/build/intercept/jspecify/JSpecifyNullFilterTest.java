@@ -1,13 +1,17 @@
 package org.pitest.mutationtest.build.intercept.jspecify;
 
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
+import com.example.jspecify.NullMarkedAndUnmarkedClassReturn;
 import com.example.jspecify.NullMarkedPackageReturn;
 import com.example.jspecify.NullUnmarkedClassReturn;
+import com.example.jspecify.UnannotatedOuterWithNestedReturn;
 import org.junit.Test;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.NullUnmarked;
 import org.jspecify.annotations.Nullable;
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.mutationtest.build.InterceptorType;
 import org.pitest.mutationtest.build.MutationInterceptorFactory;
@@ -76,6 +80,78 @@ public class JSpecifyNullFilterTest {
   }
 
   @Test
+  public void filtersMutantsInClassNestedInNullMarkedClass() {
+    v.forClass(NullMarkedOuter.Nested.class).forAnyCode()
+        .mutantsAreGenerated().allMutantsAreFiltered().verify();
+  }
+
+  @Test
+  public void filtersMutantsInClassDeeplyNestedInNullMarkedClass() {
+    v.forClass(NullMarkedOuter.Nested.DeeplyNested.class).forAnyCode()
+        .mutantsAreGenerated().allMutantsAreFiltered().verify();
+  }
+
+  @Test
+  public void doesNotFilterNullUnmarkedClassNestedInNullMarkedClass() {
+    v.forClass(NullMarkedOuter.UnmarkedNested.class).forAnyCode()
+        .mutantsAreGenerated().noMutantsAreFiltered().verify();
+  }
+
+  @Test
+  public void treatsClassWithBothAnnotationsAsUnannotated() {
+    v.forClass(NullMarkedAndUnmarkedClassReturn.class).forAnyCode()
+        .mutantsAreGenerated().allMutantsAreFiltered().verify();
+  }
+
+  @Test
+  public void treatsClassWithBothAnnotationsAsUnannotatedOutsideMarkedPackage() {
+    v.forClass(BothAnnotationsClassReturn.class).forAnyCode()
+        .mutantsAreGenerated().noMutantsAreFiltered().verify();
+  }
+
+  @Test
+  public void treatsMethodWithBothAnnotationsAsUnannotated() {
+    v.forClass(BothAnnotationsMethodReturn.class).forAnyCode()
+        .mutantsAreGenerated().allMutantsAreFiltered().verify();
+  }
+
+  @Test
+  public void filtersNestedClassOfUnannotatedOuterInNullMarkedPackage() {
+    v.forClass(UnannotatedOuterWithNestedReturn.Nested.class).forAnyCode()
+        .mutantsAreGenerated().allMutantsAreFiltered().verify();
+  }
+
+  @Test
+  public void doesNotFilterNestedClassOfUnannotatedOuterOutsideMarkedPackage() {
+    v.forClass(UnannotatedOuter.Nested.class).forAnyCode()
+        .mutantsAreGenerated().noMutantsAreFiltered().verify();
+  }
+
+  @Test
+  public void fallsBackToPackageWhenOuterClassCannotBeLoaded() {
+    final ClassByteArraySource source = ClassloaderByteArraySource.fromContext();
+    final InterceptorVerifier noOuterClasses = VerifierStart
+        .forInterceptor(new JSpecifyNullFilter(clazz ->
+            clazz.equals(UnannotatedOuterWithNestedReturn.class.getName())
+                ? Optional.empty() : source.getBytes(clazz)))
+        .usingMutator(NullReturnValsMutator.NULL_RETURNS);
+    noOuterClasses.forClass(UnannotatedOuterWithNestedReturn.Nested.class).forAnyCode()
+        .mutantsAreGenerated().allMutantsAreFiltered().verify();
+  }
+
+  @Test
+  public void filtersMutantsInAnonymousClassInNullMarkedClass() {
+    v.forClass(NullMarkedOuter.anonymous()).forAnyCode()
+        .mutantsAreGenerated().allMutantsAreFiltered().verify();
+  }
+
+  @Test
+  public void doesNotFilterAnonymousClassInNullUnmarkedClass() {
+    v.forClass(NullMarkedOuter.UnmarkedNested.anonymous()).forAnyCode()
+        .mutantsAreGenerated().noMutantsAreFiltered().verify();
+  }
+
+  @Test
   public void doesNotFilterWhenNothingIsMarked() {
     v.forClass(java.util.concurrent.atomic.AtomicReference.class).forAnyCode()
         .noMutantsAreFiltered().verify();
@@ -100,6 +176,77 @@ public class JSpecifyNullFilterTest {
   @NullMarked
   private static class NullUnmarkedMethodReturn implements Callable<Object> {
     @NullUnmarked
+    @Override
+    public Object call() {
+      return "";
+    }
+  }
+
+  @NullMarked
+  private static class NullMarkedOuter {
+    static Class<?> anonymous() {
+      return new Callable<Object>() {
+        @Override
+        public Object call() {
+          return "";
+        }
+      }.getClass();
+    }
+
+    static class Nested implements Callable<Object> {
+      @Override
+      public Object call() {
+        return "";
+      }
+
+      static class DeeplyNested implements Callable<Object> {
+        @Override
+        public Object call() {
+          return "";
+        }
+      }
+    }
+
+    @NullUnmarked
+    static class UnmarkedNested implements Callable<Object> {
+      static Class<?> anonymous() {
+        return new Callable<Object>() {
+          @Override
+          public Object call() {
+            return "";
+          }
+        }.getClass();
+      }
+
+      @Override
+      public Object call() {
+        return "";
+      }
+    }
+  }
+
+  private static class UnannotatedOuter {
+    static class Nested implements Callable<Object> {
+      @Override
+      public Object call() {
+        return "";
+      }
+    }
+  }
+
+  @NullMarked
+  @NullUnmarked
+  private static class BothAnnotationsClassReturn implements Callable<Object> {
+    @Override
+    public Object call() {
+      return "";
+    }
+  }
+
+  @NullMarked
+  private static class BothAnnotationsMethodReturn implements Callable<Object> {
+    @NullUnmarked
+    @NullMarked
     @Override
     public Object call() {
       return "";
