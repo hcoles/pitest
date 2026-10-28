@@ -40,6 +40,7 @@ import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoMother;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.HierarchicalClassId;
+import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.ClassLines;
 import org.pitest.coverage.CoverageDatabase;
@@ -157,6 +158,7 @@ public class MutationCoverageReportTest {
 
     when(this.mutater.findMutations(ClassName.fromClass(Foo.class))).thenReturn(aMutantIn(Foo.class));
 
+    when(this.code.getClassPath()).thenReturn(new ClassPath(Collections.emptyList()));
     when(this.code.getCodeUnderTestNames()).thenReturn(
         Collections.singleton(clazz));
     when(this.code.fetchClassHashes(anyCollection())).thenReturn(
@@ -200,6 +202,7 @@ public class MutationCoverageReportTest {
     this.data.setFailWhenNoMutations(false);
     final ClassName foo = ClassName.fromClass(Foo.class);
     when(this.mutater.findMutations(foo)).thenReturn(aMutantIn(Foo.class));
+    when(this.code.getClassPath()).thenReturn(new ClassPath(Collections.emptyList()));
     when(this.code.getCodeUnderTestNames()).thenReturn(
         Collections.singleton(foo));
     when(this.coverageDb.getCodeLinesForClass(foo)).thenReturn(new ClassLines(foo, Collections.emptySet()));

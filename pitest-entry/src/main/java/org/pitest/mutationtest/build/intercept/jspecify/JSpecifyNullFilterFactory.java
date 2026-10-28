@@ -21,7 +21,11 @@ public class JSpecifyNullFilterFactory implements MutationInterceptorFactory {
 
   @Override
   public MutationInterceptor createInterceptor(InterceptorParameters params) {
-    return new JSpecifyNullFilter(params.source());
+    if (params.code() == null) {
+      return new JSpecifyNullFilter(params.source());
+    }
+    return new JSpecifyNullFilter(params.source(),
+        ModuleInfoSource.fromClassPath(params.code().getClassPath()));
   }
 
 }

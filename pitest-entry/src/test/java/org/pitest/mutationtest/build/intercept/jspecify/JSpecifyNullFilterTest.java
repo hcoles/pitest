@@ -8,6 +8,8 @@ import com.example.jspecify.NullMarkedPackageReturn;
 import com.example.jspecify.NullUnmarkedClassReturn;
 import com.example.jspecify.UnannotatedOuterWithNestedReturn;
 import org.junit.Test;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.NullUnmarked;
 import org.jspecify.annotations.Nullable;
@@ -125,6 +127,43 @@ public class JSpecifyNullFilterTest {
   public void doesNotFilterNestedClassOfUnannotatedOuterOutsideMarkedPackage() {
     v.forClass(UnannotatedOuter.Nested.class).forAnyCode()
         .mutantsAreGenerated().noMutantsAreFiltered().verify();
+  }
+
+  @Test
+  public void filtersMutantsInNullMarkedModule() {
+    verifierWithModuleInfo(true).forClass(UnannotatedOuter.Nested.class).forAnyCode()
+        .mutantsAreGenerated().allMutantsAreFiltered().verify();
+  }
+
+  @Test
+  public void doesNotFilterMutantsInModuleWithoutNullMarked() {
+    verifierWithModuleInfo(false).forClass(UnannotatedOuter.Nested.class).forAnyCode()
+        .mutantsAreGenerated().noMutantsAreFiltered().verify();
+  }
+
+  @Test
+  public void doesNotFilterNullUnmarkedClassInNullMarkedModule() {
+    verifierWithModuleInfo(true).forClass(NullMarkedOuter.UnmarkedNested.class)
+        .forAnyCode().mutantsAreGenerated().noMutantsAreFiltered().verify();
+  }
+
+  private static InterceptorVerifier verifierWithModuleInfo(boolean nullMarked) {
+    final byte[] moduleInfo = moduleInfo(nullMarked);
+    return VerifierStart
+        .forInterceptor(new JSpecifyNullFilter(ClassloaderByteArraySource.fromContext(),
+            clazz -> Optional.of(moduleInfo)))
+        .usingMutator(NullReturnValsMutator.NULL_RETURNS);
+  }
+
+  private static byte[] moduleInfo(boolean nullMarked) {
+    final ClassWriter cw = new ClassWriter(0);
+    cw.visit(Opcodes.V11, Opcodes.ACC_MODULE, "module-info", null, null, null);
+    cw.visitModule("test.module", 0, null).visitEnd();
+    if (nullMarked) {
+      cw.visitAnnotation("Lorg/jspecify/annotations/NullMarked;", true).visitEnd();
+    }
+    cw.visitEnd();
+    return cw.toByteArray();
   }
 
   @Test

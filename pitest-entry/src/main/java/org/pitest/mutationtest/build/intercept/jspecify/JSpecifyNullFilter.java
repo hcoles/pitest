@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -27,8 +28,9 @@ import static org.pitest.mutationtest.engine.gregor.mutators.returns.NullReturnV
  * Removes null return mutants from code that JSpecify declares non-null.
  * Nullness is resolved most specific first: @Nullable on the method or its
  * return type keeps the mutant, then @NullMarked / @NullUnmarked on the method,
- * the class and any enclosing classes, and finally the package (package-info)
- * decide. A declaration carrying both annotations is treated as having neither.
+ * the class and any enclosing classes, then the package (package-info) and
+ * finally the module (module-info, {@code @NullMarked} only) decide.
+ * A declaration carrying both annotations is treated as having neither.
  * Only annotations from {@code org.jspecify.annotations} are recognised.
  */
 public class JSpecifyNullFilter implements MutationInterceptor {
@@ -42,14 +44,21 @@ public class JSpecifyNullFilter implements MutationInterceptor {
   }
 
   private final ClassByteArraySource code;
+  private final ModuleInfoSource modules;
   private final Map<String, Nullness> packageNullness = new HashMap<>();
   private final Map<String, Nullness> classNullnessCache = new HashMap<>();
+  private final Map<String, Nullness> moduleNullnessByPackage = new HashMap<>();
 
   private ClassTree currentClass;
   private Nullness classNullness = Nullness.UNSPECIFIED;
 
   JSpecifyNullFilter(ClassByteArraySource code) {
+    this(code, clazz -> Optional.empty());
+  }
+
+  JSpecifyNullFilter(ClassByteArraySource code, ModuleInfoSource modules) {
     this.code = code;
+    this.modules = modules;
   }
 
   @Override
@@ -155,7 +164,23 @@ public class JSpecifyNullFilter implements MutationInterceptor {
 
   private Nullness packageNullness(ClassName clazz) {
     final String packageName = clazz.getPackage().asJavaName();
-    return this.packageNullness.computeIfAbsent(packageName, this::readPackageNullness);
+    return this.packageNullness
+        .computeIfAbsent(packageName, this::readPackageNullness)
+        .orElse(() -> moduleNullness(clazz));
+  }
+
+  // @NullUnmarked is not recognised on modules, so only @NullMarked counts
+  private Nullness moduleNullness(ClassName clazz) {
+    return this.moduleNullnessByPackage.computeIfAbsent(clazz.getPackage().asJavaName(),
+        packageName -> readModuleNullness(clazz));
+  }
+
+  private Nullness readModuleNullness(ClassName clazz) {
+    final boolean marked = this.modules.moduleInfoFor(clazz)
+        .map(ClassTree::fromBytes)
+        .map(t -> nullness(t.annotations()) == Nullness.NULL_MARKED)
+        .orElse(false);
+    return marked ? Nullness.NULL_MARKED : Nullness.UNSPECIFIED;
   }
 
   private Nullness readPackageNullness(String packageName) {

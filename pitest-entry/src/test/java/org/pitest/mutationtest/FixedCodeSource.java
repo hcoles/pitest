@@ -59,7 +59,7 @@ public class FixedCodeSource implements CodeSource {
 
     @Override
     public ClassPath getClassPath() {
-        throw new UnsupportedOperationException();
+        return new ClassPath(Collections.emptyList());
     }
 
     @Override
