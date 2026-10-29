@@ -128,6 +128,49 @@ public class FeatureParserTest {
   }
 
   @Test
+  public void shouldParseQuotedValueContainingClosingBracket() {
+    final FeatureSetting actual = parse("+BAR(file[\"/tmp/a]b/c.txt\"])");
+    assertThat(actual.getString("file")).contains("/tmp/a]b/c.txt");
+  }
+
+  @Test
+  public void shouldParseQuotedValueContainingClosingParenthesis() {
+    final FeatureSetting actual = parse("+BAR(file[\"/tmp/a)b/c.txt\"])");
+    assertThat(actual.getString("file")).contains("/tmp/a)b/c.txt");
+  }
+
+  @Test
+  public void shouldParseQuotedValueContainingOpeningBracket() {
+    final FeatureSetting actual = parse("+BAR(file[\"/tmp/a[1]/b.txt\"])");
+    assertThat(actual.getString("file")).contains("/tmp/a[1]/b.txt");
+  }
+
+  @Test
+  public void shouldParseQuotedValueContainingComma() {
+    final FeatureSetting actual = parse("+BAR(file[\"/tmp/a,b/c.txt\"])");
+    assertThat(actual.getString("file")).contains("/tmp/a,b/c.txt");
+  }
+
+  @Test
+  public void shouldParseEscapedQuoteInQuotedValue() {
+    final FeatureSetting actual = parse("+BAR(name[\"a\\\"b\"])");
+    assertThat(actual.getString("name")).contains("a\"b");
+  }
+
+  @Test
+  public void shouldParseParameterFollowingAQuotedValue() {
+    final FeatureSetting actual = parse("+BAR(file[\"/tmp/a]b\"], size[42])");
+    assertThat(actual.getString("file")).contains("/tmp/a]b");
+    assertThat(actual.getInteger("size")).contains(42);
+  }
+
+  @Test
+  public void failsCleanlyWhenQuotedValueIsNotTerminated() {
+    assertThatCode(() -> parse("+BAR(file[\"/tmp/a])"))
+            .hasMessageContaining("Could not parse feature");
+  }
+
+  @Test
   public void shouldIgnoreTrailingWhitespaceAfterFinalConfigValue() {
     final FeatureSetting actual = parse("+BAR(name[hello] )");
     assertThat(actual.getString("name")).contains("hello");
