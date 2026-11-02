@@ -20,11 +20,20 @@ jobs:
         include:
           - title: "JDK 17"
             java: 17
+            os: ubuntu-latest
           - title: "JDK 21"
             java: "21"
+            os: ubuntu-latest
           - title: "JDK 25"
             java: "25"
-    runs-on: ubuntu-latest
+            os: ubuntu-latest
+          - title: "JDK 17 (Windows)"
+            java: 17
+            os: windows-latest
+          - title: "JDK 17 (macOS)"
+            java: 17
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
     steps:
       - name: 'Checkout from Git'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
