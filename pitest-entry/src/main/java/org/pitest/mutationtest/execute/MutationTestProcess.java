@@ -1,7 +1,8 @@
 package org.pitest.mutationtest.execute;
 
 import java.io.IOException;
-import java.net.ServerSocket;
+import java.nio.channels.ServerSocketChannel;
+import org.pitest.util.SocketFinder;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,9 +22,9 @@ public class MutationTestProcess {
   private final CommunicationThread thread;
   private final Map<MutationIdentifier, MutationStatusTestPair> idMap;
 
-  public MutationTestProcess(final ServerSocket socket,
+  public MutationTestProcess(final ServerSocketChannel socket,
       final ProcessArgs processArgs, final MinionArguments arguments) {
-    this.process = WrappingProcess.create(socket.getLocalPort(), processArgs,
+    this.process = WrappingProcess.create(SocketFinder.pathOf(socket), processArgs,
         MutationTestMinion.class);
 
     this.idMap = new ConcurrentHashMap<>();

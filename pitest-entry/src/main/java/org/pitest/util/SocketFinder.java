@@ -15,13 +15,31 @@
 package org.pitest.util;
 
 import java.io.IOException;
-import java.net.ServerSocket;
+import java.net.StandardProtocolFamily;
+import java.net.UnixDomainSocketAddress;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class SocketFinder {
 
-  public synchronized ServerSocket getNextAvailableServerSocket() {
+  public static Path pathOf(final ServerSocketChannel channel) {
     try {
-      return new ServerSocket(0);
+      return ((UnixDomainSocketAddress) channel.getLocalAddress()).getPath();
+    } catch (final IOException e) {
+      throw Unchecked.translateCheckedException(e);
+    }
+  }
+
+
+  public synchronized ServerSocketChannel getNextAvailableServerSocket() {
+    try {
+      final Path dir = Files.createTempDirectory("pit");
+      final Path path = dir.resolve("s");
+      final ServerSocketChannel channel = ServerSocketChannel
+          .open(StandardProtocolFamily.UNIX);
+      channel.bind(UnixDomainSocketAddress.of(path));
+      return channel;
     } catch (final IOException e) {
       throw Unchecked.translateCheckedException(e);
     }

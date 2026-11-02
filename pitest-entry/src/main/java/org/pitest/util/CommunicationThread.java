@@ -15,7 +15,7 @@
 package org.pitest.util;
 
 import java.io.IOException;
-import java.net.ServerSocket;
+import java.nio.channels.ServerSocketChannel;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -31,10 +31,10 @@ public final class CommunicationThread {
 
   private final Consumer<SafeDataOutputStream> sendInitialData;
   private final ReceiveStrategy                   receive;
-  private final ServerSocket                      socket;
+  private final ServerSocketChannel                      socket;
   private FutureTask<ExitCode>                    future;
 
-  public CommunicationThread(final ServerSocket socket,
+  public CommunicationThread(final ServerSocketChannel socket,
       final Consumer<SafeDataOutputStream> sendInitialData,
       final ReceiveStrategy receive) {
     this.socket = socket;
