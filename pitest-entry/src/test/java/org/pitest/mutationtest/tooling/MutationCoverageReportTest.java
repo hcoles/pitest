@@ -132,6 +132,7 @@ public class MutationCoverageReportTest {
     try {
       this.data.setFailWhenNoMutations(true);
       createAndRunTestee();
+      fail();
     } catch (final PitHelpError phe) {
       assertEquals(Help.NO_MUTATIONS_FOUND.toString(), phe.getMessage());
     }
