@@ -11,6 +11,9 @@ import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.export.NullCoverageExporter;
 import org.pitest.mutationtest.engine.gregor.config.GregorEngineFactory;
 import org.pitest.mutationtest.incremental.ErroringHistoryFactory;
+import org.pitest.mutationtest.ListenerArguments;
+import org.pitest.mutationtest.MutationResultListener;
+import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.plugin.Feature;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.PitError;
@@ -19,7 +22,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Properties;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -94,6 +99,53 @@ public class SettingsFactoryTest {
   public void shouldReturnListenerWhenRequestedListenerIsKnown() {
     this.options.addOutputFormats(Arrays.asList("XML"));
     assertNotNull(this.testee.createListener());
+  }
+
+  @Test
+  public void outputFormatActivatesListenerThatIsOffByDefaultAsFeature() {
+    final OffByDefaultListenerFactory factory = new OffByDefaultListenerFactory();
+    final PluginServices services = new PluginServices(new Services() {
+      @Override
+      @SuppressWarnings("unchecked")
+      public <S> Collection<S> load(Class<S> ifc) {
+        if (ifc.equals(MutationResultListenerFactory.class)) {
+          return (Collection<S>) Collections.singletonList(factory);
+        }
+        return Collections.emptyList();
+      }
+    });
+    this.options.addOutputFormats(Arrays.asList("offbydefault"));
+
+    new SettingsFactory(this.options, services).createListener()
+        .getListener(new Properties(),
+            new ListenerArguments(null, null, null, null, 0, false, null, Collections.emptyList()));
+
+    assertThat(factory.created).isTrue();
+  }
+
+  private static class OffByDefaultListenerFactory implements MutationResultListenerFactory {
+    boolean created;
+
+    @Override
+    public MutationResultListener getListener(Properties props, ListenerArguments args) {
+      this.created = true;
+      return null;
+    }
+
+    @Override
+    public String name() {
+      return "offbydefault";
+    }
+
+    @Override
+    public String description() {
+      return "dummy";
+    }
+
+    @Override
+    public Feature provides() {
+      return Feature.named("offbydefault").withOnByDefault(false);
+    }
   }
 
   @Test

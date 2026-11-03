@@ -38,6 +38,7 @@ import org.pitest.plugin.FeatureParser;
 import org.pitest.plugin.FeatureSelector;
 import org.pitest.plugin.FeatureSetting;
 import org.pitest.plugin.ProvidesFeature;
+import org.pitest.plugin.ToggleStatus;
 import org.pitest.process.DefaultJavaExecutableLocator;
 import org.pitest.process.JavaExecutableLocator;
 import org.pitest.process.KnownLocationJavaExecutableLocator;
@@ -46,6 +47,7 @@ import org.pitest.util.ResultOutputStrategy;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -119,7 +121,16 @@ public class SettingsFactory {
 
   public MutationResultListenerFactory createListener() {
     final FeatureParser parser = new FeatureParser();
-    return new CompoundListenerFactory(parser.parseFeatures(this.options.getFeatures()), findListeners());
+    final Collection<MutationResultListenerFactory> listeners = findListeners();
+    final List<FeatureSetting> features = new ArrayList<>(parser.parseFeatures(this.options.getFeatures()));
+    // activation by output format must not be undone by a feature that is off by default
+    for (MutationResultListenerFactory each : listeners) {
+      if (isActivatedByFeature().test(each)
+          && matchesOutputFormat(this.options.getOutputFormats()).test(each)) {
+        features.add(new FeatureSetting(each.provides().name(), ToggleStatus.ACTIVATE, Collections.emptyMap()));
+      }
+    }
+    return new CompoundListenerFactory(features, listeners);
   }
 
   public ConfigurationUpdater createUpdater() {
