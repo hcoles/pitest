@@ -8,6 +8,11 @@ Read all about it at https://pitest.org
 
 ## Releases
 
+## 1.30.2
+
+* #1505 Support jspecify (thanks @Lyin-OTTF)
+* #1507 Allow output formats to be activated by both name and feature 
+
 ## 1.30.1
 
 * #1497 Add the Plexus XML module required by Plexus Utils (thanks @skrcode)
