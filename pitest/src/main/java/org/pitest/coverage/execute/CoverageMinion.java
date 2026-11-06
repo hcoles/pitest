@@ -35,7 +35,9 @@ import sun.pitest.CodeCoverageStore;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
-import java.net.Socket;
+import java.net.UnixDomainSocketAddress;
+import java.nio.channels.Channels;
+import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -55,24 +57,21 @@ public class CoverageMinion {
     enableTransformations();
 
     ExitCode exitCode = ExitCode.OK;
-    Socket s = null;
+    SocketChannel s = null;
     CoveragePipe invokeQueue = null;
     try {
 
-      final int port = Integer.parseInt(args[0]);
-      s = new Socket("localhost", port);
-      // if we can't read/write in 10 seconds, something is badly wrong
-      s.setSoTimeout(10000);
+      s = SocketChannel.open(UnixDomainSocketAddress.of(args[0]));
 
       final SafeDataInputStream dis = new SafeDataInputStream(
-          s.getInputStream());
+          Channels.newInputStream(s));
 
       final CoverageOptions paramsFromParent = dis.read(CoverageOptions.class);
 
       configureVerbosity(paramsFromParent);
 
       invokeQueue = new CoveragePipe(new BufferedOutputStream(
-          s.getOutputStream()));
+          Channels.newOutputStream(s)));
 
       CodeCoverageStore.init(invokeQueue);
 
