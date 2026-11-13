@@ -21,7 +21,7 @@ jobs:
       - name: Setup Java JDK
         uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4.8.0
         with:
-          java-version: 11
+          java-version: 17
           distribution: temurin
           server-id: central
           server-username: MAVEN_USERNAME

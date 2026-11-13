@@ -1,7 +1,8 @@
 package org.pitest.coverage.execute;
 
 import java.io.IOException;
-import java.net.ServerSocket;
+import java.nio.channels.ServerSocketChannel;
+import org.pitest.util.SocketFinder;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -18,9 +19,9 @@ public class CoverageProcess {
   private final CommunicationThread crt;
 
   public CoverageProcess(final ProcessArgs processArgs,
-      final CoverageOptions arguments, final ServerSocket socket,
+      final CoverageOptions arguments, final ServerSocketChannel socket,
       final List<String> testClasses, final Consumer<CoverageResult> handler) {
-    this.process = WrappingProcess.create(socket.getLocalPort(), processArgs,
+    this.process = WrappingProcess.create(SocketFinder.pathOf(socket), processArgs,
         CoverageMinion.class);
 
     this.crt = new CommunicationThread(socket, new SendData(arguments, testClasses), new Receive(handler));
