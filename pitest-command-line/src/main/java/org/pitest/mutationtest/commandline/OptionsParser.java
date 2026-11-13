@@ -119,6 +119,7 @@ public class OptionsParser {
   private final OptionSpec<File>                     historyInputSpec;
   private final OptionSpec<String>                   mutators;
   private final OptionSpec<String>                   features;
+  private final FeatureArgsProcessor                 featuresProcessor;
   private final OptionSpec<String>                   argLine;
   private final OptionSpec<String>                   jvmArgs;
   private final CommaAwareArgsProcessor              jvmArgsProcessor;
@@ -224,8 +225,10 @@ public class OptionsParser {
         .describedAs("comma separated list of mutation operators");
 
     this.features = parserAccepts(FEATURES).withRequiredArg()
-        .ofType(String.class).withValuesSeparatedBy(',')
+        .ofType(String.class)
         .describedAs("comma separated list of features to enable/disable.");
+
+    this.featuresProcessor = new FeatureArgsProcessor(features);
 
     this.argLine = parserAccepts(ARG_LINE).withRequiredArg()
             .describedAs("argline for child JVMs");
@@ -471,7 +474,7 @@ public class OptionsParser {
             .collect(Collectors.toList()));
     data.setSourceDirs(asPaths(this.sourceDirSpec.values(userArgs)));
     data.setMutators(this.mutators.values(userArgs));
-    data.setFeatures(this.features.values(userArgs));
+    data.setFeatures(this.featuresProcessor.values(userArgs));
 
     data.setArgLine(this.argLine.value(userArgs));
 
