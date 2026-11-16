@@ -22,19 +22,19 @@ public class Java9Process implements WrappingProcess {
 
     private static final Map<Optional<String>, Path> CACHE = new ConcurrentHashMap<>();
 
-    private final int         port;
+    private final Path        socketPath;
     private final ProcessArgs processArgs;
     private final Class<?>    minionClass;
     private JavaProcess       process;
 
-    public Java9Process(int port, ProcessArgs args, Class<?> minionClass) {
-        this.port = port;
+    public Java9Process(Path socketPath, ProcessArgs args, Class<?> minionClass) {
+        this.socketPath = socketPath;
         this.processArgs = args;
         this.minionClass = minionClass;
     }
 
     public void start() throws IOException {
-        String args =  "" + this.port;
+        String args =  this.socketPath.toString();
 
         ProcessBuilder processBuilder = createProcessBuilder(
                 this.processArgs.getJavaExecutable(),

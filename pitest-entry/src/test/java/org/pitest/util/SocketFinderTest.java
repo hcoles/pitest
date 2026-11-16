@@ -17,7 +17,7 @@ package org.pitest.util;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
-import java.net.ServerSocket;
+import java.nio.channels.ServerSocketChannel;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +33,7 @@ public class SocketFinderTest {
 
   @Test
   public void shouldFindAvailableSockets() throws IOException {
-    final ServerSocket socket = this.testee.getNextAvailableServerSocket();
+    final ServerSocketChannel socket = this.testee.getNextAvailableServerSocket();
     assertThat(socket).isNotNull();
     socket.close();
   }

@@ -8,11 +8,14 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.net.UnixDomainSocketAddress;
+import java.nio.channels.Channels;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.function.Consumer;
 
 import org.junit.Before;
@@ -24,8 +27,7 @@ public class SocketReadingCallableTest {
 
   private SocketReadingCallable             testee;
 
-  @Mock
-  private ServerSocket                      socket;
+  private ServerSocketChannel               socket;
 
   @Mock
   private Consumer<SafeDataOutputStream> sendDataSideEffect;
@@ -33,39 +35,34 @@ public class SocketReadingCallableTest {
   @Mock
   private ReceiveStrategy                   receiveStrategy;
 
-  @Mock
-  private Socket                            clientSocket;
-
   private ByteArrayOutputStream             o;
 
   @Before
   public void setUp() throws IOException {
     MockitoAnnotations.openMocks(this);
+    this.socket = new SocketFinder().getNextAvailableServerSocket();
     this.testee = new SocketReadingCallable(this.socket,
         this.sendDataSideEffect, this.receiveStrategy);
-
-    when(this.socket.accept()).thenReturn(this.clientSocket);
-
     this.o = new ByteArrayOutputStream();
   }
 
   @Test
   public void shouldReportTheExitCodeSentByTheMinionProcess() throws Exception {
-    mockClientSocketToSendExitCode(ExitCode.TIMEOUT);
-    assertThat(this.testee.call()).isEqualTo(ExitCode.TIMEOUT);
+    sendExitCode(ExitCode.TIMEOUT);
+    assertThat(callWithClient()).isEqualTo(ExitCode.TIMEOUT);
   }
 
   @Test
   public void shouldSendInitialDataToMinion() throws Exception {
-    mockClientSocketToSendExitCode(ExitCode.TIMEOUT);
-    this.testee.call();
+    sendExitCode(ExitCode.TIMEOUT);
+    callWithClient();
     verify(this.sendDataSideEffect).accept(any(SafeDataOutputStream.class));
   }
 
   @Test
   public void shouldPassNotPassDoneCommandToReceiver() throws Exception {
-    mockClientSocketToSendExitCode(ExitCode.TIMEOUT);
-    this.testee.call();
+    sendExitCode(ExitCode.TIMEOUT);
+    callWithClient();
     verify(this.receiveStrategy, never()).apply(anyByte(),
         any(SafeDataInputStream.class));
   }
@@ -76,24 +73,43 @@ public class SocketReadingCallableTest {
     dos.writeByte(Id.DESCRIBE);
     dos.writeByte(Id.DONE);
     dos.writeInt(ExitCode.OK.getCode());
-    mockClientSocketInputStream();
-    this.testee.call();
+    callWithClient();
     verify(this.receiveStrategy, times(1)).apply(anyByte(),
         any(SafeDataInputStream.class));
   }
 
-  private void mockClientSocketInputStream() throws IOException {
-    final ByteArrayInputStream bis = new ByteArrayInputStream(
-        this.o.toByteArray());
-    when(this.clientSocket.getInputStream()).thenReturn(bis);
+  @Test
+  public void shouldRemoveSocketFileWhenDone() throws Exception {
+    final Path path = SocketFinder.pathOf(this.socket);
+    sendExitCode(ExitCode.OK);
+    callWithClient();
+    assertThat(Files.exists(path)).isFalse();
   }
 
-  private void mockClientSocketToSendExitCode(final ExitCode timeout)
-      throws IOException {
+  private ExitCode callWithClient() throws Exception {
+    final Path path = SocketFinder.pathOf(this.socket);
+    final Thread client = new Thread(() -> {
+      try (SocketChannel c = SocketChannel
+          .open(UnixDomainSocketAddress.of(path))) {
+        Channels.newOutputStream(c).write(this.o.toByteArray());
+        // keep the channel open until the server has sent its data and closed
+        Channels.newInputStream(c).readAllBytes();
+      } catch (final IOException e) {
+        throw new RuntimeException(e);
+      }
+    });
+    client.start();
+    try {
+      return this.testee.call();
+    } finally {
+      client.join();
+    }
+  }
+
+  private void sendExitCode(final ExitCode code) throws IOException {
     final SafeDataOutputStream dos = new SafeDataOutputStream(this.o);
     dos.writeByte(Id.DONE);
-    dos.writeInt(timeout.getCode());
-    mockClientSocketInputStream();
+    dos.writeInt(code.getCode());
   }
 
 }

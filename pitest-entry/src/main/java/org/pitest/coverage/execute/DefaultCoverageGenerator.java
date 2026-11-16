@@ -42,7 +42,7 @@ import org.pitest.util.Verbosity;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.ServerSocket;
+import java.nio.channels.ServerSocketChannel;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -144,7 +144,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
     final Consumer<CoverageResult> handler = resultProcessor(coverage);
 
     final SocketFinder sf = new SocketFinder();
-    final ServerSocket socket = sf.getNextAvailableServerSocket();
+    final ServerSocketChannel socket = sf.getNextAvailableServerSocket();
 
     final CoverageProcess process = new CoverageProcess(ProcessArgs
         .withClassPath(this.code.getClassPath()).andBaseDir(this.workingDir)

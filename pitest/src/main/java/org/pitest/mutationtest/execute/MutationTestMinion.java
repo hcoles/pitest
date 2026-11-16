@@ -39,7 +39,9 @@ import javax.management.openmbean.CompositeData;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.management.MemoryNotificationInfo;
-import java.net.Socket;
+import java.net.UnixDomainSocketAddress;
+import java.nio.channels.Channels;
+import java.nio.channels.SocketChannel;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
@@ -136,17 +138,13 @@ public class MutationTestMinion {
     enableTransformations();
     HotSwapAgent.addTransformer(new CatchNewClassLoadersTransformer());
 
-    final int port = Integer.parseInt(args[0]);
-
-    Socket s = null;
+    SocketChannel s = null;
     try {
-      s = new Socket("localhost", port);
-      // if we can't read/write in 20 seconds, something is badly wrong
-      s.setSoTimeout(20000);
+      s = SocketChannel.open(UnixDomainSocketAddress.of(args[0]));
       final SafeDataInputStream dis = new SafeDataInputStream(
-          s.getInputStream());
+          Channels.newInputStream(s));
 
-      final Reporter reporter = new DefaultReporter(s.getOutputStream());
+      final Reporter reporter = new DefaultReporter(Channels.newOutputStream(s));
       addMemoryWatchDog(reporter);
       final ClientPluginServices plugins = ClientPluginServices.makeForContextLoader();
       final MinionSettings factory = new MinionSettings(plugins);
@@ -184,7 +182,7 @@ public class MutationTestMinion {
     }
   }
 
-  private static void safelyCloseSocket(final Socket s) {
+  private static void safelyCloseSocket(final SocketChannel s) {
     if (s != null) {
       try {
         s.close();
