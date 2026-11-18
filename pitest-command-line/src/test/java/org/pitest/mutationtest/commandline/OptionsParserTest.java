@@ -134,6 +134,14 @@ public class OptionsParserTest {
   }
 
   @Test
+  public void shouldKeepCommasInsideFeatureParameterValues() {
+    final ReportOptions actual = parseAddingRequiredArgs("--features",
+        "+FOO(file[/tmp/a,b/c.txt]),-BAR()");
+    assertThat(actual.getFeatures()).containsExactly(
+        "+FOO(file[/tmp/a,b/c.txt])", "-BAR()");
+  }
+
+  @Test
   public void shouldDetectInlinedCodeByDefault() {
     final ReportOptions actual = parseAddingRequiredArgs();
     assertThat(actual.isDetectInlinedCode()).isTrue();
