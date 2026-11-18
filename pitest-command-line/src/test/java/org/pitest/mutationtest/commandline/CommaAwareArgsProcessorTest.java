@@ -29,6 +29,11 @@ public class CommaAwareArgsProcessorTest {
                 {  Arrays.asList("--jvmArgs", "{a;b;c;d}"), Arrays.asList("{a;b;c;d}") }, // no separators so region markers will not be removed
                 {  Arrays.asList("--jvmArgs", "{a,b},{c,d},{e,f}"), Arrays.asList("a,b","c,d","e,f") },
                 {  Arrays.asList("--jvmArgs", "{a,b@c,d}"), Arrays.asList("a,b@c,d") }, // pre-existing '@' will not be replaced with ","
+
+                // Issue #1441: braces that did not escape a comma should be preserved
+                {  Arrays.asList("--jvmArgs", "-DsomeValue={,}{"), Arrays.asList("-DsomeValue=,{") },
+                {  Arrays.asList("--jvmArgs", "-DsomeValue={,}{}"), Arrays.asList("-DsomeValue=,{}") },
+                {  Arrays.asList("--jvmArgs", "-DsomeValue={,}{foo}"), Arrays.asList("-DsomeValue=,{foo}") },
         });
     }
 
