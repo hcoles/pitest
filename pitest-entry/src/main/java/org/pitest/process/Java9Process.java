@@ -117,7 +117,9 @@ public class Java9Process implements WrappingProcess {
     private List<String> createLaunchArgs(JavaAgent agentJarLocator, List<String> args, String classPath) {
 
         // remove other arg files from the command line
-        List<String> argsWithoutArgFiles = removeArgFiles(args);
+        List<String> argsWithoutArgFiles = removeArgFiles(args).stream()
+                .map(Java9Process::escapeForArgsFile)
+                .collect(Collectors.toList());
 
         List<String> cmd = new ArrayList<>();
 
@@ -141,6 +143,38 @@ public class Java9Process implements WrappingProcess {
         cmd.addAll(existing);
 
         return cmd;
+    }
+
+    // The java launcher splits lines in an args file at whitespace, treats # as the
+    // start of a comment and ' and " as quotes. Each of these characters is wrapped in
+    // double quotes so the argument reaches the child JVM unchanged. A backslash is only
+    // an escape character within quotes, so the rest of the argument (e.g. a windows path)
+    // can be written as is.
+    private static String escapeForArgsFile(String arg) {
+        StringBuilder sb = new StringBuilder();
+        for (char c : arg.toCharArray()) {
+            switch (c) {
+                case ' ':
+                case '\t':
+                case '\f':
+                case '#':
+                case '\'':
+                    sb.append('"').append(c).append('"');
+                    break;
+                case '"':
+                    sb.append("\"\\\"\"");
+                    break;
+                case '\n':
+                    sb.append("\"\\n\"");
+                    break;
+                case '\r':
+                    sb.append("\"\\r\"");
+                    break;
+                default:
+                    sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 
     private static List<String> readFile(String f) {
