@@ -1,72 +1,22 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html;charset=$outputCharset$">
-    <link rel="stylesheet" type="text/css" href="../style.css">
-</head>
-<body>
-
-<h1>Pit Test Coverage Report</h1>
-<h2>Package Summary</h2>
-<h3>$packageData.packageName$</h3>
-<table>
-    <thead>
-        <tr>
-            <th>Number of Classes</th>
-            <th>Line Coverage</th>
-            <th>Mutation Coverage</th>
-            <th>Test Strength</th>
+$templates/mutation/header(root="../", title=packageData.packageName, packageView="yes")$
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="../index.html">Project</a><span>/</span><a href="../index.html#packages">Packages</a><span>/</span><span aria-current="page">$packageData.packageName$</span></nav>
+<div class="page-heading"><div><div class="eyebrow">PACKAGE REPORT</div><h1 class="code-heading">$packageData.packageName$</h1><p class="page-description">Explore source coverage and the mutations behind it.</p></div><span class="scope-tag">$packageData.totals.numberOfFiles$ source files</span></div>
+$templates/mutation/summary(totals=packageData.totals)$
+<section class="panel" aria-labelledby="files-title">
+    <div class="panel-heading"><div><h2 id="files-title">Source files</h2><p>Select a file to inspect its source and mutation results.</p></div><label class="search-field" data-search-control hidden><span aria-hidden="true">⌕</span><input type="search" data-search placeholder="Filter files…" aria-label="Filter source files"></label></div>
+    <div class="table-scroll"><table class="coverage-table" data-coverage-table>
+        <caption class="visually-hidden">Coverage breakdown by source file</caption>
+        <thead><tr><th scope="col" data-sort="text">Source file</th><th scope="col" data-sort="number">Line coverage</th><th scope="col" data-sort="number">Mutation coverage</th><th scope="col" data-sort="number">Test strength</th></tr></thead>
+        <tbody>
+        $packageData.summaryData:{ summary |
+        <tr data-report-row><td class="name-cell"><a href="./$summary.fileName$.html"><span class="file-icon" aria-hidden="true">⌘</span>$summary.fileName$<span class="row-arrow" aria-hidden="true">↗</span></a></td>
+        $templates/mutation/coverage_cells(totals=summary.totals)$
         </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>$packageData.totals.numberOfFiles$</td>
-            $if(showCoverage)$<td>$packageData.totals.lineCoverageLabel$% <div class="coverage_bar"><div class="coverage_complete width-$packageData.totals.lineCoverage$"></div><div class="coverage_legend">$packageData.totals.numberOfLinesCovered$/$packageData.totals.numberOfLines$</div></div></td>
-            $else$<td><div class="coverage_bar"><div class="coverage_complete width-100"></div><div class="coverage_legend">n/a</div></div></td>
-            $endif$
-            <td>$packageData.totals.mutationCoverageLabel$% <div class="coverage_bar"><div class="coverage_complete width-$packageData.totals.mutationCoverage$"></div><div class="coverage_legend">$packageData.totals.numberOfMutationsDetected$/$packageData.totals.numberOfMutations$</div></div></td>
-            <td>$packageData.totals.testStrengthLabel$% <div class="coverage_bar"><div class="coverage_complete width-$packageData.totals.testStrength$"></div><div class="coverage_legend">$packageData.totals.numberOfMutationsDetected$/$packageData.totals.numberOfMutationsWithCoverage$</div></div></td>
-        </tr>
-    </tbody>
-</table>
-
-
-<h3>Breakdown by Class</h3>
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Line Coverage</th>
-            <th>Mutation Coverage</th>
-            <th>Test Strength</th>
-        </tr>
-    </thead>
-    <tbody>
-$packageData.summaryData:{ summary | 
-        <tr>
-            <td><a href="./$summary.fileName$.html">$summary.fileName$</a></td>
-            $if(showCoverage)$<td><div class="coverage_percentage">$summary.totals.lineCoverageLabel$% </div><div class="coverage_bar"><div class="coverage_complete width-$summary.totals.lineCoverage$"></div><div class="coverage_legend">$summary.totals.numberOfLinesCovered$/$summary.totals.numberOfLines$</div></div></td>
-            $else$<td><div class="coverage_bar"><div class="coverage_complete width-100"></div><div class="coverage_legend">n/a</div></div></td>
-            $endif$
-            <td><div class="coverage_percentage">$summary.totals.mutationCoverageLabel$% </div><div class="coverage_bar"><div class="coverage_complete width-$summary.totals.mutationCoverage$"></div><div class="coverage_legend">$summary.totals.numberOfMutationsDetected$/$summary.totals.numberOfMutations$</div></div></td>
-            <td><div class="coverage_percentage">$summary.totals.testStrengthLabel$% </div><div class="coverage_bar"><div class="coverage_complete width-$summary.totals.testStrength$"></div><div class="coverage_legend">$summary.totals.numberOfMutationsDetected$/$summary.totals.numberOfMutationsWithCoverage$</div></div></td>
-        </tr>
-}$
-     </tbody>
-</table>
-<br/>
-
-
-$errors : { error | 
-<div class='unit'>
- $error$
-</div>
-<br/>
-}$
-
-<hr/>
-
-Report generated by <a href='https://pitest.org'>PIT</a> ${project.version} <a href='https://github.com/sponsors/hcoles'>support</a>
-
-</body>
-</html>
+        }$
+        </tbody>
+    </table></div>
+    <p class="empty-state" data-empty hidden>No source files match your search.</p>
+    <div class="panel-footnote">Percentages are accompanied by their exact counts.<span data-row-count aria-live="polite"></span></div>
+</section>
+$errors:{ error |<div class="build-messages">$error$</div>}$
+$templates/mutation/footer()$
