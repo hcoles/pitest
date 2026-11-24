@@ -88,11 +88,15 @@ public class MutationHtmlReportListener implements MutationResultListener {
   }
 
   private String loadCss() {
+    return loadAsset("style.css");
+  }
+
+  private String loadAsset(String name) {
     try (InputStream is = IsolationUtils.getContextClassLoader()
-                .getResourceAsStream("templates/mutation/style.css")) {
+                .getResourceAsStream("templates/mutation/" + name)) {
       return new String(is.readAllBytes(), StandardCharsets.UTF_8);
     } catch (final IOException e) {
-      Log.getLogger().log(Level.SEVERE, "Error while loading css", e);
+      Log.getLogger().log(Level.SEVERE, "Error while loading report asset " + name, e);
     }
     return "";
   }
@@ -107,10 +111,13 @@ public class MutationHtmlReportListener implements MutationResultListener {
     try (Writer writer = this.outputStrategy.createWriterForFile(fileName)) {
 
       final StringTemplateGroup group = new StringTemplateGroup("mutation_test");
+      group.setFileCharEncoding(StandardCharsets.UTF_8.name());
       final StringTemplate st = group
           .getInstanceOf("templates/mutation/mutation_report");
       st.setAttribute("css", this.css);
 
+      st.setAttribute("totals", mutationMetaData.getTotals());
+      st.setAttribute("packageName", mutationMetaData.getPackageName());
       st.setAttribute("tests", mutationMetaData.getTests());
 
       st.setAttribute("mutators", mutationMetaData.getMutators());
@@ -204,6 +211,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
   public void onRunEnd() {
     createIndexPages();
     createCssFile();
+    createScriptFile();
   }
 
   private void createCssFile() {
@@ -216,9 +224,18 @@ public class MutationHtmlReportListener implements MutationResultListener {
     }
   }
 
+  private void createScriptFile() {
+    try (Writer writer = this.outputStrategy.createWriterForFile("report.js")) {
+      writer.write(loadAsset("report.js"));
+    } catch (final IOException e) {
+      Log.getLogger().log(Level.WARNING, "Error while writing report script", e);
+    }
+  }
+
   private void createIndexPages() {
 
     final StringTemplateGroup group = new StringTemplateGroup("mutation_test");
+    group.setFileCharEncoding(StandardCharsets.UTF_8.name());
     final StringTemplate st = group
         .getInstanceOf("templates/mutation/mutation_package_index");
 
@@ -259,6 +276,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
 
   private void createPackageIndexPage(final PackageSummaryData psData) {
     final StringTemplateGroup group = new StringTemplateGroup("mutation_test");
+    group.setFileCharEncoding(StandardCharsets.UTF_8.name());
     final StringTemplate st = group
         .getInstanceOf("templates/mutation/package_index");
 
@@ -286,6 +304,7 @@ public class MutationHtmlReportListener implements MutationResultListener {
   public void runEnd() {
     createIndexPages();
     createCssFile();
+    createScriptFile();
   }
 
   @Override

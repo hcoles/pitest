@@ -85,6 +85,12 @@ public class MutationHtmlReportListenerTest {
   }
 
   @Test
+  public void shouldCreateAScriptFile() {
+    this.testee.runEnd();
+    verify(this.outputStrategy).createWriterForFile("report.js");
+  }
+
+  @Test
   public void shouldTryToLocateSourceFilesFromMutatedClasses() {
     final String fileName = "foo.java";
     final MutationResult mr = new MutationResult(
